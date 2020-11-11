@@ -6,10 +6,27 @@
               defines="JUCE_INCLUDE_ZLIB_CODE=0&#10;JUCE_ZLIB_INCLUDE_PATH=&lt;zlib.h&gt;">
   <MAINGROUP id="cJXxpO" name="je2be">
     <GROUP id="{EA1BDD32-91EF-BE25-FA92-510887189002}" name="Source">
+      <FILE id="TE9zi3" name="CopyProgressComponent.cpp" compile="1" resource="0"
+            file="Source/CopyProgressComponent.cpp"/>
+      <FILE id="P8FC1f" name="CopyProgressComponent.h" compile="0" resource="0"
+            file="Source/CopyProgressComponent.h"/>
+      <FILE id="CL0GDF" name="ChooseOutputComponent.cpp" compile="1" resource="0"
+            file="Source/ChooseOutputComponent.cpp"/>
+      <FILE id="Y7gY2s" name="ChooseOutputComponent.h" compile="0" resource="0"
+            file="Source/ChooseOutputComponent.h"/>
+      <FILE id="ZzGZsZ" name="ConvertProgressComponent.cpp" compile="1" resource="0"
+            file="Source/ConvertProgressComponent.cpp"/>
+      <FILE id="djzyuG" name="ConvertProgressComponent.h" compile="0" resource="0"
+            file="Source/ConvertProgressComponent.h"/>
+      <FILE id="VfPWnq" name="ConfigComponent.cpp" compile="1" resource="0"
+            file="Source/ConfigComponent.cpp"/>
+      <FILE id="Qfsv6T" name="ConfigComponent.h" compile="0" resource="0"
+            file="Source/ConfigComponent.h"/>
+      <FILE id="fRq9Mt" name="ChooseInputComponent.cpp" compile="1" resource="0"
+            file="Source/ChooseInputComponent.cpp"/>
+      <FILE id="fBACIY" name="ChooseInputComponent.h" compile="0" resource="0"
+            file="Source/ChooseInputComponent.h"/>
       <FILE id="VSjFrG" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
-      <FILE id="WbzpYS" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
-      <FILE id="dIB7nL" name="MainComponent.cpp" compile="1" resource="0"
-            file="Source/MainComponent.cpp"/>
     </GROUP>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>

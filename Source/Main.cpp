@@ -6,7 +6,7 @@
   ==============================================================================
 */
 
-#include "MainComponent.h"
+#include "ChooseInputComponent.h"
 #include <JuceHeader.h>
 
 //==============================================================================
@@ -64,7 +64,7 @@ public:
                   juce::ResizableWindow::backgroundColourId),
               DocumentWindow::allButtons) {
       setUsingNativeTitleBar(true);
-      setContentOwned(new MainComponent(), true);
+      setContentOwned(new ChooseInputComponent(), true);
 
 #if JUCE_IOS || JUCE_ANDROID
       setFullScreen(true);
