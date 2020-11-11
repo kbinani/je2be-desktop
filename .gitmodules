@@ -1,0 +1,6 @@
+[submodule "ext/je2be"]
+	path = ext/je2be
+	url = https://github.com/kbinani/je2be.git
+[submodule "ext/JUCE"]
+	path = ext/JUCE
+	url = https://github.com/kbinani/JUCE.git
