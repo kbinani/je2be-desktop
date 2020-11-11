@@ -1,20 +1,26 @@
-/*
-  ==============================================================================
-
-    ConfigComponent.cpp
-    Created: 12 Nov 2020 1:22:09am
-    Author:  kbinani
-
-  ==============================================================================
-*/
-
 #include "ConfigComponent.h"
+#include "CommandID.h"
+#include "Constants.h"
 #include <JuceHeader.h>
 
-//==============================================================================
-ConfigComponent::ConfigComponent() {
-  // In your constructor, you should add any child components, and
-  // initialise any special settings that your component needs.
+ConfigComponent::ConfigComponent(ChooseInputState const &chooseInputState)
+    : fState(chooseInputState) {
+  auto width = kWindowWidth;
+  auto height = kWindowHeight;
+  setSize(width, height);
+
+  fStartButton.reset(new TextButton(TRANS("Start")));
+  fStartButton->setBounds(width - kMargin - kButtonMinWidth,
+                          height - kMargin - kButtonBaseHeight, kButtonMinWidth,
+                          kButtonBaseHeight);
+  fStartButton->onClick = [this]() { onStartButtonClicked(); };
+  addAndMakeVisible(*fStartButton);
+
+  fBackButton.reset(new TextButton(TRANS("Back")));
+  fBackButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight,
+                         kButtonMinWidth, kButtonBaseHeight);
+  fBackButton->onClick = [this]() { onBackButtonClicked(); };
+  addAndMakeVisible(*fBackButton);
 }
 
 ConfigComponent::~ConfigComponent() {}
@@ -39,7 +45,12 @@ void ConfigComponent::paint(juce::Graphics &g) {
              true); // draw some placeholder text
 }
 
-void ConfigComponent::resized() {
-  // This method is where you should set the bounds of any child
-  // components that your component contains..
+void ConfigComponent::resized() {}
+
+void ConfigComponent::onStartButtonClicked() {
+  JUCEApplication::getInstance()->perform({gui::toConvert});
+}
+
+void ConfigComponent::onBackButtonClicked() {
+  JUCEApplication::getInstance()->perform({gui::toChooseInput});
 }

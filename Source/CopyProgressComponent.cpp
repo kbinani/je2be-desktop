@@ -1,20 +1,41 @@
-/*
-  ==============================================================================
-
-    CopyProgressComponent.cpp
-    Created: 12 Nov 2020 1:22:48am
-    Author:  kbinani
-
-  ==============================================================================
-*/
-
 #include "CopyProgressComponent.h"
+#include "CommandID.h"
+#include "ComponentState.h"
+#include "Constants.h"
 #include <JuceHeader.h>
 
-//==============================================================================
-CopyProgressComponent::CopyProgressComponent() {
-  // In your constructor, you should add any child components, and
-  // initialise any special settings that your component needs.
+class CopyThread : public Thread {
+public:
+  CopyThread(AsyncUpdater *updater, File from, File to)
+      : Thread("j2b::gui::CopyThread"), fUpdater(updater), fFrom(from),
+        fTo(to) {}
+
+  void run() override {
+    fFrom.copyDirectoryTo(fTo);
+    fUpdater->triggerAsyncUpdate();
+  }
+
+private:
+  AsyncUpdater *const fUpdater;
+  File fFrom;
+  File fTo;
+};
+
+CopyProgressComponent::CopyProgressComponent(ChooseOutputState const &state)
+    : fState(state) {
+  auto width = kWindowWidth;
+  auto height = kWindowHeight;
+  setSize(width, height);
+  {
+    fCancelButton.reset(new TextButton(TRANS("Cancel")));
+    fCancelButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight,
+                             kButtonMinWidth, kButtonBaseHeight);
+    addAndMakeVisible(*fCancelButton);
+  }
+
+  fCopyThread.reset(new CopyThread(this, state.fConvertState.fOutputDirectory,
+                                   *state.fCopyDestinationDirectory));
+  fCopyThread->startThread();
 }
 
 CopyProgressComponent::~CopyProgressComponent() {}
@@ -42,4 +63,11 @@ void CopyProgressComponent::paint(juce::Graphics &g) {
 void CopyProgressComponent::resized() {
   // This method is where you should set the bounds of any child
   // components that your component contains..
+}
+
+void CopyProgressComponent::handleAsyncUpdate() {
+  NativeMessageBox::showMessageBox(AlertWindow::AlertIconType::InfoIcon,
+                                   TRANS("Completed"),
+                                   TRANS("All files copied!"));
+  JUCEApplication::getInstance()->perform({gui::toChooseInput});
 }

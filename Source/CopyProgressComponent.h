@@ -1,28 +1,22 @@
-/*
-  ==============================================================================
-
-    CopyProgressComponent.h
-    Created: 12 Nov 2020 1:22:48am
-    Author:  kbinani
-
-  ==============================================================================
-*/
-
 #pragma once
 
+#include "ComponentState.h"
 #include <JuceHeader.h>
 
-//==============================================================================
-/*
- */
-class CopyProgressComponent : public juce::Component {
+class CopyProgressComponent : public juce::Component, public AsyncUpdater {
 public:
-  CopyProgressComponent();
+  explicit CopyProgressComponent(ChooseOutputState const &chooseOutputState);
   ~CopyProgressComponent() override;
 
   void paint(juce::Graphics &) override;
   void resized() override;
 
+  void handleAsyncUpdate() override;
+
 private:
+  std::unique_ptr<TextButton> fCancelButton;
+  ChooseOutputState fState;
+  std::unique_ptr<Thread> fCopyThread;
+
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CopyProgressComponent)
 };

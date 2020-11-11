@@ -6,6 +6,10 @@
               defines="JUCE_INCLUDE_ZLIB_CODE=0&#10;JUCE_ZLIB_INCLUDE_PATH=&lt;zlib.h&gt;">
   <MAINGROUP id="cJXxpO" name="je2be">
     <GROUP id="{EA1BDD32-91EF-BE25-FA92-510887189002}" name="Source">
+      <FILE id="SkZZHL" name="ComponentState.h" compile="0" resource="0"
+            file="Source/ComponentState.h"/>
+      <FILE id="bMgEay" name="CommandID.h" compile="0" resource="0" file="Source/CommandID.h"/>
+      <FILE id="fZFe6I" name="Constants.h" compile="0" resource="0" file="Source/Constants.h"/>
       <FILE id="TE9zi3" name="CopyProgressComponent.cpp" compile="1" resource="0"
             file="Source/CopyProgressComponent.cpp"/>
       <FILE id="P8FC1f" name="CopyProgressComponent.h" compile="0" resource="0"

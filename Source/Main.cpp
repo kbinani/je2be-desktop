@@ -1,18 +1,14 @@
-/*
-  ==============================================================================
-
-    This file contains the basic startup code for a JUCE application.
-
-  ==============================================================================
-*/
-
 #include "ChooseInputComponent.h"
+#include "ChooseOutputComponent.h"
+#include "CommandID.h"
+#include "ConfigComponent.h"
+#include "Constants.h"
+#include "ConvertProgressComponent.h"
+#include "CopyProgressComponent.h"
 #include <JuceHeader.h>
 
-//==============================================================================
 class je2beApplication : public juce::JUCEApplication {
 public:
-  //==============================================================================
   je2beApplication() {}
 
   const juce::String getApplicationName() override {
@@ -23,38 +19,64 @@ public:
   }
   bool moreThanOneInstanceAllowed() override { return true; }
 
-  //==============================================================================
   void initialise(const juce::String &commandLine) override {
-    // This method is where you should put your application's initialisation
-    // code..
+    String typeFaceName = "Meiryo UI";
+    Desktop::getInstance()
+        .getDefaultLookAndFeel()
+        .setDefaultSansSerifTypefaceName(typeFaceName);
     mainWindow.reset(new MainWindow(getApplicationName()));
   }
 
-  void shutdown() override {
-    // Add your application's shutdown code here..
+  void shutdown() override { mainWindow = nullptr; }
 
-    mainWindow = nullptr; // (deletes our window)
+  void systemRequestedQuit() override { quit(); }
+
+  bool perform(InvocationInfo const &info) override {
+    Component *current = mainWindow->getContentComponent();
+    switch (info.commandID) {
+    case gui::toConfig: {
+      auto provider = dynamic_cast<ChooseInputStateProvider *>(current);
+      if (!provider)
+        return false;
+      auto config = new ConfigComponent(provider->getChooseInputState());
+      mainWindow->setContentOwned(config, true);
+      return true;
+    }
+    case gui::toChooseInput: {
+      auto chooseInput = new ChooseInputComponent();
+      mainWindow->setContentOwned(chooseInput, true);
+      return true;
+    }
+    case gui::toConvert: {
+      auto provider = dynamic_cast<ConfigStateProvider *>(current);
+      if (!provider)
+        return false;
+      auto convert = new ConvertProgressComponent(provider->getConfigState());
+      mainWindow->setContentOwned(convert, true);
+      return true;
+    }
+    case gui::toChooseOutput: {
+      auto provider = dynamic_cast<ConvertStateProvider *>(current);
+      if (!provider)
+        return false;
+      auto chooseOutput =
+          new ChooseOutputComponent(provider->getConvertState());
+      mainWindow->setContentOwned(chooseOutput, true);
+      return true;
+    }
+    case gui::toCopy: {
+      auto provider = dynamic_cast<ChooseOutputStateProvider *>(current);
+      if (!provider)
+        return false;
+      auto copy = new CopyProgressComponent(provider->getChooseOutputState());
+      mainWindow->setContentOwned(copy, true);
+      return true;
+    }
+    default:
+      return JUCEApplication::perform(info);
+    }
   }
 
-  //==============================================================================
-  void systemRequestedQuit() override {
-    // This is called when the app is being asked to quit: you can ignore this
-    // request and let the app carry on running, or call quit() to allow the app
-    // to close.
-    quit();
-  }
-
-  void anotherInstanceStarted(const juce::String &commandLine) override {
-    // When another instance of the app is launched while this one is running,
-    // this method is invoked, and the commandLine parameter tells you what
-    // the other instance's command-line arguments were.
-  }
-
-  //==============================================================================
-  /*
-      This class implements the desktop window that contains an instance of
-      our MainComponent class.
-  */
   class MainWindow : public juce::DocumentWindow {
   public:
     MainWindow(juce::String name)
@@ -62,14 +84,14 @@ public:
               name,
               juce::Desktop::getInstance().getDefaultLookAndFeel().findColour(
                   juce::ResizableWindow::backgroundColourId),
-              DocumentWindow::allButtons) {
+              DocumentWindow::closeButton | DocumentWindow::minimiseButton) {
       setUsingNativeTitleBar(true);
       setContentOwned(new ChooseInputComponent(), true);
 
 #if JUCE_IOS || JUCE_ANDROID
       setFullScreen(true);
 #else
-      setResizable(true, true);
+      setResizable(false, false);
       centreWithSize(getWidth(), getHeight());
 #endif
 
@@ -77,18 +99,8 @@ public:
     }
 
     void closeButtonPressed() override {
-      // This is called when the user tries to close this window. Here, we'll
-      // just ask the app to quit when this happens, but you can change this to
-      // do whatever you need.
       JUCEApplication::getInstance()->systemRequestedQuit();
     }
-
-    /* Note: Be careful if you override any DocumentWindow methods - the base
-       class uses a lot of them, so by overriding you might break its
-       functionality. It's best to do all your work in your content component
-       instead, but if you really have to override any DocumentWindow methods,
-       make sure your subclass also calls the superclass's method.
-    */
 
   private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainWindow)
@@ -98,6 +110,4 @@ private:
   std::unique_ptr<MainWindow> mainWindow;
 };
 
-//==============================================================================
-// This macro generates the main() routine that launches the app.
 START_JUCE_APPLICATION(je2beApplication)

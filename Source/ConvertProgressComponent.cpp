@@ -1,23 +1,62 @@
-/*
-  ==============================================================================
-
-    ConvertProgressComponent.cpp
-    Created: 12 Nov 2020 1:22:20am
-    Author:  kbinani
-
-  ==============================================================================
-*/
-
 #include "ConvertProgressComponent.h"
+#include "CommandID.h"
+#include "Constants.h"
 #include <JuceHeader.h>
+#include <je2be.hpp>
 
-//==============================================================================
-ConvertProgressComponent::ConvertProgressComponent() {
-  // In your constructor, you should add any child components, and
-  // initialise any special settings that your component needs.
+class WorkerThread : public Thread {
+public:
+  WorkerThread(File input, j2b::InputOption io, File output,
+               j2b::OutputOption oo,
+               std::shared_ptr<ConvertProgressComponent::Updater> updater)
+      : Thread("j2b::gui::Convert"), fInput(input), fInputOption(io),
+        fOutput(output), fOutputOption(oo), fUpdater(updater) {}
+
+  void run() override {
+    using namespace j2b;
+    Converter c(fInput.getFullPathName().toStdString(), fInputOption,
+                fOutput.getFullPathName().toStdString(), fOutputOption);
+    c.run(std::thread::hardware_concurrency());
+    fUpdater->triggerAsyncUpdate();
+  }
+
+private:
+  File const fInput;
+  j2b::InputOption const fInputOption;
+  File const fOutput;
+  j2b::OutputOption const fOutputOption;
+  std::shared_ptr<ConvertProgressComponent::Updater> fUpdater;
+};
+
+ConvertProgressComponent::ConvertProgressComponent(
+    ConfigState const &configState)
+    : fState(configState) {
+  auto width = kWindowWidth;
+  auto height = kWindowHeight;
+  setSize(width, height);
+
+  fCancelButton.reset(new TextButton(TRANS("Cancel")));
+  fCancelButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight,
+                           kButtonMinWidth, kButtonBaseHeight);
+  fCancelButton->onClick = [this]() { onCancelButtonClicked(); };
+  addAndMakeVisible(*fCancelButton);
+
+  wchar_t buffer[L_tmpnam_s];
+  _wtmpnam_s(buffer);
+  fState.fOutputDirectory = File(String(buffer, L_tmpnam_s));
+
+  fUpdater = std::make_shared<Updater>();
+  fUpdater->fTarget.store(this);
+
+  fThread.reset(new WorkerThread(*configState.fInputState.fInputDirectory, {},
+                                 fState.fOutputDirectory, {}, fUpdater));
+  fThread->startThread();
 }
 
-ConvertProgressComponent::~ConvertProgressComponent() {}
+ConvertProgressComponent::~ConvertProgressComponent() {
+  fThread->stopThread(1000);
+  fUpdater->fTarget.store(nullptr);
+}
 
 void ConvertProgressComponent::paint(juce::Graphics &g) {
   /* This demo code just fills the component's background and
@@ -39,7 +78,16 @@ void ConvertProgressComponent::paint(juce::Graphics &g) {
              juce::Justification::centred, true); // draw some placeholder text
 }
 
-void ConvertProgressComponent::resized() {
-  // This method is where you should set the bounds of any child
-  // components that your component contains..
+void ConvertProgressComponent::resized() {}
+
+void ConvertProgressComponent::onCancelButtonClicked() {
+  JUCEApplication::getInstance()->perform({gui::toConfig});
+}
+
+void ConvertProgressComponent::onProgressUpdate() {
+  if (fThread->isThreadRunning()) {
+    // TODO: upate progress
+    return;
+  }
+  JUCEApplication::getInstance()->perform({gui::toChooseOutput});
 }
