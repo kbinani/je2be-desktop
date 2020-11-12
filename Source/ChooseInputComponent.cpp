@@ -12,7 +12,7 @@ ChooseInputComponent::ChooseInputComponent()
   setSize(width, height);
   {
     fMessage.reset(
-        new Label("", TRANS("Select the world you want to convert.")));
+        new Label("", TRANS("Select the world you want to convert")));
     fMessage->setBounds(
         kMargin, kMargin, width - kMargin - fileListWidth - kMargin - kMargin,
         height - kMargin - kButtonBaseHeight - kMargin - kMargin);

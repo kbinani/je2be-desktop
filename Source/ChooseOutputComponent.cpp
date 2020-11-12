@@ -7,8 +7,18 @@ ChooseOutputComponent::ChooseOutputComponent(ConvertState const &convertState)
     : fState(convertState), fListThread("j2b::gui::ChooseOutputComponent") {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
+  auto fileListWidth = 280;
   setSize(width, height);
 
+  {
+    fMessage.reset(new Label("", TRANS("Select a folder to save in")));
+    fMessage->setBounds(
+        kMargin, kMargin, width - kMargin - fileListWidth - kMargin - kMargin,
+        height - kMargin - kButtonBaseHeight - kMargin - kMargin);
+    fMessage->setJustificationType(Justification::topLeft);
+    fMessage->setMinimumHorizontalScale(1);
+    addAndMakeVisible(*fMessage);
+  }
   {
     fSaveButton.reset(new TextButton(TRANS("Save")));
     fSaveButton->setBounds(width - kMargin - kButtonMinWidth,
@@ -23,6 +33,7 @@ ChooseOutputComponent::ChooseOutputComponent(ConvertState const &convertState)
     fCancelButton.reset(new TextButton(TRANS("Cancel")));
     fCancelButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight,
                              kButtonMinWidth, kButtonBaseHeight);
+    fCancelButton->onClick = [this]() { onCancelButtonClicked(); };
     addAndMakeVisible(*fCancelButton);
   }
 
@@ -42,9 +53,9 @@ ChooseOutputComponent::ChooseOutputComponent(ConvertState const &convertState)
   fList->setDirectory(dir, true, false);
 
   {
-    auto w = 360;
     fListComponent.reset(new FileListComponent(*fList));
-    fListComponent->setBounds(width - kMargin - w, kMargin, w,
+    fListComponent->setBounds(width - kMargin - fileListWidth, kMargin,
+                              fileListWidth,
                               height - 3 * kMargin - kButtonBaseHeight);
     fListComponent->addListener(this);
     addAndMakeVisible(*fListComponent);
@@ -57,28 +68,8 @@ ChooseOutputComponent::~ChooseOutputComponent() {
 }
 
 void ChooseOutputComponent::paint(juce::Graphics &g) {
-  /* This demo code just fills the component's background and
-     draws some placeholder text to get you started.
-
-     You should replace everything in this method with your own
-     drawing code..
-  */
-
-  g.fillAll(getLookAndFeel().findColour(
-      juce::ResizableWindow::backgroundColourId)); // clear the background
-
-  g.setColour(juce::Colours::grey);
-  g.drawRect(getLocalBounds(), 1); // draw an outline around the component
-
-  g.setColour(juce::Colours::white);
-  g.setFont(14.0f);
-  g.drawText("ChooseOutputComponent", getLocalBounds(),
-             juce::Justification::centred, true); // draw some placeholder text
-}
-
-void ChooseOutputComponent::resized() {
-  // This method is where you should set the bounds of any child
-  // components that your component contains..
+  g.fillAll(
+      getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
 }
 
 void ChooseOutputComponent::selectionChanged() {
@@ -96,14 +87,40 @@ void ChooseOutputComponent::fileClicked(const File &file, const MouseEvent &e) {
 
 void ChooseOutputComponent::fileDoubleClicked(const File &file) {
   fState.fCopyDestinationDirectory = file;
-  // TODO: alert overwriting existing directory
-  JUCEApplication::getInstance()->perform({gui::toCopy});
+  onSaveButtonClicked();
 }
 
 void ChooseOutputComponent::browserRootChanged(const File &newRoot) {}
 
 void ChooseOutputComponent::onSaveButtonClicked() {
-  if (fState.fCopyDestinationDirectory) {
-    JUCEApplication::getInstance()->perform({gui::toCopy});
+  if (!fState.fCopyDestinationDirectory) {
+    return;
   }
+  auto dest = *fState.fCopyDestinationDirectory;
+  if (!dest.exists()) {
+    return;
+  }
+  if (!dest.isDirectory()) {
+    return;
+  }
+  bool containsSomething = false;
+  RangedDirectoryIterator it(dest, false);
+  for (auto const &e : it) {
+    containsSomething = true;
+    break;
+  }
+  if (containsSomething) {
+    bool ok = NativeMessageBox::showOkCancelBox(
+        AlertWindow::AlertIconType::QuestionIcon, TRANS("Confirmation"),
+        TRANS("All files in the folder will be deleted and overwritten.\nThis "
+              "process is irreversible.\nWould you like to continue?"));
+    if (!ok) {
+      return;
+    }
+  }
+  JUCEApplication::getInstance()->perform({gui::toCopy});
+}
+
+void ChooseOutputComponent::onCancelButtonClicked() {
+  JUCEApplication::getInstance()->perform({gui::toConfig});
 }

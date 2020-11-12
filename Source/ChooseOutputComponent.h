@@ -12,9 +12,9 @@ public:
   ~ChooseOutputComponent() override;
 
   void paint(juce::Graphics &) override;
-  void resized() override;
 
   void onSaveButtonClicked();
+  void onCancelButtonClicked();
 
   ChooseOutputState getChooseOutputState() const override { return fState; }
   ChooseInputState getChooseInputState() const override {
@@ -33,5 +33,7 @@ private:
   std::unique_ptr<DirectoryContentsList> fList;
   TimeSliceThread fListThread;
   ChooseOutputState fState;
+  std::unique_ptr<Label> fMessage;
+
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChooseOutputComponent)
 };
