@@ -11,7 +11,6 @@ public:
   ~ConfigComponent() override;
 
   void paint(juce::Graphics &) override;
-  void resized() override;
 
   ChooseInputState getChooseInputState() const override {
     return fState.fInputState;
@@ -26,6 +25,7 @@ private:
   std::unique_ptr<TextButton> fBackButton;
   std::unique_ptr<TextButton> fStartButton;
   ConfigState fState;
+  std::unique_ptr<Label> fDirectory;
 
 private:
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ConfigComponent)

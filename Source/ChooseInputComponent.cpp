@@ -7,7 +7,19 @@ ChooseInputComponent::ChooseInputComponent()
     : fListThread("j2b::gui::ChooseInputComponent") {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
+  auto fileListWidth = 280;
+
   setSize(width, height);
+  {
+    fMessage.reset(
+        new Label("", TRANS("Select the world you want to convert.")));
+    fMessage->setBounds(
+        kMargin, kMargin, width - kMargin - fileListWidth - kMargin - kMargin,
+        height - kMargin - kButtonBaseHeight - kMargin - kMargin);
+    fMessage->setJustificationType(Justification::topLeft);
+    fMessage->setMinimumHorizontalScale(1);
+    addAndMakeVisible(*fMessage);
+  }
   {
     fNextButton.reset(new TextButton(TRANS("Next")));
     fNextButton->setBounds(width - kButtonMinWidth - kMargin,
@@ -17,7 +29,6 @@ ChooseInputComponent::ChooseInputComponent()
     fNextButton->setEnabled(false);
     addAndMakeVisible(*fNextButton);
   }
-
   {
     auto w = 140;
     fChooseCustomButton.reset(new TextButton(TRANS("Custom Folder")));
@@ -37,9 +48,9 @@ ChooseInputComponent::ChooseInputComponent()
   fList->setDirectory(dir, true, false);
 
   {
-    auto w = 360;
     fListComponent.reset(new FileListComponent(*fList));
-    fListComponent->setBounds(width - kMargin - w, kMargin, w,
+    fListComponent->setBounds(width - kMargin - fileListWidth, kMargin,
+                              fileListWidth,
                               height - 3 * kMargin - kButtonBaseHeight);
     fListComponent->addListener(this);
     addAndMakeVisible(*fListComponent);
@@ -52,32 +63,17 @@ ChooseInputComponent::~ChooseInputComponent() {
 }
 
 void ChooseInputComponent::paint(juce::Graphics &g) {
-  /* This demo code just fills the component's background and
-     draws some placeholder text to get you started.
-
-     You should replace everything in this method with your own
-     drawing code..
-  */
-
-  g.fillAll(getLookAndFeel().findColour(
-      juce::ResizableWindow::backgroundColourId)); // clear the background
-
-  g.setColour(juce::Colours::grey);
-  g.drawRect(getLocalBounds(), 1); // draw an outline around the component
-
-  g.setColour(juce::Colours::white);
-  g.setFont(14.0f);
-  g.drawText("ChooseInputComponent", getLocalBounds(),
-             juce::Justification::centred, true); // draw some placeholder text
+  g.fillAll(
+      getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
 }
-
-void ChooseInputComponent::resized() {}
 
 void ChooseInputComponent::onNextButtonClicked() {
   JUCEApplication::getInstance()->perform({gui::toConfig});
 }
 
-void ChooseInputComponent::onChooseCustomButtonClicked() {}
+void ChooseInputComponent::onChooseCustomButtonClicked() {
+  // TODO:
+}
 
 void ChooseInputComponent::selectionChanged() {
   int num = fListComponent->getNumSelectedFiles();

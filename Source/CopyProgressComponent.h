@@ -9,14 +9,15 @@ public:
   ~CopyProgressComponent() override;
 
   void paint(juce::Graphics &) override;
-  void resized() override;
 
   void handleAsyncUpdate() override;
 
 private:
-  std::unique_ptr<TextButton> fCancelButton;
   ChooseOutputState fState;
   std::unique_ptr<Thread> fCopyThread;
+  std::unique_ptr<Label> fLabel;
+  std::unique_ptr<ProgressBar> fProgressBar;
+  double fProgress = -1;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CopyProgressComponent)
 };

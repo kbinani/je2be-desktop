@@ -4,7 +4,7 @@
 #include <JuceHeader.h>
 #include <je2be.hpp>
 
-class WorkerThread : public Thread {
+class WorkerThread : public Thread, public j2b::Progress {
 public:
   WorkerThread(File input, j2b::InputOption io, File output,
                j2b::OutputOption oo,
@@ -16,8 +16,22 @@ public:
     using namespace j2b;
     Converter c(fInput.getFullPathName().toStdString(), fInputOption,
                 fOutput.getFullPathName().toStdString(), fOutputOption);
-    c.run(std::thread::hardware_concurrency());
-    fUpdater->triggerAsyncUpdate();
+    c.run(std::thread::hardware_concurrency(), this);
+    fUpdater->trigger(2, 1, 1);
+  }
+
+  bool report(j2b::Progress::Phase phase, double done, double total) override {
+    int p = 0;
+    switch (phase) {
+    case j2b::Progress::Phase::Convert:
+      p = 0;
+      break;
+    case j2b::Progress::Phase::LevelDbCompaction:
+      p = 1;
+      break;
+    }
+    fUpdater->trigger(p, done, total);
+    return !threadShouldExit();
   }
 
 private:
@@ -41,6 +55,15 @@ ConvertProgressComponent::ConvertProgressComponent(
   fCancelButton->onClick = [this]() { onCancelButtonClicked(); };
   addAndMakeVisible(*fCancelButton);
 
+  fLabel.reset(new Label("", TRANS("Converting...")));
+  fLabel->setBounds(kMargin, kMargin, width - 2 * kMargin, kButtonBaseHeight);
+  addAndMakeVisible(*fLabel);
+
+  fProgressBar.reset(new ProgressBar(fProgress));
+  fProgressBar->setBounds(kMargin, kMargin + kButtonBaseHeight + kMargin,
+                          width - 2 * kMargin, kButtonBaseHeight);
+  addAndMakeVisible(*fProgressBar);
+
   wchar_t buffer[L_tmpnam_s];
   _wtmpnam_s(buffer);
   fState.fOutputDirectory = File(String(buffer, L_tmpnam_s));
@@ -54,40 +77,37 @@ ConvertProgressComponent::ConvertProgressComponent(
 }
 
 ConvertProgressComponent::~ConvertProgressComponent() {
-  fThread->stopThread(1000);
-  fUpdater->fTarget.store(nullptr);
+  fThread->stopThread(-1);
 }
 
 void ConvertProgressComponent::paint(juce::Graphics &g) {
-  /* This demo code just fills the component's background and
-     draws some placeholder text to get you started.
-
-     You should replace everything in this method with your own
-     drawing code..
-  */
-
-  g.fillAll(getLookAndFeel().findColour(
-      juce::ResizableWindow::backgroundColourId)); // clear the background
-
-  g.setColour(juce::Colours::grey);
-  g.drawRect(getLocalBounds(), 1); // draw an outline around the component
-
-  g.setColour(juce::Colours::white);
-  g.setFont(14.0f);
-  g.drawText("ConvertProgressComponent", getLocalBounds(),
-             juce::Justification::centred, true); // draw some placeholder text
+  g.fillAll(
+      getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
 }
-
-void ConvertProgressComponent::resized() {}
 
 void ConvertProgressComponent::onCancelButtonClicked() {
-  JUCEApplication::getInstance()->perform({gui::toConfig});
+  fCancelButton->setEnabled(false);
+  fCommandWhenFinished = gui::toConfig;
+  fThread->signalThreadShouldExit();
+  fProgress = -1;
+  fLabel->setText(TRANS("Waiting for the worker thread to finish"),
+                  dontSendNotification);
 }
 
-void ConvertProgressComponent::onProgressUpdate() {
-  if (fThread->isThreadRunning()) {
-    // TODO: upate progress
-    return;
+void ConvertProgressComponent::onProgressUpdate(int phase, double done,
+                                                double total) {
+  if (phase == 2) {
+    if (fCommandWhenFinished != gui::toChooseOutput &&
+        fState.fOutputDirectory.exists()) {
+      fState.fOutputDirectory.deleteRecursively();
+    }
+    JUCEApplication::getInstance()->perform({fCommandWhenFinished});
+  } else if (phase == 1) {
+    fLabel->setText(TRANS("LevelDB compaction"), dontSendNotification);
+    fProgress = -1;
+  } else {
+    if (fProgress >= 0) {
+      fProgress = done / total;
+    }
   }
-  JUCEApplication::getInstance()->perform({gui::toChooseOutput});
 }

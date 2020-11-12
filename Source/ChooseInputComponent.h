@@ -11,7 +11,6 @@ public:
   ~ChooseInputComponent() override;
 
   void paint(juce::Graphics &) override;
-  void resized() override;
 
   ChooseInputState getChooseInputState() const override { return fState; }
 
@@ -31,6 +30,7 @@ private:
   std::unique_ptr<DirectoryContentsList> fList;
   TimeSliceThread fListThread;
   ChooseInputState fState;
+  std::unique_ptr<Label> fMessage;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChooseInputComponent)
 };

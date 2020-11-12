@@ -9,6 +9,12 @@ ConfigComponent::ConfigComponent(ChooseInputState const &chooseInputState)
   auto height = kWindowHeight;
   setSize(width, height);
 
+  String label = (*fState.fInputState.fInputDirectory).getFullPathName();
+  fDirectory.reset(new Label("", TRANS("Selected world:") + " " + label));
+  fDirectory->setBounds(kMargin, kMargin, width - kMargin * 2,
+                        kButtonBaseHeight);
+  addAndMakeVisible(*fDirectory);
+
   fStartButton.reset(new TextButton(TRANS("Start")));
   fStartButton->setBounds(width - kMargin - kButtonMinWidth,
                           height - kMargin - kButtonBaseHeight, kButtonMinWidth,
@@ -26,26 +32,9 @@ ConfigComponent::ConfigComponent(ChooseInputState const &chooseInputState)
 ConfigComponent::~ConfigComponent() {}
 
 void ConfigComponent::paint(juce::Graphics &g) {
-  /* This demo code just fills the component's background and
-     draws some placeholder text to get you started.
-
-     You should replace everything in this method with your own
-     drawing code..
-  */
-
-  g.fillAll(getLookAndFeel().findColour(
-      juce::ResizableWindow::backgroundColourId)); // clear the background
-
-  g.setColour(juce::Colours::grey);
-  g.drawRect(getLocalBounds(), 1); // draw an outline around the component
-
-  g.setColour(juce::Colours::white);
-  g.setFont(14.0f);
-  g.drawText("ConfigComponent", getLocalBounds(), juce::Justification::centred,
-             true); // draw some placeholder text
+  g.fillAll(
+      getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
 }
-
-void ConfigComponent::resized() {}
 
 void ConfigComponent::onStartButtonClicked() {
   JUCEApplication::getInstance()->perform({gui::toConvert});
