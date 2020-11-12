@@ -3,7 +3,8 @@
 <JUCERPROJECT id="iT5ZT3" name="je2be" projectType="guiapp" useAppConfig="0"
               addUsingNamespaceToJuceHeader="1" jucerFormatVersion="1" cppLanguageStandard="latest"
               headerPath="$(ProjectDir)..\..\ext\je2be\include&#10;$(ProjectDir)..\..\ext\je2be\ext\libminecraft-file\include&#10;$(ProjectDir)..\..\ext\je2be\ext\zlib&#10;$(ProjectDir)..\..\build-je2be\deps\zlib&#10;$(ProjectDir)..\..\ext\je2be\ext\leveldb\include&#10;$(ProjectDir)..\..\ext\je2be\ext\leveldb&#10;$(ProjectDir)..\..\ext\je2be\ext\xxHash&#10;$(ProjectDir)..\..\ext\je2be\ext\thread-pool\include&#10;$(ProjectDir)..\..\ext\je2be\ext\json\include"
-              defines="JUCE_INCLUDE_ZLIB_CODE=0&#10;JUCE_ZLIB_INCLUDE_PATH=&lt;zlib.h&gt;">
+              defines="JUCE_INCLUDE_ZLIB_CODE=0&#10;JUCE_ZLIB_INCLUDE_PATH=&lt;zlib.h&gt;"
+              postExportShellCommandWin="%%1%%\Builds\jucer-post-save.bat">
   <MAINGROUP id="cJXxpO" name="je2be">
     <GROUP id="{EA1BDD32-91EF-BE25-FA92-510887189002}" name="Source">
       <FILE id="SkZZHL" name="ComponentState.h" compile="0" resource="0"
