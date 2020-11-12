@@ -6,6 +6,10 @@
               defines="JUCE_INCLUDE_ZLIB_CODE=0&#10;JUCE_ZLIB_INCLUDE_PATH=&lt;zlib.h&gt;"
               postExportShellCommandWin="%%1%%\Builds\jucer-post-save.bat">
   <MAINGROUP id="cJXxpO" name="je2be">
+    <GROUP id="{71FC1588-A18A-EB2B-DB08-CA425B7C2BAD}" name="Resource">
+      <FILE id="lUUqde" name="icon-large.png" compile="0" resource="1" file="Resource/icon-large.png"/>
+      <FILE id="EqohrX" name="icon-small.png" compile="0" resource="1" file="Resource/icon-small.png"/>
+    </GROUP>
     <GROUP id="{EA1BDD32-91EF-BE25-FA92-510887189002}" name="Source">
       <FILE id="SkZZHL" name="ComponentState.h" compile="0" resource="0"
             file="Source/ComponentState.h"/>
@@ -37,7 +41,8 @@
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
   <EXPORTFORMATS>
     <VS2019 targetFolder="Builds/VisualStudio2019" extraCompilerFlags="/bigobj"
-            externalLibraries="zlib.lib&#10;leveldb.lib&#10;xxhash.lib">
+            externalLibraries="zlib.lib&#10;leveldb.lib&#10;xxhash.lib" smallIcon="EqohrX"
+            bigIcon="lUUqde">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" targetName="je2be" libraryPath="$(ProjectDir)..\..\build-je2be\deps\zlib\Debug&#10;$(ProjectDir)..\..\build-je2be\deps\leveldb\Debug&#10;$(ProjectDir)..\..\build-je2be\deps\xxHash\Debug"/>
         <CONFIGURATION isDebug="0" name="Release" targetName="je2be" libraryPath="$(ProjectDir)..\..\build-je2be\deps\zlib\Release&#10;$(ProjectDir)..\..\build-je2be\deps\leveldb\Release&#10;$(ProjectDir)..\..\build-je2be\deps\xxHash\Release"/>
