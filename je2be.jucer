@@ -9,8 +9,13 @@
     <GROUP id="{71FC1588-A18A-EB2B-DB08-CA425B7C2BAD}" name="Resource">
       <FILE id="lUUqde" name="icon-large.png" compile="0" resource="1" file="Resource/icon-large.png"/>
       <FILE id="EqohrX" name="icon-small.png" compile="0" resource="1" file="Resource/icon-small.png"/>
+      <FILE id="KdWcfU" name="japanese.lang" compile="0" resource="1" file="Resource/japanese.lang"/>
     </GROUP>
     <GROUP id="{EA1BDD32-91EF-BE25-FA92-510887189002}" name="Source">
+      <FILE id="ZJiUqs" name="LocalizationHelper.cpp" compile="1" resource="0"
+            file="Source/LocalizationHelper.cpp"/>
+      <FILE id="NjujXi" name="LocalizationHelper.h" compile="0" resource="0"
+            file="Source/LocalizationHelper.h"/>
       <FILE id="SkZZHL" name="ComponentState.h" compile="0" resource="0"
             file="Source/ComponentState.h"/>
       <FILE id="bMgEay" name="CommandID.h" compile="0" resource="0" file="Source/CommandID.h"/>

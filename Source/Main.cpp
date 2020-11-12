@@ -5,6 +5,7 @@
 #include "Constants.h"
 #include "ConvertProgressComponent.h"
 #include "CopyProgressComponent.h"
+#include "LocalizationHelper.h"
 #include <JuceHeader.h>
 
 class je2beApplication : public juce::JUCEApplication {
@@ -24,6 +25,9 @@ public:
     Desktop::getInstance()
         .getDefaultLookAndFeel()
         .setDefaultSansSerifTypefaceName(typeFaceName);
+
+    LocalisedStrings::setCurrentMappings(LocalizationHelper::CurrentLocalisedStrings());
+
     mainWindow.reset(new MainWindow(getApplicationName()));
   }
 

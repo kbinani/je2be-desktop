@@ -112,8 +112,8 @@ void ChooseOutputComponent::onSaveButtonClicked() {
   if (containsSomething) {
     bool ok = NativeMessageBox::showOkCancelBox(
         AlertWindow::AlertIconType::QuestionIcon, TRANS("Confirmation"),
-        TRANS("All files in the folder will be deleted and overwritten.\nThis "
-              "process is irreversible.\nWould you like to continue?"));
+        TRANS("All files in the folder will be deleted and overwritten.\rThis "
+              "process is irreversible.\rWould you like to continue?"));
     if (!ok) {
       return;
     }
