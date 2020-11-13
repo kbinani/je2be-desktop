@@ -50,7 +50,8 @@
             bigIcon="lUUqde">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" targetName="je2be" libraryPath="$(ProjectDir)..\je2be\deps\zlib\Debug&#10;$(ProjectDir)..\je2be\deps\leveldb\Debug&#10;$(ProjectDir)..\je2be\deps\xxHash\Debug"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="je2be" libraryPath="$(ProjectDir)..\je2be\deps\zlib\Release&#10;$(ProjectDir)..\je2be\deps\leveldb\Release&#10;$(ProjectDir)..\je2be\deps\xxHash\Release"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="je2be" libraryPath="$(ProjectDir)..\je2be\deps\zlib\Release&#10;$(ProjectDir)..\je2be\deps\leveldb\Release&#10;$(ProjectDir)..\je2be\deps\xxHash\Release"
+                       alwaysGenerateDebugSymbols="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../ext/JUCE/modules"/>
