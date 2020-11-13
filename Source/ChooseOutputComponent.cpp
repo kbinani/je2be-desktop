@@ -4,120 +4,83 @@
 #include <JuceHeader.h>
 
 ChooseOutputComponent::ChooseOutputComponent(ConvertState const &convertState)
-    : fState(convertState), fListThread("j2b::gui::ChooseOutputComponent") {
+    : fState(convertState) {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
   auto fileListWidth = 280;
   setSize(width, height);
 
   {
-    fMessage.reset(new Label("", TRANS("Select a folder to save in")));
-    fMessage->setBounds(
-        kMargin, kMargin, width - kMargin - fileListWidth - kMargin - kMargin,
-        height - kMargin - kButtonBaseHeight - kMargin - kMargin);
+    fMessage.reset(
+        new Label("", TRANS("Select a folder to save in.\rChoose an empty "
+                            "folder to protect your existing data.")));
+    fMessage->setBounds(kMargin, kMargin, width - 2 * kMargin,
+                        height - kMargin - kButtonBaseHeight - kMargin -
+                            kMargin);
     fMessage->setJustificationType(Justification::topLeft);
     fMessage->setMinimumHorizontalScale(1);
     addAndMakeVisible(*fMessage);
   }
   {
-    fSaveButton.reset(new TextButton(TRANS("Save")));
-    fSaveButton->setBounds(width - kMargin - kButtonMinWidth,
-                           height - kMargin - kButtonBaseHeight,
-                           kButtonMinWidth, kButtonBaseHeight);
-    fSaveButton->setEnabled(false);
-    fSaveButton->onClick = [this]() { onSaveButtonClicked(); };
-    addAndMakeVisible(*fSaveButton);
+    int w = 160;
+    fBackButton.reset(new TextButton(TRANS("Back to the beginning")));
+    fBackButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight, w,
+                           kButtonBaseHeight);
+    fBackButton->onClick = [this]() { onBackButtonClicked(); };
+    addAndMakeVisible(*fBackButton);
   }
-
   {
-    fCancelButton.reset(new TextButton(TRANS("Cancel")));
-    fCancelButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight,
+    fBrowseButton.reset(new TextButton(TRANS("Choose again")));
+    fBrowseButton->setBounds(width - kMargin - kButtonMinWidth,
+                             height - kMargin - kButtonBaseHeight,
                              kButtonMinWidth, kButtonBaseHeight);
-    fCancelButton->onClick = [this]() { onCancelButtonClicked(); };
-    addAndMakeVisible(*fCancelButton);
+    fBrowseButton->onClick = [this]() { onBrowseButtonClicked(); };
+    addAndMakeVisible(*fBrowseButton);
   }
-
-  fListThread.startThread();
-  fList.reset(new DirectoryContentsList(nullptr, fListThread));
-
-  File dir = File::getSpecialLocation(File::userApplicationDataDirectory)
-                 .getParentDirectory()
-                 .getChildFile("Local")
-                 .getChildFile("Packages")
-                 .getChildFile("Microsoft.MinecraftUWP_8wekyb3d8bbwe")
-                 .getChildFile("LocalState")
-                 .getChildFile("games")
-                 .getChildFile("com.mojang")
-                 .getChildFile("minecraftWorlds");
-
-  fList->setDirectory(dir, true, false);
-
-  {
-    fListComponent.reset(new FileListComponent(*fList));
-    fListComponent->setBounds(width - kMargin - fileListWidth, kMargin,
-                              fileListWidth,
-                              height - 3 * kMargin - kButtonBaseHeight);
-    fListComponent->addListener(this);
-    addAndMakeVisible(*fListComponent);
-  }
+  triggerAsyncUpdate();
 }
 
-ChooseOutputComponent::~ChooseOutputComponent() {
-  fListComponent.reset();
-  fList.reset();
-}
+ChooseOutputComponent::~ChooseOutputComponent() {}
 
-void ChooseOutputComponent::paint(juce::Graphics &g) {}
+void ChooseOutputComponent::onBrowseButtonClicked() {
+  static File lastDir =
+      File::getSpecialLocation(File::userApplicationDataDirectory)
+          .getParentDirectory()
+          .getChildFile("Local")
+          .getChildFile("Packages")
+          .getChildFile("Microsoft.MinecraftUWP_8wekyb3d8bbwe")
+          .getChildFile("LocalState")
+          .getChildFile("games")
+          .getChildFile("com.mojang")
+          .getChildFile("minecraftWorlds");
 
-void ChooseOutputComponent::selectionChanged() {
-  int num = fListComponent->getNumSelectedFiles();
-  if (num == 1) {
-    fState.fCopyDestinationDirectory = fListComponent->getSelectedFile();
-  } else {
-    fState.fCopyDestinationDirectory = std::nullopt;
-  }
-  fSaveButton->setEnabled(fState.fCopyDestinationDirectory != std::nullopt);
-}
-
-void ChooseOutputComponent::fileClicked(const File &file, const MouseEvent &e) {
-}
-
-void ChooseOutputComponent::fileDoubleClicked(const File &file) {
-  fState.fCopyDestinationDirectory = file;
-  onSaveButtonClicked();
-}
-
-void ChooseOutputComponent::browserRootChanged(const File &newRoot) {}
-
-void ChooseOutputComponent::onSaveButtonClicked() {
-  if (!fState.fCopyDestinationDirectory) {
+  FileChooser chooser(TRANS("Select an empty folder to save in"), lastDir);
+  bool ok = chooser.browseForDirectory();
+  if (!ok) {
     return;
   }
-  auto dest = *fState.fCopyDestinationDirectory;
-  if (!dest.exists()) {
-    return;
-  }
-  if (!dest.isDirectory()) {
-    return;
-  }
-  bool containsSomething = false;
+  File dest = chooser.getResult();
   RangedDirectoryIterator it(dest, false);
+  bool containsSomething = false;
   for (auto const &e : it) {
     containsSomething = true;
     break;
   }
   if (containsSomething) {
-    bool ok = NativeMessageBox::showOkCancelBox(
-        AlertWindow::AlertIconType::QuestionIcon, TRANS("Confirmation"),
-        TRANS("All files in the folder will be deleted and overwritten.\rThis "
-              "process is irreversible.\rWould you like to continue?"));
-    if (!ok) {
-      return;
-    }
+    NativeMessageBox::showMessageBox(
+        AlertWindow::AlertIconType::WarningIcon, TRANS("Error"),
+        TRANS("There are files and folders in the directory.\rPlease select an "
+              "empty folder"));
+  } else {
+    fState.fCopyDestinationDirectory = dest;
+    JUCEApplication::getInstance()->perform({gui::toCopy});
   }
-  JUCEApplication::getInstance()->perform({gui::toCopy});
 }
 
-void ChooseOutputComponent::onCancelButtonClicked() {
-  JUCEApplication::getInstance()->perform({gui::toConfig});
+void ChooseOutputComponent::paint(juce::Graphics &g) {}
+
+void ChooseOutputComponent::handleAsyncUpdate() { onBrowseButtonClicked(); }
+
+void ChooseOutputComponent::onBackButtonClicked() {
+  JUCEApplication::getInstance()->perform({gui::toChooseInput});
 }
