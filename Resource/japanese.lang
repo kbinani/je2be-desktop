@@ -2,7 +2,7 @@ language: Japanese
 
 "Select the world you want to convert" = "変換するワールドを選択してください"
 "Next" = "次へ"
-"Custom Folder" = "他のフォルダを選択"
+"Select from other directories" = "他のフォルダを選択"
 "Select a folder to save in" = "保存先のフォルダを選択してください"
 "Save" = "保存"
 "Cancel" = "キャンセル"
@@ -17,3 +17,4 @@ language: Japanese
 "Copying..." = "コピー中..."
 "Completed" = "完了"
 "All files copied!" = "全てのファイルがコピーされました"
+"Select save data folder of Minecraft" = "Minecraft のセーブデータのフォルダを選択"

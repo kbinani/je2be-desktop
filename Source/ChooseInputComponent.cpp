@@ -35,11 +35,13 @@ ChooseInputComponent::ChooseInputComponent(
     addAndMakeVisible(*fNextButton);
   }
   {
+
     auto w = 140;
-    fChooseCustomButton.reset(new TextButton(TRANS("Custom Folder")));
-    fChooseCustomButton->setBounds(
-        width - kButtonMinWidth - kMargin - w - kMargin,
-        height - kButtonBaseHeight - kMargin, w, kButtonBaseHeight);
+    fChooseCustomButton.reset(
+        new TextButton(TRANS("Select from other directories")));
+    fChooseCustomButton->setBounds(width - kMargin - fileListWidth,
+                                   height - kButtonBaseHeight - kMargin, w,
+                                   kButtonBaseHeight);
     fChooseCustomButton->onClick = [this]() { onChooseCustomButtonClicked(); };
     addAndMakeVisible(*fChooseCustomButton);
   }
@@ -99,7 +101,15 @@ void ChooseInputComponent::onNextButtonClicked() {
 }
 
 void ChooseInputComponent::onChooseCustomButtonClicked() {
-  // TODO:
+  fInitialSelection = std::nullopt;
+  fList->removeChangeListener(this);
+
+  FileChooser chooser(TRANS("Select save data folder of Minecraft"), File(), "");
+  if (!chooser.browseForDirectory()) {
+    return;
+  }
+  fState.fInputDirectory = chooser.getResult();
+  JUCEApplication::getInstance()->perform({gui::toConfig});
 }
 
 void ChooseInputComponent::selectionChanged() {
