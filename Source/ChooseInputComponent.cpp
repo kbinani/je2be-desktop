@@ -1,4 +1,5 @@
 #include "ChooseInputComponent.h"
+#include "AboutComponent.h"
 #include "CommandID.h"
 #include "Constants.h"
 #include <JuceHeader.h>
@@ -24,6 +25,13 @@ ChooseInputComponent::ChooseInputComponent(
     fMessage->setJustificationType(Justification::topLeft);
     fMessage->setMinimumHorizontalScale(1);
     addAndMakeVisible(*fMessage);
+  }
+  {
+    fAboutButton.reset(new TextButton("About"));
+    fAboutButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight,
+                            kButtonMinWidth, kButtonBaseHeight);
+    fAboutButton->onClick = [this]() { onAboutButtonClicked(); };
+    addAndMakeVisible(*fAboutButton);
   }
   {
     fNextButton.reset(new TextButton(TRANS("Next")));
@@ -130,3 +138,15 @@ void ChooseInputComponent::fileDoubleClicked(const File &file) {
 }
 
 void ChooseInputComponent::browserRootChanged(const File &newRoot) {}
+
+void ChooseInputComponent::onAboutButtonClicked() {
+  DialogWindow::LaunchOptions options;
+  options.content.setOwned(new AboutComponent());
+  options.dialogTitle = "About";
+  options.useNativeTitleBar = true;
+  options.escapeKeyTriggersCloseButton = true;
+  options.resizable = false;
+  options.dialogBackgroundColour =
+      getLookAndFeel().findColour(ResizableWindow::backgroundColourId);
+  options.runModal();
+}

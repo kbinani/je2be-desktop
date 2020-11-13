@@ -25,6 +25,7 @@ public:
 private:
   void onNextButtonClicked();
   void onChooseCustomButtonClicked();
+  void onAboutButtonClicked();
 
 private:
   std::unique_ptr<TextButton> fNextButton;
@@ -35,6 +36,7 @@ private:
   ChooseInputState fState;
   std::unique_ptr<Label> fMessage;
   std::optional<File> fInitialSelection;
+  std::unique_ptr<TextButton> fAboutButton;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChooseInputComponent)
 };
