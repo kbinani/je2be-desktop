@@ -3,8 +3,13 @@
 #include "Constants.h"
 #include <JuceHeader.h>
 
-ChooseInputComponent::ChooseInputComponent()
+ChooseInputComponent::ChooseInputComponent(
+    std::optional<ChooseInputState> state)
     : fListThread("j2b::gui::ChooseInputComponent") {
+  if (state) {
+    fState = *state;
+  }
+
   auto width = kWindowWidth;
   auto height = kWindowHeight;
   auto fileListWidth = 280;
@@ -46,6 +51,7 @@ ChooseInputComponent::ChooseInputComponent()
                  .getChildFile(".minecraft")
                  .getChildFile("saves");
   fList->setDirectory(dir, true, false);
+  fList->addChangeListener(this);
 
   {
     fListComponent.reset(new FileListComponent(*fList));
@@ -55,11 +61,32 @@ ChooseInputComponent::ChooseInputComponent()
     fListComponent->addListener(this);
     addAndMakeVisible(*fListComponent);
   }
+
+  if (state && state->fInputDirectory &&
+      state->fInputDirectory->getParentDirectory() == dir) {
+    fInitialSelection = state->fInputDirectory;
+  }
 }
 
 ChooseInputComponent::~ChooseInputComponent() {
   fListComponent.reset();
   fList.reset();
+}
+
+void ChooseInputComponent::changeListenerCallback(ChangeBroadcaster *source) {
+  if (!source)
+    return;
+  if (source != fList.get()) {
+    return;
+  }
+  if (!fInitialSelection) {
+    return;
+  }
+  if (fList->contains(*fInitialSelection)) {
+    fListComponent->setSelectedFile(*fInitialSelection);
+    fInitialSelection = std::nullopt;
+    fList->removeChangeListener(this);
+  }
 }
 
 void ChooseInputComponent::paint(juce::Graphics &g) {
@@ -83,6 +110,8 @@ void ChooseInputComponent::selectionChanged() {
     fState.fInputDirectory = std::nullopt;
   }
   fNextButton->setEnabled(fState.fInputDirectory != std::nullopt);
+  fInitialSelection = std::nullopt;
+  fList->removeChangeListener(this);
 }
 
 void ChooseInputComponent::fileClicked(const File &file, const MouseEvent &e) {}

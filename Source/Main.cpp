@@ -48,7 +48,12 @@ public:
       return true;
     }
     case gui::toChooseInput: {
-      auto chooseInput = new ChooseInputComponent();
+      std::optional<ChooseInputState> state;
+      auto provider = dynamic_cast<ChooseInputStateProvider *>(current);
+      if (provider) {
+        state = provider->getChooseInputState();
+      }
+      auto chooseInput = new ChooseInputComponent(state);
       mainWindow->setContentOwned(chooseInput, true);
       return true;
     }
@@ -91,7 +96,7 @@ public:
                   juce::ResizableWindow::backgroundColourId),
               DocumentWindow::closeButton | DocumentWindow::minimiseButton) {
       setUsingNativeTitleBar(true);
-      setContentOwned(new ChooseInputComponent(), true);
+      setContentOwned(new ChooseInputComponent(std::nullopt), true);
 
 #if JUCE_IOS || JUCE_ANDROID
       setFullScreen(true);

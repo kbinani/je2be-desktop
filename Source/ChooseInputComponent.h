@@ -5,9 +5,10 @@
 
 class ChooseInputComponent : public juce::Component,
                              public ChooseInputStateProvider,
-                             public FileBrowserListener {
+                             public FileBrowserListener,
+                             public ChangeListener {
 public:
-  ChooseInputComponent();
+  explicit ChooseInputComponent(std::optional<ChooseInputState> state);
   ~ChooseInputComponent() override;
 
   void paint(juce::Graphics &) override;
@@ -18,6 +19,8 @@ public:
   void fileClicked(const File &file, const MouseEvent &e) override;
   void fileDoubleClicked(const File &file) override;
   void browserRootChanged(const File &newRoot) override;
+
+  void changeListenerCallback(ChangeBroadcaster *source) override;
 
 private:
   void onNextButtonClicked();
@@ -31,6 +34,7 @@ private:
   TimeSliceThread fListThread;
   ChooseInputState fState;
   std::unique_ptr<Label> fMessage;
+  std::optional<File> fInitialSelection;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChooseInputComponent)
 };
