@@ -26,7 +26,8 @@ public:
         .getDefaultLookAndFeel()
         .setDefaultSansSerifTypefaceName(typeFaceName);
 
-    LocalisedStrings::setCurrentMappings(LocalizationHelper::CurrentLocalisedStrings());
+    LocalisedStrings::setCurrentMappings(
+        LocalizationHelper::CurrentLocalisedStrings());
 
     mainWindow.reset(new MainWindow(getApplicationName()));
   }
