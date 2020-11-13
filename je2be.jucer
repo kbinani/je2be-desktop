@@ -2,9 +2,9 @@
 
 <JUCERPROJECT id="iT5ZT3" name="je2be" projectType="guiapp" useAppConfig="0"
               addUsingNamespaceToJuceHeader="1" jucerFormatVersion="1" cppLanguageStandard="latest"
-              headerPath="$(ProjectDir)..\..\ext\je2be\include&#10;$(ProjectDir)..\..\ext\je2be\ext\libminecraft-file\include&#10;$(ProjectDir)..\..\ext\je2be\ext\zlib&#10;$(ProjectDir)..\..\build-je2be\deps\zlib&#10;$(ProjectDir)..\..\ext\je2be\ext\leveldb\include&#10;$(ProjectDir)..\..\ext\je2be\ext\leveldb&#10;$(ProjectDir)..\..\ext\je2be\ext\xxHash&#10;$(ProjectDir)..\..\ext\je2be\ext\thread-pool\include&#10;$(ProjectDir)..\..\ext\je2be\ext\json\include"
+              headerPath="$(ProjectDir)..\..\ext\je2be\include&#10;$(ProjectDir)..\..\ext\je2be\ext\libminecraft-file\include&#10;$(ProjectDir)..\..\ext\je2be\ext\zlib&#10;$(ProjectDir)..\je2be\deps\zlib&#10;$(ProjectDir)..\..\ext\je2be\ext\leveldb\include&#10;$(ProjectDir)..\..\ext\je2be\ext\leveldb&#10;$(ProjectDir)..\..\ext\je2be\ext\xxHash&#10;$(ProjectDir)..\..\ext\je2be\ext\thread-pool\include&#10;$(ProjectDir)..\..\ext\je2be\ext\json\include"
               defines="JUCE_INCLUDE_ZLIB_CODE=0&#10;JUCE_ZLIB_INCLUDE_PATH=&lt;zlib.h&gt;"
-              postExportShellCommandWin="%%1%%\Builds\jucer-post-save.bat">
+              postExportShellCommandWin="call %%1%%\Builds\jucer-post-save.bat">
   <MAINGROUP id="cJXxpO" name="je2be">
     <GROUP id="{71FC1588-A18A-EB2B-DB08-CA425B7C2BAD}" name="Resource">
       <FILE id="lUUqde" name="icon-large.png" compile="0" resource="1" file="Resource/icon-large.png"/>
@@ -49,8 +49,8 @@
             externalLibraries="zlib.lib&#10;leveldb.lib&#10;xxhash.lib" smallIcon="EqohrX"
             bigIcon="lUUqde">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="je2be" libraryPath="$(ProjectDir)..\..\build-je2be\deps\zlib\Debug&#10;$(ProjectDir)..\..\build-je2be\deps\leveldb\Debug&#10;$(ProjectDir)..\..\build-je2be\deps\xxHash\Debug"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="je2be" libraryPath="$(ProjectDir)..\..\build-je2be\deps\zlib\Release&#10;$(ProjectDir)..\..\build-je2be\deps\leveldb\Release&#10;$(ProjectDir)..\..\build-je2be\deps\xxHash\Release"/>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="je2be" libraryPath="$(ProjectDir)..\je2be\deps\zlib\Debug&#10;$(ProjectDir)..\je2be\deps\leveldb\Debug&#10;$(ProjectDir)..\je2be\deps\xxHash\Debug"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="je2be" libraryPath="$(ProjectDir)..\je2be\deps\zlib\Release&#10;$(ProjectDir)..\je2be\deps\leveldb\Release&#10;$(ProjectDir)..\je2be\deps\xxHash\Release"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../ext/JUCE/modules"/>
