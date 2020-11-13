@@ -18,3 +18,6 @@ language: Japanese
 "Completed" = "完了"
 "All files copied!" = "全てのファイルがコピーされました"
 "Select save data folder of Minecraft" = "Minecraft のセーブデータのフォルダを選択"
+"Directory structure" = "ディレクトリの形式"
+"There doesn't seem to be any Minecraft save data in the specified directory." = "指定されたディレクトリには Minecraft のセーブデータが存在しないようです"
+"The conversion failed." = "変換に失敗しました"

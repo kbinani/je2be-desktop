@@ -19,6 +19,11 @@ public:
   explicit ConfigState(ChooseInputState const &inputState)
       : fInputState(inputState) {}
   ChooseInputState const fInputState;
+  enum class DirectoryStructure {
+    Vanilla,
+    Paper,
+  };
+  DirectoryStructure fStructure = DirectoryStructure::Vanilla;
 };
 
 class ConfigStateProvider {

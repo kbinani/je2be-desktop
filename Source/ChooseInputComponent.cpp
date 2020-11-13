@@ -104,7 +104,8 @@ void ChooseInputComponent::onChooseCustomButtonClicked() {
   fInitialSelection = std::nullopt;
   fList->removeChangeListener(this);
 
-  FileChooser chooser(TRANS("Select save data folder of Minecraft"), File(), "");
+  FileChooser chooser(TRANS("Select save data folder of Minecraft"), File(),
+                      "");
   if (!chooser.browseForDirectory()) {
     return;
   }

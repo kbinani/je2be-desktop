@@ -29,6 +29,7 @@ CopyProgressComponent::CopyProgressComponent(ChooseOutputState const &state)
 
   fLabel.reset(new Label("", TRANS("Copying...")));
   fLabel->setBounds(kMargin, kMargin, width - 2 * kMargin, kButtonBaseHeight);
+  fLabel->setJustificationType(Justification::topLeft);
   addAndMakeVisible(*fLabel);
 
   fProgressBar.reset(new ProgressBar(fProgress));

@@ -16,8 +16,14 @@ public:
     using namespace j2b;
     Converter c(fInput.getFullPathName().toStdString(), fInputOption,
                 fOutput.getFullPathName().toStdString(), fOutputOption);
-    c.run(std::thread::hardware_concurrency(), this);
-    fUpdater->trigger(2, 1, 1);
+    try {
+      c.run(std::thread::hardware_concurrency(), this);
+      fUpdater->trigger(2, 1, 1);
+    } catch (std::filesystem::filesystem_error &e) {
+      fUpdater->trigger(-1, 1, 1);
+    } catch (...) {
+      fUpdater->trigger(-1, 1, 1);
+    }
   }
 
   bool report(j2b::Progress::Phase phase, double done, double total) override {
@@ -57,6 +63,7 @@ ConvertProgressComponent::ConvertProgressComponent(
 
   fLabel.reset(new Label("", TRANS("Converting...")));
   fLabel->setBounds(kMargin, kMargin, width - 2 * kMargin, kButtonBaseHeight);
+  fLabel->setJustificationType(Justification::topLeft);
   addAndMakeVisible(*fLabel);
 
   fProgressBar.reset(new ProgressBar(fProgress));
@@ -71,7 +78,12 @@ ConvertProgressComponent::ConvertProgressComponent(
   fUpdater = std::make_shared<Updater>();
   fUpdater->fTarget.store(this);
 
-  fThread.reset(new WorkerThread(*configState.fInputState.fInputDirectory, {},
+  j2b::InputOption io;
+  if (fState.fConfigState.fStructure ==
+      ConfigState::DirectoryStructure::Paper) {
+    io.fLevelDirectoryStructure = j2b::LevelDirectoryStructure::Paper;
+  }
+  fThread.reset(new WorkerThread(*configState.fInputState.fInputDirectory, io,
                                  fState.fOutputDirectory, {}, fUpdater));
   fThread->startThread();
 }
@@ -86,12 +98,16 @@ void ConvertProgressComponent::paint(juce::Graphics &g) {
 }
 
 void ConvertProgressComponent::onCancelButtonClicked() {
-  fCancelButton->setEnabled(false);
-  fCommandWhenFinished = gui::toConfig;
-  fThread->signalThreadShouldExit();
-  fProgress = -1;
-  fLabel->setText(TRANS("Waiting for the worker thread to finish"),
-                  dontSendNotification);
+  if (fFailed) {
+    JUCEApplication::getInstance()->perform({gui::toChooseInput});
+  } else {
+    fCancelButton->setEnabled(false);
+    fCommandWhenFinished = gui::toConfig;
+    fThread->signalThreadShouldExit();
+    fProgress = -1;
+    fLabel->setText(TRANS("Waiting for the worker thread to finish"),
+                    dontSendNotification);
+  }
 }
 
 void ConvertProgressComponent::onProgressUpdate(int phase, double done,
@@ -105,9 +121,14 @@ void ConvertProgressComponent::onProgressUpdate(int phase, double done,
   } else if (phase == 1) {
     fLabel->setText(TRANS("LevelDB compaction"), dontSendNotification);
     fProgress = -1;
-  } else {
+  } else if (phase == 0) {
     if (fProgress >= 0) {
       fProgress = done / total;
     }
+  } else {
+    fLabel->setText(TRANS("The conversion failed."), dontSendNotification);
+    fLabel->setColour(Label::textColourId, kErrorTextColor);
+    fCancelButton->setButtonText(TRANS("Back"));
+    fFailed = true;
   }
 }

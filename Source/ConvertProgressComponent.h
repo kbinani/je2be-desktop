@@ -74,6 +74,7 @@ private:
   double fProgress = 0;
   std::unique_ptr<Label> fLabel;
   CommandID fCommandWhenFinished = gui::toChooseOutput;
+  bool fFailed = false;
 
 private:
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ConvertProgressComponent)

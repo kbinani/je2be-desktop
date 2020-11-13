@@ -29,6 +29,8 @@ private:
   std::unique_ptr<TextButton> fStartButton;
   ConfigState fState;
   std::unique_ptr<Label> fDirectory;
+  bool fOk = false;
+  std::unique_ptr<Label> fMessage;
 
 private:
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ConfigComponent)
