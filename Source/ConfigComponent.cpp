@@ -78,10 +78,7 @@ void ConfigComponent::timerCallback() {
   fStartButton->setEnabled(fOk);
 }
 
-void ConfigComponent::paint(juce::Graphics &g) {
-  g.fillAll(
-      getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
-}
+void ConfigComponent::paint(juce::Graphics &g) {}
 
 void ConfigComponent::onStartButtonClicked() {
   JUCEApplication::getInstance()->perform({gui::toConvert});

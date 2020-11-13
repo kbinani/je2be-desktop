@@ -92,10 +92,7 @@ ConvertProgressComponent::~ConvertProgressComponent() {
   fThread->stopThread(-1);
 }
 
-void ConvertProgressComponent::paint(juce::Graphics &g) {
-  g.fillAll(
-      getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
-}
+void ConvertProgressComponent::paint(juce::Graphics &g) {}
 
 void ConvertProgressComponent::onCancelButtonClicked() {
   if (fFailed) {

@@ -44,10 +44,7 @@ CopyProgressComponent::CopyProgressComponent(ChooseOutputState const &state)
 
 CopyProgressComponent::~CopyProgressComponent() {}
 
-void CopyProgressComponent::paint(juce::Graphics &g) {
-  g.fillAll(
-      getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
-}
+void CopyProgressComponent::paint(juce::Graphics &g) {}
 
 void CopyProgressComponent::handleAsyncUpdate() {
   NativeMessageBox::showMessageBox(AlertWindow::AlertIconType::InfoIcon,

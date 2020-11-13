@@ -67,10 +67,7 @@ ChooseOutputComponent::~ChooseOutputComponent() {
   fList.reset();
 }
 
-void ChooseOutputComponent::paint(juce::Graphics &g) {
-  g.fillAll(
-      getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
-}
+void ChooseOutputComponent::paint(juce::Graphics &g) {}
 
 void ChooseOutputComponent::selectionChanged() {
   int num = fListComponent->getNumSelectedFiles();

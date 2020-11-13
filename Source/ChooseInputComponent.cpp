@@ -91,10 +91,7 @@ void ChooseInputComponent::changeListenerCallback(ChangeBroadcaster *source) {
   }
 }
 
-void ChooseInputComponent::paint(juce::Graphics &g) {
-  g.fillAll(
-      getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
-}
+void ChooseInputComponent::paint(juce::Graphics &g) {}
 
 void ChooseInputComponent::onNextButtonClicked() {
   JUCEApplication::getInstance()->perform({gui::toConfig});
