@@ -19,6 +19,7 @@ ConfigComponent::ConfigComponent(ChooseInputState const &chooseInputState)
   fStartButton->setBounds(width - kMargin - kButtonMinWidth,
                           height - kMargin - kButtonBaseHeight, kButtonMinWidth,
                           kButtonBaseHeight);
+  fStartButton->setEnabled(false);
   fStartButton->onClick = [this]() { onStartButtonClicked(); };
   addAndMakeVisible(*fStartButton);
 
@@ -27,9 +28,16 @@ ConfigComponent::ConfigComponent(ChooseInputState const &chooseInputState)
                          kButtonMinWidth, kButtonBaseHeight);
   fBackButton->onClick = [this]() { onBackButtonClicked(); };
   addAndMakeVisible(*fBackButton);
+
+  startTimer(1500);
 }
 
 ConfigComponent::~ConfigComponent() {}
+
+void ConfigComponent::timerCallback() {
+  stopTimer();
+  fStartButton->setEnabled(true);
+}
 
 void ConfigComponent::paint(juce::Graphics &g) {
   g.fillAll(

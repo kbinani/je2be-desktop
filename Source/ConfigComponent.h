@@ -5,7 +5,8 @@
 
 class ConfigComponent : public juce::Component,
                         public ChooseInputStateProvider,
-                        public ConfigStateProvider {
+                        public ConfigStateProvider,
+                        public Timer {
 public:
   explicit ConfigComponent(ChooseInputState const &inputState);
   ~ConfigComponent() override;
@@ -16,6 +17,8 @@ public:
     return fState.fInputState;
   }
   ConfigState getConfigState() const override { return fState; }
+
+  void timerCallback() override;
 
 private:
   void onBackButtonClicked();
