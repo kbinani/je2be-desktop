@@ -6,6 +6,7 @@ int const kHeaderHeight = 232;
 double const kScrollSpeedPixelPerSec = 40;
 int const kLineHeight = 14;
 double const kSteadySeconds = 3;
+int const kTimerHz = 32;
 } // namespace
 
 AboutComponent::AboutComponent() {
@@ -56,22 +57,30 @@ AboutComponent::AboutComponent() {
   fLogo = Drawable::createFromImageData(BinaryData::iconlarge_png,
                                         BinaryData::iconlarge_pngSize);
   setSize(400, 500);
-  fStartTime = std::chrono::high_resolution_clock::now();
-  startTimerHz(32);
+  fLastTick = std::chrono::high_resolution_clock::now();
+  fScrollDuration = std::chrono::high_resolution_clock::duration(0);
+  startTimerHz(kTimerHz);
 }
 
-void AboutComponent::timerCallback() { repaint(); }
+void AboutComponent::timerCallback() {
+  auto now = std::chrono::high_resolution_clock::now();
+  if (fScrolling) {
+    fScrollDuration += now - fLastTick;
+  }
+  fLastTick = now;
+  repaint();
+}
 
 void AboutComponent::paint(Graphics &g) {
-  g.saveState();
+  Graphics::ScopedSaveState s(g);
 
   int const margin = 10;
   int const width = getWidth();
 
   float scroll = 0;
-  auto elapsed = std::chrono::high_resolution_clock::now() - fStartTime;
-  auto sec = std::chrono::duration_cast<std::chrono::duration<double>>(elapsed)
-                 .count();
+  auto sec =
+      std::chrono::duration_cast<std::chrono::duration<double>>(fScrollDuration)
+          .count();
   if (sec <= kSteadySeconds) {
     scroll = 0;
   } else {
@@ -79,6 +88,8 @@ void AboutComponent::paint(Graphics &g) {
   }
   float y = kHeaderHeight;
   g.setColour(Colours::white);
+  int fontSize = kLineHeight;
+  g.setFont(fontSize);
   float scrollHeight = 1.8 * kLineHeight * fLines.size();
   for (auto const &line : fLines) {
     float pos = y - kHeaderHeight - scroll;
@@ -103,19 +114,39 @@ void AboutComponent::paint(Graphics &g) {
   }
   {
     int const titleHeight = 40;
-    g.saveState();
     g.setFont(titleHeight);
     g.setColour(Colours::white);
     g.drawText(ProjectInfo::projectName, margin, y, width - 2 * margin,
                titleHeight, Justification::centred);
-    g.restoreState();
     y += titleHeight + margin;
   }
+  g.setFont(fontSize);
   g.setColour(Colours::white);
   for (auto const &line : fHeaderLines) {
     g.drawSingleLineText(line, width / 2, y,
                          Justification::horizontallyCentred);
     y += kLineHeight;
   }
-  g.restoreState();
+}
+
+void AboutComponent::mouseDown(MouseEvent const &e) {
+  if (!e.mods.isLeftButtonDown()) {
+    return;
+  }
+  auto sec =
+      std::chrono::duration_cast<std::chrono::duration<double>>(fScrollDuration)
+          .count();
+  if (sec <= kSteadySeconds) {
+    fScrolling = true;
+  } else {
+    fScrolling = !fScrolling;
+  }
+  if (fScrolling != isTimerRunning()) {
+    if (fScrolling) {
+      fLastTick = std::chrono::high_resolution_clock::now();
+      startTimerHz(kTimerHz);
+    } else {
+      stopTimer();
+    }
+  }
 }

@@ -8,10 +8,13 @@ public:
   void paint(Graphics &g) override;
 
   void timerCallback() override;
+  void mouseDown(MouseEvent const &) override;
 
 private:
   std::unique_ptr<Drawable> fLogo;
   std::vector<String> fHeaderLines;
   std::vector<String> fLines;
-  std::chrono::time_point<std::chrono::high_resolution_clock> fStartTime;
+  std::chrono::high_resolution_clock::duration fScrollDuration;
+  bool fScrolling = true;
+  std::chrono::high_resolution_clock::time_point fLastTick;
 };
