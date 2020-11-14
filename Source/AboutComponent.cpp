@@ -1,50 +1,99 @@
 #include "AboutComponent.h"
 #include "BinaryData.h"
 
-static Component *createLabel(String t, int height = 14) {
-  Label *l = new Label();
-  l->setText(t, NotificationType::dontSendNotification);
-  l->setBounds(0, 0, 100, height);
-  l->setColour(Label::textColourId, Colours::white);
-  l->setJustificationType(Justification::centred);
-  return l;
-}
+namespace {
+int const kHeaderHeight = 232;
+double const kScrollSpeedPixelPerSec = 40;
+int const kLineHeight = 14;
+double const kSteadySeconds = 3;
+} // namespace
 
 AboutComponent::AboutComponent() {
-  fLines = {
-      createLabel(String("Version: ") +
-                  String::fromUTF8(ProjectInfo::versionString)),
-      createLabel("Copyright (C) 2020 kbinani"),
-      createLabel(""),
-      createLabel("Acknowledgement"),
-      createLabel(""),
-
-      createLabel("JUCE"),
-      createLabel("https://github.com/juce-framework/JUCE"),
-      createLabel(""),
-
-      createLabel("je2be (core library)"),
-      createLabel("https://github.com/kbinani/je2be"),
-      createLabel(""),
-
-      createLabel("libminecraft-file"),
-      createLabel("https://github.com/kbinani/libminecraft-file"),
-      createLabel(""),
+  fHeaderLines = {
+      String("Version: ") + String::fromUTF8(ProjectInfo::versionString),
+      "Copyright (C) 2020 kbinani",
+      "",
   };
-  for (auto const &line : fLines) {
-    addAndMakeVisible(*line);
-  }
+  fLines = {
+      "",
+      "Acknowledgement",
+      "",
+
+      "JUCE",
+      "https://github.com/juce-framework/JUCE",
+      "",
+
+      "LevelDB",
+      "https://github.com/google/leveldb",
+      "https://github.com/pmmp/leveldb",
+      "",
+
+      "xxHash",
+      "https://github.com/Cyan4973/xxHash",
+      "",
+
+      "json",
+      "https://github.com/nlohmann/json",
+      "",
+
+      "zlib",
+      "https://github.com/madler/zlib",
+      "https://github.com/commontk/zlib",
+      "",
+
+      "thread-pool",
+      "https://github.com/mtrebi/thread-pool",
+      "",
+
+      "je2be (core library)",
+      "https://github.com/kbinani/je2be",
+      "",
+
+      "libminecraft-file",
+      "https://github.com/kbinani/libminecraft-file",
+      "",
+  };
   fLogo = Drawable::createFromImageData(BinaryData::iconlarge_png,
                                         BinaryData::iconlarge_pngSize);
   setSize(400, 500);
+  fStartTime = std::chrono::high_resolution_clock::now();
+  startTimerHz(32);
 }
+
+void AboutComponent::timerCallback() { repaint(); }
 
 void AboutComponent::paint(Graphics &g) {
   g.saveState();
 
   int const margin = 10;
   int const width = getWidth();
-  float y = margin;
+
+  float scroll = 0;
+  auto elapsed = std::chrono::high_resolution_clock::now() - fStartTime;
+  auto sec = std::chrono::duration_cast<std::chrono::duration<double>>(elapsed)
+                 .count();
+  if (sec <= kSteadySeconds) {
+    scroll = 0;
+  } else {
+    scroll = (sec - kSteadySeconds) * kScrollSpeedPixelPerSec;
+  }
+  float y = kHeaderHeight;
+  g.setColour(Colours::white);
+  float scrollHeight = 1.8 * kLineHeight * fLines.size();
+  for (auto const &line : fLines) {
+    float pos = y - kHeaderHeight - scroll;
+    int vPos = fmod(fmod(pos, scrollHeight) + scrollHeight, scrollHeight) +
+               kHeaderHeight;
+    g.drawSingleLineText(line, width / 2, vPos,
+                         Justification::horizontallyCentred);
+    y += kLineHeight;
+  }
+
+  y = margin;
+
+  g.setColour(
+      getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
+  g.fillRect(0, 0, width, kHeaderHeight);
 
   {
     int const logoHeight = 120;
@@ -62,9 +111,11 @@ void AboutComponent::paint(Graphics &g) {
     g.restoreState();
     y += titleHeight + margin;
   }
-  for (auto const &line : fLines) {
-    line->setBounds(0, y, width, line->getHeight());
-    y += line->getHeight();
+  g.setColour(Colours::white);
+  for (auto const &line : fHeaderLines) {
+    g.drawSingleLineText(line, width / 2, y,
+                         Justification::horizontallyCentred);
+    y += kLineHeight;
   }
   g.restoreState();
 }
