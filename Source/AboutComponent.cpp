@@ -2,7 +2,7 @@
 #include "BinaryData.h"
 
 namespace {
-int const kHeaderHeight = 232;
+int const kHeaderHeight = 204;
 double const kScrollSpeedPixelPerSec = 40;
 int const kLineHeight = 14;
 double const kSteadySeconds = 3;
@@ -12,10 +12,26 @@ int const kTimerHz = 32;
 AboutComponent::AboutComponent() {
   fHeaderLines = {
       String("Version: ") + String::fromUTF8(ProjectInfo::versionString),
-      "Copyright (C) 2020 kbinani",
-      "",
   };
   fLines = {
+      "",
+      "Copyright (C) 2020 kbinani",
+      "",
+      "This program is free software: you can redistribute it and/or",
+      "modify it under the terms of the GNU General Public License as",
+      "published by the Free Software Foundation, either version 3 of",
+      "the License, or (at your option) any later version.",
+      "",
+      "This program is distributed in the hope that it will be useful,",
+      "but WITHOUT ANY WARRANTY; without even the implied",
+      "warranty of MERCHANTABILITY or FITNESS FOR A",
+      "PARTICULAR PURPOSE. See the GNU General Public License",
+      "for more details.",
+      "",
+      "You should have received a copy of the GNU General Public License",
+      "along with this program.",
+      "If not, see <http://www.gnu.org/licenses/>.",
+      "",
       "",
       "Acknowledgement",
       "",
@@ -76,6 +92,7 @@ void AboutComponent::paint(Graphics &g) {
 
   int const margin = 10;
   int const width = getWidth();
+  int const height = getHeight();
 
   float scroll = 0;
   auto sec =
@@ -90,7 +107,8 @@ void AboutComponent::paint(Graphics &g) {
   g.setColour(Colours::white);
   int fontSize = kLineHeight;
   g.setFont(fontSize);
-  float scrollHeight = 1.8 * kLineHeight * fLines.size();
+  float scrollHeight =
+      kLineHeight * (int)fLines.size() + (height - kHeaderHeight);
   for (auto const &line : fLines) {
     float pos = y - kHeaderHeight - scroll;
     int vPos = fmod(fmod(pos, scrollHeight) + scrollHeight, scrollHeight) +
