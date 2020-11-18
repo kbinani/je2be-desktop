@@ -24,46 +24,7 @@ public:
 
   void onProgressUpdate(int phase, double done, double total);
 
-  class Updater : public AsyncUpdater {
-    struct Entry {
-      int fPhase;
-      double fDone;
-      double fTotal;
-    };
-
-  public:
-    void trigger(int phase, double done, double total) {
-      Entry entry;
-      entry.fPhase = phase;
-      entry.fDone = done;
-      entry.fTotal = total;
-      {
-        std::lock_guard<std::mutex> lk(fMut);
-        fQueue.push_back(entry);
-      }
-      triggerAsyncUpdate();
-    }
-
-    void handleAsyncUpdate() override {
-      std::deque<Entry> copy;
-      {
-        std::lock_guard<std::mutex> lk(fMut);
-        copy.swap(fQueue);
-      }
-      auto target = fTarget.load();
-      if (!target)
-        return;
-      for (auto const &e : copy) {
-        target->onProgressUpdate(e.fPhase, e.fDone, e.fTotal);
-      }
-    }
-
-    std::atomic<ConvertProgressComponent *> fTarget;
-
-  private:
-    std::deque<Entry> fQueue;
-    std::mutex fMut;
-  };
+  class Updater;
 
 private:
   std::unique_ptr<TextButton> fCancelButton;

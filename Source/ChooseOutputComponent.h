@@ -28,6 +28,7 @@ private:
   std::unique_ptr<Label> fMessage;
   std::unique_ptr<TextButton> fBrowseButton;
   std::unique_ptr<TextButton> fBackButton;
+  std::unique_ptr<TextEditor> fStat;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChooseOutputComponent)
 };

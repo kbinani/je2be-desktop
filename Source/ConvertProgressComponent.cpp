@@ -4,6 +4,50 @@
 #include <JuceHeader.h>
 #include <je2be.hpp>
 
+class ConvertProgressComponent::Updater : public AsyncUpdater {
+  struct Entry {
+    int fPhase;
+    double fDone;
+    double fTotal;
+  };
+
+public:
+  void trigger(int phase, double done, double total) {
+    Entry entry;
+    entry.fPhase = phase;
+    entry.fDone = done;
+    entry.fTotal = total;
+    {
+      std::lock_guard<std::mutex> lk(fMut);
+      fQueue.push_back(entry);
+    }
+    triggerAsyncUpdate();
+  }
+
+  void handleAsyncUpdate() override {
+    std::deque<Entry> copy;
+    {
+      std::lock_guard<std::mutex> lk(fMut);
+      copy.swap(fQueue);
+    }
+    auto target = fTarget.load();
+    if (!target)
+      return;
+    for (auto const &e : copy) {
+      target->onProgressUpdate(e.fPhase, e.fDone, e.fTotal);
+    }
+  }
+
+  void complete(j2b::Statistics stat) { fStat = stat; }
+
+  std::atomic<ConvertProgressComponent *> fTarget;
+  std::optional<j2b::Statistics> fStat;
+
+private:
+  std::deque<Entry> fQueue;
+  std::mutex fMut;
+};
+
 class WorkerThread : public Thread, public j2b::Progress {
 public:
   WorkerThread(File input, j2b::InputOption io, File output,
@@ -17,7 +61,10 @@ public:
     Converter c(fInput.getFullPathName().toStdString(), fInputOption,
                 fOutput.getFullPathName().toStdString(), fOutputOption);
     try {
-      c.run(std::thread::hardware_concurrency(), this);
+      auto stat = c.run(std::thread::hardware_concurrency(), this);
+      if (stat) {
+        fUpdater->complete(*stat);
+      }
       fUpdater->trigger(2, 1, 1);
     } catch (std::filesystem::filesystem_error &e) {
       fUpdater->trigger(-1, 1, 1);
@@ -47,6 +94,17 @@ private:
   j2b::OutputOption const fOutputOption;
   std::shared_ptr<ConvertProgressComponent::Updater> fUpdater;
 };
+
+static ConvertStatistics Import(j2b::Statistics stat) {
+  ConvertStatistics ret;
+  for (auto const &it : stat.fChunkDataVersions) {
+    ret.fChunkDataVersions[it.first] = it.second;
+  }
+  ret.fNumChunks = stat.fNumChunks;
+  ret.fNumBlockEntities = stat.fNumBlockEntities;
+  ret.fNumEntities = stat.fNumEntities;
+  return ret;
+}
 
 ConvertProgressComponent::ConvertProgressComponent(
     ConfigState const &configState)
@@ -113,6 +171,10 @@ void ConvertProgressComponent::onProgressUpdate(int phase, double done,
     if (fCommandWhenFinished != gui::toChooseOutput &&
         fState.fOutputDirectory.exists()) {
       fState.fOutputDirectory.deleteRecursively();
+    }
+    auto stat = fUpdater->fStat;
+    if (stat) {
+      fState.fStat = Import(*stat);
     }
     JUCEApplication::getInstance()->perform({fCommandWhenFinished});
   } else if (phase == 1) {

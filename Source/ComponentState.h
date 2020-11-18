@@ -32,12 +32,23 @@ public:
   virtual ConfigState getConfigState() const = 0;
 };
 
+class ConvertStatistics {
+public:
+  ConvertStatistics() = default;
+
+  std::unordered_map<uint32_t, uint64_t> fChunkDataVersions;
+  uint64_t fNumChunks = 0;
+  uint64_t fNumBlockEntities = 0;
+  uint64_t fNumEntities = 0;
+};
+
 class ConvertState {
 public:
   explicit ConvertState(ConfigState const &configState)
       : fConfigState(configState) {}
   ConfigState const fConfigState;
   File fOutputDirectory;
+  ConvertStatistics fStat;
 };
 
 class ConvertStateProvider {
