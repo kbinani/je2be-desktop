@@ -21,7 +21,7 @@ language: Japanese
 "There doesn't seem to be any Minecraft save data in the specified directory." = "指定されたディレクトリには Minecraft のセーブデータが存在しないようです"
 "The conversion failed." = "変換に失敗しました"
 "There are files and folders in the directory.\rPlease select an empty folder" = "ディレクトリ内にファイルやフォルダがあります。\r中身が空のフォルダを選択してください"
-"Choose again" = "選びなおす"
+"Select the destination" = "保存先を選択"
 "Select an empty folder to save in" = "保存先の空のフォルダを選択してください"
 "Error" = "エラー"
 "Back to the beginning" = "最初に戻る"

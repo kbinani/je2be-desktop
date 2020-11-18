@@ -5,8 +5,7 @@
 
 class ChooseOutputComponent : public juce::Component,
                               public ChooseOutputStateProvider,
-                              public ChooseInputStateProvider,
-                              public AsyncUpdater {
+                              public ChooseInputStateProvider {
 public:
   explicit ChooseOutputComponent(ConvertState const &convertState);
   ~ChooseOutputComponent() override;
@@ -20,8 +19,6 @@ public:
 
   void onBrowseButtonClicked();
   void onBackButtonClicked();
-
-  void handleAsyncUpdate();
 
 private:
   ChooseOutputState fState;

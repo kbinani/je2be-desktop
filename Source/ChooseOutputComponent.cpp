@@ -139,14 +139,13 @@ ChooseOutputComponent::ChooseOutputComponent(ConvertState const &convertState)
     addAndMakeVisible(*fBackButton);
   }
   {
-    fBrowseButton.reset(new TextButton(TRANS("Choose again")));
+    fBrowseButton.reset(new TextButton(TRANS("Select the destination")));
     fBrowseButton->setBounds(width - kMargin - kButtonMinWidth,
                              height - kMargin - kButtonBaseHeight,
                              kButtonMinWidth, kButtonBaseHeight);
     fBrowseButton->onClick = [this]() { onBrowseButtonClicked(); };
     addAndMakeVisible(*fBrowseButton);
   }
-  triggerAsyncUpdate();
 }
 
 ChooseOutputComponent::~ChooseOutputComponent() {}
@@ -187,8 +186,6 @@ void ChooseOutputComponent::onBrowseButtonClicked() {
 }
 
 void ChooseOutputComponent::paint(juce::Graphics &g) {}
-
-void ChooseOutputComponent::handleAsyncUpdate() { onBrowseButtonClicked(); }
 
 void ChooseOutputComponent::onBackButtonClicked() {
   JUCEApplication::getInstance()->perform({gui::toChooseInput});
