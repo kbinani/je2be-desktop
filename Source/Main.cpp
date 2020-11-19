@@ -36,6 +36,18 @@ public:
 
   void systemRequestedQuit() override { quit(); }
 
+  void getAllCommands(Array<CommandID> &commands) override {
+    JUCEApplication::getAllCommands(commands);
+    commands.addArray({gui::toConfig, gui::toChooseInput, gui::toConvert,
+                       gui::toChooseOutput, gui::toCopy});
+  }
+
+  void getCommandInfo(CommandID commandID,
+                      ApplicationCommandInfo &result) override {
+    result.setInfo("", "", "",
+                   ApplicationCommandInfo::CommandFlags::hiddenFromKeyEditor);
+  }
+
   bool perform(InvocationInfo const &info) override {
     Component *current = mainWindow->getContentComponent();
     switch (info.commandID) {

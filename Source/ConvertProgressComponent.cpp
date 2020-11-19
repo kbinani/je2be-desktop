@@ -174,7 +174,7 @@ void ConvertProgressComponent::paint(juce::Graphics &g) {}
 
 void ConvertProgressComponent::onCancelButtonClicked() {
   if (fFailed) {
-    JUCEApplication::getInstance()->perform({gui::toChooseInput});
+    JUCEApplication::getInstance()->invoke(gui::toChooseInput, true);
   } else {
     fCancelButton->setEnabled(false);
     fCommandWhenFinished = gui::toConfig;
@@ -196,7 +196,7 @@ void ConvertProgressComponent::onProgressUpdate(int phase, double done,
     if (stat) {
       fState.fStat = Import(*stat);
       if (stat->fErrors.empty()) {
-        JUCEApplication::getInstance()->perform({fCommandWhenFinished});
+        JUCEApplication::getInstance()->invoke(fCommandWhenFinished, true);
       } else {
         fFailed = true;
         String msg = "Failed chunks:\n";

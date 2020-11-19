@@ -53,5 +53,5 @@ void CopyProgressComponent::handleAsyncUpdate() {
   if (fState.fConvertState.fOutputDirectory.exists()) {
     fState.fConvertState.fOutputDirectory.deleteRecursively();
   }
-  JUCEApplication::getInstance()->perform({gui::toChooseInput});
+  JUCEApplication::getInstance()->invoke(gui::toChooseInput, true);
 }

@@ -181,12 +181,12 @@ void ChooseOutputComponent::onBrowseButtonClicked() {
               "empty folder"));
   } else {
     fState.fCopyDestinationDirectory = dest;
-    JUCEApplication::getInstance()->perform({gui::toCopy});
+    JUCEApplication::getInstance()->invoke(gui::toCopy, true);
   }
 }
 
 void ChooseOutputComponent::paint(juce::Graphics &g) {}
 
 void ChooseOutputComponent::onBackButtonClicked() {
-  JUCEApplication::getInstance()->perform({gui::toChooseInput});
+  JUCEApplication::getInstance()->invoke(gui::toChooseInput, true);
 }

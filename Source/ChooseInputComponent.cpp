@@ -102,7 +102,7 @@ void ChooseInputComponent::changeListenerCallback(ChangeBroadcaster *source) {
 void ChooseInputComponent::paint(juce::Graphics &g) {}
 
 void ChooseInputComponent::onNextButtonClicked() {
-  JUCEApplication::getInstance()->perform({gui::toConfig});
+  JUCEApplication::getInstance()->invoke(gui::toConfig, true);
 }
 
 void ChooseInputComponent::onChooseCustomButtonClicked() {
@@ -115,7 +115,7 @@ void ChooseInputComponent::onChooseCustomButtonClicked() {
     return;
   }
   fState.fInputDirectory = chooser.getResult();
-  JUCEApplication::getInstance()->perform({gui::toConfig});
+  JUCEApplication::getInstance()->invoke(gui::toConfig, true);
 }
 
 void ChooseInputComponent::selectionChanged() {
@@ -134,7 +134,7 @@ void ChooseInputComponent::fileClicked(const File &file, const MouseEvent &e) {}
 
 void ChooseInputComponent::fileDoubleClicked(const File &file) {
   fState.fInputDirectory = file;
-  JUCEApplication::getInstance()->perform({gui::toConfig});
+  JUCEApplication::getInstance()->invoke(gui::toConfig, false);
 }
 
 void ChooseInputComponent::browserRootChanged(const File &newRoot) {}

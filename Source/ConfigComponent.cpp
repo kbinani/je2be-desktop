@@ -81,9 +81,9 @@ void ConfigComponent::timerCallback() {
 void ConfigComponent::paint(juce::Graphics &g) {}
 
 void ConfigComponent::onStartButtonClicked() {
-  JUCEApplication::getInstance()->perform({gui::toConvert});
+  JUCEApplication::getInstance()->invoke(gui::toConvert, true);
 }
 
 void ConfigComponent::onBackButtonClicked() {
-  JUCEApplication::getInstance()->perform({gui::toChooseInput});
+  JUCEApplication::getInstance()->invoke(gui::toChooseInput, true);
 }
