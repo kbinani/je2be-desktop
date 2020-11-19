@@ -95,7 +95,7 @@ static String StatToString(ConvertStatistics stat) {
   String msg;
   msg += "Chunk data version:\n";
   for (auto const &it : stat.fChunkDataVersions) {
-    msg += "\tVersion " + String(ChunkDataVersionToString(it.first)) + ": " +
+    msg += "    Version " + String(ChunkDataVersionToString(it.first)) + ": " +
            String(it.second) + "\n";
   }
   msg += "Number of Chunks: " + String(stat.fNumChunks) + "\n";
@@ -127,6 +127,7 @@ ChooseOutputComponent::ChooseOutputComponent(ConvertState const &convertState)
                      width - 2 * kMargin,
                      height - 4 * kMargin - 2 * kButtonBaseHeight);
     fStat->setEnabled(false);
+    fStat->setMultiLine(true);
     fStat->setText(StatToString(convertState.fStat));
     addAndMakeVisible(*fStat);
   }
