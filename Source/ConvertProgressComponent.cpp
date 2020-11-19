@@ -106,6 +106,18 @@ static ConvertStatistics Import(j2b::Statistics stat) {
   return ret;
 }
 
+static String DimensionToString(j2b::Dimension dim) {
+  switch (dim) {
+  case j2b::Dimension::Overworld:
+    return TRANS("Overworld");
+  case j2b::Dimension::Nether:
+    return TRANS("Nether");
+  case j2b::Dimension::End:
+    return TRANS("End");
+  }
+  return "Unknown";
+}
+
 ConvertProgressComponent::ConvertProgressComponent(
     ConfigState const &configState)
     : fState(configState) {
@@ -119,15 +131,23 @@ ConvertProgressComponent::ConvertProgressComponent(
   fCancelButton->onClick = [this]() { onCancelButtonClicked(); };
   addAndMakeVisible(*fCancelButton);
 
+  int y = kMargin;
   fLabel.reset(new Label("", TRANS("Converting...")));
-  fLabel->setBounds(kMargin, kMargin, width - 2 * kMargin, kButtonBaseHeight);
+  fLabel->setBounds(kMargin, y, width - 2 * kMargin, kButtonBaseHeight);
   fLabel->setJustificationType(Justification::topLeft);
   addAndMakeVisible(*fLabel);
+  y += fLabel->getHeight() + kMargin;
 
   fProgressBar.reset(new ProgressBar(fProgress));
-  fProgressBar->setBounds(kMargin, kMargin + kButtonBaseHeight + kMargin,
-                          width - 2 * kMargin, kButtonBaseHeight);
+  fProgressBar->setBounds(kMargin, y, width - 2 * kMargin, kButtonBaseHeight);
   addAndMakeVisible(*fProgressBar);
+
+  fErrorMessage.reset(new TextEditor());
+  fErrorMessage->setBounds(kMargin, y, width - 2 * kMargin,
+                           fCancelButton->getY() - y - kMargin);
+  fErrorMessage->setEnabled(false);
+  fErrorMessage->setMultiLine(true);
+  addChildComponent(*fErrorMessage);
 
   wchar_t buffer[L_tmpnam_s];
   _wtmpnam_s(buffer);
@@ -175,8 +195,24 @@ void ConvertProgressComponent::onProgressUpdate(int phase, double done,
     auto stat = fUpdater->fStat;
     if (stat) {
       fState.fStat = Import(*stat);
+      if (stat->fErrors.empty()) {
+        JUCEApplication::getInstance()->perform({fCommandWhenFinished});
+      } else {
+        fFailed = true;
+        String msg = "Failed chunks:\n";
+        for (auto const &it : stat->fErrors) {
+          int32_t regionX = it.fChunkX >> 5;
+          int32_t regionZ = it.fChunkZ >> 5;
+          msg += "    " + DimensionToString(it.fDim) + " chunk (" +
+                 String(it.fChunkX) + ", " + String(it.fChunkZ) + ") at r." +
+                 String(regionX) + "." + String(regionZ) + ".mca\n";
+        }
+        fErrorMessage->setText(msg);
+        fErrorMessage->setVisible(true);
+      }
+    } else {
+      fFailed = true;
     }
-    JUCEApplication::getInstance()->perform({fCommandWhenFinished});
   } else if (phase == 1) {
     fLabel->setText(TRANS("LevelDB compaction"), dontSendNotification);
     fProgress = -1;
@@ -185,9 +221,12 @@ void ConvertProgressComponent::onProgressUpdate(int phase, double done,
       fProgress = done / total;
     }
   } else {
+    fFailed = true;
+  }
+  if (fFailed) {
     fLabel->setText(TRANS("The conversion failed."), dontSendNotification);
     fLabel->setColour(Label::textColourId, kErrorTextColor);
     fCancelButton->setButtonText(TRANS("Back"));
-    fFailed = true;
+    fProgressBar->setVisible(false);
   }
 }

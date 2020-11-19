@@ -36,6 +36,7 @@ private:
   std::unique_ptr<Label> fLabel;
   CommandID fCommandWhenFinished = gui::toChooseOutput;
   bool fFailed = false;
+  std::unique_ptr<TextEditor> fErrorMessage;
 
 private:
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ConvertProgressComponent)
