@@ -145,6 +145,9 @@ ChooseOutputComponent::ChooseOutputComponent(ConvertState const &convertState)
                              kButtonMinWidth, kButtonBaseHeight);
     fBrowseButton->onClick = [this]() { onBrowseButtonClicked(); };
     addAndMakeVisible(*fBrowseButton);
+
+    fBrowseButton->setExplicitFocusOrder(1);
+    fBackButton->setExplicitFocusOrder(2);
   }
 }
 
