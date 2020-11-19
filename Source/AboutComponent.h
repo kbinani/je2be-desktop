@@ -17,4 +17,6 @@ private:
   std::chrono::high_resolution_clock::duration fScrollDuration;
   bool fScrolling = true;
   std::chrono::high_resolution_clock::time_point fLastTick;
+
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AboutComponent)
 };
