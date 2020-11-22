@@ -6,6 +6,7 @@
 #include "ConvertProgressComponent.h"
 #include "CopyProgressComponent.h"
 #include "LocalizationHelper.h"
+#include "TemporaryDirectory.h"
 #include <JuceHeader.h>
 
 class je2beApplication : public juce::JUCEApplication {
@@ -28,6 +29,8 @@ public:
 
     LocalisedStrings::setCurrentMappings(
         LocalizationHelper::CurrentLocalisedStrings());
+
+    TemporaryDirectory::CleanupAsync();
 
     mainWindow.reset(new MainWindow(getApplicationName()));
   }

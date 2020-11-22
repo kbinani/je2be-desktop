@@ -1,6 +1,7 @@
 #include "ConvertProgressComponent.h"
 #include "CommandID.h"
 #include "Constants.h"
+#include "TemporaryDirectory.h"
 #include <JuceHeader.h>
 #include <je2be.hpp>
 
@@ -149,9 +150,11 @@ ConvertProgressComponent::ConvertProgressComponent(
   fErrorMessage->setMultiLine(true);
   addChildComponent(*fErrorMessage);
 
-  wchar_t buffer[L_tmpnam_s];
-  _wtmpnam_s(buffer);
-  fState.fOutputDirectory = File(String(buffer, L_tmpnam_s));
+  File temp = TemporaryDirectory::EnsureExisting();
+  Uuid u;
+  File outputDir = temp.getChildFile(u.toDashedString());
+  outputDir.createDirectory();
+  fState.fOutputDirectory = outputDir;
 
   fUpdater = std::make_shared<Updater>();
   fUpdater->fTarget.store(this);

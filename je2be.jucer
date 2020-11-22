@@ -13,6 +13,8 @@
       <FILE id="KdWcfU" name="japanese.lang" compile="0" resource="1" file="Resource/japanese.lang"/>
     </GROUP>
     <GROUP id="{EA1BDD32-91EF-BE25-FA92-510887189002}" name="Source">
+      <FILE id="pEsAV5" name="TemporaryDirectory.h" compile="0" resource="0"
+            file="Source/TemporaryDirectory.h"/>
       <FILE id="ZgEqbD" name="AboutComponent.cpp" compile="1" resource="0"
             file="Source/AboutComponent.cpp"/>
       <FILE id="Y3Hpn3" name="AboutComponent.h" compile="0" resource="0"
