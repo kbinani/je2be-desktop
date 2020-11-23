@@ -27,7 +27,7 @@ CopyProgressComponent::CopyProgressComponent(ChooseOutputState const &state)
   auto height = kWindowHeight;
   setSize(width, height);
 
-  fLabel.reset(new Label("", TRANS("Copying...")));
+  fLabel.reset(new Label("", TRANS("Saving...")));
   fLabel->setBounds(kMargin, kMargin, width - 2 * kMargin, kButtonBaseHeight);
   fLabel->setJustificationType(Justification::topLeft);
   addAndMakeVisible(*fLabel);
@@ -49,7 +49,7 @@ void CopyProgressComponent::paint(juce::Graphics &g) {}
 void CopyProgressComponent::handleAsyncUpdate() {
   NativeMessageBox::showMessageBox(AlertWindow::AlertIconType::InfoIcon,
                                    TRANS("Completed"),
-                                   TRANS("All files copied!"));
+                                   TRANS("Saving completed."));
   if (fState.fConvertState.fOutputDirectory.exists()) {
     fState.fConvertState.fOutputDirectory.deleteRecursively();
   }

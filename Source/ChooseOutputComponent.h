@@ -19,6 +19,7 @@ public:
 
   void onBrowseButtonClicked();
   void onBackButtonClicked();
+  void onSaveButtonClicked();
 
 private:
   ChooseOutputState fState;
@@ -26,6 +27,7 @@ private:
   std::unique_ptr<TextButton> fBrowseButton;
   std::unique_ptr<TextButton> fBackButton;
   std::unique_ptr<TextEditor> fStat;
+  std::unique_ptr<TextButton> fSaveButton;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChooseOutputComponent)
 };

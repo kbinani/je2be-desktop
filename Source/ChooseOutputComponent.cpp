@@ -104,6 +104,37 @@ static String StatToString(ConvertStatistics stat) {
   return msg;
 }
 
+static File BedrockSaveDirectory() {
+  return File::getSpecialLocation(File::userApplicationDataDirectory)
+      .getParentDirectory()
+      .getChildFile("Local")
+      .getChildFile("Packages")
+      .getChildFile("Microsoft.MinecraftUWP_8wekyb3d8bbwe")
+      .getChildFile("LocalState")
+      .getChildFile("games")
+      .getChildFile("com.mojang")
+      .getChildFile("minecraftWorlds");
+}
+
+static File DecideDefaultOutputDirectory(ConvertState const &s) {
+  File root = BedrockSaveDirectory();
+  String name = s.fConfigState.fInputState.fInputDirectory->getFileName();
+  File candidate = root.getChildFile(name);
+  int count = 0;
+  while (candidate.exists()) {
+    count++;
+    candidate = root.getChildFile(name + "-" + String(count));
+  }
+  return candidate;
+}
+
+static String WillBeSavedMessage(File outputDir) {
+  return TRANS("The conversion result will be saved in the following folder.") +
+         "\n\n" + outputDir.getFullPathName() + "\n\n" +
+         TRANS("If you want to change the destination, please select it with "
+               "the button below.");
+}
+
 ChooseOutputComponent::ChooseOutputComponent(ConvertState const &convertState)
     : fState(convertState) {
   auto width = kWindowWidth;
@@ -111,21 +142,42 @@ ChooseOutputComponent::ChooseOutputComponent(ConvertState const &convertState)
   auto fileListWidth = 280;
   setSize(width, height);
 
+  File root = BedrockSaveDirectory();
+  File outputDir = DecideDefaultOutputDirectory(convertState);
+
   {
-    fMessage.reset(
-        new Label("", TRANS("Select a folder to save in.\rChoose an empty "
-                            "folder to protect your existing data.")));
-    fMessage->setBounds(kMargin, kMargin, width - 2 * kMargin,
-                        kButtonBaseHeight);
+    fSaveButton.reset(new TextButton(TRANS("Save")));
+    fSaveButton->setBounds(width - kMargin - kButtonMinWidth,
+                           height - kMargin - kButtonBaseHeight,
+                           kButtonMinWidth, kButtonBaseHeight);
+    fSaveButton->onClick = [this]() { onSaveButtonClicked(); };
+    addAndMakeVisible(*fSaveButton);
+  }
+
+  int y = kMargin;
+  {
+    int h = 96;
+    String message;
+    if (root.exists()) {
+      fState.fCopyDestinationDirectory = outputDir;
+      message = WillBeSavedMessage(outputDir);
+      fSaveButton->setEnabled(true);
+    } else {
+      message = TRANS("Select a folder to save in.\rChoose an empty "
+                      "folder to protect your existing data.");
+      fSaveButton->setEnabled(false);
+    }
+    fMessage.reset(new Label("", message));
+    fMessage->setBounds(kMargin, y, width - 2 * kMargin, h);
     fMessage->setJustificationType(Justification::topLeft);
     fMessage->setMinimumHorizontalScale(1);
     addAndMakeVisible(*fMessage);
+    y += h + kMargin;
   }
   {
     fStat.reset(new TextEditor());
-    fStat->setBounds(kMargin, kMargin + kButtonBaseHeight + kMargin,
-                     width - 2 * kMargin,
-                     height - 4 * kMargin - 2 * kButtonBaseHeight);
+    fStat->setBounds(kMargin, y, width - 2 * kMargin,
+                     height - 2 * kMargin - kButtonBaseHeight - y);
     fStat->setEnabled(false);
     fStat->setMultiLine(true);
     fStat->setText(StatToString(convertState.fStat));
@@ -140,10 +192,11 @@ ChooseOutputComponent::ChooseOutputComponent(ConvertState const &convertState)
     addAndMakeVisible(*fBackButton);
   }
   {
-    fBrowseButton.reset(new TextButton(TRANS("Select the destination")));
-    fBrowseButton->setBounds(width - kMargin - kButtonMinWidth,
-                             height - kMargin - kButtonBaseHeight,
-                             kButtonMinWidth, kButtonBaseHeight);
+    int w = 160;
+    fBrowseButton.reset(new TextButton(TRANS("Change the destination")));
+    fBrowseButton->setBounds(width - kMargin - kButtonMinWidth - kMargin - w,
+                             height - kMargin - kButtonBaseHeight, w,
+                             kButtonBaseHeight);
     fBrowseButton->onClick = [this]() { onBrowseButtonClicked(); };
     addAndMakeVisible(*fBrowseButton);
 
@@ -155,16 +208,7 @@ ChooseOutputComponent::ChooseOutputComponent(ConvertState const &convertState)
 ChooseOutputComponent::~ChooseOutputComponent() {}
 
 void ChooseOutputComponent::onBrowseButtonClicked() {
-  static File lastDir =
-      File::getSpecialLocation(File::userApplicationDataDirectory)
-          .getParentDirectory()
-          .getChildFile("Local")
-          .getChildFile("Packages")
-          .getChildFile("Microsoft.MinecraftUWP_8wekyb3d8bbwe")
-          .getChildFile("LocalState")
-          .getChildFile("games")
-          .getChildFile("com.mojang")
-          .getChildFile("minecraftWorlds");
+  static File lastDir = BedrockSaveDirectory();
 
   FileChooser chooser(TRANS("Select an empty folder to save in"), lastDir);
   bool ok = chooser.browseForDirectory();
@@ -185,7 +229,9 @@ void ChooseOutputComponent::onBrowseButtonClicked() {
               "empty folder"));
   } else {
     fState.fCopyDestinationDirectory = dest;
-    JUCEApplication::getInstance()->invoke(gui::toCopy, true);
+    String message = WillBeSavedMessage(dest);
+    fMessage->setText(message, dontSendNotification);
+    fSaveButton->setEnabled(true);
   }
 }
 
@@ -193,4 +239,8 @@ void ChooseOutputComponent::paint(juce::Graphics &g) {}
 
 void ChooseOutputComponent::onBackButtonClicked() {
   JUCEApplication::getInstance()->invoke(gui::toChooseInput, true);
+}
+
+void ChooseOutputComponent::onSaveButtonClicked() {
+  JUCEApplication::getInstance()->invoke(gui::toCopy, true);
 }
