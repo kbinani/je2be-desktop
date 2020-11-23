@@ -26,7 +26,6 @@ public:
               continue;
             file.deleteRecursively();
           }
-          int a = 0;
         },
         root, current);
     th.detach();
@@ -44,7 +43,6 @@ private:
   }
 
   static File Create() {
-    File systemTemp = File::getSpecialLocation(File::tempDirectory);
     Uuid u;
     return AppTempRootDir().getChildFile(u.toDashedString());
   }

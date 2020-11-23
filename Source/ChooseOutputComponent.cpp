@@ -139,7 +139,6 @@ ChooseOutputComponent::ChooseOutputComponent(ConvertState const &convertState)
     : fState(convertState) {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
-  auto fileListWidth = 280;
   setSize(width, height);
 
   File root = BedrockSaveDirectory();
