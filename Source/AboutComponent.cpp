@@ -33,6 +33,13 @@ AboutComponent::AboutComponent() {
       "If not, see <http://www.gnu.org/licenses/>.",
       "",
       "",
+      "",
+      "Disclaimer",
+      "",
+      "This program is not an official Minecraft product.",
+      ""
+      "",
+      "",
       "Acknowledgement",
       "",
 
