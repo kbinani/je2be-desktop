@@ -158,7 +158,8 @@ ChooseOutputComponent::ChooseOutputComponent(ConvertState const &convertState)
     int h = 96;
     String message;
     if (root.exists()) {
-      fState.fCopyDestinationDirectory = outputDir;
+      fState.fCopyDestination = outputDir;
+      fState.fFormat = OutputFormat::Directory;
       message = WillBeSavedMessage(outputDir);
       fSaveButton->setEnabled(true);
     } else {
@@ -227,7 +228,8 @@ void ChooseOutputComponent::onBrowseButtonClicked() {
         TRANS("There are files and folders in the directory.\rPlease select an "
               "empty folder"));
   } else {
-    fState.fCopyDestinationDirectory = dest;
+    fState.fCopyDestination = dest;
+    fState.fFormat = OutputFormat::Directory;
     String message = WillBeSavedMessage(dest);
     fMessage->setText(message, dontSendNotification);
     fSaveButton->setEnabled(true);

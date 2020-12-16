@@ -57,12 +57,18 @@ public:
   virtual ConvertState getConvertState() const = 0;
 };
 
+enum class OutputFormat {
+  Directory,
+  MCWorld,
+};
+
 class ChooseOutputState {
 public:
   explicit ChooseOutputState(ConvertState const &convertState)
-      : fConvertState(convertState) {}
+      : fConvertState(convertState), fFormat(OutputFormat::Directory) {}
   ConvertState const fConvertState;
-  std::optional<File> fCopyDestinationDirectory;
+  OutputFormat fFormat;
+  std::optional<File> fCopyDestination;
 };
 
 class ChooseOutputStateProvider {

@@ -11,7 +11,50 @@ public:
         fTo(to) {}
 
   void run() override {
+    try {
+      unsafeRun();
+    } catch (...) {
+    }
+  }
+
+private:
+  void unsafeRun() {
     fFrom.copyDirectoryTo(fTo);
+    fUpdater->triggerAsyncUpdate();
+  }
+
+private:
+  AsyncUpdater *const fUpdater;
+  File fFrom;
+  File fTo;
+};
+
+class ZipThread : public Thread {
+public:
+  ZipThread(AsyncUpdater *updater, File from, File to)
+      : Thread("j2b::gui::ZipThread"), fUpdater(updater), fFrom(from), fTo(to) {
+  }
+
+  void run() override {
+    try {
+      unsafeRun();
+    } catch (...) {
+    }
+  }
+
+private:
+  void unsafeRun() {
+    ZipFile::Builder builder;
+    RangedDirectoryIterator it(fFrom, true);
+    int const kCompressionLevel = 9;
+    for (auto const &item : it) {
+      File file = item.getFile();
+      String relativePath = file.getRelativePathFrom(fFrom);
+      builder.addFile(file, kCompressionLevel, relativePath);
+    }
+    auto stream = fTo.createOutputStream();
+    builder.writeToStream(*stream, nullptr);
+
     fUpdater->triggerAsyncUpdate();
   }
 
@@ -37,8 +80,13 @@ CopyProgressComponent::CopyProgressComponent(ChooseOutputState const &state)
                           width - 2 * kMargin, kButtonBaseHeight);
   addAndMakeVisible(*fProgressBar);
 
-  fCopyThread.reset(new CopyThread(this, state.fConvertState.fOutputDirectory,
-                                   *state.fCopyDestinationDirectory));
+  if (state.fFormat == OutputFormat::Directory) {
+    fCopyThread.reset(new CopyThread(this, state.fConvertState.fOutputDirectory,
+                                     *state.fCopyDestination));
+  } else {
+    fCopyThread.reset(new ZipThread(this, state.fConvertState.fOutputDirectory,
+                                    *state.fCopyDestination));
+  }
   fCopyThread->startThread();
 }
 
