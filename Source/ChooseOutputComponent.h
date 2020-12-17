@@ -17,17 +17,20 @@ public:
     return fState.fConvertState.fConfigState.fInputState;
   }
 
-  void onBrowseButtonClicked();
   void onBackButtonClicked();
-  void onSaveButtonClicked();
+
+  void onSaveToDefaultButtonClicked();
+  void onSaveToCustomButtonClicked();
+  void onSaveAsZipButtonClicked();
 
 private:
   ChooseOutputState fState;
   std::unique_ptr<Label> fMessage;
-  std::unique_ptr<TextButton> fBrowseButton;
   std::unique_ptr<TextButton> fBackButton;
-  std::unique_ptr<TextEditor> fStat;
-  std::unique_ptr<TextButton> fSaveButton;
+  std::unique_ptr<TextButton> fSaveToDefaultDirectory;
+  std::unique_ptr<TextButton> fSaveToCustomDirectory;
+  std::unique_ptr<TextButton> fSaveAsZipFile;
+  File fDefaultSaveDirectory;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChooseOutputComponent)
 };

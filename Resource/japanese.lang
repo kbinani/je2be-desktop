@@ -6,7 +6,6 @@ language: Japanese
 "Save" = "保存"
 "Cancel" = "キャンセル"
 "Confirmation" = "確認"
-"All files in the folder will be deleted and overwritten.\rThis process is irreversible.\rWould you like to continue?" = "フォルダ内のすべてのファイルは削除され上書きされます。\rこの処理は元に戻せません。\r続けますか？"
 "Selected world:" = "選択されたワールド:"
 "Start" = "開始"
 "Back" = "戻る"
@@ -26,5 +25,8 @@ language: Japanese
 "Error" = "エラー"
 "Back to the beginning" = "最初に戻る"
 "Select a folder to save in.\rChoose an empty folder to protect your existing data." = "保存先のフォルダを選択してください。既存のデータを保護するため、空のフォルダを選んでください。"
-"The conversion result will be saved in the following folder." = "変換結果は下記のフォルダに保存されます。"
-"If you want to change the destination, please select it with the button below." = "保存先を変更する場合は画面下のボタンで選択してください。"
+"Choose where to export the file" = "エクスポート先を選択してください。";
+"Conversion completed! Choose how you want to save it" = "変換処理が成功しました！ 保存方法を選択してください。";
+"Save into Minecraft Windows 10 save folder" = "Minecraft Windows 10 のセーブフォルダに保存";
+"Save into custom folder" = "保存先を自分で選ぶ";
+"Export as *.mcworld file" = "*.mcworld 形式で保存";

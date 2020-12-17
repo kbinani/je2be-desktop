@@ -133,6 +133,7 @@ public:
 
 private:
   std::unique_ptr<MainWindow> mainWindow;
+  SharedResourcePointer<TooltipWindow> tooltipWindow;
 };
 
 START_JUCE_APPLICATION(je2beApplication)
