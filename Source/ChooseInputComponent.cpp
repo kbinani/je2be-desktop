@@ -30,6 +30,7 @@ ChooseInputComponent::ChooseInputComponent(
     fAboutButton.reset(new TextButton("About"));
     fAboutButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight,
                             kButtonMinWidth, kButtonBaseHeight);
+    fAboutButton->setMouseCursor(MouseCursor::PointingHandCursor);
     fAboutButton->onClick = [this]() { onAboutButtonClicked(); };
     addAndMakeVisible(*fAboutButton);
   }
@@ -50,6 +51,7 @@ ChooseInputComponent::ChooseInputComponent(
     fChooseCustomButton->setBounds(width - kMargin - fileListWidth,
                                    height - kButtonBaseHeight - kMargin, w,
                                    kButtonBaseHeight);
+    fChooseCustomButton->setMouseCursor(MouseCursor::PointingHandCursor);
     fChooseCustomButton->onClick = [this]() { onChooseCustomButtonClicked(); };
     addAndMakeVisible(*fChooseCustomButton);
   }
@@ -125,7 +127,10 @@ void ChooseInputComponent::selectionChanged() {
   } else {
     fState.fInputDirectory = std::nullopt;
   }
-  fNextButton->setEnabled(fState.fInputDirectory != std::nullopt);
+  if (fState.fInputDirectory != std::nullopt) {
+    fNextButton->setEnabled(true);
+    fNextButton->setMouseCursor(MouseCursor::PointingHandCursor);
+  }
   fInitialSelection = std::nullopt;
   fList->removeChangeListener(this);
 }

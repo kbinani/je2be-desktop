@@ -129,6 +129,7 @@ ConvertProgressComponent::ConvertProgressComponent(
   fCancelButton.reset(new TextButton(TRANS("Cancel")));
   fCancelButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight,
                            kButtonMinWidth, kButtonBaseHeight);
+  fCancelButton->setMouseCursor(MouseCursor::PointingHandCursor);
   fCancelButton->onClick = [this]() { onCancelButtonClicked(); };
   addAndMakeVisible(*fCancelButton);
 
@@ -180,6 +181,7 @@ void ConvertProgressComponent::onCancelButtonClicked() {
     JUCEApplication::getInstance()->invoke(gui::toChooseInput, true);
   } else {
     fCancelButton->setEnabled(false);
+    fCancelButton->setMouseCursor(MouseCursor::NormalCursor);
     fCommandWhenFinished = gui::toConfig;
     fThread->signalThreadShouldExit();
     fProgress = -1;

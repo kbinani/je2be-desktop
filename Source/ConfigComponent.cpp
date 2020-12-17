@@ -40,6 +40,7 @@ ConfigComponent::ConfigComponent(ChooseInputState const &chooseInputState)
   fBackButton.reset(new TextButton(TRANS("Back")));
   fBackButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight,
                          kButtonMinWidth, kButtonBaseHeight);
+  fBackButton->setMouseCursor(MouseCursor::PointingHandCursor);
   fBackButton->onClick = [this]() { onBackButtonClicked(); };
   addAndMakeVisible(*fBackButton);
 
@@ -76,6 +77,9 @@ ConfigComponent::~ConfigComponent() {}
 void ConfigComponent::timerCallback() {
   stopTimer();
   fStartButton->setEnabled(fOk);
+  if (fOk) {
+    fStartButton->setMouseCursor(MouseCursor::PointingHandCursor);
+  }
 }
 
 void ConfigComponent::paint(juce::Graphics &g) {}
