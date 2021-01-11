@@ -4,42 +4,58 @@
 #include "Constants.h"
 #include <JuceHeader.h>
 
-class CopyThread : public Thread {
+class CopyThread : public CopyProgressComponent::Worker {
 public:
   CopyThread(AsyncUpdater *updater, File from, File to)
-      : Thread("j2b::gui::CopyThread"), fUpdater(updater), fFrom(from),
-        fTo(to) {}
+      : CopyProgressComponent::Worker("j2b::gui::CopyThread"),
+        fUpdater(updater), fFrom(from), fTo(to) {}
 
   void run() override {
     try {
       unsafeRun();
     } catch (...) {
+      fResult = CopyProgressComponent::Worker::Result::Failed;
     }
+    fUpdater->triggerAsyncUpdate();
+  }
+
+  std::optional<CopyProgressComponent::Worker::Result> result() const override {
+    return fResult;
   }
 
 private:
   void unsafeRun() {
-    fFrom.copyDirectoryTo(fTo);
-    fUpdater->triggerAsyncUpdate();
+    if (fFrom.copyDirectoryTo(fTo)) {
+      fResult = CopyProgressComponent::Worker::Result::Success;
+    } else {
+      fResult = CopyProgressComponent::Worker::Result::Failed;
+    }
   }
 
 private:
   AsyncUpdater *const fUpdater;
   File fFrom;
   File fTo;
+  std::optional<CopyProgressComponent::Worker::Result> fResult;
 };
 
-class ZipThread : public Thread {
+class ZipThread : public CopyProgressComponent::Worker {
 public:
   ZipThread(AsyncUpdater *updater, File from, File to)
-      : Thread("j2b::gui::ZipThread"), fUpdater(updater), fFrom(from), fTo(to) {
-  }
+      : CopyProgressComponent::Worker("j2b::gui::ZipThread"), fUpdater(updater),
+        fFrom(from), fTo(to) {}
 
   void run() override {
     try {
       unsafeRun();
     } catch (...) {
+      fResult = CopyProgressComponent::Worker::Result::Failed;
     }
+    fUpdater->triggerAsyncUpdate();
+  }
+
+  std::optional<CopyProgressComponent::Worker::Result> result() const override {
+    return fResult;
   }
 
 private:
@@ -47,21 +63,34 @@ private:
     ZipFile::Builder builder;
     RangedDirectoryIterator it(fFrom, true);
     int const kCompressionLevel = 9;
+    bool cancelled = false;
     for (auto const &item : it) {
       File file = item.getFile();
       String relativePath = file.getRelativePathFrom(fFrom);
       builder.addFile(file, kCompressionLevel, relativePath);
+      if (currentThreadShouldExit()) {
+        cancelled = true;
+        break;
+      }
     }
-    auto stream = fTo.createOutputStream();
-    builder.writeToStream(*stream, nullptr);
 
-    fUpdater->triggerAsyncUpdate();
+    if (cancelled || currentThreadShouldExit()) {
+      fResult = CopyProgressComponent::Worker::Result::Cancelled;
+    } else {
+      auto stream = fTo.createOutputStream();
+      if (builder.writeToStream(*stream, nullptr)) {
+        fResult = CopyProgressComponent::Worker::Result::Success;
+      } else {
+        fResult = CopyProgressComponent::Worker::Result::Failed;
+      }
+    }
   }
 
 private:
   AsyncUpdater *const fUpdater;
   File fFrom;
   File fTo;
+  std::optional<CopyProgressComponent::Worker::Result> fResult;
 };
 
 CopyProgressComponent::CopyProgressComponent(ChooseOutputState const &state)
@@ -95,11 +124,24 @@ CopyProgressComponent::~CopyProgressComponent() {}
 void CopyProgressComponent::paint(juce::Graphics &g) {}
 
 void CopyProgressComponent::handleAsyncUpdate() {
-  NativeMessageBox::showMessageBox(AlertWindow::AlertIconType::InfoIcon,
-                                   TRANS("Completed"),
-                                   TRANS("Saving completed."));
-  if (fState.fConvertState.fOutputDirectory.exists()) {
-    fState.fConvertState.fOutputDirectory.deleteRecursively();
+
+  auto result = fCopyThread->result();
+  if (!result || *result == CopyProgressComponent::Worker::Result::Failed) {
+    NativeMessageBox::showMessageBox(AlertWindow::AlertIconType::WarningIcon,
+                                     TRANS("Failed"), TRANS("Saving failed."));
+    JUCEApplication::getInstance()->invoke(gui::toChooseOutput, true);
+  } else if (*result == CopyProgressComponent::Worker::Result::Cancelled) {
+    NativeMessageBox::showMessageBox(AlertWindow::AlertIconType::InfoIcon,
+                                     TRANS("Cancelled"),
+                                     TRANS("Saving cancelled."));
+    JUCEApplication::getInstance()->invoke(gui::toChooseOutput, true);
+  } else {
+    NativeMessageBox::showMessageBox(AlertWindow::AlertIconType::InfoIcon,
+                                     TRANS("Completed"),
+                                     TRANS("Saving completed."));
+    if (fState.fConvertState.fOutputDirectory.exists()) {
+      fState.fConvertState.fOutputDirectory.deleteRecursively();
+    }
+    JUCEApplication::getInstance()->invoke(gui::toChooseInput, true);
   }
-  JUCEApplication::getInstance()->invoke(gui::toChooseInput, true);
 }
