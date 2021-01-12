@@ -41,9 +41,9 @@ private:
 
 class ZipThread : public CopyProgressComponent::Worker {
 public:
-  ZipThread(AsyncUpdater *updater, File from, File to)
+  ZipThread(AsyncUpdater *updater, File from, File to, double *progress)
       : CopyProgressComponent::Worker("j2b::gui::ZipThread"), fUpdater(updater),
-        fFrom(from), fTo(to) {}
+        fFrom(from), fTo(to), fProgress(progress) {}
 
   void run() override {
     try {
@@ -78,7 +78,7 @@ private:
       fResult = CopyProgressComponent::Worker::Result::Cancelled;
     } else {
       auto stream = fTo.createOutputStream();
-      if (builder.writeToStream(*stream, nullptr)) {
+      if (builder.writeToStream(*stream, fProgress)) {
         fResult = CopyProgressComponent::Worker::Result::Success;
       } else {
         fResult = CopyProgressComponent::Worker::Result::Failed;
@@ -91,6 +91,7 @@ private:
   File fFrom;
   File fTo;
   std::optional<CopyProgressComponent::Worker::Result> fResult;
+  double *const fProgress;
 };
 
 CopyProgressComponent::CopyProgressComponent(ChooseOutputState const &state)
@@ -114,7 +115,7 @@ CopyProgressComponent::CopyProgressComponent(ChooseOutputState const &state)
                                      *state.fCopyDestination));
   } else {
     fCopyThread.reset(new ZipThread(this, state.fConvertState.fOutputDirectory,
-                                    *state.fCopyDestination));
+                                    *state.fCopyDestination, &fProgress));
   }
   fCopyThread->startThread();
 }
