@@ -6,9 +6,9 @@
 
 class CopyThread : public CopyProgressComponent::Worker {
 public:
-  CopyThread(AsyncUpdater *updater, File from, File to)
+  CopyThread(AsyncUpdater *updater, File from, File to, double *progress)
       : CopyProgressComponent::Worker("j2b::gui::CopyThread"),
-        fUpdater(updater), fFrom(from), fTo(to) {}
+        fUpdater(updater), fFrom(from), fTo(to), fProgress(progress) {}
 
   void run() override {
     try {
@@ -25,11 +25,29 @@ public:
 
 private:
   void unsafeRun() {
-    if (fFrom.copyDirectoryTo(fTo)) {
-      fResult = CopyProgressComponent::Worker::Result::Success;
-    } else {
-      fResult = CopyProgressComponent::Worker::Result::Failed;
+    RangedDirectoryIterator it(fFrom, true);
+    for (auto const &item : it) {
+      File const &from = item.getFile();
+      if (from.isDirectory()) {
+        continue;
+      }
+      auto relative = from.getRelativePathFrom(fFrom);
+      auto destination = fTo.getChildFile(relative);
+      auto dir = destination.getParentDirectory();
+      if (!dir.exists()) {
+        auto result = dir.createDirectory();
+        if (!result.wasOk()) {
+          fResult = CopyProgressComponent::Worker::Result::Failed;
+          return;
+        }
+      }
+      if (!from.copyFileTo(destination)) {
+        fResult = CopyProgressComponent::Worker::Result::Failed;
+        return;
+      }
+      *fProgress = (double)item.getEstimatedProgress();
     }
+    fResult = CopyProgressComponent::Worker::Result::Success;
   }
 
 private:
@@ -37,6 +55,7 @@ private:
   File fFrom;
   File fTo;
   std::optional<CopyProgressComponent::Worker::Result> fResult;
+  double *const fProgress;
 };
 
 class ZipThread : public CopyProgressComponent::Worker {
@@ -112,7 +131,7 @@ CopyProgressComponent::CopyProgressComponent(ChooseOutputState const &state)
 
   if (state.fFormat == OutputFormat::Directory) {
     fCopyThread.reset(new CopyThread(this, state.fConvertState.fOutputDirectory,
-                                     *state.fCopyDestination));
+                                     *state.fCopyDestination, &fProgress));
   } else {
     fCopyThread.reset(new ZipThread(this, state.fConvertState.fOutputDirectory,
                                     *state.fCopyDestination, &fProgress));
