@@ -110,13 +110,15 @@ void ChooseInputComponent::onNextButtonClicked() {
 void ChooseInputComponent::onChooseCustomButtonClicked() {
   fInitialSelection = std::nullopt;
   fList->removeChangeListener(this);
+  static File sLast;
 
-  FileChooser chooser(TRANS("Select save data folder of Minecraft"), File(),
-                      "");
+  FileChooser chooser(TRANS("Select save data folder of Minecraft"), sLast, "");
   if (!chooser.browseForDirectory()) {
     return;
   }
-  fState.fInputDirectory = chooser.getResult();
+  File result = chooser.getResult();
+  fState.fInputDirectory = result;
+  sLast = result.getParentDirectory();
   JUCEApplication::getInstance()->invoke(gui::toConfig, true);
 }
 
