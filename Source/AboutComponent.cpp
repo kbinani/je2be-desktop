@@ -15,7 +15,7 @@ AboutComponent::AboutComponent() {
   };
   fLines = {
       "",
-      "Copyright (C) 2020 kbinani",
+      "Copyright (C) 2020, 2021 kbinani",
       "",
       "This program is free software: you can redistribute it and/or",
       "modify it under the terms of the GNU General Public License as",
