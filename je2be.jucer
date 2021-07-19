@@ -5,7 +5,7 @@
               headerPath="$(ProjectDir)..\..\ext\je2be\include&#10;$(ProjectDir)..\..\ext\je2be\ext\libminecraft-file\include&#10;$(ProjectDir)..\..\ext\je2be\ext\zlib&#10;$(ProjectDir)..\je2be\deps\zlib&#10;$(ProjectDir)..\..\ext\je2be\ext\leveldb\include&#10;$(ProjectDir)..\..\ext\je2be\ext\leveldb&#10;$(ProjectDir)..\..\ext\je2be\ext\xxHash&#10;$(ProjectDir)..\..\ext\je2be\ext\thread-pool\include&#10;$(ProjectDir)..\..\ext\je2be\ext\json\include"
               defines="JUCE_INCLUDE_ZLIB_CODE=0&#10;JUCE_ZLIB_INCLUDE_PATH=&lt;zlib.h&gt;"
               postExportShellCommandWin="call %%1%%\Builds\jucer-post-save.bat"
-              version="2.1.1">
+              version="2.1.2">
   <MAINGROUP id="cJXxpO" name="je2be">
     <GROUP id="{71FC1588-A18A-EB2B-DB08-CA425B7C2BAD}" name="Resource">
       <FILE id="lUUqde" name="icon-large.png" compile="0" resource="1" file="Resource/icon-large.png"/>
