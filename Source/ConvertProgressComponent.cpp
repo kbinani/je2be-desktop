@@ -3,7 +3,6 @@
 #include "Constants.h"
 #include "TemporaryDirectory.h"
 #include <JuceHeader.h>
-#include <je2be.hpp>
 
 class ConvertProgressComponent::Updater : public AsyncUpdater {
   struct Entry {
