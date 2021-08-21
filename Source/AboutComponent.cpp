@@ -64,6 +64,9 @@ AboutComponent::AboutComponent() {
 
       "zlib",
       "https://github.com/madler/zlib",
+      "",
+
+      "zlib-ng",
       "https://github.com/zlib-ng/zlib-ng",
       "",
 
