@@ -41,10 +41,11 @@ target_compile_definitions(je2be-gui
     JUCE_APPLICATION_VERSION_STRING="$<TARGET_PROPERTY:je2be-gui,JUCE_VERSION>"
     JUCE_DISPLAY_SPLASH_SCREEN=0)
 
-juce_add_binary_data(GuiAppData SOURCES
-  Resource/icon-large.png
-  Resource/icon-small.png
-  Resource/japanese.lang)
+juce_add_binary_data(GuiAppData
+  SOURCES
+    Resource/icon-large.png
+    Resource/icon-small.png
+    Resource/japanese.lang)
 
 target_link_libraries(je2be-gui
   PRIVATE
