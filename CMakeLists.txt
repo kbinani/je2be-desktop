@@ -73,3 +73,5 @@ target_include_directories(je2be-gui
 include_external_msproject(Package Package/Package.wapproj
   TYPE C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5
   GUID 713653CB-7989-4C22-8171-0F1951271B8D)
+
+configure_file(Builds/Package/Package.appxmanifest.in Package/Package.appxmanifest)
