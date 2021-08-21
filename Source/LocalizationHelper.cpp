@@ -7,6 +7,8 @@
 #include <windows.h>
 #endif
 
+using namespace juce;
+
 LocalisedStrings *LocalizationHelper::CurrentLocalisedStrings() {
   LANGID lang = GetSystemDefaultUILanguage();
   if (lang == 0x0411) {

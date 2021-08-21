@@ -1,11 +1,12 @@
 #pragma once
 
-#include <JuceHeader.h>
+#include <juce_gui_extra/juce_gui_extra.h>
 #include <optional>
+#include <unordered_map>
 
 class ChooseInputState {
 public:
-  std::optional<File> fInputDirectory;
+  std::optional<juce::File> fInputDirectory;
 };
 
 class ChooseInputStateProvider {
@@ -47,7 +48,7 @@ public:
   explicit ConvertState(ConfigState const &configState)
       : fConfigState(configState) {}
   ConfigState const fConfigState;
-  File fOutputDirectory;
+  juce::File fOutputDirectory;
   ConvertStatistics fStat;
 };
 
@@ -68,7 +69,7 @@ public:
       : fConvertState(convertState), fFormat(OutputFormat::Directory) {}
   ConvertState const fConvertState;
   OutputFormat fFormat;
-  std::optional<File> fCopyDestination;
+  std::optional<juce::File> fCopyDestination;
 };
 
 class ChooseOutputStateProvider {

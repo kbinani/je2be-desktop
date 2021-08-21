@@ -56,7 +56,7 @@
     <DefaultLanguage>ja-JP</DefaultLanguage>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <PackageCertificateThumbprint>2CF8666EE8639BDF9FC2A1F938489413E07542E8</PackageCertificateThumbprint>
-    <EntryPointProjectUniqueName>..\VisualStudio2019\je2be_App.vcxproj</EntryPointProjectUniqueName>
+    <EntryPointProjectUniqueName>..\je2be-gui.vcxproj</EntryPointProjectUniqueName>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
@@ -110,7 +110,7 @@
     <None Include="Package.StoreAssociation.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\VisualStudio2019\je2be_App.vcxproj" />
+    <ProjectReference Include="..\je2be-gui.vcxproj" />
   </ItemGroup>
   <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.targets" />
 </Project>

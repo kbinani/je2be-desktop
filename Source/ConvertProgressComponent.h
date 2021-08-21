@@ -2,7 +2,6 @@
 
 #include "CommandID.h"
 #include "ComponentState.h"
-#include <JuceHeader.h>
 
 class ConvertProgressComponent : public juce::Component,
                                  public ConvertStateProvider,
@@ -27,16 +26,16 @@ public:
   class Updater;
 
 private:
-  std::unique_ptr<TextButton> fCancelButton;
+  std::unique_ptr<juce::TextButton> fCancelButton;
   ConvertState fState;
-  std::unique_ptr<Thread> fThread;
+  std::unique_ptr<juce::Thread> fThread;
   std::shared_ptr<Updater> fUpdater;
-  std::unique_ptr<ProgressBar> fProgressBar;
+  std::unique_ptr<juce::ProgressBar> fProgressBar;
   double fProgress = 0;
-  std::unique_ptr<Label> fLabel;
-  CommandID fCommandWhenFinished = gui::toChooseOutput;
+  std::unique_ptr<juce::Label> fLabel;
+  juce::CommandID fCommandWhenFinished = gui::toChooseOutput;
   bool fFailed = false;
-  std::unique_ptr<TextEditor> fErrorMessage;
+  std::unique_ptr<juce::TextEditor> fErrorMessage;
 
 private:
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ConvertProgressComponent)

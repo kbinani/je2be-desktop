@@ -7,5 +7,5 @@ int const kButtonMinWidth = 100;
 int const kWindowWidth = 600;
 int const kWindowHeight = 400;
 
-Colour const kErrorTextColor(255, 0, 0);
+juce::Colour const kErrorTextColor(255, 0, 0);
 } // namespace

@@ -1,7 +1,8 @@
 #include "ConfigComponent.h"
 #include "CommandID.h"
 #include "Constants.h"
-#include <JuceHeader.h>
+
+using namespace juce;
 
 static std::optional<ConfigState::DirectoryStructure>
 SniffDirectoryStructure(File input) {

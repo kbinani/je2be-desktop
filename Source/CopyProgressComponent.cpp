@@ -2,7 +2,8 @@
 #include "CommandID.h"
 #include "ComponentState.h"
 #include "Constants.h"
-#include <JuceHeader.h>
+
+using namespace juce;
 
 class CopyThread : public CopyProgressComponent::Worker {
 public:

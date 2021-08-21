@@ -1,6 +1,8 @@
 #include "AboutComponent.h"
 #include "BinaryData.h"
 
+using namespace juce;
+
 namespace {
 int const kHeaderHeight = 204;
 double const kScrollSpeedPixelPerSec = 40;
@@ -11,7 +13,7 @@ int const kTimerHz = 32;
 
 AboutComponent::AboutComponent() {
   fHeaderLines = {
-      String("Version: ") + String::fromUTF8(ProjectInfo::versionString),
+      String("Version: ") + String::fromUTF8(JUCE_APPLICATION_VERSION_STRING),
   };
   fLines = {
       "",
@@ -127,8 +129,7 @@ void AboutComponent::paint(Graphics &g) {
 
   y = margin;
 
-  g.setColour(
-      getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
+  g.setColour(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));
   g.fillRect(0, 0, width, kHeaderHeight);
 
   {
@@ -141,7 +142,7 @@ void AboutComponent::paint(Graphics &g) {
     int const titleHeight = 40;
     g.setFont(titleHeight);
     g.setColour(Colours::white);
-    g.drawText(ProjectInfo::projectName, margin, y, width - 2 * margin,
+    g.drawText(JUCE_APPLICATION_NAME_STRING, margin, y, width - 2 * margin,
                titleHeight, Justification::centred);
     y += titleHeight + margin;
   }

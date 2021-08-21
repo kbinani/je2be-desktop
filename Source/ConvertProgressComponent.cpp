@@ -2,7 +2,9 @@
 #include "CommandID.h"
 #include "Constants.h"
 #include "TemporaryDirectory.h"
-#include <JuceHeader.h>
+#include <je2be.hpp>
+
+using namespace juce;
 
 class ConvertProgressComponent::Updater : public AsyncUpdater {
   struct Entry {
