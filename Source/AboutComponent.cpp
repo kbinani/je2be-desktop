@@ -64,7 +64,7 @@ AboutComponent::AboutComponent() {
 
       "zlib",
       "https://github.com/madler/zlib",
-      "https://github.com/commontk/zlib",
+      "https://github.com/zlib-ng/zlib-ng",
       "",
 
       "thread-pool",
