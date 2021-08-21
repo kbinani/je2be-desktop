@@ -1,10 +1,10 @@
 #pragma once
 
 #include "ComponentState.h"
-#include <JuceHeader.h>
+#include <optional>
 
 class CopyProgressComponent : public juce::Component,
-                              public AsyncUpdater,
+                              public juce::AsyncUpdater,
                               public ConvertStateProvider {
 public:
   explicit CopyProgressComponent(ChooseOutputState const &chooseOutputState);
@@ -16,7 +16,7 @@ public:
 
   ConvertState getConvertState() const override { return fState.fConvertState; }
 
-  class Worker : public Thread {
+  class Worker : public juce::Thread {
   public:
     enum class Result {
       Success,
@@ -24,7 +24,7 @@ public:
       Failed,
     };
 
-    Worker(String const &name) : Thread(name) {}
+    Worker(juce::String const &name) : Thread(name) {}
     virtual ~Worker() {}
 
     virtual std::optional<Result> result() const = 0;
@@ -33,8 +33,8 @@ public:
 private:
   ChooseOutputState fState;
   std::unique_ptr<Worker> fCopyThread;
-  std::unique_ptr<Label> fLabel;
-  std::unique_ptr<ProgressBar> fProgressBar;
+  std::unique_ptr<juce::Label> fLabel;
+  std::unique_ptr<juce::ProgressBar> fProgressBar;
   double fProgress = -1;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CopyProgressComponent)

@@ -1,20 +1,21 @@
 #pragma once
 
-#include <JuceHeader.h>
+#include <juce_gui_extra/juce_gui_extra.h>
 
 class LocalizationHelper {
 public:
-  static LocalisedStrings *CurrentLocalisedStrings();
+  static juce::LocalisedStrings *CurrentLocalisedStrings();
 
 private:
-  static LocalisedStrings *LoadLocalisedStrings(char const *data, int size) {
+  static juce::LocalisedStrings *LoadLocalisedStrings(char const *data,
+                                                      int size) {
     std::vector<char> d(size + 1);
     std::copy_n(data, size, d.begin());
-    String t = String::fromUTF8(d.data());
-    return new LocalisedStrings(t, false);
+    juce::String t = juce::String::fromUTF8(d.data());
+    return new juce::LocalisedStrings(t, false);
   }
 
-  static LocalisedStrings *Japanese();
+  static juce::LocalisedStrings *Japanese();
 
   LocalizationHelper() = delete;
 };

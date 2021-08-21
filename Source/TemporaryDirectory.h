@@ -1,11 +1,11 @@
 #pragma once
 
-#include "JuceHeader.h"
+#include <juce_gui_extra/juce_gui_extra.h>
 
 class TemporaryDirectory {
 public:
-  static File EnsureExisting() {
-    File current = Get();
+  static juce::File EnsureExisting() {
+    juce::File current = Get();
     if (current.exists()) {
       return current;
     }
@@ -14,14 +14,14 @@ public:
   }
 
   static void CleanupAsync() {
-    File current = Get();
-    File root = AppTempRootDir();
+    juce::File current = Get();
+    juce::File root = AppTempRootDir();
 
     std::thread th(
-        [](File root, File current) {
-          for (auto it : RangedDirectoryIterator(
-                   root, false, "*", File::findFilesAndDirectories)) {
-            File file = it.getFile();
+        [](juce::File root, juce::File current) {
+          for (auto it : juce::RangedDirectoryIterator(
+                   root, false, "*", juce::File::findFilesAndDirectories)) {
+            juce::File file = it.getFile();
             if (file == current)
               continue;
             file.deleteRecursively();
@@ -32,18 +32,19 @@ public:
   }
 
 private:
-  static File Get() {
-    static File const t(Create());
+  static juce::File Get() {
+    static juce::File const t(Create());
     return t;
   }
 
-  static File AppTempRootDir() {
-    File systemTemp = File::getSpecialLocation(File::tempDirectory);
+  static juce::File AppTempRootDir() {
+    juce::File systemTemp =
+        juce::File::getSpecialLocation(juce::File::tempDirectory);
     return systemTemp.getChildFile("je2be");
   }
 
-  static File Create() {
-    Uuid u;
+  static juce::File Create() {
+    juce::Uuid u;
     return AppTempRootDir().getChildFile(u.toDashedString());
   }
 

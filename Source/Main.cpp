@@ -7,17 +7,18 @@
 #include "CopyProgressComponent.h"
 #include "LocalizationHelper.h"
 #include "TemporaryDirectory.h"
-#include <JuceHeader.h>
+
+using namespace juce;
 
 class je2beApplication : public juce::JUCEApplication {
 public:
   je2beApplication() {}
 
   const juce::String getApplicationName() override {
-    return ProjectInfo::projectName;
+    return JUCE_APPLICATION_NAME_STRING;
   }
   const juce::String getApplicationVersion() override {
-    return ProjectInfo::versionString;
+    return JUCE_APPLICATION_VERSION_STRING;
   }
   bool moreThanOneInstanceAllowed() override { return true; }
 

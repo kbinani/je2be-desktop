@@ -2,7 +2,8 @@
 #include "AboutComponent.h"
 #include "CommandID.h"
 #include "Constants.h"
-#include <JuceHeader.h>
+
+using namespace juce;
 
 ChooseInputComponent::ChooseInputComponent(
     std::optional<ChooseInputState> state)

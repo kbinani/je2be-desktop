@@ -1,7 +1,8 @@
 #include "ChooseOutputComponent.h"
 #include "CommandID.h"
 #include "Constants.h"
-#include <JuceHeader.h>
+
+using namespace juce;
 
 static File BedrockSaveDirectory() {
   return File::getSpecialLocation(File::userApplicationDataDirectory)

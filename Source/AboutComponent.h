@@ -1,19 +1,19 @@
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include <juce_gui_extra/juce_gui_extra.h>
 
-class AboutComponent : public Component, public Timer {
+class AboutComponent : public juce::Component, public juce::Timer {
 public:
   AboutComponent();
-  void paint(Graphics &g) override;
+  void paint(juce::Graphics &g) override;
 
   void timerCallback() override;
-  void mouseDown(MouseEvent const &) override;
+  void mouseDown(juce::MouseEvent const &) override;
 
 private:
-  std::unique_ptr<Drawable> fLogo;
-  std::vector<String> fHeaderLines;
-  std::vector<String> fLines;
+  std::unique_ptr<juce::Drawable> fLogo;
+  std::vector<juce::String> fHeaderLines;
+  std::vector<juce::String> fLines;
   std::chrono::high_resolution_clock::duration fScrollDuration;
   bool fScrolling = true;
   std::chrono::high_resolution_clock::time_point fLastTick;

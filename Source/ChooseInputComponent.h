@@ -1,12 +1,12 @@
 #pragma once
 
 #include "ComponentState.h"
-#include <JuceHeader.h>
+#include <optional>
 
 class ChooseInputComponent : public juce::Component,
                              public ChooseInputStateProvider,
-                             public FileBrowserListener,
-                             public ChangeListener {
+                             public juce::FileBrowserListener,
+                             public juce::ChangeListener {
 public:
   explicit ChooseInputComponent(std::optional<ChooseInputState> state);
   ~ChooseInputComponent() override;
@@ -16,11 +16,11 @@ public:
   ChooseInputState getChooseInputState() const override { return fState; }
 
   void selectionChanged() override;
-  void fileClicked(const File &file, const MouseEvent &e) override;
-  void fileDoubleClicked(const File &file) override;
-  void browserRootChanged(const File &newRoot) override;
+  void fileClicked(const juce::File &file, const juce::MouseEvent &e) override;
+  void fileDoubleClicked(const juce::File &file) override;
+  void browserRootChanged(const juce::File &newRoot) override;
 
-  void changeListenerCallback(ChangeBroadcaster *source) override;
+  void changeListenerCallback(juce::ChangeBroadcaster *source) override;
 
 private:
   void onNextButtonClicked();
@@ -28,15 +28,15 @@ private:
   void onAboutButtonClicked();
 
 private:
-  std::unique_ptr<TextButton> fNextButton;
-  std::unique_ptr<TextButton> fChooseCustomButton;
-  std::unique_ptr<FileListComponent> fListComponent;
-  std::unique_ptr<DirectoryContentsList> fList;
-  TimeSliceThread fListThread;
+  std::unique_ptr<juce::TextButton> fNextButton;
+  std::unique_ptr<juce::TextButton> fChooseCustomButton;
+  std::unique_ptr<juce::FileListComponent> fListComponent;
+  std::unique_ptr<juce::DirectoryContentsList> fList;
+  juce::TimeSliceThread fListThread;
   ChooseInputState fState;
-  std::unique_ptr<Label> fMessage;
-  std::optional<File> fInitialSelection;
-  std::unique_ptr<TextButton> fAboutButton;
+  std::unique_ptr<juce::Label> fMessage;
+  std::optional<juce::File> fInitialSelection;
+  std::unique_ptr<juce::TextButton> fAboutButton;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChooseInputComponent)
 };
