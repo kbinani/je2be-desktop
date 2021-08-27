@@ -60,8 +60,8 @@ public:
 
   void run() override {
     using namespace j2b;
-    Converter c(fInput.getFullPathName().toStdString(), fInputOption,
-                fOutput.getFullPathName().toStdString(), fOutputOption);
+    Converter c(fInput.getFullPathName().toWideCharPointer(), fInputOption,
+                fOutput.getFullPathName().toWideCharPointer(), fOutputOption);
     try {
       auto stat = c.run(std::thread::hardware_concurrency(), this);
       if (stat) {
