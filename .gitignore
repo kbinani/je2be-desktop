@@ -1,5 +1,3 @@
 /Builds
-/JuceLibraryCode
 *.wapproj.user
 *.pfx
-/build
