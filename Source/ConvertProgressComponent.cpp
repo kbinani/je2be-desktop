@@ -60,8 +60,19 @@ public:
 
   void run() override {
     using namespace j2b;
-    Converter c(fInput.getFullPathName().toWideCharPointer(), fInputOption,
-                fOutput.getFullPathName().toWideCharPointer(), fOutputOption);
+    Converter c(
+#if defined(_WIN32)
+        std::filesystem::path(fInput.getFullPathName().toWideCharPointer()),
+        fInputOption,
+        std::filesystem::path(fOutput.getFullPathName().toWideCharPointer()),
+        fOutputOption
+#else
+        std::filesystem::path(fInput.getFullPathName().toStdString()),
+        fInputOption,
+        std::filesystem::path(fOutput.getFullPathName().toStdString()),
+        fOutputOption
+#endif
+    );
     try {
       auto stat = c.run(std::thread::hardware_concurrency(), this);
       if (stat) {
