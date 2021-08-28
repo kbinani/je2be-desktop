@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(je2be-gui VERSION 2.3.0)
+project(je2be-gui VERSION 2.4.0)
 
 add_subdirectory(ext/je2be)
 add_subdirectory(ext/JUCE)
