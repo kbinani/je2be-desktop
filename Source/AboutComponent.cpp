@@ -52,6 +52,7 @@ AboutComponent::AboutComponent() {
       "LevelDB",
       "https://github.com/google/leveldb",
       "https://github.com/pmmp/leveldb",
+      "https://github.com/kbinani/leveldb-stdfs",
       "",
 
       "xxHash",
