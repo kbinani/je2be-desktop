@@ -41,6 +41,9 @@ target_compile_definitions(je2be-gui
     JUCE_APPLICATION_VERSION_STRING="$<TARGET_PROPERTY:je2be-gui,JUCE_VERSION>"
     JUCE_DISPLAY_SPLASH_SCREEN=0)
 
+target_compile_options(je2be-gui PRIVATE $<$<CONFIG:Release>:/Zi>)
+target_link_options(je2be-gui PRIVATE $<$<CONFIG:Release>:/DEBUG>)
+
 juce_add_binary_data(app-data
   SOURCES
     Resource/icon-large.png
