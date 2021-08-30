@@ -13,8 +13,14 @@ public:
 
   void paint(juce::Graphics &) override;
 
-  ConfigState getConfigState() const override { return fState.fConfigState; }
-  ConvertState getConvertState() const override { return fState; }
+  ConfigState getConfigState() const override {
+    return fState.fConfigState;
+  }
+
+  ConvertState getConvertState() const override {
+    return fState;
+  }
+
   ChooseInputState getChooseInputState() const override {
     return fState.fConfigState.fInputState;
   }

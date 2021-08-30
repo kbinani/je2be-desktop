@@ -40,7 +40,9 @@ public:
     }
   }
 
-  void complete(j2b::Statistics stat) { fStat = stat; }
+  void complete(j2b::Statistics stat) {
+    fStat = stat;
+  }
 
   std::atomic<ConvertProgressComponent *> fTarget;
   std::optional<j2b::Statistics> fStat;
@@ -131,16 +133,13 @@ static String DimensionToString(j2b::Dimension dim) {
   return "Unknown";
 }
 
-ConvertProgressComponent::ConvertProgressComponent(
-    ConfigState const &configState)
-    : fState(configState) {
+ConvertProgressComponent::ConvertProgressComponent(ConfigState const &configState) : fState(configState) {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
   setSize(width, height);
 
   fCancelButton.reset(new TextButton(TRANS("Cancel")));
-  fCancelButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight,
-                           kButtonMinWidth, kButtonBaseHeight);
+  fCancelButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight, kButtonMinWidth, kButtonBaseHeight);
   fCancelButton->setMouseCursor(MouseCursor::PointingHandCursor);
   fCancelButton->onClick = [this]() { onCancelButtonClicked(); };
   addAndMakeVisible(*fCancelButton);
@@ -157,8 +156,7 @@ ConvertProgressComponent::ConvertProgressComponent(
   addAndMakeVisible(*fProgressBar);
 
   fErrorMessage.reset(new TextEditor());
-  fErrorMessage->setBounds(kMargin, y, width - 2 * kMargin,
-                           fCancelButton->getY() - y - kMargin);
+  fErrorMessage->setBounds(kMargin, y, width - 2 * kMargin, fCancelButton->getY() - y - kMargin);
   fErrorMessage->setEnabled(false);
   fErrorMessage->setMultiLine(true);
   addChildComponent(*fErrorMessage);
@@ -173,12 +171,10 @@ ConvertProgressComponent::ConvertProgressComponent(
   fUpdater->fTarget.store(this);
 
   j2b::InputOption io;
-  if (fState.fConfigState.fStructure ==
-      ConfigState::DirectoryStructure::Paper) {
+  if (fState.fConfigState.fStructure == ConfigState::DirectoryStructure::Paper) {
     io.fLevelDirectoryStructure = j2b::LevelDirectoryStructure::Paper;
   }
-  fThread.reset(new WorkerThread(*configState.fInputState.fInputDirectory, io,
-                                 fState.fOutputDirectory, {}, fUpdater));
+  fThread.reset(new WorkerThread(*configState.fInputState.fInputDirectory, io, fState.fOutputDirectory, {}, fUpdater));
   fThread->startThread();
 }
 
@@ -197,16 +193,13 @@ void ConvertProgressComponent::onCancelButtonClicked() {
     fCommandWhenFinished = gui::toConfig;
     fThread->signalThreadShouldExit();
     fProgress = -1;
-    fLabel->setText(TRANS("Waiting for the worker thread to finish"),
-                    dontSendNotification);
+    fLabel->setText(TRANS("Waiting for the worker thread to finish"), dontSendNotification);
   }
 }
 
-void ConvertProgressComponent::onProgressUpdate(int phase, double done,
-                                                double total) {
+void ConvertProgressComponent::onProgressUpdate(int phase, double done, double total) {
   if (phase == 2) {
-    if (fCommandWhenFinished != gui::toChooseOutput &&
-        fState.fOutputDirectory.exists()) {
+    if (fCommandWhenFinished != gui::toChooseOutput && fState.fOutputDirectory.exists()) {
       fState.fOutputDirectory.deleteRecursively();
     }
     auto stat = fUpdater->fStat;

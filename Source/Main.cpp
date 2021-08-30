@@ -17,39 +17,41 @@ public:
   const juce::String getApplicationName() override {
     return JUCE_APPLICATION_NAME_STRING;
   }
+
   const juce::String getApplicationVersion() override {
     return JUCE_APPLICATION_VERSION_STRING;
   }
-  bool moreThanOneInstanceAllowed() override { return true; }
+
+  bool moreThanOneInstanceAllowed() override {
+    return true;
+  }
 
   void initialise(const juce::String &commandLine) override {
     String typeFaceName = "Meiryo UI";
-    Desktop::getInstance()
-        .getDefaultLookAndFeel()
-        .setDefaultSansSerifTypefaceName(typeFaceName);
+    Desktop::getInstance().getDefaultLookAndFeel().setDefaultSansSerifTypefaceName(typeFaceName);
 
-    LocalisedStrings::setCurrentMappings(
-        LocalizationHelper::CurrentLocalisedStrings());
+    LocalisedStrings::setCurrentMappings(LocalizationHelper::CurrentLocalisedStrings());
 
     TemporaryDirectory::CleanupAsync();
 
     mainWindow.reset(new MainWindow(getApplicationName()));
   }
 
-  void shutdown() override { mainWindow = nullptr; }
+  void shutdown() override {
+    mainWindow = nullptr;
+  }
 
-  void systemRequestedQuit() override { quit(); }
+  void systemRequestedQuit() override {
+    quit();
+  }
 
   void getAllCommands(Array<CommandID> &commands) override {
     JUCEApplication::getAllCommands(commands);
-    commands.addArray({gui::toConfig, gui::toChooseInput, gui::toConvert,
-                       gui::toChooseOutput, gui::toCopy});
+    commands.addArray({gui::toConfig, gui::toChooseInput, gui::toConvert, gui::toChooseOutput, gui::toCopy});
   }
 
-  void getCommandInfo(CommandID commandID,
-                      ApplicationCommandInfo &result) override {
-    result.setInfo("", "", "",
-                   ApplicationCommandInfo::CommandFlags::hiddenFromKeyEditor);
+  void getCommandInfo(CommandID commandID, ApplicationCommandInfo &result) override {
+    result.setInfo("", "", "", ApplicationCommandInfo::CommandFlags::hiddenFromKeyEditor);
   }
 
   bool perform(InvocationInfo const &info) override {
@@ -57,8 +59,9 @@ public:
     switch (info.commandID) {
     case gui::toConfig: {
       auto provider = dynamic_cast<ChooseInputStateProvider *>(current);
-      if (!provider)
+      if (!provider) {
         return false;
+      }
       auto config = new ConfigComponent(provider->getChooseInputState());
       mainWindow->setContentOwned(config, true);
       return true;
@@ -75,25 +78,27 @@ public:
     }
     case gui::toConvert: {
       auto provider = dynamic_cast<ConfigStateProvider *>(current);
-      if (!provider)
+      if (!provider) {
         return false;
+      }
       auto convert = new ConvertProgressComponent(provider->getConfigState());
       mainWindow->setContentOwned(convert, true);
       return true;
     }
     case gui::toChooseOutput: {
       auto provider = dynamic_cast<ConvertStateProvider *>(current);
-      if (!provider)
+      if (!provider) {
         return false;
-      auto chooseOutput =
-          new ChooseOutputComponent(provider->getConvertState());
+      }
+      auto chooseOutput = new ChooseOutputComponent(provider->getConvertState());
       mainWindow->setContentOwned(chooseOutput, true);
       return true;
     }
     case gui::toCopy: {
       auto provider = dynamic_cast<ChooseOutputStateProvider *>(current);
-      if (!provider)
+      if (!provider) {
         return false;
+      }
       auto copy = new CopyProgressComponent(provider->getChooseOutputState());
       mainWindow->setContentOwned(copy, true);
       return true;

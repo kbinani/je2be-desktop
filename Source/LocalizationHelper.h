@@ -7,8 +7,7 @@ public:
   static juce::LocalisedStrings *CurrentLocalisedStrings();
 
 private:
-  static juce::LocalisedStrings *LoadLocalisedStrings(char const *data,
-                                                      int size) {
+  static juce::LocalisedStrings *LoadLocalisedStrings(char const *data, int size) {
     std::vector<char> d(size + 1);
     std::copy_n(data, size, d.begin());
     juce::String t = juce::String::fromUTF8(d.data());

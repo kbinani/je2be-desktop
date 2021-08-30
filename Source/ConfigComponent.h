@@ -15,7 +15,10 @@ public:
   ChooseInputState getChooseInputState() const override {
     return fState.fInputState;
   }
-  ConfigState getConfigState() const override { return fState; }
+
+  ConfigState getConfigState() const override {
+    return fState;
+  }
 
   void timerCallback() override;
 

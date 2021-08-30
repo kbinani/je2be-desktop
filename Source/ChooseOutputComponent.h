@@ -11,7 +11,10 @@ public:
 
   void paint(juce::Graphics &) override;
 
-  ChooseOutputState getChooseOutputState() const override { return fState; }
+  ChooseOutputState getChooseOutputState() const override {
+    return fState;
+  }
+
   ChooseInputState getChooseInputState() const override {
     return fState.fConvertState.fConfigState.fInputState;
   }

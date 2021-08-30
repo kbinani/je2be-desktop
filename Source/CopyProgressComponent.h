@@ -14,7 +14,9 @@ public:
 
   void handleAsyncUpdate() override;
 
-  ConvertState getConvertState() const override { return fState.fConvertState; }
+  ConvertState getConvertState() const override {
+    return fState.fConvertState;
+  }
 
   class Worker : public juce::Thread {
   public:

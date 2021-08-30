@@ -83,8 +83,7 @@ AboutComponent::AboutComponent() {
       "https://github.com/kbinani/libminecraft-file",
       "",
   };
-  fLogo = Drawable::createFromImageData(BinaryData::iconlarge_png,
-                                        BinaryData::iconlarge_pngSize);
+  fLogo = Drawable::createFromImageData(BinaryData::iconlarge_png, BinaryData::iconlarge_pngSize);
   setSize(400, 500);
   fLastTick = std::chrono::high_resolution_clock::now();
   fScrollDuration = std::chrono::high_resolution_clock::duration(0);
@@ -108,9 +107,7 @@ void AboutComponent::paint(Graphics &g) {
   int const height = getHeight();
 
   float scroll = 0;
-  auto sec =
-      std::chrono::duration_cast<std::chrono::duration<double>>(fScrollDuration)
-          .count();
+  auto sec = std::chrono::duration_cast<std::chrono::duration<double>>(fScrollDuration).count();
   if (sec <= kSteadySeconds) {
     scroll = 0;
   } else {
@@ -120,14 +117,11 @@ void AboutComponent::paint(Graphics &g) {
   g.setColour(Colours::white);
   int fontSize = kLineHeight;
   g.setFont(fontSize);
-  float scrollHeight =
-      kLineHeight * (int)fLines.size() + (height - kHeaderHeight);
+  float scrollHeight = kLineHeight * (int)fLines.size() + (height - kHeaderHeight);
   for (auto const &line : fLines) {
     float pos = y - kHeaderHeight - scroll;
-    int vPos = fmod(fmod(pos, scrollHeight) + scrollHeight, scrollHeight) +
-               kHeaderHeight;
-    g.drawSingleLineText(line, width / 2, vPos,
-                         Justification::horizontallyCentred);
+    int vPos = fmod(fmod(pos, scrollHeight) + scrollHeight, scrollHeight) + kHeaderHeight;
+    g.drawSingleLineText(line, width / 2, vPos, Justification::horizontallyCentred);
     y += kLineHeight;
   }
 
@@ -146,15 +140,13 @@ void AboutComponent::paint(Graphics &g) {
     int const titleHeight = 40;
     g.setFont(titleHeight);
     g.setColour(Colours::white);
-    g.drawText(JUCE_APPLICATION_NAME_STRING, margin, y, width - 2 * margin,
-               titleHeight, Justification::centred);
+    g.drawText(JUCE_APPLICATION_NAME_STRING, margin, y, width - 2 * margin, titleHeight, Justification::centred);
     y += titleHeight + margin;
   }
   g.setFont(fontSize);
   g.setColour(Colours::white);
   for (auto const &line : fHeaderLines) {
-    g.drawSingleLineText(line, width / 2, y,
-                         Justification::horizontallyCentred);
+    g.drawSingleLineText(line, width / 2, y, Justification::horizontallyCentred);
     y += kLineHeight;
   }
 }
@@ -163,9 +155,7 @@ void AboutComponent::mouseDown(MouseEvent const &e) {
   if (!e.mods.isLeftButtonDown()) {
     return;
   }
-  auto sec =
-      std::chrono::duration_cast<std::chrono::duration<double>>(fScrollDuration)
-          .count();
+  auto sec = std::chrono::duration_cast<std::chrono::duration<double>>(fScrollDuration).count();
   if (sec <= kSteadySeconds) {
     fScrolling = true;
   } else {

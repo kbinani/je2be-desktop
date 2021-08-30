@@ -7,8 +7,7 @@ using namespace juce;
 
 File ChooseInputComponent::sLastDirectory;
 
-ChooseInputComponent::ChooseInputComponent(
-    std::optional<ChooseInputState> state)
+ChooseInputComponent::ChooseInputComponent(std::optional<ChooseInputState> state)
     : fListThread("j2b::gui::ChooseInputComponent") {
   if (state) {
     fState = *state;
@@ -20,40 +19,30 @@ ChooseInputComponent::ChooseInputComponent(
 
   setSize(width, height);
   {
-    fMessage.reset(
-        new Label("", TRANS("Select the world you want to convert")));
-    fMessage->setBounds(
-        kMargin, kMargin, width - kMargin - fileListWidth - kMargin - kMargin,
-        height - kMargin - kButtonBaseHeight - kMargin - kMargin);
+    fMessage.reset(new Label("", TRANS("Select the world you want to convert")));
+    fMessage->setBounds(kMargin, kMargin, width - kMargin - fileListWidth - kMargin - kMargin, height - kMargin - kButtonBaseHeight - kMargin - kMargin);
     fMessage->setJustificationType(Justification::topLeft);
     fMessage->setMinimumHorizontalScale(1);
     addAndMakeVisible(*fMessage);
   }
   {
     fAboutButton.reset(new TextButton("About"));
-    fAboutButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight,
-                            kButtonMinWidth, kButtonBaseHeight);
+    fAboutButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight, kButtonMinWidth, kButtonBaseHeight);
     fAboutButton->setMouseCursor(MouseCursor::PointingHandCursor);
     fAboutButton->onClick = [this]() { onAboutButtonClicked(); };
     addAndMakeVisible(*fAboutButton);
   }
   {
     fNextButton.reset(new TextButton(TRANS("Next")));
-    fNextButton->setBounds(width - kButtonMinWidth - kMargin,
-                           height - kButtonBaseHeight - kMargin,
-                           kButtonMinWidth, kButtonBaseHeight);
+    fNextButton->setBounds(width - kButtonMinWidth - kMargin, height - kButtonBaseHeight - kMargin, kButtonMinWidth, kButtonBaseHeight);
     fNextButton->onClick = [this]() { onNextButtonClicked(); };
     fNextButton->setEnabled(false);
     addAndMakeVisible(*fNextButton);
   }
   {
-
     auto w = 140;
-    fChooseCustomButton.reset(
-        new TextButton(TRANS("Select from other directories")));
-    fChooseCustomButton->setBounds(width - kMargin - fileListWidth,
-                                   height - kButtonBaseHeight - kMargin, w,
-                                   kButtonBaseHeight);
+    fChooseCustomButton.reset(new TextButton(TRANS("Select from other directories")));
+    fChooseCustomButton->setBounds(width - kMargin - fileListWidth, height - kButtonBaseHeight - kMargin, w, kButtonBaseHeight);
     fChooseCustomButton->setMouseCursor(MouseCursor::PointingHandCursor);
     fChooseCustomButton->onClick = [this]() { onChooseCustomButtonClicked(); };
     addAndMakeVisible(*fChooseCustomButton);
@@ -62,23 +51,18 @@ ChooseInputComponent::ChooseInputComponent(
   fListThread.startThread();
   fList.reset(new DirectoryContentsList(nullptr, fListThread));
 
-  File dir = File::getSpecialLocation(File::userApplicationDataDirectory)
-                 .getChildFile(".minecraft")
-                 .getChildFile("saves");
+  File dir = File::getSpecialLocation(File::userApplicationDataDirectory).getChildFile(".minecraft").getChildFile("saves");
   fList->setDirectory(dir, true, false);
   fList->addChangeListener(this);
 
   {
     fListComponent.reset(new FileListComponent(*fList));
-    fListComponent->setBounds(width - kMargin - fileListWidth, kMargin,
-                              fileListWidth,
-                              height - 3 * kMargin - kButtonBaseHeight);
+    fListComponent->setBounds(width - kMargin - fileListWidth, kMargin, fileListWidth, height - 3 * kMargin - kButtonBaseHeight);
     fListComponent->addListener(this);
     addAndMakeVisible(*fListComponent);
   }
 
-  if (state && state->fInputDirectory &&
-      state->fInputDirectory->getParentDirectory() == dir) {
+  if (state && state->fInputDirectory && state->fInputDirectory->getParentDirectory() == dir) {
     fInitialSelection = state->fInputDirectory;
   }
 }
@@ -114,17 +98,12 @@ void ChooseInputComponent::onChooseCustomButtonClicked() {
   fInitialSelection = std::nullopt;
   fList->removeChangeListener(this);
 
-  int flags = FileBrowserComponent::openMode |
-              FileBrowserComponent::canSelectDirectories;
-  fFileChooser.reset(new FileChooser(
-      TRANS("Select save data folder of Minecraft"), sLastDirectory, ""));
-  fFileChooser->launchAsync(flags, [this](FileChooser const &chooser) {
-    onCustomDirectorySelected(chooser);
-  });
+  int flags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectDirectories;
+  fFileChooser.reset(new FileChooser(TRANS("Select save data folder of Minecraft"), sLastDirectory, ""));
+  fFileChooser->launchAsync(flags, [this](FileChooser const &chooser) { onCustomDirectorySelected(chooser); });
 }
 
-void ChooseInputComponent::onCustomDirectorySelected(
-    juce::FileChooser const &chooser) {
+void ChooseInputComponent::onCustomDirectorySelected(juce::FileChooser const &chooser) {
   File result = chooser.getResult();
   if (result == File()) {
     return;
@@ -165,7 +144,6 @@ void ChooseInputComponent::onAboutButtonClicked() {
   options.useNativeTitleBar = true;
   options.escapeKeyTriggersCloseButton = true;
   options.resizable = false;
-  options.dialogBackgroundColour =
-      getLookAndFeel().findColour(ResizableWindow::backgroundColourId);
+  options.dialogBackgroundColour = getLookAndFeel().findColour(ResizableWindow::backgroundColourId);
   options.launchAsync();
 }

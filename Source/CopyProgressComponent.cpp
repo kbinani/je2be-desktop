@@ -114,8 +114,7 @@ private:
   double *const fProgress;
 };
 
-CopyProgressComponent::CopyProgressComponent(ChooseOutputState const &state)
-    : fState(state) {
+CopyProgressComponent::CopyProgressComponent(ChooseOutputState const &state) : fState(state) {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
   setSize(width, height);
@@ -126,16 +125,13 @@ CopyProgressComponent::CopyProgressComponent(ChooseOutputState const &state)
   addAndMakeVisible(*fLabel);
 
   fProgressBar.reset(new ProgressBar(fProgress));
-  fProgressBar->setBounds(kMargin, kMargin + kButtonBaseHeight + kMargin,
-                          width - 2 * kMargin, kButtonBaseHeight);
+  fProgressBar->setBounds(kMargin, kMargin + kButtonBaseHeight + kMargin, width - 2 * kMargin, kButtonBaseHeight);
   addAndMakeVisible(*fProgressBar);
 
   if (state.fFormat == OutputFormat::Directory) {
-    fCopyThread.reset(new CopyThread(this, state.fConvertState.fOutputDirectory,
-                                     *state.fCopyDestination, &fProgress));
+    fCopyThread.reset(new CopyThread(this, state.fConvertState.fOutputDirectory, *state.fCopyDestination, &fProgress));
   } else {
-    fCopyThread.reset(new ZipThread(this, state.fConvertState.fOutputDirectory,
-                                    *state.fCopyDestination, &fProgress));
+    fCopyThread.reset(new ZipThread(this, state.fConvertState.fOutputDirectory, *state.fCopyDestination, &fProgress));
   }
   fCopyThread->startThread();
 }
@@ -145,7 +141,6 @@ CopyProgressComponent::~CopyProgressComponent() {}
 void CopyProgressComponent::paint(juce::Graphics &g) {}
 
 void CopyProgressComponent::handleAsyncUpdate() {
-
   struct InvokeToChooseOutput : public ModalComponentManager::Callback {
     void modalStateFinished(int returnValue) override {
       JUCEApplication::getInstance()->invoke(gui::toChooseOutput, true);
@@ -160,18 +155,12 @@ void CopyProgressComponent::handleAsyncUpdate() {
 
   auto result = fCopyThread->result();
   if (!result || *result == CopyProgressComponent::Worker::Result::Failed) {
-    NativeMessageBox::showMessageBoxAsync(
-        AlertWindow::AlertIconType::WarningIcon, TRANS("Failed"),
-        TRANS("Saving failed."), nullptr, new InvokeToChooseOutput);
+    NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::WarningIcon, TRANS("Failed"), TRANS("Saving failed."), nullptr, new InvokeToChooseOutput);
   } else if (*result == CopyProgressComponent::Worker::Result::Cancelled) {
-    NativeMessageBox::showMessageBoxAsync(
-        AlertWindow::AlertIconType::InfoIcon, TRANS("Cancelled"),
-        TRANS("Saving cancelled."), nullptr, new InvokeToChooseOutput);
+    NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::InfoIcon, TRANS("Cancelled"), TRANS("Saving cancelled."), nullptr, new InvokeToChooseOutput);
     JUCEApplication::getInstance()->invoke(gui::toChooseOutput, true);
   } else {
-    NativeMessageBox::showMessageBoxAsync(
-        AlertWindow::AlertIconType::InfoIcon, TRANS("Completed"),
-        TRANS("Saving completed."), nullptr, new InvokeToChooseInput);
+    NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::InfoIcon, TRANS("Completed"), TRANS("Saving completed."), nullptr, new InvokeToChooseInput);
     if (fState.fConvertState.fOutputDirectory.exists()) {
       fState.fConvertState.fOutputDirectory.deleteRecursively();
     }

@@ -13,7 +13,9 @@ public:
 
   void paint(juce::Graphics &) override;
 
-  ChooseInputState getChooseInputState() const override { return fState; }
+  ChooseInputState getChooseInputState() const override {
+    return fState;
+  }
 
   void selectionChanged() override;
   void fileClicked(const juce::File &file, const juce::MouseEvent &e) override;

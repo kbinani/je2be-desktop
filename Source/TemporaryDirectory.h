@@ -19,8 +19,7 @@ public:
 
     std::thread th(
         [](juce::File root, juce::File current) {
-          for (auto it : juce::RangedDirectoryIterator(
-                   root, false, "*", juce::File::findFilesAndDirectories)) {
+          for (auto it : juce::RangedDirectoryIterator(root, false, "*", juce::File::findFilesAndDirectories)) {
             juce::File file = it.getFile();
             if (file == current)
               continue;
@@ -38,8 +37,7 @@ private:
   }
 
   static juce::File AppTempRootDir() {
-    juce::File systemTemp =
-        juce::File::getSpecialLocation(juce::File::tempDirectory);
+    juce::File systemTemp = juce::File::getSpecialLocation(juce::File::tempDirectory);
     return systemTemp.getChildFile("je2be");
   }
 

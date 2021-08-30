@@ -45,8 +45,7 @@ public:
 
 class ConvertState {
 public:
-  explicit ConvertState(ConfigState const &configState)
-      : fConfigState(configState) {}
+  explicit ConvertState(ConfigState const &configState) : fConfigState(configState) {}
   ConfigState const fConfigState;
   juce::File fOutputDirectory;
   ConvertStatistics fStat;
@@ -67,6 +66,7 @@ class ChooseOutputState {
 public:
   explicit ChooseOutputState(ConvertState const &convertState)
       : fConvertState(convertState), fFormat(OutputFormat::Directory) {}
+
   ConvertState const fConvertState;
   OutputFormat fFormat;
   std::optional<juce::File> fCopyDestination;
