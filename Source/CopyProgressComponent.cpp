@@ -146,23 +146,34 @@ void CopyProgressComponent::paint(juce::Graphics &g) {}
 
 void CopyProgressComponent::handleAsyncUpdate() {
 
+  struct InvokeToChooseOutput : public ModalComponentManager::Callback {
+    void modalStateFinished(int returnValue) override {
+      JUCEApplication::getInstance()->invoke(gui::toChooseOutput, true);
+    }
+  };
+
+  struct InvokeToChooseInput : public ModalComponentManager::Callback {
+    void modalStateFinished(int returnValue) override {
+      JUCEApplication::getInstance()->invoke(gui::toChooseInput, true);
+    }
+  };
+
   auto result = fCopyThread->result();
   if (!result || *result == CopyProgressComponent::Worker::Result::Failed) {
-    NativeMessageBox::showMessageBox(AlertWindow::AlertIconType::WarningIcon,
-                                     TRANS("Failed"), TRANS("Saving failed."));
-    JUCEApplication::getInstance()->invoke(gui::toChooseOutput, true);
+    NativeMessageBox::showMessageBoxAsync(
+        AlertWindow::AlertIconType::WarningIcon, TRANS("Failed"),
+        TRANS("Saving failed."), nullptr, new InvokeToChooseOutput);
   } else if (*result == CopyProgressComponent::Worker::Result::Cancelled) {
-    NativeMessageBox::showMessageBox(AlertWindow::AlertIconType::InfoIcon,
-                                     TRANS("Cancelled"),
-                                     TRANS("Saving cancelled."));
+    NativeMessageBox::showMessageBoxAsync(
+        AlertWindow::AlertIconType::InfoIcon, TRANS("Cancelled"),
+        TRANS("Saving cancelled."), nullptr, new InvokeToChooseOutput);
     JUCEApplication::getInstance()->invoke(gui::toChooseOutput, true);
   } else {
-    NativeMessageBox::showMessageBox(AlertWindow::AlertIconType::InfoIcon,
-                                     TRANS("Completed"),
-                                     TRANS("Saving completed."));
+    NativeMessageBox::showMessageBoxAsync(
+        AlertWindow::AlertIconType::InfoIcon, TRANS("Completed"),
+        TRANS("Saving completed."), nullptr, new InvokeToChooseInput);
     if (fState.fConvertState.fOutputDirectory.exists()) {
       fState.fConvertState.fOutputDirectory.deleteRecursively();
     }
-    JUCEApplication::getInstance()->invoke(gui::toChooseInput, true);
   }
 }

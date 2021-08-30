@@ -5,6 +5,8 @@
 
 using namespace juce;
 
+File ChooseInputComponent::sLastDirectory;
+
 ChooseInputComponent::ChooseInputComponent(
     std::optional<ChooseInputState> state)
     : fListThread("j2b::gui::ChooseInputComponent") {
@@ -111,15 +113,24 @@ void ChooseInputComponent::onNextButtonClicked() {
 void ChooseInputComponent::onChooseCustomButtonClicked() {
   fInitialSelection = std::nullopt;
   fList->removeChangeListener(this);
-  static File sLast;
 
-  FileChooser chooser(TRANS("Select save data folder of Minecraft"), sLast, "");
-  if (!chooser.browseForDirectory()) {
+  int flags = FileBrowserComponent::openMode |
+              FileBrowserComponent::canSelectDirectories;
+  fFileChooser.reset(new FileChooser(
+      TRANS("Select save data folder of Minecraft"), sLastDirectory, ""));
+  fFileChooser->launchAsync(flags, [this](FileChooser const &chooser) {
+    onCustomDirectorySelected(chooser);
+  });
+}
+
+void ChooseInputComponent::onCustomDirectorySelected(
+    juce::FileChooser const &chooser) {
+  File result = chooser.getResult();
+  if (result == File()) {
     return;
   }
-  File result = chooser.getResult();
   fState.fInputDirectory = result;
-  sLast = result.getParentDirectory();
+  sLastDirectory = result.getParentDirectory();
   JUCEApplication::getInstance()->invoke(gui::toConfig, true);
 }
 
@@ -156,5 +167,5 @@ void ChooseInputComponent::onAboutButtonClicked() {
   options.resizable = false;
   options.dialogBackgroundColour =
       getLookAndFeel().findColour(ResizableWindow::backgroundColourId);
-  options.runModal();
+  options.launchAsync();
 }

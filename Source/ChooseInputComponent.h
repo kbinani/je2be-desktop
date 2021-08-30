@@ -27,7 +27,11 @@ private:
   void onChooseCustomButtonClicked();
   void onAboutButtonClicked();
 
+  void onCustomDirectorySelected(juce::FileChooser const &chooser);
+
 private:
+  static juce::File sLastDirectory;
+
   std::unique_ptr<juce::TextButton> fNextButton;
   std::unique_ptr<juce::TextButton> fChooseCustomButton;
   std::unique_ptr<juce::FileListComponent> fListComponent;
@@ -37,6 +41,7 @@ private:
   std::unique_ptr<juce::Label> fMessage;
   std::optional<juce::File> fInitialSelection;
   std::unique_ptr<juce::TextButton> fAboutButton;
+  std::unique_ptr<juce::FileChooser> fFileChooser;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChooseInputComponent)
 };

@@ -28,6 +28,9 @@ static File DecideDefaultOutputDirectory(ConvertState const &s) {
   return candidate;
 }
 
+File ChooseOutputComponent::sLastCustomDirectory;
+File ChooseOutputComponent::sLastZipFile;
+
 ChooseOutputComponent::ChooseOutputComponent(ConvertState const &convertState)
     : fState(convertState) {
   auto width = kWindowWidth;
@@ -100,17 +103,28 @@ void ChooseOutputComponent::onSaveToDefaultButtonClicked() {
 }
 
 void ChooseOutputComponent::onSaveToCustomButtonClicked() {
-  static File lastDir = BedrockSaveDirectory();
+  if (sLastCustomDirectory == File()) {
+    sLastCustomDirectory = BedrockSaveDirectory();
+  }
 
-  FileChooser chooser(TRANS("Select an empty folder to save in"), lastDir);
-  bool ok = chooser.browseForDirectory();
-  if (!ok) {
+  fFileChooser.reset(new FileChooser(TRANS("Select an empty folder to save in"),
+                                     sLastCustomDirectory));
+  int flags = FileBrowserComponent::openMode |
+              FileBrowserComponent::canSelectDirectories;
+  fFileChooser->launchAsync(flags, [this](FileChooser const &chooser) {
+    onCustomDestinationDirectorySelected(chooser);
+  });
+}
+
+void ChooseOutputComponent::onCustomDestinationDirectorySelected(
+    FileChooser const &chooser) {
+  File dest = chooser.getResult();
+  if (dest == File()) {
     fSaveToCustomDirectory->setToggleState(false, dontSendNotification);
     fState.fCopyDestination = std::nullopt;
     return;
   }
-  File dest = chooser.getResult();
-  lastDir = dest;
+  sLastCustomDirectory = dest;
   RangedDirectoryIterator it(dest, false);
   bool containsSomething = false;
   for (auto const &e : it) {
@@ -120,7 +134,7 @@ void ChooseOutputComponent::onSaveToCustomButtonClicked() {
   if (containsSomething) {
     fSaveToCustomDirectory->setToggleState(false, dontSendNotification);
     fState.fCopyDestination = std::nullopt;
-    NativeMessageBox::showMessageBox(
+    NativeMessageBox::showMessageBoxAsync(
         AlertWindow::AlertIconType::WarningIcon, TRANS("Error"),
         TRANS("There are files and folders in the directory.\rPlease select an "
               "empty folder"));
@@ -132,18 +146,25 @@ void ChooseOutputComponent::onSaveToCustomButtonClicked() {
 }
 
 void ChooseOutputComponent::onSaveAsZipButtonClicked() {
-  static File lastFile;
+  fFileChooser.reset(new FileChooser(TRANS("Choose where to export the file"),
+                                     sLastZipFile, "*.mcworld"));
+  int flags = FileBrowserComponent::saveMode |
+              FileBrowserComponent::canSelectFiles |
+              FileBrowserComponent::warnAboutOverwriting;
+  fFileChooser->launchAsync(flags, [this](FileChooser const &chooser) {
+    onZipDestinationFileSelected(chooser);
+  });
+}
 
-  FileChooser chooser(TRANS("Choose where to export the file"), lastFile,
-                      "*.mcworld");
-  bool ok = chooser.browseForFileToSave(true);
-  if (!ok) {
+void ChooseOutputComponent::onZipDestinationFileSelected(
+    FileChooser const &chooser) {
+  File dest = chooser.getResult();
+  if (dest == File()) {
     fSaveAsZipFile->setToggleState(false, dontSendNotification);
     fState.fCopyDestination = std::nullopt;
     return;
   }
-  File dest = chooser.getResult();
-  lastFile = dest;
+  sLastZipFile = dest;
   fState.fCopyDestination = dest;
   fState.fFormat = OutputFormat::MCWorld;
   JUCEApplication::getInstance()->invoke(gui::toCopy, true);
