@@ -43,7 +43,6 @@ private:
   std::unique_ptr<juce::Label> fMessage;
   std::optional<juce::File> fInitialSelection;
   std::unique_ptr<juce::TextButton> fAboutButton;
-  std::unique_ptr<juce::FileChooser> fFileChooser;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChooseInputComponent)
 };

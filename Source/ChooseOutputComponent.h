@@ -39,7 +39,6 @@ private:
   std::unique_ptr<juce::TextButton> fSaveToCustomDirectory;
   std::unique_ptr<juce::TextButton> fSaveAsZipFile;
   juce::File fDefaultSaveDirectory;
-  std::unique_ptr<juce::FileChooser> fFileChooser;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChooseOutputComponent)
 };

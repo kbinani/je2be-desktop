@@ -31,7 +31,9 @@ target_sources(je2be-gui
     Source/LocalizationHelper.cpp
     Source/LocalizationHelper.h
     Source/Main.cpp
-    Source/TemporaryDirectory.h)
+    Source/TemporaryDirectory.h
+    Source/MainWindow.h
+    Source/MainWindow.cpp)
 
 target_compile_definitions(je2be-gui
   PRIVATE

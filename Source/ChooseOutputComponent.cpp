@@ -1,6 +1,7 @@
 #include "ChooseOutputComponent.h"
 #include "CommandID.h"
 #include "Constants.h"
+#include "MainWindow.h"
 
 using namespace juce;
 
@@ -97,9 +98,9 @@ void ChooseOutputComponent::onSaveToCustomButtonClicked() {
     sLastCustomDirectory = BedrockSaveDirectory();
   }
 
-  fFileChooser.reset(new FileChooser(TRANS("Select an empty folder to save in"), sLastCustomDirectory));
+  MainWindow::sFileChooser.reset(new FileChooser(TRANS("Select an empty folder to save in"), sLastCustomDirectory));
   int flags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectDirectories;
-  fFileChooser->launchAsync(flags, [this](FileChooser const &chooser) { onCustomDestinationDirectorySelected(chooser); });
+  MainWindow::sFileChooser->launchAsync(flags, [this](FileChooser const &chooser) { onCustomDestinationDirectorySelected(chooser); });
 }
 
 void ChooseOutputComponent::onCustomDestinationDirectorySelected(FileChooser const &chooser) {
@@ -130,9 +131,9 @@ void ChooseOutputComponent::onCustomDestinationDirectorySelected(FileChooser con
 }
 
 void ChooseOutputComponent::onSaveAsZipButtonClicked() {
-  fFileChooser.reset(new FileChooser(TRANS("Choose where to export the file"), sLastZipFile, "*.mcworld"));
+  MainWindow::sFileChooser.reset(new FileChooser(TRANS("Choose where to export the file"), sLastZipFile, "*.mcworld"));
   int flags = FileBrowserComponent::saveMode | FileBrowserComponent::canSelectFiles | FileBrowserComponent::warnAboutOverwriting;
-  fFileChooser->launchAsync(flags, [this](FileChooser const &chooser) { onZipDestinationFileSelected(chooser); });
+  MainWindow::sFileChooser->launchAsync(flags, [this](FileChooser const &chooser) { onZipDestinationFileSelected(chooser); });
 }
 
 void ChooseOutputComponent::onZipDestinationFileSelected(FileChooser const &chooser) {

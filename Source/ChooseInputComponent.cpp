@@ -2,6 +2,7 @@
 #include "AboutComponent.h"
 #include "CommandID.h"
 #include "Constants.h"
+#include "MainWindow.h"
 
 using namespace juce;
 
@@ -99,8 +100,8 @@ void ChooseInputComponent::onChooseCustomButtonClicked() {
   fList->removeChangeListener(this);
 
   int flags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectDirectories;
-  fFileChooser.reset(new FileChooser(TRANS("Select save data folder of Minecraft"), sLastDirectory, ""));
-  fFileChooser->launchAsync(flags, [this](FileChooser const &chooser) { onCustomDirectorySelected(chooser); });
+  MainWindow::sFileChooser.reset(new FileChooser(TRANS("Select save data folder of Minecraft"), sLastDirectory, ""));
+  MainWindow::sFileChooser->launchAsync(flags, [this](FileChooser const &chooser) { onCustomDirectorySelected(chooser); });
 }
 
 void ChooseInputComponent::onCustomDirectorySelected(juce::FileChooser const &chooser) {
