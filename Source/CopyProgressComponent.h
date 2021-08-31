@@ -3,6 +3,8 @@
 #include "ComponentState.h"
 #include <optional>
 
+namespace j2b::gui {
+
 class CopyProgressComponent : public juce::Component,
                               public juce::AsyncUpdater,
                               public ConvertStateProvider {
@@ -41,3 +43,5 @@ private:
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CopyProgressComponent)
 };
+
+} // namespace j2b::gui

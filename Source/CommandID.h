@@ -1,6 +1,7 @@
 #pragma once
 
-namespace gui {
+namespace j2b::gui {
+
 enum {
   toConfig = 1,
   toChooseInput = 2,
@@ -8,4 +9,5 @@ enum {
   toChooseOutput = 4,
   toCopy = 5,
 };
+
 }

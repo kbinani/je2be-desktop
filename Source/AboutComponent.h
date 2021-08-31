@@ -2,6 +2,8 @@
 
 #include <juce_gui_extra/juce_gui_extra.h>
 
+namespace j2b::gui {
+
 class AboutComponent : public juce::Component, public juce::Timer {
 public:
   AboutComponent();
@@ -20,3 +22,5 @@ private:
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AboutComponent)
 };
+
+} // namespace j2b::gui

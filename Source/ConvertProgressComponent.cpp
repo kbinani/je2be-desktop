@@ -6,6 +6,8 @@
 
 using namespace juce;
 
+namespace j2b::gui {
+
 class ConvertProgressComponent::Updater : public AsyncUpdater {
   struct Entry {
     int fPhase;
@@ -240,3 +242,5 @@ void ConvertProgressComponent::onProgressUpdate(int phase, double done, double t
     fProgressBar->setVisible(false);
   }
 }
+
+} // namespace j2b::gui

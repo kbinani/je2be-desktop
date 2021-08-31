@@ -5,6 +5,8 @@
 
 using namespace juce;
 
+namespace j2b::gui {
+
 class CopyThread : public CopyProgressComponent::Worker {
 public:
   CopyThread(AsyncUpdater *updater, File from, File to, double *progress)
@@ -166,3 +168,5 @@ void CopyProgressComponent::handleAsyncUpdate() {
     }
   }
 }
+
+} // namespace j2b::gui

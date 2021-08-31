@@ -4,6 +4,8 @@
 #include <optional>
 #include <unordered_map>
 
+namespace j2b::gui {
+
 class ChooseInputState {
 public:
   std::optional<juce::File> fInputDirectory;
@@ -77,3 +79,5 @@ public:
   virtual ~ChooseOutputStateProvider() {}
   virtual ChooseOutputState getChooseOutputState() const = 0;
 };
+
+} // namespace j2b::gui

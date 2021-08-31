@@ -6,6 +6,8 @@
 
 using namespace juce;
 
+namespace j2b::gui {
+
 File ChooseInputComponent::sLastDirectory;
 
 ChooseInputComponent::ChooseInputComponent(std::optional<ChooseInputState> state)
@@ -148,3 +150,5 @@ void ChooseInputComponent::onAboutButtonClicked() {
   options.dialogBackgroundColour = getLookAndFeel().findColour(ResizableWindow::backgroundColourId);
   options.launchAsync();
 }
+
+} // namespace j2b::gui

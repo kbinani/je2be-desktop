@@ -11,9 +11,11 @@
 
 using namespace juce;
 
-class je2beApplication : public juce::JUCEApplication {
+namespace j2b::gui {
+
+class Application : public juce::JUCEApplication {
 public:
-  je2beApplication() {}
+  Application() {}
 
   const juce::String getApplicationName() override {
     return JUCE_APPLICATION_NAME_STRING;
@@ -114,4 +116,6 @@ private:
   SharedResourcePointer<TooltipWindow> tooltipWindow;
 };
 
-START_JUCE_APPLICATION(je2beApplication)
+} // namespace j2b::gui
+
+START_JUCE_APPLICATION(j2b::gui::Application)

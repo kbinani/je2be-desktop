@@ -2,6 +2,8 @@
 
 #include <juce_gui_extra/juce_gui_extra.h>
 
+namespace j2b::gui {
+
 class LocalizationHelper {
 public:
   static juce::LocalisedStrings *CurrentLocalisedStrings();
@@ -18,3 +20,5 @@ private:
 
   LocalizationHelper() = delete;
 };
+
+} // namespace j2b::gui

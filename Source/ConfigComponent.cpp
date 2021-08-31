@@ -4,6 +4,8 @@
 
 using namespace juce;
 
+namespace j2b::gui {
+
 static std::optional<ConfigState::DirectoryStructure> SniffDirectoryStructure(File input) {
   File vanillaLevelDat = input.getChildFile("level.dat");
   if (vanillaLevelDat.existsAsFile()) {
@@ -83,3 +85,5 @@ void ConfigComponent::onStartButtonClicked() {
 void ConfigComponent::onBackButtonClicked() {
   JUCEApplication::getInstance()->invoke(gui::toChooseInput, true);
 }
+
+} // namespace j2b::gui

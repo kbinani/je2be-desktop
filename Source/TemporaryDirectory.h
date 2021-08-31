@@ -2,6 +2,8 @@
 
 #include <juce_gui_extra/juce_gui_extra.h>
 
+namespace j2b::gui {
+
 class TemporaryDirectory {
 public:
   static juce::File EnsureExisting() {
@@ -49,3 +51,5 @@ private:
 private:
   TemporaryDirectory() = delete;
 };
+
+} // namespace j2b::gui

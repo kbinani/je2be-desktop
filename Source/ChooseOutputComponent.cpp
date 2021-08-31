@@ -5,6 +5,8 @@
 
 using namespace juce;
 
+namespace j2b::gui {
+
 static File BedrockSaveDirectory() {
   return File::getSpecialLocation(File::userApplicationDataDirectory)
       .getParentDirectory()
@@ -154,3 +156,5 @@ void ChooseOutputComponent::paint(juce::Graphics &g) {}
 void ChooseOutputComponent::onBackButtonClicked() {
   JUCEApplication::getInstance()->invoke(gui::toChooseInput, true);
 }
+
+} // namespace j2b::gui

@@ -11,6 +11,8 @@ double const kSteadySeconds = 3;
 int const kTimerHz = 32;
 } // namespace
 
+namespace j2b::gui {
+
 AboutComponent::AboutComponent() {
   fHeaderLines = {
       String("Version: ") + String::fromUTF8(JUCE_APPLICATION_VERSION_STRING),
@@ -170,3 +172,5 @@ void AboutComponent::mouseDown(MouseEvent const &e) {
     }
   }
 }
+
+} // namespace j2b::gui

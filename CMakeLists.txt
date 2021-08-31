@@ -30,7 +30,7 @@ target_sources(je2be-gui
     Source/CopyProgressComponent.h
     Source/LocalizationHelper.cpp
     Source/LocalizationHelper.h
-    Source/Main.cpp
+    Source/Application.cpp
     Source/TemporaryDirectory.h
     Source/MainWindow.h
     Source/MainWindow.cpp)
