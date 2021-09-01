@@ -123,13 +123,13 @@ static ConvertStatistics Import(j2b::Statistics stat) {
   return ret;
 }
 
-static String DimensionToString(j2b::Dimension dim) {
+static String DimensionToString(mcfile::Dimension dim) {
   switch (dim) {
-  case j2b::Dimension::Overworld:
+  case mcfile::Dimension::Overworld:
     return TRANS("Overworld");
-  case j2b::Dimension::Nether:
+  case mcfile::Dimension::Nether:
     return TRANS("Nether");
-  case j2b::Dimension::End:
+  case mcfile::Dimension::End:
     return TRANS("End");
   }
   return "Unknown";
