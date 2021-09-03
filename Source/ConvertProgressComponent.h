@@ -5,6 +5,8 @@
 
 namespace j2b::gui {
 
+class TaskbarProgress;
+
 class ConvertProgressComponent : public juce::Component,
                                  public ConvertStateProvider,
                                  public ConfigStateProvider,
@@ -44,6 +46,7 @@ private:
   juce::CommandID fCommandWhenFinished = gui::toChooseOutput;
   bool fFailed = false;
   std::unique_ptr<juce::TextEditor> fErrorMessage;
+  std::unique_ptr<TaskbarProgress> fTaskbarProgress;
 
 private:
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ConvertProgressComponent)

@@ -33,7 +33,9 @@ target_sources(je2be-gui
     Source/Application.cpp
     Source/TemporaryDirectory.h
     Source/MainWindow.h
-    Source/MainWindow.cpp)
+    Source/MainWindow.cpp
+    Source/TaskbarProgress.h
+    Source/TaskbarProgress.cpp)
 
 target_compile_definitions(je2be-gui
   PRIVATE
@@ -41,7 +43,8 @@ target_compile_definitions(je2be-gui
     JUCE_USE_CURL=0
     JUCE_APPLICATION_NAME_STRING="$<TARGET_PROPERTY:je2be-gui,JUCE_PRODUCT_NAME>"
     JUCE_APPLICATION_VERSION_STRING="$<TARGET_PROPERTY:je2be-gui,JUCE_VERSION>"
-    JUCE_DISPLAY_SPLASH_SCREEN=0)
+    JUCE_DISPLAY_SPLASH_SCREEN=0
+    NOMINMAX)
 
 target_compile_options(je2be-gui PRIVATE $<$<CONFIG:Release>:/Zi>)
 target_link_options(je2be-gui PRIVATE $<$<CONFIG:Release>:/DEBUG>)

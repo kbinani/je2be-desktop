@@ -5,9 +5,12 @@
 
 namespace j2b::gui {
 
+class TaskbarProgress;
+
 class CopyProgressComponent : public juce::Component,
                               public juce::AsyncUpdater,
-                              public ConvertStateProvider {
+                              public ConvertStateProvider,
+                              public juce::Timer {
 public:
   explicit CopyProgressComponent(ChooseOutputState const &chooseOutputState);
   ~CopyProgressComponent() override;
@@ -19,6 +22,8 @@ public:
   ConvertState getConvertState() const override {
     return fState.fConvertState;
   }
+
+  void timerCallback() override;
 
   class Worker : public juce::Thread {
   public:
@@ -40,6 +45,7 @@ private:
   std::unique_ptr<juce::Label> fLabel;
   std::unique_ptr<juce::ProgressBar> fProgressBar;
   double fProgress = -1;
+  std::unique_ptr<TaskbarProgress> fTaskbarProgress;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CopyProgressComponent)
 };

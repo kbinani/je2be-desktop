@@ -1,6 +1,7 @@
 #include "ConvertProgressComponent.h"
 #include "CommandID.h"
 #include "Constants.h"
+#include "TaskbarProgress.h"
 #include "TemporaryDirectory.h"
 #include <je2be.hpp>
 
@@ -163,6 +164,8 @@ ConvertProgressComponent::ConvertProgressComponent(ConfigState const &configStat
   fErrorMessage->setMultiLine(true);
   addChildComponent(*fErrorMessage);
 
+  fTaskbarProgress.reset(new TaskbarProgress());
+
   File temp = TemporaryDirectory::EnsureExisting();
   Uuid u;
   File outputDir = temp.getChildFile(u.toDashedString());
@@ -182,6 +185,7 @@ ConvertProgressComponent::ConvertProgressComponent(ConfigState const &configStat
 
 ConvertProgressComponent::~ConvertProgressComponent() {
   fThread->stopThread(-1);
+  fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
 }
 
 void ConvertProgressComponent::paint(juce::Graphics &g) {}
@@ -225,12 +229,21 @@ void ConvertProgressComponent::onProgressUpdate(int phase, double done, double t
     } else {
       fFailed = true;
     }
+    if (fFailed) {
+      fTaskbarProgress->setState(TaskbarProgress::State::Error);
+    } else {
+      fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
+    }
   } else if (phase == 1) {
     fLabel->setText(TRANS("LevelDB compaction"), dontSendNotification);
     fProgress = -1;
+    fTaskbarProgress->setState(TaskbarProgress::State::Indeterminate);
   } else if (phase == 0) {
     if (fProgress >= 0) {
-      fProgress = done / total;
+      double progress = done / total;
+      fProgress = progress;
+      fTaskbarProgress->setState(TaskbarProgress::State::Normal);
+      fTaskbarProgress->update(progress);
     }
   } else {
     fFailed = true;

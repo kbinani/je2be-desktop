@@ -2,6 +2,7 @@
 #include "CommandID.h"
 #include "ComponentState.h"
 #include "Constants.h"
+#include "TaskbarProgress.h"
 
 using namespace juce;
 
@@ -130,15 +131,21 @@ CopyProgressComponent::CopyProgressComponent(ChooseOutputState const &state) : f
   fProgressBar->setBounds(kMargin, kMargin + kButtonBaseHeight + kMargin, width - 2 * kMargin, kButtonBaseHeight);
   addAndMakeVisible(*fProgressBar);
 
+  fTaskbarProgress.reset(new TaskbarProgress());
+
   if (state.fFormat == OutputFormat::Directory) {
     fCopyThread.reset(new CopyThread(this, state.fConvertState.fOutputDirectory, *state.fCopyDestination, &fProgress));
   } else {
     fCopyThread.reset(new ZipThread(this, state.fConvertState.fOutputDirectory, *state.fCopyDestination, &fProgress));
   }
   fCopyThread->startThread();
+  fTaskbarProgress->setState(TaskbarProgress::State::Normal);
+  startTimerHz(12);
 }
 
-CopyProgressComponent::~CopyProgressComponent() {}
+CopyProgressComponent::~CopyProgressComponent() {
+  fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
+}
 
 void CopyProgressComponent::paint(juce::Graphics &g) {}
 
@@ -155,18 +162,28 @@ void CopyProgressComponent::handleAsyncUpdate() {
     }
   };
 
+  stopTimer();
+
   auto result = fCopyThread->result();
   if (!result || *result == CopyProgressComponent::Worker::Result::Failed) {
+    fTaskbarProgress->setState(TaskbarProgress::State::Error);
     NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::WarningIcon, TRANS("Failed"), TRANS("Saving failed."), nullptr, new InvokeToChooseOutput);
   } else if (*result == CopyProgressComponent::Worker::Result::Cancelled) {
+    fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
     NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::InfoIcon, TRANS("Cancelled"), TRANS("Saving cancelled."), nullptr, new InvokeToChooseOutput);
     JUCEApplication::getInstance()->invoke(gui::toChooseOutput, true);
   } else {
+    fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
     NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::InfoIcon, TRANS("Completed"), TRANS("Saving completed."), nullptr, new InvokeToChooseInput);
     if (fState.fConvertState.fOutputDirectory.exists()) {
       fState.fConvertState.fOutputDirectory.deleteRecursively();
     }
   }
+}
+
+void CopyProgressComponent::timerCallback() {
+  double progress = fProgress;
+  fTaskbarProgress->update(progress);
 }
 
 } // namespace j2b::gui
