@@ -1,10 +1,11 @@
 cmake_minimum_required(VERSION 3.16)
 project(je2be-gui VERSION 2.5.0)
 
+set(BUILD_SHARED_LIBS OFF)
+add_definitions(/std:c++latest)
+
 add_subdirectory(ext/je2be)
 add_subdirectory(ext/JUCE)
-
-add_definitions(/std:c++latest)
 
 juce_add_gui_app(je2be-gui
   ICON_BIG "Resource/icon-large.png"
@@ -48,6 +49,10 @@ target_compile_definitions(je2be-gui
 
 target_compile_options(je2be-gui PRIVATE $<$<CONFIG:Release>:/Zi>)
 target_link_options(je2be-gui PRIVATE $<$<CONFIG:Release>:/DEBUG>)
+target_compile_options(leveldb PRIVATE $<$<CONFIG:Release>:/Zi>)
+target_link_options(leveldb PRIVATE $<$<CONFIG:Release>:/DEBUG>)
+target_compile_options(zlib PRIVATE $<$<CONFIG:Release>:/Zi>)
+target_link_options(zlib PRIVATE $<$<CONFIG:Release>:/DEBUG>)
 
 juce_add_binary_data(app-data
   SOURCES
@@ -59,7 +64,7 @@ target_link_libraries(je2be-gui
     app-data
     juce::juce_gui_extra
     xxhash
-    zlibstatic
+    zlib
     leveldb
   PUBLIC
     juce::juce_recommended_config_flags
