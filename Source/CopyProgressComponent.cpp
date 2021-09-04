@@ -6,7 +6,7 @@
 
 using namespace juce;
 
-namespace j2b::gui {
+namespace je2be::gui {
 
 class CopyThread : public CopyProgressComponent::Worker {
 public:
@@ -186,4 +186,4 @@ void CopyProgressComponent::timerCallback() {
   fTaskbarProgress->update(progress);
 }
 
-} // namespace j2b::gui
+} // namespace je2be::gui

@@ -2,7 +2,7 @@
 
 #include "ComponentState.h"
 
-namespace j2b::gui {
+namespace je2be::gui {
 
 class ConfigComponent : public juce::Component,
                         public ChooseInputStateProvider,
@@ -40,4 +40,4 @@ private:
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ConfigComponent)
 };
 
-} // namespace j2b::gui
+} // namespace je2be::gui

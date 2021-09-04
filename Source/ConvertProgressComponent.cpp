@@ -7,7 +7,7 @@
 
 using namespace juce;
 
-namespace j2b::gui {
+namespace je2be::gui {
 
 class ConvertProgressComponent::Updater : public AsyncUpdater {
   struct Entry {
@@ -43,29 +43,28 @@ public:
     }
   }
 
-  void complete(j2b::Statistics stat) {
+  void complete(je2be::tobe::Statistics stat) {
     fStat = stat;
   }
 
   std::atomic<ConvertProgressComponent *> fTarget;
-  std::optional<j2b::Statistics> fStat;
+  std::optional<je2be::tobe::Statistics> fStat;
 
 private:
   std::deque<Entry> fQueue;
   std::mutex fMut;
 };
 
-class WorkerThread : public Thread, public j2b::Progress {
+class WorkerThread : public Thread, public je2be::Progress {
 public:
-  WorkerThread(File input, j2b::InputOption io, File output,
-               j2b::OutputOption oo,
+  WorkerThread(File input, je2be::tobe::InputOption io, File output,
+               je2be::tobe::OutputOption oo,
                std::shared_ptr<ConvertProgressComponent::Updater> updater)
-      : Thread("j2b::gui::Convert"), fInput(input), fInputOption(io),
+      : Thread("je2be::gui::Convert"), fInput(input), fInputOption(io),
         fOutput(output), fOutputOption(oo), fUpdater(updater) {}
 
   void run() override {
-    using namespace j2b;
-    Converter c(
+    je2be::tobe::Converter c(
 #if defined(_WIN32)
         std::filesystem::path(fInput.getFullPathName().toWideCharPointer()),
         fInputOption,
@@ -91,13 +90,13 @@ public:
     }
   }
 
-  bool report(j2b::Progress::Phase phase, double done, double total) override {
+  bool report(je2be::Progress::Phase phase, double done, double total) override {
     int p = 0;
     switch (phase) {
-    case j2b::Progress::Phase::Convert:
+    case je2be::Progress::Phase::Convert:
       p = 0;
       break;
-    case j2b::Progress::Phase::LevelDbCompaction:
+    case je2be::Progress::Phase::LevelDbCompaction:
       p = 1;
       break;
     }
@@ -107,13 +106,13 @@ public:
 
 private:
   File const fInput;
-  j2b::InputOption const fInputOption;
+  je2be::tobe::InputOption const fInputOption;
   File const fOutput;
-  j2b::OutputOption const fOutputOption;
+  je2be::tobe::OutputOption const fOutputOption;
   std::shared_ptr<ConvertProgressComponent::Updater> fUpdater;
 };
 
-static ConvertStatistics Import(j2b::Statistics stat) {
+static ConvertStatistics Import(je2be::tobe::Statistics stat) {
   ConvertStatistics ret;
   for (auto const &it : stat.fChunkDataVersions) {
     ret.fChunkDataVersions[it.first] = it.second;
@@ -175,9 +174,9 @@ ConvertProgressComponent::ConvertProgressComponent(ConfigState const &configStat
   fUpdater = std::make_shared<Updater>();
   fUpdater->fTarget.store(this);
 
-  j2b::InputOption io;
+  je2be::tobe::InputOption io;
   if (fState.fConfigState.fStructure == ConfigState::DirectoryStructure::Paper) {
-    io.fLevelDirectoryStructure = j2b::LevelDirectoryStructure::Paper;
+    io.fLevelDirectoryStructure = je2be::LevelDirectoryStructure::Paper;
   }
   fThread.reset(new WorkerThread(*configState.fInputState.fInputDirectory, io, fState.fOutputDirectory, {}, fUpdater));
   fThread->startThread();
@@ -256,4 +255,4 @@ void ConvertProgressComponent::onProgressUpdate(int phase, double done, double t
   }
 }
 
-} // namespace j2b::gui
+} // namespace je2be::gui

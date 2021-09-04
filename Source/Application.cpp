@@ -11,7 +11,7 @@
 
 using namespace juce;
 
-namespace j2b::gui {
+namespace je2be::gui {
 
 class Application : public juce::JUCEApplication {
 public:
@@ -116,6 +116,6 @@ private:
   SharedResourcePointer<TooltipWindow> tooltipWindow;
 };
 
-} // namespace j2b::gui
+} // namespace je2be::gui
 
-START_JUCE_APPLICATION(j2b::gui::Application)
+START_JUCE_APPLICATION(je2be::gui::Application)

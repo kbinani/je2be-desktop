@@ -9,7 +9,7 @@
 
 using namespace juce;
 
-namespace j2b::gui {
+namespace je2be::gui {
 
 LocalisedStrings *LocalizationHelper::CurrentLocalisedStrings() {
   LANGID lang = GetSystemDefaultUILanguage();
@@ -24,4 +24,4 @@ LocalisedStrings *LocalizationHelper::Japanese() {
                               BinaryData::japanese_langSize);
 }
 
-} // namespace j2b::gui
+} // namespace je2be::gui

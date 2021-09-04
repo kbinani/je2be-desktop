@@ -4,7 +4,7 @@
 #include <optional>
 #include <unordered_map>
 
-namespace j2b::gui {
+namespace je2be::gui {
 
 class ChooseInputState {
 public:
@@ -80,4 +80,4 @@ public:
   virtual ChooseOutputState getChooseOutputState() const = 0;
 };
 
-} // namespace j2b::gui
+} // namespace je2be::gui

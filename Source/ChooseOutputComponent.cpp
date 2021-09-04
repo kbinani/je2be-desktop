@@ -5,7 +5,7 @@
 
 using namespace juce;
 
-namespace j2b::gui {
+namespace je2be::gui {
 
 static File BedrockSaveDirectory() {
   return File::getSpecialLocation(File::userApplicationDataDirectory)
@@ -157,4 +157,4 @@ void ChooseOutputComponent::onBackButtonClicked() {
   JUCEApplication::getInstance()->invoke(gui::toChooseInput, true);
 }
 
-} // namespace j2b::gui
+} // namespace je2be::gui

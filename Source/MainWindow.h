@@ -5,7 +5,7 @@
 
 using namespace juce;
 
-namespace j2b::gui {
+namespace je2be::gui {
 
 class MainWindow : public juce::DocumentWindow {
 public:
@@ -39,4 +39,4 @@ private:
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainWindow)
 };
 
-} // namespace j2b::gui
+} // namespace je2be::gui

@@ -11,7 +11,7 @@ double const kSteadySeconds = 3;
 int const kTimerHz = 32;
 } // namespace
 
-namespace j2b::gui {
+namespace je2be::gui {
 
 AboutComponent::AboutComponent() {
   fHeaderLines = {
@@ -173,4 +173,4 @@ void AboutComponent::mouseDown(MouseEvent const &e) {
   }
 }
 
-} // namespace j2b::gui
+} // namespace je2be::gui

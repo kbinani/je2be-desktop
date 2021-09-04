@@ -1,6 +1,6 @@
 #pragma once
 
-namespace j2b::gui {
+namespace je2be::gui {
 
 enum {
   toConfig = 1,

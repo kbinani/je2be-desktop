@@ -6,7 +6,7 @@
 
 using namespace juce;
 
-namespace j2b::gui {
+namespace je2be::gui {
 
 File ChooseInputComponent::sLastDirectory;
 
@@ -151,4 +151,4 @@ void ChooseInputComponent::onAboutButtonClicked() {
   options.launchAsync();
 }
 
-} // namespace j2b::gui
+} // namespace je2be::gui
