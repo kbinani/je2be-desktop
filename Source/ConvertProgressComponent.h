@@ -40,8 +40,10 @@ private:
   ConvertState fState;
   std::unique_ptr<juce::Thread> fThread;
   std::shared_ptr<Updater> fUpdater;
-  std::unique_ptr<juce::ProgressBar> fProgressBar;
-  double fProgress = 0;
+  std::unique_ptr<juce::ProgressBar> fConversionProgressBar;
+  std::unique_ptr<juce::ProgressBar> fCompactionProgressBar;
+  double fConversionProgress = 0;
+  double fCompactionProgress = 0;
   std::unique_ptr<juce::Label> fLabel;
   juce::CommandID fCommandWhenFinished = gui::toChooseOutput;
   bool fFailed = false;

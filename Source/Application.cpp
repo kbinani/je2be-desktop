@@ -6,6 +6,7 @@
 #include "ConvertProgressComponent.h"
 #include "CopyProgressComponent.h"
 #include "LocalizationHelper.h"
+#include "LookAndFeel.h"
 #include "MainWindow.h"
 #include "TemporaryDirectory.h"
 
@@ -30,18 +31,18 @@ public:
   }
 
   void initialise(const juce::String &commandLine) override {
-    String typeFaceName = "Meiryo UI";
-    Desktop::getInstance().getDefaultLookAndFeel().setDefaultSansSerifTypefaceName(typeFaceName);
+    fLaf.reset(new je2be::gui::LookAndFeel);
+    LookAndFeel::setDefaultLookAndFeel(fLaf.get());
 
     LocalisedStrings::setCurrentMappings(LocalizationHelper::CurrentLocalisedStrings());
 
     TemporaryDirectory::CleanupAsync();
 
-    mainWindow.reset(new MainWindow(getApplicationName()));
+    fMainWindow.reset(new MainWindow(getApplicationName()));
   }
 
   void shutdown() override {
-    mainWindow = nullptr;
+    fMainWindow = nullptr;
   }
 
   void systemRequestedQuit() override {
@@ -58,7 +59,7 @@ public:
   }
 
   bool perform(InvocationInfo const &info) override {
-    Component *current = mainWindow->getContentComponent();
+    Component *current = fMainWindow->getContentComponent();
     switch (info.commandID) {
     case gui::toConfig: {
       auto provider = dynamic_cast<ChooseInputStateProvider *>(current);
@@ -66,7 +67,7 @@ public:
         return false;
       }
       auto config = new ConfigComponent(provider->getChooseInputState());
-      mainWindow->setContentOwned(config, true);
+      fMainWindow->setContentOwned(config, true);
       return true;
     }
     case gui::toChooseInput: {
@@ -76,7 +77,7 @@ public:
         state = provider->getChooseInputState();
       }
       auto chooseInput = new ChooseInputComponent(state);
-      mainWindow->setContentOwned(chooseInput, true);
+      fMainWindow->setContentOwned(chooseInput, true);
       return true;
     }
     case gui::toConvert: {
@@ -85,7 +86,7 @@ public:
         return false;
       }
       auto convert = new ConvertProgressComponent(provider->getConfigState());
-      mainWindow->setContentOwned(convert, true);
+      fMainWindow->setContentOwned(convert, true);
       return true;
     }
     case gui::toChooseOutput: {
@@ -94,7 +95,7 @@ public:
         return false;
       }
       auto chooseOutput = new ChooseOutputComponent(provider->getConvertState());
-      mainWindow->setContentOwned(chooseOutput, true);
+      fMainWindow->setContentOwned(chooseOutput, true);
       return true;
     }
     case gui::toCopy: {
@@ -103,7 +104,7 @@ public:
         return false;
       }
       auto copy = new CopyProgressComponent(provider->getChooseOutputState());
-      mainWindow->setContentOwned(copy, true);
+      fMainWindow->setContentOwned(copy, true);
       return true;
     }
     default:
@@ -112,8 +113,9 @@ public:
   }
 
 private:
-  std::unique_ptr<MainWindow> mainWindow;
-  SharedResourcePointer<TooltipWindow> tooltipWindow;
+  std::unique_ptr<MainWindow> fMainWindow;
+  SharedResourcePointer<TooltipWindow> fTooltipWindow;
+  std::unique_ptr<je2be::gui::LookAndFeel> fLaf;
 };
 
 } // namespace je2be::gui

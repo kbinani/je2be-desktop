@@ -36,7 +36,8 @@ target_sources(je2be-gui
     Source/MainWindow.h
     Source/MainWindow.cpp
     Source/TaskbarProgress.h
-    Source/TaskbarProgress.cpp)
+    Source/TaskbarProgress.cpp
+    Source/LookAndFeel.h)
 
 target_compile_definitions(je2be-gui
   PRIVATE

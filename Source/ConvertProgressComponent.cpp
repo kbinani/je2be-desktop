@@ -152,13 +152,21 @@ ConvertProgressComponent::ConvertProgressComponent(ConfigState const &configStat
   fLabel->setJustificationType(Justification::topLeft);
   addAndMakeVisible(*fLabel);
   y += fLabel->getHeight() + kMargin;
+  int errorMessageY = y;
 
-  fProgressBar.reset(new ProgressBar(fProgress));
-  fProgressBar->setBounds(kMargin, y, width - 2 * kMargin, kButtonBaseHeight);
-  addAndMakeVisible(*fProgressBar);
+  fConversionProgressBar.reset(new ProgressBar(fConversionProgress));
+  fConversionProgressBar->setBounds(kMargin, y, width - 2 * kMargin, kButtonBaseHeight);
+  fConversionProgressBar->setTextToDisplay("Conversion: ");
+  addAndMakeVisible(*fConversionProgressBar);
+  y += fConversionProgressBar->getHeight() + kMargin;
+
+  fCompactionProgressBar.reset(new ProgressBar(fCompactionProgress));
+  fCompactionProgressBar->setBounds(kMargin, y, width - 2 * kMargin, kButtonBaseHeight);
+  fCompactionProgressBar->setTextToDisplay("LevelDB Compaction: ");
+  addAndMakeVisible(*fCompactionProgressBar);
 
   fErrorMessage.reset(new TextEditor());
-  fErrorMessage->setBounds(kMargin, y, width - 2 * kMargin, fCancelButton->getY() - y - kMargin);
+  fErrorMessage->setBounds(kMargin, errorMessageY, width - 2 * kMargin, fCancelButton->getY() - y - kMargin);
   fErrorMessage->setEnabled(false);
   fErrorMessage->setMultiLine(true);
   addChildComponent(*fErrorMessage);
@@ -197,12 +205,15 @@ void ConvertProgressComponent::onCancelButtonClicked() {
     fCancelButton->setMouseCursor(MouseCursor::NormalCursor);
     fCommandWhenFinished = gui::toConfig;
     fThread->signalThreadShouldExit();
-    fProgress = -1;
+    fConversionProgress = -1;
     fLabel->setText(TRANS("Waiting for the worker thread to finish"), dontSendNotification);
   }
 }
 
 void ConvertProgressComponent::onProgressUpdate(int phase, double done, double total) {
+  double weightConversion = 0.67;
+  double weightCompaction = 1 - weightConversion;
+
   if (phase == 2) {
     if (fCommandWhenFinished != gui::toChooseOutput && fState.fOutputDirectory.exists()) {
       fState.fOutputDirectory.deleteRecursively();
@@ -235,14 +246,18 @@ void ConvertProgressComponent::onProgressUpdate(int phase, double done, double t
     }
   } else if (phase == 1) {
     fLabel->setText(TRANS("LevelDB compaction"), dontSendNotification);
-    fProgress = -1;
-    fTaskbarProgress->setState(TaskbarProgress::State::Indeterminate);
+    double progress = done / total;
+    fConversionProgress = 1;
+    fCompactionProgress = progress;
+    fTaskbarProgress->setState(TaskbarProgress::State::Normal);
+    fTaskbarProgress->update(weightConversion + progress * weightCompaction);
   } else if (phase == 0) {
-    if (fProgress >= 0) {
+    if (fConversionProgress >= 0) {
       double progress = done / total;
-      fProgress = progress;
+      fConversionProgress = progress;
+      fCompactionProgress = 0;
       fTaskbarProgress->setState(TaskbarProgress::State::Normal);
-      fTaskbarProgress->update(progress);
+      fTaskbarProgress->update(progress * weightConversion);
     }
   } else {
     fFailed = true;
@@ -251,7 +266,8 @@ void ConvertProgressComponent::onProgressUpdate(int phase, double done, double t
     fLabel->setText(TRANS("The conversion failed."), dontSendNotification);
     fLabel->setColour(Label::textColourId, kErrorTextColor);
     fCancelButton->setButtonText(TRANS("Back"));
-    fProgressBar->setVisible(false);
+    fConversionProgressBar->setVisible(false);
+    fCompactionProgressBar->setVisible(false);
   }
 }
 
