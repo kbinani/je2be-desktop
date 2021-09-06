@@ -45,7 +45,8 @@ target_compile_definitions(je2be-gui
     JUCE_APPLICATION_NAME_STRING="$<TARGET_PROPERTY:je2be-gui,JUCE_PRODUCT_NAME>"
     JUCE_APPLICATION_VERSION_STRING="$<TARGET_PROPERTY:je2be-gui,JUCE_VERSION>"
     JUCE_DISPLAY_SPLASH_SCREEN=0
-    NOMINMAX)
+    NOMINMAX
+    WIN32_LEAN_AND_MEAN)
 
 target_compile_options(je2be-gui PRIVATE $<$<CONFIG:Release>:/Zi>)
 target_link_options(je2be-gui PRIVATE $<$<CONFIG:Release>:/DEBUG>)
