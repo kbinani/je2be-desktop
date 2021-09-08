@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(je2be-gui VERSION 2.5.0)
+project(je2be-gui VERSION 2.6.0)
 
 set(BUILD_SHARED_LIBS OFF)
 add_definitions(/std:c++latest)
