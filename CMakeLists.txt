@@ -2,7 +2,12 @@ cmake_minimum_required(VERSION 3.16)
 project(je2be-gui VERSION 2.6.0)
 
 set(BUILD_SHARED_LIBS OFF)
-add_definitions(/std:c++latest)
+add_definitions(/std:c++latest /DUNICODE /D_UNICODE)
+add_compile_options(
+  $<$<CONFIG:Debug>:/MTd>
+  $<$<CONFIG:Release>:/MT>
+  $<$<CONFIG:RelWithDebInfo>:/MT>
+  $<$<CONFIG:MinSizeRel>:/MT>)
 
 add_subdirectory(ext/je2be)
 add_subdirectory(ext/JUCE)
