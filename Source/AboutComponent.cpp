@@ -73,8 +73,8 @@ AboutComponent::AboutComponent() {
       "https://github.com/zlib-ng/zlib-ng",
       "",
 
-      "thread-pool",
-      "https://github.com/mtrebi/thread-pool",
+      "hwm.task",
+      "https://github.com/hotwatermorning/hwm.task",
       "",
 
       "je2be (core library)",
