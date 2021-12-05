@@ -74,27 +74,13 @@ juce_add_binary_data(app-data
 
 target_link_libraries(je2be-gui
   PRIVATE
+    je2be
     app-data
     juce::juce_gui_extra
-    xxhash
-    zlib
-    leveldb
   PUBLIC
     juce::juce_recommended_config_flags
     juce::juce_recommended_lto_flags
     juce::juce_recommended_warning_flags)
-
-target_include_directories(je2be-gui
-  PRIVATE
-    ext/je2be/include
-    ext/je2be/deps/libminecraft-file/include
-    ext/je2be/deps/zlib-ng
-    ${CMAKE_BINARY_DIR}/ext/je2be/deps/zlib-ng
-    ext/je2be/deps/leveldb
-    ext/je2be/deps/leveldb/include
-    ext/je2be/deps/xxHash
-    ext/je2be/deps/hwm.task
-    ext/je2be/deps/json/include)
 
 include_external_msproject(Package Package/Package.wapproj
   TYPE C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5
