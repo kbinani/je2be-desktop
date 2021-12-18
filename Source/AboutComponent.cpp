@@ -52,21 +52,15 @@ AboutComponent::AboutComponent() {
       "",
 
       "LevelDB",
-      "https://github.com/google/leveldb",
-      "https://github.com/pmmp/leveldb",
       "https://github.com/kbinani/leveldb-stdfs",
       "",
 
-      "xxHash",
-      "https://github.com/Cyan4973/xxHash",
+      "xxhash",
+      "https://github.com/stbrumme/xxhash",
       "",
 
       "json",
       "https://github.com/nlohmann/json",
-      "",
-
-      "zlib",
-      "https://github.com/madler/zlib",
       "",
 
       "zlib-ng",
