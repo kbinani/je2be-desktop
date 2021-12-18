@@ -174,7 +174,7 @@ ConvertProgressComponent::ConvertProgressComponent(ConfigState const &configStat
   fTaskbarProgress.reset(new TaskbarProgress());
 
   File temp = TemporaryDirectory::EnsureExisting();
-  Uuid u;
+  juce::Uuid u;
   File outputDir = temp.getChildFile(u.toDashedString());
   outputDir.createDirectory();
   fState.fOutputDirectory = outputDir;
