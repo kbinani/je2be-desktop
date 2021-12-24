@@ -1,0 +1,63 @@
+Version 2.9.0 (23 Dec 2021)
+- mcfunction files stored in the datapacks directory are now converted as behavior packs
+
+Version 2.8.0 (19 Dec 2021)
+- Enabled chunk migration below Y = 0 for legacy chunks generated with Minecraft 1.17 or lower
+- Improved conversion accuracy (mob spawner and end gateway)
+
+Version 2.7.2 (16 Dec 2021)
+- Fixed the problem of failing to convert old format map data.
+
+Version 2.7.0 (05 Dec 2021), 2.7.1 (10 Dec 2021)
+- Added support for Minecraft version 1.18.
+
+Version 2.6.0 (11 Sep 2021), 2.6.1 (20 Sep 2021)
+- Faster conversion process.
+- Reduced the amount of memory used during the conversion process.
+
+Version 2.5.0 (04 Sep 2021)
+- Flowing water and lava are now converted correctly.
+- Fixed a problem where the conversion result was saved uncompressed.
+
+Version 2.4.0 (29 Aug 2021)
+- Villager's trade details can now be converted.
+
+Version 2.3.0 (21 Aug 2021)
+- Bucket of Axolotl is now converted correctly.
+- Memory usage during the conversion process has been reduced.
+- Fixed an issue where equipment worn by entities was not being converted correctly.
+
+Version 2.2.0 (18 Aug 2021)
+- Blocks that are being pushed by the piston are now converted correctly.
+- Blocks that are falling are now converted correctly.
+- Improved conversion accuracy. (deepslate, candle cake, exposed cut copper stairs, dripleaf, azalea leaves, etc.)
+
+Version 2.1.2 (20 Jul 2021)
+- Fixed an issue where the conversion process was inaccurate in some blocks: color of sign, chain, and cave vines.
+
+Version 2.1.1 (20 Jul 2021)
+- Fixed an issue where signs with glowing text were not converted correctly.
+- Fixed a case where the app would crash when converting block entities.
+
+Version 2.1.0 (15 Jul 2021)
+- Added support for Bedrock 1.17.10.
+- Improved the conversion accuracy. (Potted azalea, Candles, Light block, Powder snow cauldron, etc.)
+
+Version 2.0.0 (21 Jul 2021)
+- Data from Minecraft Java 1.17 can now be converted.
+- Fixed an issue where some entities were not being converted.
+  - chicken jockey, drownd, experience orbs, and written book
+
+Version 1.3.0 (16 Dec 2020)
+- Data from Minecraft 1.12 or earlier can now be converted.
+- Improved the conversion accuracy. (Bees in beehive or bee nest, direction of purpur pillar, location of armor stand, etc.)
+
+Version 1.2.0 (23 Nov 2020)
+- Improve the accuracy / speed of the conversion
+
+Version 1.1.0 (21 Nov 2020)
+- Support BE 1.16.100
+- Show the chunks that caused the conversion to fail
+
+Version 1.0.0 (17 Nov 2020)
+- First release
