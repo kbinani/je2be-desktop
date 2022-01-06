@@ -1,4 +1,4 @@
-Version 2.10.0 (TBD)
+Version 2.10.0 (1 Jan 2022)
 - Respawn location is now converted as expected, including when respawn anchor was used.
 - Superflat world configurations will be exported correctly to BE.
 - Fixed the problem that pre-1.13 chunks were not converted correctly.
