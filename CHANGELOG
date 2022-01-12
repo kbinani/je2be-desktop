@@ -1,3 +1,7 @@
+Version 2.10.1 (TBD)
+- Fixed possible crash while reading chunk.
+- Improved conversion accuracy of written book, tall seagrass, and kelp.
+
 Version 2.10.0 (5 Jan 2022)
 - Respawn location is now converted as expected, including when respawn anchor was used.
 - Superflat world configurations will be exported correctly to BE.
