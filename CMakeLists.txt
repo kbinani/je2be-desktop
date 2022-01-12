@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(je2be-gui VERSION 2.10.0)
+project(je2be-gui VERSION 2.10.1)
 
 if (NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 20)
