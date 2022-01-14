@@ -1,4 +1,7 @@
-Version 2.10.1 (TBD)
+Version 2.10.2 (TBD)
+- Fixed possible crash while reading chunk.
+
+Version 2.10.1 (14 Jan 2022)
 - Fixed possible crash while reading chunk.
 - Improved conversion accuracy of written book, tall seagrass, and kelp.
 
