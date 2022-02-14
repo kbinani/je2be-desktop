@@ -62,7 +62,7 @@ void ModeSelectComponent::onAboutButtonClicked() {
 }
 
 void ModeSelectComponent::onB2JClicked() {
-  //JUCEApplication::getInstance()->invoke(gui::toB2JConfig, false);
+  JUCEApplication::getInstance()->invoke(gui::toB2JChooseInput, true);
 }
 
 void ModeSelectComponent::onJ2BClicked() {

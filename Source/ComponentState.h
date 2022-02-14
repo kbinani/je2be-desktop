@@ -80,4 +80,15 @@ public:
   virtual J2BChooseOutputState getChooseOutputState() const = 0;
 };
 
+class B2JChooseInputState {
+public:
+  std::optional<juce::File> fInputFileOrDirectory;
+};
+
+class B2JChooseInputStateProvider {
+public:
+  virtual ~B2JChooseInputStateProvider() {}
+  virtual B2JChooseInputState getChooseInputState() const = 0;
+};
+
 } // namespace je2be::gui

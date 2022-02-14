@@ -33,3 +33,5 @@ language: Japanese
 "Select conversion mode" = "変換モードを選んでください";
 "Java to Bedrock" = "Java版 から 統合版に";
 "Bedrock to Java" = "統合版 から Java版に";
+"Select mcworld file" = "mcworld ファイルを選ぶ";
+"Select mcworld file to convert" = "変換する mcworld ファイルを選んでください";

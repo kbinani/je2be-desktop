@@ -48,7 +48,10 @@ target_sources(je2be-gui
     Source/TaskbarProgress.cpp
     Source/LookAndFeel.h
     Source/ModeSelectComponent.h
-    Source/ModeSelectComponent.cpp)
+    Source/ModeSelectComponent.cpp
+    Source/B2JChooseInputComponent.cpp
+    Source/B2JChooseInputComponent.h
+    Source/GameDirectories.h)
 
 target_compile_definitions(je2be-gui
   PRIVATE

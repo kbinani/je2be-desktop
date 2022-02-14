@@ -1,6 +1,7 @@
 #include "J2BChooseInputComponent.h"
 #include "CommandID.h"
 #include "Constants.h"
+#include "GameDirectories.h"
 #include "MainWindow.h"
 
 using namespace juce;
@@ -10,7 +11,7 @@ namespace je2be::gui {
 File J2BChooseInputComponent::sLastDirectory;
 
 J2BChooseInputComponent::J2BChooseInputComponent(std::optional<J2BChooseInputState> state)
-    : fListThread("j2b::gui::ChooseInputComponent") {
+    : fListThread("j2b::gui::J2BChooseInputComponent") {
   if (state) {
     fState = *state;
   }
@@ -42,7 +43,7 @@ J2BChooseInputComponent::J2BChooseInputComponent(std::optional<J2BChooseInputSta
     addAndMakeVisible(*fNextButton);
   }
   {
-    auto w = 140;
+    auto w = 160;
     fChooseCustomButton.reset(new TextButton(TRANS("Select from other directories")));
     fChooseCustomButton->setBounds(width - kMargin - fileListWidth, height - kButtonBaseHeight - kMargin, w, kButtonBaseHeight);
     fChooseCustomButton->setMouseCursor(MouseCursor::PointingHandCursor);
@@ -53,7 +54,7 @@ J2BChooseInputComponent::J2BChooseInputComponent(std::optional<J2BChooseInputSta
   fListThread.startThread();
   fList.reset(new DirectoryContentsList(nullptr, fListThread));
 
-  File dir = File::getSpecialLocation(File::userApplicationDataDirectory).getChildFile(".minecraft").getChildFile("saves");
+  File dir = JavaSaveDirectory();
   fList->setDirectory(dir, true, false);
   fList->addChangeListener(this);
 

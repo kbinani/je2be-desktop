@@ -1,23 +1,12 @@
 #include "J2BChooseOutputComponent.h"
 #include "CommandID.h"
 #include "Constants.h"
+#include "GameDirectories.h"
 #include "MainWindow.h"
 
 using namespace juce;
 
 namespace je2be::gui {
-
-static File BedrockSaveDirectory() {
-  return File::getSpecialLocation(File::userApplicationDataDirectory)
-      .getParentDirectory()
-      .getChildFile("Local")
-      .getChildFile("Packages")
-      .getChildFile("Microsoft.MinecraftUWP_8wekyb3d8bbwe")
-      .getChildFile("LocalState")
-      .getChildFile("games")
-      .getChildFile("com.mojang")
-      .getChildFile("minecraftWorlds");
-}
 
 static File DecideDefaultOutputDirectory(J2BConvertState const &s) {
   File root = BedrockSaveDirectory();
