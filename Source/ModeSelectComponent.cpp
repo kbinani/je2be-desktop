@@ -13,7 +13,7 @@ ModeSelectComponent::ModeSelectComponent() {
   int const buttonWidth = kWindowWidth / 2;
 
   int y = kMargin;
-  fLabel.reset(new Label("", TRANS("Select conversion mode:")));
+  fLabel.reset(new Label("", TRANS("Select conversion mode") + ":"));
   fLabel->setJustificationType(Justification::centred);
   fLabel->setBounds(kMargin, y, kWindowWidth - 2 * kMargin, kButtonBaseHeight);
   addAndMakeVisible(*fLabel);

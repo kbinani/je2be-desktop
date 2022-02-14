@@ -30,3 +30,6 @@ language: Japanese
 "Save into Minecraft Windows 10 save folder" = "Minecraft Windows 10 のセーブフォルダに保存";
 "Save into custom folder" = "保存先を自分で選ぶ";
 "Export as *.mcworld file" = "*.mcworld 形式で保存";
+"Select conversion mode" = "変換モードを選んでください";
+"Java to Bedrock" = "Java版 から 統合版に";
+"Bedrock to Java" = "統合版 から Java版に";

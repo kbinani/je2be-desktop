@@ -27,3 +27,6 @@ indent_style = space
 
 [*.wapproj]
 end_of_line = crlf
+
+[*.lang]
+end_of_line = crlf
