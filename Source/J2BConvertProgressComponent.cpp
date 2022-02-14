@@ -9,7 +9,7 @@ using namespace juce;
 
 namespace je2be::gui {
 
-class ConvertProgressComponent::Updater : public AsyncUpdater {
+class J2BConvertProgressComponent::Updater : public AsyncUpdater {
   struct Entry {
     int fPhase;
     double fDone;
@@ -47,7 +47,7 @@ public:
     fStat = stat;
   }
 
-  std::atomic<ConvertProgressComponent *> fTarget;
+  std::atomic<J2BConvertProgressComponent *> fTarget;
   std::optional<je2be::tobe::Statistics> fStat;
 
 private:
@@ -59,7 +59,7 @@ class WorkerThread : public Thread, public je2be::Progress {
 public:
   WorkerThread(File input, je2be::tobe::InputOption io, File output,
                je2be::tobe::OutputOption oo,
-               std::shared_ptr<ConvertProgressComponent::Updater> updater)
+               std::shared_ptr<J2BConvertProgressComponent::Updater> updater)
       : Thread("je2be::gui::Convert"), fInput(input), fInputOption(io),
         fOutput(output), fOutputOption(oo), fUpdater(updater) {}
 
@@ -109,7 +109,7 @@ private:
   je2be::tobe::InputOption const fInputOption;
   File const fOutput;
   je2be::tobe::OutputOption const fOutputOption;
-  std::shared_ptr<ConvertProgressComponent::Updater> fUpdater;
+  std::shared_ptr<J2BConvertProgressComponent::Updater> fUpdater;
 };
 
 static J2BConvertStatistics Import(je2be::tobe::Statistics stat) {
@@ -135,7 +135,7 @@ static String DimensionToString(mcfile::Dimension dim) {
   return "Unknown";
 }
 
-ConvertProgressComponent::ConvertProgressComponent(J2BConfigState const &configState) : fState(configState) {
+J2BConvertProgressComponent::J2BConvertProgressComponent(J2BConfigState const &configState) : fState(configState) {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
   setSize(width, height);
@@ -190,14 +190,14 @@ ConvertProgressComponent::ConvertProgressComponent(J2BConfigState const &configS
   fThread->startThread();
 }
 
-ConvertProgressComponent::~ConvertProgressComponent() {
+J2BConvertProgressComponent::~J2BConvertProgressComponent() {
   fThread->stopThread(-1);
   fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
 }
 
-void ConvertProgressComponent::paint(juce::Graphics &g) {}
+void J2BConvertProgressComponent::paint(juce::Graphics &g) {}
 
-void ConvertProgressComponent::onCancelButtonClicked() {
+void J2BConvertProgressComponent::onCancelButtonClicked() {
   if (fFailed) {
     JUCEApplication::getInstance()->invoke(gui::toChooseInput, true);
   } else {
@@ -210,7 +210,7 @@ void ConvertProgressComponent::onCancelButtonClicked() {
   }
 }
 
-void ConvertProgressComponent::onProgressUpdate(int phase, double done, double total) {
+void J2BConvertProgressComponent::onProgressUpdate(int phase, double done, double total) {
   double weightConversion = 0.67;
   double weightCompaction = 1 - weightConversion;
 

@@ -18,7 +18,7 @@ static std::optional<J2BConfigState::DirectoryStructure> SniffDirectoryStructure
   return std::nullopt;
 }
 
-ConfigComponent::ConfigComponent(J2BChooseInputState const &chooseInputState) : fState(chooseInputState) {
+J2BConfigComponent::J2BConfigComponent(J2BChooseInputState const &chooseInputState) : fState(chooseInputState) {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
   setSize(width, height);
@@ -66,9 +66,9 @@ ConfigComponent::ConfigComponent(J2BChooseInputState const &chooseInputState) : 
   startTimer(1000);
 }
 
-ConfigComponent::~ConfigComponent() {}
+J2BConfigComponent::~J2BConfigComponent() {}
 
-void ConfigComponent::timerCallback() {
+void J2BConfigComponent::timerCallback() {
   stopTimer();
   fStartButton->setEnabled(fOk);
   if (fOk) {
@@ -76,13 +76,13 @@ void ConfigComponent::timerCallback() {
   }
 }
 
-void ConfigComponent::paint(juce::Graphics &g) {}
+void J2BConfigComponent::paint(juce::Graphics &g) {}
 
-void ConfigComponent::onStartButtonClicked() {
+void J2BConfigComponent::onStartButtonClicked() {
   JUCEApplication::getInstance()->invoke(gui::toConvert, true);
 }
 
-void ConfigComponent::onBackButtonClicked() {
+void J2BConfigComponent::onBackButtonClicked() {
   JUCEApplication::getInstance()->invoke(gui::toChooseInput, true);
 }
 

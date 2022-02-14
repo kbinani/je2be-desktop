@@ -16,7 +16,7 @@ public:
                 juce::ResizableWindow::backgroundColourId),
             DocumentWindow::closeButton | DocumentWindow::minimiseButton) {
     setUsingNativeTitleBar(true);
-    setContentOwned(new ChooseInputComponent(std::nullopt), true);
+    setContentOwned(new J2BChooseInputComponent(std::nullopt), true);
 
 #if JUCE_IOS || JUCE_ANDROID
     setFullScreen(true);

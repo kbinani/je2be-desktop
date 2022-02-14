@@ -8,9 +8,9 @@ using namespace juce;
 
 namespace je2be::gui {
 
-File ChooseInputComponent::sLastDirectory;
+File J2BChooseInputComponent::sLastDirectory;
 
-ChooseInputComponent::ChooseInputComponent(std::optional<J2BChooseInputState> state)
+J2BChooseInputComponent::J2BChooseInputComponent(std::optional<J2BChooseInputState> state)
     : fListThread("j2b::gui::ChooseInputComponent") {
   if (state) {
     fState = *state;
@@ -70,12 +70,12 @@ ChooseInputComponent::ChooseInputComponent(std::optional<J2BChooseInputState> st
   }
 }
 
-ChooseInputComponent::~ChooseInputComponent() {
+J2BChooseInputComponent::~J2BChooseInputComponent() {
   fListComponent.reset();
   fList.reset();
 }
 
-void ChooseInputComponent::changeListenerCallback(ChangeBroadcaster *source) {
+void J2BChooseInputComponent::changeListenerCallback(ChangeBroadcaster *source) {
   if (!source)
     return;
   if (source != fList.get()) {
@@ -91,13 +91,13 @@ void ChooseInputComponent::changeListenerCallback(ChangeBroadcaster *source) {
   }
 }
 
-void ChooseInputComponent::paint(juce::Graphics &g) {}
+void J2BChooseInputComponent::paint(juce::Graphics &g) {}
 
-void ChooseInputComponent::onNextButtonClicked() {
+void J2BChooseInputComponent::onNextButtonClicked() {
   JUCEApplication::getInstance()->invoke(gui::toConfig, true);
 }
 
-void ChooseInputComponent::onChooseCustomButtonClicked() {
+void J2BChooseInputComponent::onChooseCustomButtonClicked() {
   fInitialSelection = std::nullopt;
   fList->removeChangeListener(this);
 
@@ -106,7 +106,7 @@ void ChooseInputComponent::onChooseCustomButtonClicked() {
   MainWindow::sFileChooser->launchAsync(flags, [this](FileChooser const &chooser) { onCustomDirectorySelected(chooser); });
 }
 
-void ChooseInputComponent::onCustomDirectorySelected(juce::FileChooser const &chooser) {
+void J2BChooseInputComponent::onCustomDirectorySelected(juce::FileChooser const &chooser) {
   File result = chooser.getResult();
   if (result == File()) {
     return;
@@ -116,7 +116,7 @@ void ChooseInputComponent::onCustomDirectorySelected(juce::FileChooser const &ch
   JUCEApplication::getInstance()->invoke(gui::toConfig, true);
 }
 
-void ChooseInputComponent::selectionChanged() {
+void J2BChooseInputComponent::selectionChanged() {
   int num = fListComponent->getNumSelectedFiles();
   if (num == 1) {
     fState.fInputDirectory = fListComponent->getSelectedFile();
@@ -131,16 +131,16 @@ void ChooseInputComponent::selectionChanged() {
   fList->removeChangeListener(this);
 }
 
-void ChooseInputComponent::fileClicked(const File &file, const MouseEvent &e) {}
+void J2BChooseInputComponent::fileClicked(const File &file, const MouseEvent &e) {}
 
-void ChooseInputComponent::fileDoubleClicked(const File &file) {
+void J2BChooseInputComponent::fileDoubleClicked(const File &file) {
   fState.fInputDirectory = file;
   JUCEApplication::getInstance()->invoke(gui::toConfig, false);
 }
 
-void ChooseInputComponent::browserRootChanged(const File &newRoot) {}
+void J2BChooseInputComponent::browserRootChanged(const File &newRoot) {}
 
-void ChooseInputComponent::onAboutButtonClicked() {
+void J2BChooseInputComponent::onAboutButtonClicked() {
   DialogWindow::LaunchOptions options;
   options.content.setOwned(new AboutComponent());
   options.dialogTitle = "About";

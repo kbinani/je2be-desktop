@@ -4,13 +4,13 @@
 
 namespace je2be::gui {
 
-class ConfigComponent : public juce::Component,
-                        public J2BChooseInputStateProvider,
-                        public J2BConfigStateProvider,
-                        public juce::Timer {
+class J2BConfigComponent : public juce::Component,
+                           public J2BChooseInputStateProvider,
+                           public J2BConfigStateProvider,
+                           public juce::Timer {
 public:
-  explicit ConfigComponent(J2BChooseInputState const &inputState);
-  ~ConfigComponent() override;
+  explicit J2BConfigComponent(J2BChooseInputState const &inputState);
+  ~J2BConfigComponent() override;
 
   void paint(juce::Graphics &) override;
 
@@ -37,7 +37,7 @@ private:
   std::unique_ptr<juce::Label> fMessage;
 
 private:
-  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ConfigComponent)
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(J2BConfigComponent)
 };
 
 } // namespace je2be::gui

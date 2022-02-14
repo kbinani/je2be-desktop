@@ -4,12 +4,12 @@
 
 namespace je2be::gui {
 
-class ChooseOutputComponent : public juce::Component,
-                              public J2BChooseOutputStateProvider,
-                              public J2BChooseInputStateProvider {
+class J2BChooseOutputComponent : public juce::Component,
+                                 public J2BChooseOutputStateProvider,
+                                 public J2BChooseInputStateProvider {
 public:
-  explicit ChooseOutputComponent(J2BConvertState const &convertState);
-  ~ChooseOutputComponent() override;
+  explicit J2BChooseOutputComponent(J2BConvertState const &convertState);
+  ~J2BChooseOutputComponent() override;
 
   void paint(juce::Graphics &) override;
 
@@ -42,7 +42,7 @@ private:
   std::unique_ptr<juce::TextButton> fSaveAsZipFile;
   juce::File fDefaultSaveDirectory;
 
-  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChooseOutputComponent)
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(J2BChooseOutputComponent)
 };
 
 } // namespace je2be::gui

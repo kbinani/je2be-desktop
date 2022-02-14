@@ -31,10 +31,10 @@ static File DecideDefaultOutputDirectory(J2BConvertState const &s) {
   return candidate;
 }
 
-File ChooseOutputComponent::sLastCustomDirectory;
-File ChooseOutputComponent::sLastZipFile;
+File J2BChooseOutputComponent::sLastCustomDirectory;
+File J2BChooseOutputComponent::sLastZipFile;
 
-ChooseOutputComponent::ChooseOutputComponent(J2BConvertState const &convertState) : fState(convertState) {
+J2BChooseOutputComponent::J2BChooseOutputComponent(J2BConvertState const &convertState) : fState(convertState) {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
   setSize(width, height);
@@ -87,15 +87,15 @@ ChooseOutputComponent::ChooseOutputComponent(J2BConvertState const &convertState
   fBackButton->setExplicitFocusOrder(2);
 }
 
-ChooseOutputComponent::~ChooseOutputComponent() {}
+J2BChooseOutputComponent::~J2BChooseOutputComponent() {}
 
-void ChooseOutputComponent::onSaveToDefaultButtonClicked() {
+void J2BChooseOutputComponent::onSaveToDefaultButtonClicked() {
   fState.fCopyDestination = fDefaultSaveDirectory;
   fState.fFormat = J2BOutputFormat::Directory;
   JUCEApplication::getInstance()->invoke(gui::toCopy, true);
 }
 
-void ChooseOutputComponent::onSaveToCustomButtonClicked() {
+void J2BChooseOutputComponent::onSaveToCustomButtonClicked() {
   if (sLastCustomDirectory == File()) {
     sLastCustomDirectory = BedrockSaveDirectory();
   }
@@ -105,7 +105,7 @@ void ChooseOutputComponent::onSaveToCustomButtonClicked() {
   MainWindow::sFileChooser->launchAsync(flags, [this](FileChooser const &chooser) { onCustomDestinationDirectorySelected(chooser); });
 }
 
-void ChooseOutputComponent::onCustomDestinationDirectorySelected(FileChooser const &chooser) {
+void J2BChooseOutputComponent::onCustomDestinationDirectorySelected(FileChooser const &chooser) {
   File dest = chooser.getResult();
   if (dest == File()) {
     fSaveToCustomDirectory->setToggleState(false, dontSendNotification);
@@ -132,13 +132,13 @@ void ChooseOutputComponent::onCustomDestinationDirectorySelected(FileChooser con
   }
 }
 
-void ChooseOutputComponent::onSaveAsZipButtonClicked() {
+void J2BChooseOutputComponent::onSaveAsZipButtonClicked() {
   MainWindow::sFileChooser.reset(new FileChooser(TRANS("Choose where to export the file"), sLastZipFile, "*.mcworld"));
   int flags = FileBrowserComponent::saveMode | FileBrowserComponent::canSelectFiles | FileBrowserComponent::warnAboutOverwriting;
   MainWindow::sFileChooser->launchAsync(flags, [this](FileChooser const &chooser) { onZipDestinationFileSelected(chooser); });
 }
 
-void ChooseOutputComponent::onZipDestinationFileSelected(FileChooser const &chooser) {
+void J2BChooseOutputComponent::onZipDestinationFileSelected(FileChooser const &chooser) {
   File dest = chooser.getResult();
   if (dest == File()) {
     fSaveAsZipFile->setToggleState(false, dontSendNotification);
@@ -151,9 +151,9 @@ void ChooseOutputComponent::onZipDestinationFileSelected(FileChooser const &choo
   JUCEApplication::getInstance()->invoke(gui::toCopy, true);
 }
 
-void ChooseOutputComponent::paint(juce::Graphics &g) {}
+void J2BChooseOutputComponent::paint(juce::Graphics &g) {}
 
-void ChooseOutputComponent::onBackButtonClicked() {
+void J2BChooseOutputComponent::onBackButtonClicked() {
   JUCEApplication::getInstance()->invoke(gui::toChooseInput, true);
 }
 

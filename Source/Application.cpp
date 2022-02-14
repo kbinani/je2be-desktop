@@ -66,7 +66,7 @@ public:
       if (!provider) {
         return false;
       }
-      auto config = new ConfigComponent(provider->getChooseInputState());
+      auto config = new J2BConfigComponent(provider->getChooseInputState());
       fMainWindow->setContentOwned(config, true);
       return true;
     }
@@ -76,7 +76,7 @@ public:
       if (provider) {
         state = provider->getChooseInputState();
       }
-      auto chooseInput = new ChooseInputComponent(state);
+      auto chooseInput = new J2BChooseInputComponent(state);
       fMainWindow->setContentOwned(chooseInput, true);
       return true;
     }
@@ -85,7 +85,7 @@ public:
       if (!provider) {
         return false;
       }
-      auto convert = new ConvertProgressComponent(provider->getConfigState());
+      auto convert = new J2BConvertProgressComponent(provider->getConfigState());
       fMainWindow->setContentOwned(convert, true);
       return true;
     }
@@ -94,7 +94,7 @@ public:
       if (!provider) {
         return false;
       }
-      auto chooseOutput = new ChooseOutputComponent(provider->getConvertState());
+      auto chooseOutput = new J2BChooseOutputComponent(provider->getConvertState());
       fMainWindow->setContentOwned(chooseOutput, true);
       return true;
     }
@@ -103,7 +103,7 @@ public:
       if (!provider) {
         return false;
       }
-      auto copy = new CopyProgressComponent(provider->getChooseOutputState());
+      auto copy = new J2BCopyProgressComponent(provider->getChooseOutputState());
       fMainWindow->setContentOwned(copy, true);
       return true;
     }

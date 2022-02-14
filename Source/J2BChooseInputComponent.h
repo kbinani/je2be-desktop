@@ -5,13 +5,13 @@
 
 namespace je2be::gui {
 
-class ChooseInputComponent : public juce::Component,
-                             public J2BChooseInputStateProvider,
-                             public juce::FileBrowserListener,
-                             public juce::ChangeListener {
+class J2BChooseInputComponent : public juce::Component,
+                                public J2BChooseInputStateProvider,
+                                public juce::FileBrowserListener,
+                                public juce::ChangeListener {
 public:
-  explicit ChooseInputComponent(std::optional<J2BChooseInputState> state);
-  ~ChooseInputComponent() override;
+  explicit J2BChooseInputComponent(std::optional<J2BChooseInputState> state);
+  ~J2BChooseInputComponent() override;
 
   void paint(juce::Graphics &) override;
 
@@ -46,7 +46,7 @@ private:
   std::optional<juce::File> fInitialSelection;
   std::unique_ptr<juce::TextButton> fAboutButton;
 
-  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChooseInputComponent)
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(J2BChooseInputComponent)
 };
 
 } // namespace je2be::gui

@@ -7,13 +7,13 @@ namespace je2be::gui {
 
 class TaskbarProgress;
 
-class ConvertProgressComponent : public juce::Component,
-                                 public J2BConvertStateProvider,
-                                 public J2BConfigStateProvider,
-                                 public J2BChooseInputStateProvider {
+class J2BConvertProgressComponent : public juce::Component,
+                                    public J2BConvertStateProvider,
+                                    public J2BConfigStateProvider,
+                                    public J2BChooseInputStateProvider {
 public:
-  explicit ConvertProgressComponent(J2BConfigState const &configState);
-  ~ConvertProgressComponent() override;
+  explicit J2BConvertProgressComponent(J2BConfigState const &configState);
+  ~J2BConvertProgressComponent() override;
 
   void paint(juce::Graphics &) override;
 
@@ -51,7 +51,7 @@ private:
   std::unique_ptr<TaskbarProgress> fTaskbarProgress;
 
 private:
-  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ConvertProgressComponent)
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(J2BConvertProgressComponent)
 };
 
 } // namespace je2be::gui
