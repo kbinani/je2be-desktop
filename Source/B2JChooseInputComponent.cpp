@@ -132,7 +132,7 @@ void B2JChooseInputComponent::listBoxItemDoubleClicked(int row, const MouseEvent
   }
   GameDirectory gd = fGameDirectories[row];
   fState.fInputFileOrDirectory = gd.fDirectory;
-  JUCEApplication::getInstance()->invoke(gui::toJ2BConfig, false);
+  JUCEApplication::getInstance()->invoke(gui::toB2JConfig, false);
 }
 
 void B2JChooseInputComponent::onBackButtonClicked() {
