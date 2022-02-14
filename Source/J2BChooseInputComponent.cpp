@@ -1,5 +1,4 @@
 #include "J2BChooseInputComponent.h"
-#include "AboutComponent.h"
 #include "CommandID.h"
 #include "Constants.h"
 #include "MainWindow.h"
@@ -29,11 +28,11 @@ J2BChooseInputComponent::J2BChooseInputComponent(std::optional<J2BChooseInputSta
     addAndMakeVisible(*fMessage);
   }
   {
-    fAboutButton.reset(new TextButton("About"));
-    fAboutButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight, kButtonMinWidth, kButtonBaseHeight);
-    fAboutButton->setMouseCursor(MouseCursor::PointingHandCursor);
-    fAboutButton->onClick = [this]() { onAboutButtonClicked(); };
-    addAndMakeVisible(*fAboutButton);
+    fBackButton.reset(new TextButton(TRANS("Back")));
+    fBackButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight, kButtonMinWidth, kButtonBaseHeight);
+    fBackButton->setMouseCursor(MouseCursor::PointingHandCursor);
+    fBackButton->onClick = [this]() { onBackButtonClicked(); };
+    addAndMakeVisible(*fBackButton);
   }
   {
     fNextButton.reset(new TextButton(TRANS("Next")));
@@ -140,15 +139,8 @@ void J2BChooseInputComponent::fileDoubleClicked(const File &file) {
 
 void J2BChooseInputComponent::browserRootChanged(const File &newRoot) {}
 
-void J2BChooseInputComponent::onAboutButtonClicked() {
-  DialogWindow::LaunchOptions options;
-  options.content.setOwned(new AboutComponent());
-  options.dialogTitle = "About";
-  options.useNativeTitleBar = true;
-  options.escapeKeyTriggersCloseButton = true;
-  options.resizable = false;
-  options.dialogBackgroundColour = getLookAndFeel().findColour(ResizableWindow::backgroundColourId);
-  options.launchAsync();
+void J2BChooseInputComponent::onBackButtonClicked() {
+  JUCEApplication::getInstance()->invoke(gui::toModeSelect, true);
 }
 
 } // namespace je2be::gui

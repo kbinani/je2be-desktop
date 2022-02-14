@@ -1,6 +1,6 @@
 #pragma once
 
-#include "J2BChooseInputComponent.h"
+#include "ModeSelectComponent.h"
 #include <juce_gui_extra/juce_gui_extra.h>
 
 using namespace juce;
@@ -16,7 +16,7 @@ public:
                 juce::ResizableWindow::backgroundColourId),
             DocumentWindow::closeButton | DocumentWindow::minimiseButton) {
     setUsingNativeTitleBar(true);
-    setContentOwned(new J2BChooseInputComponent(std::nullopt), true);
+    setContentOwned(new ModeSelectComponent, true);
 
 #if JUCE_IOS || JUCE_ANDROID
     setFullScreen(true);

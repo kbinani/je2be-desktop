@@ -51,7 +51,7 @@ public:
 
   void getAllCommands(Array<CommandID> &commands) override {
     JUCEApplication::getAllCommands(commands);
-    commands.addArray({gui::toJ2BConfig, gui::toJ2BChooseInput, gui::toJ2BConvert, gui::toJ2BChooseOutput, gui::toJ2BCopy});
+    commands.addArray({gui::toJ2BConfig, gui::toJ2BChooseInput, gui::toJ2BConvert, gui::toJ2BChooseOutput, gui::toJ2BCopy, gui::toModeSelect});
   }
 
   void getCommandInfo(CommandID commandID, ApplicationCommandInfo &result) override {
@@ -105,6 +105,11 @@ public:
       }
       auto copy = new J2BCopyProgressComponent(provider->getChooseOutputState());
       fMainWindow->setContentOwned(copy, true);
+      return true;
+    }
+    case gui::toModeSelect: {
+      auto modeSelect = new ModeSelectComponent;
+      fMainWindow->setContentOwned(modeSelect, true);
       return true;
     }
     default:

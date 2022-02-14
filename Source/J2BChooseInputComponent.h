@@ -29,7 +29,7 @@ public:
 private:
   void onNextButtonClicked();
   void onChooseCustomButtonClicked();
-  void onAboutButtonClicked();
+  void onBackButtonClicked();
 
   void onCustomDirectorySelected(juce::FileChooser const &chooser);
 
@@ -44,7 +44,7 @@ private:
   J2BChooseInputState fState;
   std::unique_ptr<juce::Label> fMessage;
   std::optional<juce::File> fInitialSelection;
-  std::unique_ptr<juce::TextButton> fAboutButton;
+  std::unique_ptr<juce::TextButton> fBackButton;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(J2BChooseInputComponent)
 };
