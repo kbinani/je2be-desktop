@@ -1,14 +1,12 @@
 cmake_minimum_required(VERSION 3.16)
 project(je2be-gui VERSION 2.10.2)
 
-if (NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 20)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-  set(CMAKE_CXX_EXTENSIONS OFF)
-endif()
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(BUILD_SHARED_LIBS OFF)
-add_definitions(/DUNICODE /D_UNICODE)
+add_definitions(/DUNICODE /D_UNICODE /source-charset:utf-8 /we4828)
 add_compile_options(
   $<$<CONFIG:Debug>:/MTd>
   $<$<CONFIG:Release>:/MT>
@@ -27,19 +25,19 @@ target_sources(je2be-gui
   PRIVATE
     Source/AboutComponent.cpp
     Source/AboutComponent.h
-    Source/ChooseInputComponent.cpp
-    Source/ChooseInputComponent.h
-    Source/ChooseOutputComponent.cpp
-    Source/ChooseOutputComponent.h
+    Source/J2BChooseInputComponent.cpp
+    Source/J2BChooseInputComponent.h
+    Source/J2BChooseOutputComponent.cpp
+    Source/J2BChooseOutputComponent.h
     Source/CommandID.h
     Source/ComponentState.h
-    Source/ConfigComponent.cpp
-    Source/ConfigComponent.h
+    Source/J2BConfigComponent.cpp
+    Source/J2BConfigComponent.h
     Source/Constants.h
-    Source/ConvertProgressComponent.cpp
-    Source/ConvertProgressComponent.h
-    Source/CopyProgressComponent.cpp
-    Source/CopyProgressComponent.h
+    Source/J2BConvertProgressComponent.cpp
+    Source/J2BConvertProgressComponent.h
+    Source/J2BCopyProgressComponent.cpp
+    Source/J2BCopyProgressComponent.h
     Source/LocalizationHelper.cpp
     Source/LocalizationHelper.h
     Source/Application.cpp

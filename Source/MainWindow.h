@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ChooseInputComponent.h"
+#include "J2BChooseInputComponent.h"
 #include <juce_gui_extra/juce_gui_extra.h>
 
 using namespace juce;
