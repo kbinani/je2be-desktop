@@ -79,11 +79,11 @@ void J2BConfigComponent::timerCallback() {
 void J2BConfigComponent::paint(juce::Graphics &g) {}
 
 void J2BConfigComponent::onStartButtonClicked() {
-  JUCEApplication::getInstance()->invoke(gui::toConvert, true);
+  JUCEApplication::getInstance()->invoke(gui::toJ2BConvert, true);
 }
 
 void J2BConfigComponent::onBackButtonClicked() {
-  JUCEApplication::getInstance()->invoke(gui::toChooseInput, true);
+  JUCEApplication::getInstance()->invoke(gui::toJ2BChooseInput, true);
 }
 
 } // namespace je2be::gui

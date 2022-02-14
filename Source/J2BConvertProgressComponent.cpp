@@ -199,11 +199,11 @@ void J2BConvertProgressComponent::paint(juce::Graphics &g) {}
 
 void J2BConvertProgressComponent::onCancelButtonClicked() {
   if (fFailed) {
-    JUCEApplication::getInstance()->invoke(gui::toChooseInput, true);
+    JUCEApplication::getInstance()->invoke(gui::toJ2BChooseInput, true);
   } else {
     fCancelButton->setEnabled(false);
     fCancelButton->setMouseCursor(MouseCursor::NormalCursor);
-    fCommandWhenFinished = gui::toConfig;
+    fCommandWhenFinished = gui::toJ2BConfig;
     fThread->signalThreadShouldExit();
     fConversionProgress = -1;
     fLabel->setText(TRANS("Waiting for the worker thread to finish"), dontSendNotification);
@@ -215,7 +215,7 @@ void J2BConvertProgressComponent::onProgressUpdate(int phase, double done, doubl
   double weightCompaction = 1 - weightConversion;
 
   if (phase == 2) {
-    if (fCommandWhenFinished != gui::toChooseOutput && fState.fOutputDirectory.exists()) {
+    if (fCommandWhenFinished != gui::toJ2BChooseOutput && fState.fOutputDirectory.exists()) {
       fState.fOutputDirectory.deleteRecursively();
     }
     auto stat = fUpdater->fStat;

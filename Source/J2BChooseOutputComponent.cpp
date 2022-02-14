@@ -92,7 +92,7 @@ J2BChooseOutputComponent::~J2BChooseOutputComponent() {}
 void J2BChooseOutputComponent::onSaveToDefaultButtonClicked() {
   fState.fCopyDestination = fDefaultSaveDirectory;
   fState.fFormat = J2BOutputFormat::Directory;
-  JUCEApplication::getInstance()->invoke(gui::toCopy, true);
+  JUCEApplication::getInstance()->invoke(gui::toJ2BCopy, true);
 }
 
 void J2BChooseOutputComponent::onSaveToCustomButtonClicked() {
@@ -128,7 +128,7 @@ void J2BChooseOutputComponent::onCustomDestinationDirectorySelected(FileChooser 
   } else {
     fState.fCopyDestination = dest;
     fState.fFormat = J2BOutputFormat::Directory;
-    JUCEApplication::getInstance()->invoke(gui::toCopy, true);
+    JUCEApplication::getInstance()->invoke(gui::toJ2BCopy, true);
   }
 }
 
@@ -148,13 +148,13 @@ void J2BChooseOutputComponent::onZipDestinationFileSelected(FileChooser const &c
   sLastZipFile = dest;
   fState.fCopyDestination = dest;
   fState.fFormat = J2BOutputFormat::MCWorld;
-  JUCEApplication::getInstance()->invoke(gui::toCopy, true);
+  JUCEApplication::getInstance()->invoke(gui::toJ2BCopy, true);
 }
 
 void J2BChooseOutputComponent::paint(juce::Graphics &g) {}
 
 void J2BChooseOutputComponent::onBackButtonClicked() {
-  JUCEApplication::getInstance()->invoke(gui::toChooseInput, true);
+  JUCEApplication::getInstance()->invoke(gui::toJ2BChooseInput, true);
 }
 
 } // namespace je2be::gui

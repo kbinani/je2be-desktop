@@ -152,13 +152,13 @@ void J2BCopyProgressComponent::paint(juce::Graphics &g) {}
 void J2BCopyProgressComponent::handleAsyncUpdate() {
   struct InvokeToChooseOutput : public ModalComponentManager::Callback {
     void modalStateFinished(int returnValue) override {
-      JUCEApplication::getInstance()->invoke(gui::toChooseOutput, true);
+      JUCEApplication::getInstance()->invoke(gui::toJ2BChooseOutput, true);
     }
   };
 
   struct InvokeToChooseInput : public ModalComponentManager::Callback {
     void modalStateFinished(int returnValue) override {
-      JUCEApplication::getInstance()->invoke(gui::toChooseInput, true);
+      JUCEApplication::getInstance()->invoke(gui::toJ2BChooseInput, true);
     }
   };
 
@@ -171,7 +171,7 @@ void J2BCopyProgressComponent::handleAsyncUpdate() {
   } else if (*result == J2BCopyProgressComponent::Worker::Result::Cancelled) {
     fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
     NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::InfoIcon, TRANS("Cancelled"), TRANS("Saving cancelled."), nullptr, new InvokeToChooseOutput);
-    JUCEApplication::getInstance()->invoke(gui::toChooseOutput, true);
+    JUCEApplication::getInstance()->invoke(gui::toJ2BChooseOutput, true);
   } else {
     fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
     NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::InfoIcon, TRANS("Completed"), TRANS("Saving completed."), nullptr, new InvokeToChooseInput);

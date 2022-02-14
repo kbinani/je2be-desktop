@@ -3,11 +3,11 @@
 namespace je2be::gui {
 
 enum {
-  toConfig = 1,
-  toChooseInput = 2,
-  toConvert = 3,
-  toChooseOutput = 4,
-  toCopy = 5,
+  toJ2BConfig = 1,
+  toJ2BChooseInput = 2,
+  toJ2BConvert = 3,
+  toJ2BChooseOutput = 4,
+  toJ2BCopy = 5,
 };
 
 }

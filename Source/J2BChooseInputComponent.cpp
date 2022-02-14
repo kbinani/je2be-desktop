@@ -94,7 +94,7 @@ void J2BChooseInputComponent::changeListenerCallback(ChangeBroadcaster *source) 
 void J2BChooseInputComponent::paint(juce::Graphics &g) {}
 
 void J2BChooseInputComponent::onNextButtonClicked() {
-  JUCEApplication::getInstance()->invoke(gui::toConfig, true);
+  JUCEApplication::getInstance()->invoke(gui::toJ2BConfig, true);
 }
 
 void J2BChooseInputComponent::onChooseCustomButtonClicked() {
@@ -113,7 +113,7 @@ void J2BChooseInputComponent::onCustomDirectorySelected(juce::FileChooser const 
   }
   fState.fInputDirectory = result;
   sLastDirectory = result.getParentDirectory();
-  JUCEApplication::getInstance()->invoke(gui::toConfig, true);
+  JUCEApplication::getInstance()->invoke(gui::toJ2BConfig, true);
 }
 
 void J2BChooseInputComponent::selectionChanged() {
@@ -135,7 +135,7 @@ void J2BChooseInputComponent::fileClicked(const File &file, const MouseEvent &e)
 
 void J2BChooseInputComponent::fileDoubleClicked(const File &file) {
   fState.fInputDirectory = file;
-  JUCEApplication::getInstance()->invoke(gui::toConfig, false);
+  JUCEApplication::getInstance()->invoke(gui::toJ2BConfig, false);
 }
 
 void J2BChooseInputComponent::browserRootChanged(const File &newRoot) {}

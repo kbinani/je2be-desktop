@@ -51,7 +51,7 @@ public:
 
   void getAllCommands(Array<CommandID> &commands) override {
     JUCEApplication::getAllCommands(commands);
-    commands.addArray({gui::toConfig, gui::toChooseInput, gui::toConvert, gui::toChooseOutput, gui::toCopy});
+    commands.addArray({gui::toJ2BConfig, gui::toJ2BChooseInput, gui::toJ2BConvert, gui::toJ2BChooseOutput, gui::toJ2BCopy});
   }
 
   void getCommandInfo(CommandID commandID, ApplicationCommandInfo &result) override {
@@ -61,7 +61,7 @@ public:
   bool perform(InvocationInfo const &info) override {
     Component *current = fMainWindow->getContentComponent();
     switch (info.commandID) {
-    case gui::toConfig: {
+    case gui::toJ2BConfig: {
       auto provider = dynamic_cast<J2BChooseInputStateProvider *>(current);
       if (!provider) {
         return false;
@@ -70,7 +70,7 @@ public:
       fMainWindow->setContentOwned(config, true);
       return true;
     }
-    case gui::toChooseInput: {
+    case gui::toJ2BChooseInput: {
       std::optional<J2BChooseInputState> state;
       auto provider = dynamic_cast<J2BChooseInputStateProvider *>(current);
       if (provider) {
@@ -80,7 +80,7 @@ public:
       fMainWindow->setContentOwned(chooseInput, true);
       return true;
     }
-    case gui::toConvert: {
+    case gui::toJ2BConvert: {
       auto provider = dynamic_cast<J2BConfigStateProvider *>(current);
       if (!provider) {
         return false;
@@ -89,7 +89,7 @@ public:
       fMainWindow->setContentOwned(convert, true);
       return true;
     }
-    case gui::toChooseOutput: {
+    case gui::toJ2BChooseOutput: {
       auto provider = dynamic_cast<J2BConvertStateProvider *>(current);
       if (!provider) {
         return false;
@@ -98,7 +98,7 @@ public:
       fMainWindow->setContentOwned(chooseOutput, true);
       return true;
     }
-    case gui::toCopy: {
+    case gui::toJ2BCopy: {
       auto provider = dynamic_cast<J2BChooseOutputStateProvider *>(current);
       if (!provider) {
         return false;
