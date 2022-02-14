@@ -1,4 +1,5 @@
 #include "B2JChooseInputComponent.h"
+#include "B2JConfigComponent.h"
 #include "CommandID.h"
 #include "Constants.h"
 #include "J2BChooseInputComponent.h"
@@ -52,7 +53,7 @@ public:
 
   void getAllCommands(Array<CommandID> &commands) override {
     JUCEApplication::getAllCommands(commands);
-    commands.addArray({gui::toJ2BConfig, gui::toJ2BChooseInput, gui::toJ2BConvert, gui::toJ2BChooseOutput, gui::toJ2BCopy, gui::toModeSelect, gui::toB2JChooseInput});
+    commands.addArray({gui::toJ2BConfig, gui::toJ2BChooseInput, gui::toJ2BConvert, gui::toJ2BChooseOutput, gui::toJ2BCopy, gui::toModeSelect, gui::toB2JChooseInput, gui::toB2JConfig});
   }
 
   void getCommandInfo(CommandID commandID, ApplicationCommandInfo &result) override {
@@ -121,6 +122,15 @@ public:
       }
       auto chooseInput = new B2JChooseInputComponent(state);
       fMainWindow->setContentOwned(chooseInput, true);
+      return true;
+    }
+    case gui::toB2JConfig: {
+      auto provider = dynamic_cast<B2JChooseInputStateProvider *>(current);
+      if (!provider) {
+        return false;
+      }
+      auto config = new B2JConfigComponent(provider->getChooseInputState());
+      fMainWindow->setContentOwned(config, true);
       return true;
     }
     default:

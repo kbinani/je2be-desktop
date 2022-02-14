@@ -51,7 +51,9 @@ target_sources(je2be-gui
     Source/ModeSelectComponent.cpp
     Source/B2JChooseInputComponent.cpp
     Source/B2JChooseInputComponent.h
-    Source/GameDirectories.h)
+    Source/GameDirectories.h
+    Source/B2JConfigComponent.cpp
+    Source/B2JConfigComponent.h)
 
 target_compile_definitions(je2be-gui
   PRIVATE

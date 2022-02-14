@@ -13,6 +13,7 @@ enum {
 
   toB2JChooseInput,
   toB2JConfig,
+  toB2JConvert,
 };
 
 }

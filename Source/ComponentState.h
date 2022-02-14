@@ -91,4 +91,17 @@ public:
   virtual B2JChooseInputState getChooseInputState() const = 0;
 };
 
+class B2JConfigState {
+public:
+  explicit B2JConfigState(B2JChooseInputState const &inputState)
+      : fInputState(inputState) {}
+  B2JChooseInputState const fInputState;
+};
+
+class B2JConfigStateProvider {
+public:
+  virtual ~B2JConfigStateProvider() {}
+  virtual B2JConfigState getConfigState() const = 0;
+};
+
 } // namespace je2be::gui
