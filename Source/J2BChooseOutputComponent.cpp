@@ -19,7 +19,7 @@ static File BedrockSaveDirectory() {
       .getChildFile("minecraftWorlds");
 }
 
-static File DecideDefaultOutputDirectory(ConvertState const &s) {
+static File DecideDefaultOutputDirectory(J2BConvertState const &s) {
   File root = BedrockSaveDirectory();
   String name = s.fConfigState.fInputState.fInputDirectory->getFileName();
   File candidate = root.getChildFile(name);
@@ -34,7 +34,7 @@ static File DecideDefaultOutputDirectory(ConvertState const &s) {
 File ChooseOutputComponent::sLastCustomDirectory;
 File ChooseOutputComponent::sLastZipFile;
 
-ChooseOutputComponent::ChooseOutputComponent(ConvertState const &convertState) : fState(convertState) {
+ChooseOutputComponent::ChooseOutputComponent(J2BConvertState const &convertState) : fState(convertState) {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
   setSize(width, height);
@@ -91,7 +91,7 @@ ChooseOutputComponent::~ChooseOutputComponent() {}
 
 void ChooseOutputComponent::onSaveToDefaultButtonClicked() {
   fState.fCopyDestination = fDefaultSaveDirectory;
-  fState.fFormat = OutputFormat::Directory;
+  fState.fFormat = J2BOutputFormat::Directory;
   JUCEApplication::getInstance()->invoke(gui::toCopy, true);
 }
 
@@ -127,7 +127,7 @@ void ChooseOutputComponent::onCustomDestinationDirectorySelected(FileChooser con
                                                 "empty folder"));
   } else {
     fState.fCopyDestination = dest;
-    fState.fFormat = OutputFormat::Directory;
+    fState.fFormat = J2BOutputFormat::Directory;
     JUCEApplication::getInstance()->invoke(gui::toCopy, true);
   }
 }
@@ -147,7 +147,7 @@ void ChooseOutputComponent::onZipDestinationFileSelected(FileChooser const &choo
   }
   sLastZipFile = dest;
   fState.fCopyDestination = dest;
-  fState.fFormat = OutputFormat::MCWorld;
+  fState.fFormat = J2BOutputFormat::MCWorld;
   JUCEApplication::getInstance()->invoke(gui::toCopy, true);
 }
 

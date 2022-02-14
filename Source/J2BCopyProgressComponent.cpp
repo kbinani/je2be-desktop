@@ -117,7 +117,7 @@ private:
   double *const fProgress;
 };
 
-CopyProgressComponent::CopyProgressComponent(ChooseOutputState const &state) : fState(state) {
+CopyProgressComponent::CopyProgressComponent(J2BChooseOutputState const &state) : fState(state) {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
   setSize(width, height);
@@ -133,7 +133,7 @@ CopyProgressComponent::CopyProgressComponent(ChooseOutputState const &state) : f
 
   fTaskbarProgress.reset(new TaskbarProgress());
 
-  if (state.fFormat == OutputFormat::Directory) {
+  if (state.fFormat == J2BOutputFormat::Directory) {
     fCopyThread.reset(new CopyThread(this, state.fConvertState.fOutputDirectory, *state.fCopyDestination, &fProgress));
   } else {
     fCopyThread.reset(new ZipThread(this, state.fConvertState.fOutputDirectory, *state.fCopyDestination, &fProgress));

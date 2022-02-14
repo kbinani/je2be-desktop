@@ -62,7 +62,7 @@ public:
     Component *current = fMainWindow->getContentComponent();
     switch (info.commandID) {
     case gui::toConfig: {
-      auto provider = dynamic_cast<ChooseInputStateProvider *>(current);
+      auto provider = dynamic_cast<J2BChooseInputStateProvider *>(current);
       if (!provider) {
         return false;
       }
@@ -71,8 +71,8 @@ public:
       return true;
     }
     case gui::toChooseInput: {
-      std::optional<ChooseInputState> state;
-      auto provider = dynamic_cast<ChooseInputStateProvider *>(current);
+      std::optional<J2BChooseInputState> state;
+      auto provider = dynamic_cast<J2BChooseInputStateProvider *>(current);
       if (provider) {
         state = provider->getChooseInputState();
       }
@@ -81,7 +81,7 @@ public:
       return true;
     }
     case gui::toConvert: {
-      auto provider = dynamic_cast<ConfigStateProvider *>(current);
+      auto provider = dynamic_cast<J2BConfigStateProvider *>(current);
       if (!provider) {
         return false;
       }
@@ -90,7 +90,7 @@ public:
       return true;
     }
     case gui::toChooseOutput: {
-      auto provider = dynamic_cast<ConvertStateProvider *>(current);
+      auto provider = dynamic_cast<J2BConvertStateProvider *>(current);
       if (!provider) {
         return false;
       }
@@ -99,7 +99,7 @@ public:
       return true;
     }
     case gui::toCopy: {
-      auto provider = dynamic_cast<ChooseOutputStateProvider *>(current);
+      auto provider = dynamic_cast<J2BChooseOutputStateProvider *>(current);
       if (!provider) {
         return false;
       }

@@ -6,22 +6,22 @@
 
 namespace je2be::gui {
 
-class ChooseInputState {
+class J2BChooseInputState {
 public:
   std::optional<juce::File> fInputDirectory;
 };
 
-class ChooseInputStateProvider {
+class J2BChooseInputStateProvider {
 public:
-  virtual ~ChooseInputStateProvider() {}
-  virtual ChooseInputState getChooseInputState() const = 0;
+  virtual ~J2BChooseInputStateProvider() {}
+  virtual J2BChooseInputState getChooseInputState() const = 0;
 };
 
-class ConfigState {
+class J2BConfigState {
 public:
-  explicit ConfigState(ChooseInputState const &inputState)
+  explicit J2BConfigState(J2BChooseInputState const &inputState)
       : fInputState(inputState) {}
-  ChooseInputState const fInputState;
+  J2BChooseInputState const fInputState;
   enum class DirectoryStructure {
     Vanilla,
     Paper,
@@ -29,15 +29,15 @@ public:
   DirectoryStructure fStructure = DirectoryStructure::Vanilla;
 };
 
-class ConfigStateProvider {
+class J2BConfigStateProvider {
 public:
-  virtual ~ConfigStateProvider() {}
-  virtual ConfigState getConfigState() const = 0;
+  virtual ~J2BConfigStateProvider() {}
+  virtual J2BConfigState getConfigState() const = 0;
 };
 
-class ConvertStatistics {
+class J2BConvertStatistics {
 public:
-  ConvertStatistics() = default;
+  J2BConvertStatistics() = default;
 
   std::unordered_map<uint32_t, uint64_t> fChunkDataVersions;
   uint64_t fNumChunks = 0;
@@ -45,39 +45,39 @@ public:
   uint64_t fNumEntities = 0;
 };
 
-class ConvertState {
+class J2BConvertState {
 public:
-  explicit ConvertState(ConfigState const &configState) : fConfigState(configState) {}
-  ConfigState const fConfigState;
+  explicit J2BConvertState(J2BConfigState const &configState) : fConfigState(configState) {}
+  J2BConfigState const fConfigState;
   juce::File fOutputDirectory;
-  ConvertStatistics fStat;
+  J2BConvertStatistics fStat;
 };
 
-class ConvertStateProvider {
+class J2BConvertStateProvider {
 public:
-  virtual ~ConvertStateProvider() {}
-  virtual ConvertState getConvertState() const = 0;
+  virtual ~J2BConvertStateProvider() {}
+  virtual J2BConvertState getConvertState() const = 0;
 };
 
-enum class OutputFormat {
+enum class J2BOutputFormat {
   Directory,
   MCWorld,
 };
 
-class ChooseOutputState {
+class J2BChooseOutputState {
 public:
-  explicit ChooseOutputState(ConvertState const &convertState)
-      : fConvertState(convertState), fFormat(OutputFormat::Directory) {}
+  explicit J2BChooseOutputState(J2BConvertState const &convertState)
+      : fConvertState(convertState), fFormat(J2BOutputFormat::Directory) {}
 
-  ConvertState const fConvertState;
-  OutputFormat fFormat;
+  J2BConvertState const fConvertState;
+  J2BOutputFormat fFormat;
   std::optional<juce::File> fCopyDestination;
 };
 
-class ChooseOutputStateProvider {
+class J2BChooseOutputStateProvider {
 public:
-  virtual ~ChooseOutputStateProvider() {}
-  virtual ChooseOutputState getChooseOutputState() const = 0;
+  virtual ~J2BChooseOutputStateProvider() {}
+  virtual J2BChooseOutputState getChooseOutputState() const = 0;
 };
 
 } // namespace je2be::gui

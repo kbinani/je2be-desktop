@@ -112,8 +112,8 @@ private:
   std::shared_ptr<ConvertProgressComponent::Updater> fUpdater;
 };
 
-static ConvertStatistics Import(je2be::tobe::Statistics stat) {
-  ConvertStatistics ret;
+static J2BConvertStatistics Import(je2be::tobe::Statistics stat) {
+  J2BConvertStatistics ret;
   for (auto const &it : stat.fChunkDataVersions) {
     ret.fChunkDataVersions[it.first] = it.second;
   }
@@ -135,7 +135,7 @@ static String DimensionToString(mcfile::Dimension dim) {
   return "Unknown";
 }
 
-ConvertProgressComponent::ConvertProgressComponent(ConfigState const &configState) : fState(configState) {
+ConvertProgressComponent::ConvertProgressComponent(J2BConfigState const &configState) : fState(configState) {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
   setSize(width, height);
@@ -183,7 +183,7 @@ ConvertProgressComponent::ConvertProgressComponent(ConfigState const &configStat
   fUpdater->fTarget.store(this);
 
   je2be::tobe::InputOption io;
-  if (fState.fConfigState.fStructure == ConfigState::DirectoryStructure::Paper) {
+  if (fState.fConfigState.fStructure == J2BConfigState::DirectoryStructure::Paper) {
     io.fLevelDirectoryStructure = je2be::LevelDirectoryStructure::Paper;
   }
   fThread.reset(new WorkerThread(*configState.fInputState.fInputDirectory, io, fState.fOutputDirectory, {}, fUpdater));

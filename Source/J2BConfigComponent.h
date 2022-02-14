@@ -5,20 +5,20 @@
 namespace je2be::gui {
 
 class ConfigComponent : public juce::Component,
-                        public ChooseInputStateProvider,
-                        public ConfigStateProvider,
+                        public J2BChooseInputStateProvider,
+                        public J2BConfigStateProvider,
                         public juce::Timer {
 public:
-  explicit ConfigComponent(ChooseInputState const &inputState);
+  explicit ConfigComponent(J2BChooseInputState const &inputState);
   ~ConfigComponent() override;
 
   void paint(juce::Graphics &) override;
 
-  ChooseInputState getChooseInputState() const override {
+  J2BChooseInputState getChooseInputState() const override {
     return fState.fInputState;
   }
 
-  ConfigState getConfigState() const override {
+  J2BConfigState getConfigState() const override {
     return fState;
   }
 
@@ -31,7 +31,7 @@ private:
 private:
   std::unique_ptr<juce::TextButton> fBackButton;
   std::unique_ptr<juce::TextButton> fStartButton;
-  ConfigState fState;
+  J2BConfigState fState;
   std::unique_ptr<juce::Label> fDirectory;
   bool fOk = false;
   std::unique_ptr<juce::Label> fMessage;

@@ -10,7 +10,7 @@ namespace je2be::gui {
 
 File ChooseInputComponent::sLastDirectory;
 
-ChooseInputComponent::ChooseInputComponent(std::optional<ChooseInputState> state)
+ChooseInputComponent::ChooseInputComponent(std::optional<J2BChooseInputState> state)
     : fListThread("j2b::gui::ChooseInputComponent") {
   if (state) {
     fState = *state;

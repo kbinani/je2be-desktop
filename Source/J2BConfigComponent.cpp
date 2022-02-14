@@ -6,19 +6,19 @@ using namespace juce;
 
 namespace je2be::gui {
 
-static std::optional<ConfigState::DirectoryStructure> SniffDirectoryStructure(File input) {
+static std::optional<J2BConfigState::DirectoryStructure> SniffDirectoryStructure(File input) {
   File vanillaLevelDat = input.getChildFile("level.dat");
   if (vanillaLevelDat.existsAsFile()) {
-    return ConfigState::DirectoryStructure::Vanilla;
+    return J2BConfigState::DirectoryStructure::Vanilla;
   }
   File paperLevelDat = input.getChildFile("world").getChildFile("level.dat");
   if (paperLevelDat.existsAsFile()) {
-    return ConfigState::DirectoryStructure::Paper;
+    return J2BConfigState::DirectoryStructure::Paper;
   }
   return std::nullopt;
 }
 
-ConfigComponent::ConfigComponent(ChooseInputState const &chooseInputState) : fState(chooseInputState) {
+ConfigComponent::ConfigComponent(J2BChooseInputState const &chooseInputState) : fState(chooseInputState) {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
   setSize(width, height);
@@ -51,7 +51,7 @@ ConfigComponent::ConfigComponent(ChooseInputState const &chooseInputState) : fSt
 
   if (fOk) {
     String s = "Vanilla";
-    if (fState.fStructure == ConfigState::DirectoryStructure::Paper) {
+    if (fState.fStructure == J2BConfigState::DirectoryStructure::Paper) {
       s = "Spigot/Paper";
     }
     fMessage.reset(new Label("", TRANS("Directory structure") + ": " + s));

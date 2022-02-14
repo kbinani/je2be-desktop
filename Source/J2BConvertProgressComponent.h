@@ -8,24 +8,24 @@ namespace je2be::gui {
 class TaskbarProgress;
 
 class ConvertProgressComponent : public juce::Component,
-                                 public ConvertStateProvider,
-                                 public ConfigStateProvider,
-                                 public ChooseInputStateProvider {
+                                 public J2BConvertStateProvider,
+                                 public J2BConfigStateProvider,
+                                 public J2BChooseInputStateProvider {
 public:
-  explicit ConvertProgressComponent(ConfigState const &configState);
+  explicit ConvertProgressComponent(J2BConfigState const &configState);
   ~ConvertProgressComponent() override;
 
   void paint(juce::Graphics &) override;
 
-  ConfigState getConfigState() const override {
+  J2BConfigState getConfigState() const override {
     return fState.fConfigState;
   }
 
-  ConvertState getConvertState() const override {
+  J2BConvertState getConvertState() const override {
     return fState;
   }
 
-  ChooseInputState getChooseInputState() const override {
+  J2BChooseInputState getChooseInputState() const override {
     return fState.fConfigState.fInputState;
   }
 
@@ -37,7 +37,7 @@ public:
 
 private:
   std::unique_ptr<juce::TextButton> fCancelButton;
-  ConvertState fState;
+  J2BConvertState fState;
   std::unique_ptr<juce::Thread> fThread;
   std::shared_ptr<Updater> fUpdater;
   std::unique_ptr<juce::ProgressBar> fConversionProgressBar;

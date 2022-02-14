@@ -5,19 +5,19 @@
 namespace je2be::gui {
 
 class ChooseOutputComponent : public juce::Component,
-                              public ChooseOutputStateProvider,
-                              public ChooseInputStateProvider {
+                              public J2BChooseOutputStateProvider,
+                              public J2BChooseInputStateProvider {
 public:
-  explicit ChooseOutputComponent(ConvertState const &convertState);
+  explicit ChooseOutputComponent(J2BConvertState const &convertState);
   ~ChooseOutputComponent() override;
 
   void paint(juce::Graphics &) override;
 
-  ChooseOutputState getChooseOutputState() const override {
+  J2BChooseOutputState getChooseOutputState() const override {
     return fState;
   }
 
-  ChooseInputState getChooseInputState() const override {
+  J2BChooseInputState getChooseInputState() const override {
     return fState.fConvertState.fConfigState.fInputState;
   }
 
@@ -34,7 +34,7 @@ private:
   static juce::File sLastCustomDirectory;
   static juce::File sLastZipFile;
 
-  ChooseOutputState fState;
+  J2BChooseOutputState fState;
   std::unique_ptr<juce::Label> fMessage;
   std::unique_ptr<juce::TextButton> fBackButton;
   std::unique_ptr<juce::TextButton> fSaveToDefaultDirectory;

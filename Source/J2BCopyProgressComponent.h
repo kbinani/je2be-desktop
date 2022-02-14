@@ -9,17 +9,17 @@ class TaskbarProgress;
 
 class CopyProgressComponent : public juce::Component,
                               public juce::AsyncUpdater,
-                              public ConvertStateProvider,
+                              public J2BConvertStateProvider,
                               public juce::Timer {
 public:
-  explicit CopyProgressComponent(ChooseOutputState const &chooseOutputState);
+  explicit CopyProgressComponent(J2BChooseOutputState const &chooseOutputState);
   ~CopyProgressComponent() override;
 
   void paint(juce::Graphics &) override;
 
   void handleAsyncUpdate() override;
 
-  ConvertState getConvertState() const override {
+  J2BConvertState getConvertState() const override {
     return fState.fConvertState;
   }
 
@@ -40,7 +40,7 @@ public:
   };
 
 private:
-  ChooseOutputState fState;
+  J2BChooseOutputState fState;
   std::unique_ptr<Worker> fCopyThread;
   std::unique_ptr<juce::Label> fLabel;
   std::unique_ptr<juce::ProgressBar> fProgressBar;

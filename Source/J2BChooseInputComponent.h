@@ -6,16 +6,16 @@
 namespace je2be::gui {
 
 class ChooseInputComponent : public juce::Component,
-                             public ChooseInputStateProvider,
+                             public J2BChooseInputStateProvider,
                              public juce::FileBrowserListener,
                              public juce::ChangeListener {
 public:
-  explicit ChooseInputComponent(std::optional<ChooseInputState> state);
+  explicit ChooseInputComponent(std::optional<J2BChooseInputState> state);
   ~ChooseInputComponent() override;
 
   void paint(juce::Graphics &) override;
 
-  ChooseInputState getChooseInputState() const override {
+  J2BChooseInputState getChooseInputState() const override {
     return fState;
   }
 
@@ -41,7 +41,7 @@ private:
   std::unique_ptr<juce::FileListComponent> fListComponent;
   std::unique_ptr<juce::DirectoryContentsList> fList;
   juce::TimeSliceThread fListThread;
-  ChooseInputState fState;
+  J2BChooseInputState fState;
   std::unique_ptr<juce::Label> fMessage;
   std::optional<juce::File> fInitialSelection;
   std::unique_ptr<juce::TextButton> fAboutButton;
