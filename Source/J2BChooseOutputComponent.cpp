@@ -93,7 +93,7 @@ void J2BChooseOutputComponent::onSaveToCustomButtonClicked() {
   }
 
   MainWindow::sFileChooser.reset(new FileChooser(TRANS("Select an empty folder to save in"), directory, {}, false));
-  int flags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectDirectories;
+  int flags = FileBrowserComponent::saveMode | FileBrowserComponent::canSelectDirectories;
   MainWindow::sFileChooser->launchAsync(flags, [this](FileChooser const &chooser) { onCustomDestinationDirectorySelected(chooser); });
 }
 
@@ -125,7 +125,15 @@ void J2BChooseOutputComponent::onCustomDestinationDirectorySelected(FileChooser 
 }
 
 void J2BChooseOutputComponent::onSaveAsZipButtonClicked() {
-  MainWindow::sFileChooser.reset(new FileChooser(TRANS("Choose where to export the file"), sLastZipFile, "*.mcworld", false));
+  File init = sLastZipFile;
+  String fileName = fState.fConvertState.fConfigState.fInputState.fInputDirectory->getFileName();
+  if (init == File()) {
+    init = File(fileName + ".mcworld");
+  } else {
+    auto parent = init.getParentDirectory();
+    init = parent.getNonexistentChildFile(fileName, ".mcworld", true);
+  }
+  MainWindow::sFileChooser.reset(new FileChooser(TRANS("Choose where to export the file"), init, "*.mcworld", false));
   int flags = FileBrowserComponent::saveMode | FileBrowserComponent::canSelectFiles | FileBrowserComponent::warnAboutOverwriting;
   MainWindow::sFileChooser->launchAsync(flags, [this](FileChooser const &chooser) { onZipDestinationFileSelected(chooser); });
 }
