@@ -56,7 +56,7 @@ J2BChooseOutputComponent::J2BChooseOutputComponent(J2BConvertState const &conver
   y += fSaveToCustomDirectory->getHeight();
 
   y += kMargin;
-  fSaveAsZipFile.reset(new TextButton(TRANS("Export as *.mcworld file")));
+  fSaveAsZipFile.reset(new TextButton(TRANS("Export as mcworld file")));
   fSaveAsZipFile->setBounds(2 * kMargin, y, width - 4 * kMargin, kButtonBaseHeight);
   fSaveAsZipFile->setMouseCursor(MouseCursor::PointingHandCursor);
   fSaveAsZipFile->onClick = [this]() { onSaveAsZipButtonClicked(); };
