@@ -10,16 +10,22 @@ namespace je2be::gui {
 
 static File DecideDefaultOutputDirectory(B2JConvertState const &s) {
   File root = JavaSaveDirectory();
-  String fileName = s.fConfigState.fInputState.fInputFileOrDirectory->getFileName();
-  File levelNameFile = s.fConfigState.fInputState.fInputFileOrDirectory->getChildFile("levelname.txt");
-  if (levelNameFile.existsAsFile()) {
-    StringArray lines;
-    levelNameFile.readLines(lines);
-    if (!lines.isEmpty() && !lines[0].isEmpty()) {
-      fileName = lines[0];
+  auto input = s.fConfigState.fInputState.fInputFileOrDirectory;
+  String name = input->getFileName();
+  if (input->isDirectory()) {
+    File levelNameFile = input->getChildFile("levelname.txt");
+    if (levelNameFile.existsAsFile()) {
+      StringArray lines;
+      levelNameFile.readLines(lines);
+      if (!lines.isEmpty() && !lines[0].isEmpty()) {
+        name = lines[0];
+      }
+    }
+  } else {
+    if (input->getFileExtension().isNotEmpty()) {
+      name = input->getFileNameWithoutExtension();
     }
   }
-  String name = s.fConfigState.fInputState.fInputFileOrDirectory->getFileName();
   File candidate = root.getChildFile(name);
   int count = 0;
   while (candidate.exists()) {
