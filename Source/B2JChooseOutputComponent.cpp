@@ -8,8 +8,7 @@ using namespace juce;
 
 namespace je2be::gui {
 
-static File DecideDefaultOutputDirectory(B2JConvertState const &s) {
-  File root = JavaSaveDirectory();
+static File DecideDefaultOutputDirectory(B2JConvertState const &s, File directory) {
   auto input = s.fConfigState.fInputState.fInputFileOrDirectory;
   String name = input->getFileName();
   if (input->isDirectory()) {
@@ -26,11 +25,11 @@ static File DecideDefaultOutputDirectory(B2JConvertState const &s) {
       name = input->getFileNameWithoutExtension();
     }
   }
-  File candidate = root.getChildFile(name);
+  File candidate = directory.getChildFile(name);
   int count = 0;
   while (candidate.exists()) {
     count++;
-    candidate = root.getChildFile(name + "-" + String(count));
+    candidate = directory.getChildFile(name + "-" + String(count));
   }
   return candidate;
 }
@@ -44,7 +43,7 @@ B2JChooseOutputComponent::B2JChooseOutputComponent(B2JConvertState const &conver
   setSize(width, height);
 
   File root = BedrockSaveDirectory();
-  fDefaultSaveDirectory = DecideDefaultOutputDirectory(convertState);
+  fDefaultSaveDirectory = DecideDefaultOutputDirectory(convertState, root);
 
   int y = kMargin;
   fMessage.reset(new Label("", TRANS("Conversion completed! Choose how you want to save it")));
@@ -92,11 +91,17 @@ void B2JChooseOutputComponent::onSaveToDefaultButtonClicked() {
 
 void B2JChooseOutputComponent::onSaveToCustomButtonClicked() {
   if (sLastCustomDirectory == File()) {
-    sLastCustomDirectory = BedrockSaveDirectory();
+    sLastCustomDirectory = JavaSaveDirectory();
   }
 
-  MainWindow::sFileChooser.reset(new FileChooser(TRANS("Select an empty folder to save in"), sLastCustomDirectory));
-  int flags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectDirectories;
+  File directory = sLastCustomDirectory;
+  if (auto defaultDirectory = DecideDefaultOutputDirectory(fState.fConvertState, sLastCustomDirectory); defaultDirectory != File()) {
+    directory = defaultDirectory;
+  }
+
+  auto chooser = new FileChooser(TRANS("Select an empty folder to save in"), directory, {}, false);
+  MainWindow::sFileChooser.reset(chooser);
+  int flags = FileBrowserComponent::saveMode | FileBrowserComponent::canSelectDirectories;
   MainWindow::sFileChooser->launchAsync(flags, [this](FileChooser const &chooser) { onCustomDestinationDirectorySelected(chooser); });
 }
 

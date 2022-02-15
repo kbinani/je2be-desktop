@@ -102,7 +102,7 @@ void J2BChooseInputComponent::onChooseCustomButtonClicked() {
   fList->removeChangeListener(this);
 
   int flags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectDirectories;
-  MainWindow::sFileChooser.reset(new FileChooser(TRANS("Select save data folder of Minecraft"), sLastDirectory, ""));
+  MainWindow::sFileChooser.reset(new FileChooser(TRANS("Select save data folder of Minecraft"), sLastDirectory, {}, false));
   MainWindow::sFileChooser->launchAsync(flags, [this](FileChooser const &chooser) { onCustomDirectorySelected(chooser); });
 }
 

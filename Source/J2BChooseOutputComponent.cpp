@@ -8,8 +8,7 @@ using namespace juce;
 
 namespace je2be::gui {
 
-static File DecideDefaultOutputDirectory(J2BConvertState const &s) {
-  File root = BedrockSaveDirectory();
+static File DecideDefaultOutputDirectory(J2BConvertState const &s, File root) {
   String name = s.fConfigState.fInputState.fInputDirectory->getFileName();
   File candidate = root.getChildFile(name);
   int count = 0;
@@ -29,7 +28,7 @@ J2BChooseOutputComponent::J2BChooseOutputComponent(J2BConvertState const &conver
   setSize(width, height);
 
   File root = BedrockSaveDirectory();
-  fDefaultSaveDirectory = DecideDefaultOutputDirectory(convertState);
+  fDefaultSaveDirectory = DecideDefaultOutputDirectory(convertState, root);
 
   int y = kMargin;
   fMessage.reset(new Label("", TRANS("Conversion completed! Choose how you want to save it")));
@@ -88,8 +87,12 @@ void J2BChooseOutputComponent::onSaveToCustomButtonClicked() {
   if (sLastCustomDirectory == File()) {
     sLastCustomDirectory = BedrockSaveDirectory();
   }
+  File directory = sLastCustomDirectory;
+  if (auto candidate = DecideDefaultOutputDirectory(fState.fConvertState, directory); candidate != File()) {
+    directory = candidate;
+  }
 
-  MainWindow::sFileChooser.reset(new FileChooser(TRANS("Select an empty folder to save in"), sLastCustomDirectory));
+  MainWindow::sFileChooser.reset(new FileChooser(TRANS("Select an empty folder to save in"), directory, {}, false));
   int flags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectDirectories;
   MainWindow::sFileChooser->launchAsync(flags, [this](FileChooser const &chooser) { onCustomDestinationDirectorySelected(chooser); });
 }
@@ -122,7 +125,7 @@ void J2BChooseOutputComponent::onCustomDestinationDirectorySelected(FileChooser 
 }
 
 void J2BChooseOutputComponent::onSaveAsZipButtonClicked() {
-  MainWindow::sFileChooser.reset(new FileChooser(TRANS("Choose where to export the file"), sLastZipFile, "*.mcworld"));
+  MainWindow::sFileChooser.reset(new FileChooser(TRANS("Choose where to export the file"), sLastZipFile, "*.mcworld", false));
   int flags = FileBrowserComponent::saveMode | FileBrowserComponent::canSelectFiles | FileBrowserComponent::warnAboutOverwriting;
   MainWindow::sFileChooser->launchAsync(flags, [this](FileChooser const &chooser) { onZipDestinationFileSelected(chooser); });
 }
