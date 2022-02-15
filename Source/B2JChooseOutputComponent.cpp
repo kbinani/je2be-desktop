@@ -42,7 +42,7 @@ B2JChooseOutputComponent::B2JChooseOutputComponent(B2JConvertState const &conver
   auto height = kWindowHeight;
   setSize(width, height);
 
-  File root = BedrockSaveDirectory();
+  File root = JavaSaveDirectory();
   fDefaultSaveDirectory = DecideDefaultOutputDirectory(convertState, root);
 
   int y = kMargin;
