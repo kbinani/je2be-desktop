@@ -117,4 +117,19 @@ public:
   virtual B2JConvertState getConvertState() const = 0;
 };
 
+class B2JChooseOutputState {
+public:
+  explicit B2JChooseOutputState(B2JConvertState const &convertState)
+      : fConvertState(convertState) {}
+
+  B2JConvertState const fConvertState;
+  std::optional<juce::File> fCopyDestination;
+};
+
+class B2JChooseOutputStateProvider {
+public:
+  virtual ~B2JChooseOutputStateProvider() {}
+  virtual B2JChooseOutputState getChooseOutputState() const = 0;
+};
+
 } // namespace je2be::gui

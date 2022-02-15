@@ -35,3 +35,4 @@ language: Japanese
 "Bedrock to Java" = "統合版 から Java版に";
 "Select mcworld file" = "mcworld ファイルを選ぶ";
 "Select mcworld file to convert" = "変換する mcworld ファイルを選んでください";
+"Save into Minecraft Java edition save folder" = "Minecraft Java 版のセーブフォルダに保存";

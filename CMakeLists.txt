@@ -55,7 +55,9 @@ target_sources(je2be-gui
     Source/B2JConfigComponent.cpp
     Source/B2JConfigComponent.h
     Source/B2JConvertProgressComponent.cpp
-    Source/B2JConvertProgressComponent.h)
+    Source/B2JConvertProgressComponent.h
+    Source/B2JChooseOutputComponent.cpp
+    Source/B2JChooseOutputComponent.h)
 
 target_compile_definitions(je2be-gui
   PRIVATE

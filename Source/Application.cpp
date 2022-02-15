@@ -1,4 +1,5 @@
 #include "B2JChooseInputComponent.h"
+#include "B2JChooseOutputComponent.h"
 #include "B2JConfigComponent.h"
 #include "B2JConvertProgressComponent.h"
 #include "CommandID.h"
@@ -54,7 +55,7 @@ public:
 
   void getAllCommands(Array<CommandID> &commands) override {
     JUCEApplication::getAllCommands(commands);
-    commands.addArray({gui::toJ2BConfig, gui::toJ2BChooseInput, gui::toJ2BConvert, gui::toJ2BChooseOutput, gui::toJ2BCopy, gui::toModeSelect, gui::toB2JChooseInput, gui::toB2JConfig, gui::toB2JConvert});
+    commands.addArray({gui::toJ2BConfig, gui::toJ2BChooseInput, gui::toJ2BConvert, gui::toJ2BChooseOutput, gui::toJ2BCopy, gui::toModeSelect, gui::toB2JChooseInput, gui::toB2JConfig, gui::toB2JConvert, gui::toB2JChooseOutput});
   }
 
   void getCommandInfo(CommandID commandID, ApplicationCommandInfo &result) override {
@@ -141,6 +142,15 @@ public:
       }
       auto convert = new B2JConvertProgressComponent(provider->getConfigState());
       fMainWindow->setContentOwned(convert, true);
+      return true;
+    }
+    case gui::toB2JChooseOutput: {
+      auto provider = dynamic_cast<B2JConvertStateProvider *>(current);
+      if (!provider) {
+        return false;
+      }
+      auto chooseOutput = new B2JChooseOutputComponent(provider->getConvertState());
+      fMainWindow->setContentOwned(chooseOutput, true);
       return true;
     }
     default:

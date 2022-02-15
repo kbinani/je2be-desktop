@@ -15,6 +15,7 @@ enum {
   toB2JConfig,
   toB2JConvert,
   toB2JChooseOutput,
+  toB2JCopy,
 };
 
 }
