@@ -83,6 +83,7 @@ public:
       }
       auto chooseInput = new j2b::J2BChooseInputComponent(state);
       fMainWindow->setContentOwned(chooseInput, true);
+      fMainWindow->setName(getApplicationName() + " : " + TRANS("Java to Bedrock"));
       return true;
     }
     case gui::toJ2BConvert: {
@@ -115,6 +116,7 @@ public:
     case gui::toModeSelect: {
       auto modeSelect = new ModeSelectComponent;
       fMainWindow->setContentOwned(modeSelect, true);
+      fMainWindow->setName(Application::getApplicationName());
       return true;
     }
     case gui::toB2JChooseInput: {
@@ -125,6 +127,7 @@ public:
       }
       auto chooseInput = new b2j::B2JChooseInputComponent(state);
       fMainWindow->setContentOwned(chooseInput, true);
+      fMainWindow->setName(getApplicationName() + " : " + TRANS("Bedrock to Java"));
       return true;
     }
     case gui::toB2JConfig: {
