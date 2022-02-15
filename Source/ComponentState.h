@@ -104,4 +104,17 @@ public:
   virtual B2JConfigState getConfigState() const = 0;
 };
 
+class B2JConvertState {
+public:
+  explicit B2JConvertState(B2JConfigState const &configState) : fConfigState(configState) {}
+  B2JConfigState const fConfigState;
+  juce::File fOutputDirectory;
+};
+
+class B2JConvertStateProvider {
+public:
+  virtual ~B2JConvertStateProvider() {}
+  virtual B2JConvertState getConvertState() const = 0;
+};
+
 } // namespace je2be::gui

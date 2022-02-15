@@ -55,12 +55,12 @@ private:
   std::mutex fMut;
 };
 
-class WorkerThread : public Thread, public je2be::Progress {
+class J2BWorkerThread : public Thread, public je2be::tobe::Progress {
 public:
-  WorkerThread(File input, je2be::tobe::InputOption io, File output,
-               je2be::tobe::OutputOption oo,
-               std::shared_ptr<J2BConvertProgressComponent::Updater> updater)
-      : Thread("je2be::gui::Convert"), fInput(input), fInputOption(io),
+  J2BWorkerThread(File input, je2be::tobe::InputOption io, File output,
+                  je2be::tobe::OutputOption oo,
+                  std::shared_ptr<J2BConvertProgressComponent::Updater> updater)
+      : Thread("je2be::gui::J2BConvert"), fInput(input), fInputOption(io),
         fOutput(output), fOutputOption(oo), fUpdater(updater) {}
 
   void run() override {
@@ -90,13 +90,13 @@ public:
     }
   }
 
-  bool report(je2be::Progress::Phase phase, double done, double total) override {
+  bool report(je2be::tobe::Progress::Phase phase, double done, double total) override {
     int p = 0;
     switch (phase) {
-    case je2be::Progress::Phase::Convert:
+    case je2be::tobe::Progress::Phase::Convert:
       p = 0;
       break;
-    case je2be::Progress::Phase::LevelDbCompaction:
+    case je2be::tobe::Progress::Phase::LevelDbCompaction:
       p = 1;
       break;
     }
@@ -186,7 +186,7 @@ J2BConvertProgressComponent::J2BConvertProgressComponent(J2BConfigState const &c
   if (fState.fConfigState.fStructure == J2BConfigState::DirectoryStructure::Paper) {
     io.fLevelDirectoryStructure = je2be::LevelDirectoryStructure::Paper;
   }
-  fThread.reset(new WorkerThread(*configState.fInputState.fInputDirectory, io, fState.fOutputDirectory, {}, fUpdater));
+  fThread.reset(new J2BWorkerThread(*configState.fInputState.fInputDirectory, io, fState.fOutputDirectory, {}, fUpdater));
   fThread->startThread();
 }
 
