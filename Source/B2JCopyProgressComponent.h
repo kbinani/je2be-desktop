@@ -4,8 +4,10 @@
 #include <optional>
 
 namespace je2be::gui {
-
 class TaskbarProgress;
+}
+
+namespace je2be::gui::b2j {
 
 class B2JCopyProgressComponent : public juce::Component,
                                  public juce::AsyncUpdater,
@@ -50,4 +52,4 @@ private:
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(B2JCopyProgressComponent)
 };
 
-} // namespace je2be::gui
+} // namespace je2be::gui::b2j

@@ -7,7 +7,7 @@
 
 using namespace juce;
 
-namespace je2be::gui {
+namespace je2be::gui::j2b {
 
 class J2BConvertProgressComponent::Updater : public AsyncUpdater {
   struct Entry {
@@ -271,4 +271,4 @@ void J2BConvertProgressComponent::onProgressUpdate(int phase, double done, doubl
   }
 }
 
-} // namespace je2be::gui
+} // namespace je2be::gui::j2b

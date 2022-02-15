@@ -10,7 +10,7 @@ namespace juce {
 Image juce_createIconForFile(const File &file);
 }
 
-namespace je2be::gui {
+namespace je2be::gui::b2j {
 
 File B2JChooseInputComponent::sLastDirectory;
 
@@ -176,4 +176,4 @@ void B2JChooseInputComponent::paintListBoxItem(int rowNumber,
                    Justification::centredLeft, 1);
 }
 
-} // namespace je2be::gui
+} // namespace je2be::gui::b2j

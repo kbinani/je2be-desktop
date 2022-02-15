@@ -4,8 +4,10 @@
 #include "ComponentState.h"
 
 namespace je2be::gui {
-
 class TaskbarProgress;
+}
+
+namespace je2be::gui::b2j {
 
 class B2JConvertProgressComponent : public juce::Component,
                                     public B2JConvertStateProvider,
@@ -62,4 +64,4 @@ private:
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(B2JConvertProgressComponent)
 };
 
-} // namespace je2be::gui
+} // namespace je2be::gui::b2j

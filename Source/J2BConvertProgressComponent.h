@@ -7,6 +7,10 @@ namespace je2be::gui {
 
 class TaskbarProgress;
 
+}
+
+namespace je2be::gui::j2b {
+
 class J2BConvertProgressComponent : public juce::Component,
                                     public J2BConvertStateProvider,
                                     public J2BConfigStateProvider,
@@ -54,4 +58,4 @@ private:
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(J2BConvertProgressComponent)
 };
 
-} // namespace je2be::gui
+} // namespace je2be::gui::j2b

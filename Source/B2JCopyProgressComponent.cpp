@@ -6,11 +6,11 @@
 
 using namespace juce;
 
-namespace je2be::gui {
+namespace je2be::gui::b2j {
 
-class CopyThread : public B2JCopyProgressComponent::Worker {
+class B2JCopyThread : public B2JCopyProgressComponent::Worker {
 public:
-  CopyThread(AsyncUpdater *updater, File from, File to, double *progress)
+  B2JCopyThread(AsyncUpdater *updater, File from, File to, double *progress)
       : B2JCopyProgressComponent::Worker("j2b::gui::B2JCopyThread"),
         fUpdater(updater), fFrom(from), fTo(to), fProgress(progress) {}
 
@@ -78,7 +78,7 @@ B2JCopyProgressComponent::B2JCopyProgressComponent(B2JChooseOutputState const &s
 
   fTaskbarProgress.reset(new TaskbarProgress());
 
-  fCopyThread.reset(new CopyThread(this, state.fConvertState.fOutputDirectory, *state.fCopyDestination, &fProgress));
+  fCopyThread.reset(new B2JCopyThread(this, state.fConvertState.fOutputDirectory, *state.fCopyDestination, &fProgress));
   fCopyThread->startThread();
   fTaskbarProgress->setState(TaskbarProgress::State::Normal);
   startTimerHz(12);
@@ -127,4 +127,4 @@ void B2JCopyProgressComponent::timerCallback() {
   fTaskbarProgress->update(progress);
 }
 
-} // namespace je2be::gui
+} // namespace je2be::gui::b2j

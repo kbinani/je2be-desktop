@@ -6,7 +6,7 @@
 
 using namespace juce;
 
-namespace je2be::gui {
+namespace je2be::gui::j2b {
 
 File J2BChooseInputComponent::sLastDirectory;
 
@@ -144,4 +144,4 @@ void J2BChooseInputComponent::onBackButtonClicked() {
   JUCEApplication::getInstance()->invoke(gui::toModeSelect, true);
 }
 
-} // namespace je2be::gui
+} // namespace je2be::gui::j2b

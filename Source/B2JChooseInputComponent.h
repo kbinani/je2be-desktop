@@ -3,7 +3,7 @@
 #include "ComponentState.h"
 #include <optional>
 
-namespace je2be::gui {
+namespace je2be::gui::b2j {
 
 class B2JChooseInputComponent : public juce::Component,
                                 public B2JChooseInputStateProvider,
@@ -54,4 +54,4 @@ private:
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(B2JChooseInputComponent)
 };
 
-} // namespace je2be::gui
+} // namespace je2be::gui::b2j
