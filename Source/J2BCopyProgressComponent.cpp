@@ -11,7 +11,7 @@ namespace je2be::gui {
 class CopyThread : public J2BCopyProgressComponent::Worker {
 public:
   CopyThread(AsyncUpdater *updater, File from, File to, double *progress)
-      : J2BCopyProgressComponent::Worker("j2b::gui::CopyThread"),
+      : J2BCopyProgressComponent::Worker("j2b::gui::J2BCopyThread"),
         fUpdater(updater), fFrom(from), fTo(to), fProgress(progress) {}
 
   void run() override {
