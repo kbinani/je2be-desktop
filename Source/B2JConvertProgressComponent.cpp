@@ -110,21 +110,8 @@ public:
     fUpdater->trigger(B2JConvertProgressComponent::Phase::Done, 1, 1);
   }
 
-  bool report(je2be::toje::Progress::Phase phase, double done, double total) override {
-    double offset = 0;
-    switch (phase) {
-    case je2be::toje::Progress::Phase::Dimension2:
-      offset = 1.0 / 3.0;
-      break;
-    case je2be::toje::Progress::Phase::Dimension3:
-      offset = 2.0 / 3.0;
-      break;
-    case je2be::toje::Progress::Phase::Dimension1:
-    default:
-      offset = 0;
-      break;
-    }
-    fUpdater->trigger(B2JConvertProgressComponent::Phase::Conversion, offset + done / total / 3.0, 1.0);
+  bool report(double done, double total) override {
+    fUpdater->trigger(B2JConvertProgressComponent::Phase::Conversion, done / total, 1.0);
     return !threadShouldExit();
   }
 
