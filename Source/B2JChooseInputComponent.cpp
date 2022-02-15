@@ -18,18 +18,26 @@ static void LookupGameDirectories(File dir, std::vector<B2JChooseInputComponent:
   buffer.clear();
   auto directories = dir.findChildFiles(File::findDirectories, false);
   for (File const &directory : directories) {
-    File levelNameFile = directory.getChildFile("levelname.txt");
-    if (!levelNameFile.existsAsFile()) {
+    File db = directory.getChildFile("db");
+    if (!db.isDirectory()) {
       continue;
     }
-    StringArray lines;
-    levelNameFile.readLines(lines);
-    if (lines.isEmpty()) {
+    File level = directory.getChildFile("level.dat");
+    if (!level.existsAsFile()) {
       continue;
+    }
+    String levelName = directory.getFileName();
+    File levelNameFile = directory.getChildFile("levelname.txt");
+    if (levelNameFile.existsAsFile()) {
+      StringArray lines;
+      levelNameFile.readLines(lines);
+      if (!lines.isEmpty()) {
+        levelName = lines[0];
+      }
     }
     B2JChooseInputComponent::GameDirectory gd;
     gd.fDirectory = directory;
-    gd.fLevelName = lines[0];
+    gd.fLevelName = levelName;
     buffer.push_back(gd);
   }
 }
