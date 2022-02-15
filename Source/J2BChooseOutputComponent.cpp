@@ -37,7 +37,7 @@ J2BChooseOutputComponent::J2BChooseOutputComponent(J2BConvertState const &conver
   y += fMessage->getHeight();
 
   y += kMargin;
-  fSaveToDefaultDirectory.reset(new TextButton(TRANS("Save into Minecraft Windows 10 save folder")));
+  fSaveToDefaultDirectory.reset(new TextButton(TRANS("Save into Minecraft Bedrock save folder")));
   fSaveToDefaultDirectory->setBounds(2 * kMargin, y, width - 4 * kMargin, kButtonBaseHeight);
   fSaveToDefaultDirectory->setEnabled(root.exists());
   if (root.exists()) {

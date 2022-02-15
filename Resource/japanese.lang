@@ -27,7 +27,7 @@ language: Japanese
 "Select a folder to save in.\rChoose an empty folder to protect your existing data." = "保存先のフォルダを選択してください。既存のデータを保護するため、空のフォルダを選んでください。"
 "Choose where to export the file" = "エクスポート先を選択してください。";
 "Conversion completed! Choose how you want to save it" = "変換処理が成功しました！ 保存方法を選択してください。";
-"Save into Minecraft Windows 10 save folder" = "Minecraft Windows 10 のセーブフォルダに保存";
+"Save into Minecraft Bedrock save folder" = "Minecraft 統合版のセーブフォルダに保存";
 "Save into custom folder" = "保存先を自分で選ぶ";
 "Export as mcworld file" = "mcworld 形式で保存";
 "Select conversion mode" = "変換モードを選んでください";
