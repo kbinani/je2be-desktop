@@ -14,33 +14,53 @@ namespace je2be::gui::b2j {
 
 File B2JChooseInputComponent::sLastDirectory;
 
-static void LookupGameDirectories(File dir, std::vector<B2JChooseInputComponent::GameDirectory> &buffer) {
-  buffer.clear();
-  auto directories = dir.findChildFiles(File::findDirectories, false);
-  for (File const &directory : directories) {
-    File db = directory.getChildFile("db");
-    if (!db.isDirectory()) {
-      continue;
+class B2JChooseInputComponent::GameDirectoryScanThread : public Thread {
+public:
+  std::vector<GameDirectory> fGameDirectories;
+  B2JChooseInputComponent *const fOwner;
+
+public:
+  explicit GameDirectoryScanThread(B2JChooseInputComponent *owner) : Thread("je2be::gui::B2JChooseInputComponent::GameDirectoryScanThread"), fOwner(owner) {}
+
+  void run() override {
+    try {
+      unsafeRun();
+      fOwner->triggerAsyncUpdate();
+    } catch (...) {
     }
-    File level = directory.getChildFile("level.dat");
-    if (!level.existsAsFile()) {
-      continue;
-    }
-    String levelName = directory.getFileName();
-    File levelNameFile = directory.getChildFile("levelname.txt");
-    if (levelNameFile.existsAsFile()) {
-      StringArray lines;
-      levelNameFile.readLines(lines);
-      if (!lines.isEmpty()) {
-        levelName = lines[0];
-      }
-    }
-    B2JChooseInputComponent::GameDirectory gd;
-    gd.fDirectory = directory;
-    gd.fLevelName = levelName;
-    buffer.push_back(gd);
   }
-}
+
+  void unsafeRun() {
+    File dir = BedrockSaveDirectory();
+    auto directories = dir.findChildFiles(File::findDirectories, false);
+    for (File const &directory : directories) {
+      File db = directory.getChildFile("db");
+      if (threadShouldExit()) {
+        break;
+      }
+      if (!db.isDirectory()) {
+        continue;
+      }
+      File level = directory.getChildFile("level.dat");
+      if (!level.existsAsFile()) {
+        continue;
+      }
+      String levelName = directory.getFileName();
+      File levelNameFile = directory.getChildFile("levelname.txt");
+      if (levelNameFile.existsAsFile()) {
+        StringArray lines;
+        levelNameFile.readLines(lines);
+        if (!lines.isEmpty()) {
+          levelName = lines[0];
+        }
+      }
+      B2JChooseInputComponent::GameDirectory gd;
+      gd.fDirectory = directory;
+      gd.fLevelName = levelName;
+      fGameDirectories.push_back(gd);
+    }
+  }
+};
 
 B2JChooseInputComponent::B2JChooseInputComponent(std::optional<B2JChooseInputState> state) {
   if (state) {
@@ -84,18 +104,24 @@ B2JChooseInputComponent::B2JChooseInputComponent(std::optional<B2JChooseInputSta
     addAndMakeVisible(*fChooseCustomButton);
   }
 
-  //TODO: do this with sub-thread
-  LookupGameDirectories(fBedrockGameDirectory, fGameDirectories);
   {
     fListComponent.reset(new ListBox("", this));
     fListComponent->setBounds(width - kMargin - fileListWidth, kMargin, fileListWidth, height - 3 * kMargin - kButtonBaseHeight);
+    fListComponent->setEnabled(false);
     addAndMakeVisible(*fListComponent);
-    fListComponent->updateContent();
+  }
+  {
+    fThread.reset(new GameDirectoryScanThread(this));
+    fThread->startThread();
   }
 }
 
 B2JChooseInputComponent::~B2JChooseInputComponent() {
   fListComponent.reset();
+  if (fThread->isThreadRunning()) {
+    fThread->signalThreadShouldExit();
+    fThread->wait(-1);
+  }
 }
 
 void B2JChooseInputComponent::paint(juce::Graphics &g) {}
@@ -182,6 +208,12 @@ void B2JChooseInputComponent::paintListBoxItem(int rowNumber,
   g.drawFittedText(name,
                    x, 0, width - x, height,
                    Justification::centredLeft, 1);
+}
+
+void B2JChooseInputComponent::handleAsyncUpdate() {
+  fGameDirectories.swap(fThread->fGameDirectories);
+  fListComponent->updateContent();
+  fListComponent->setEnabled(true);
 }
 
 } // namespace je2be::gui::b2j

@@ -7,7 +7,8 @@ namespace je2be::gui::b2j {
 
 class B2JChooseInputComponent : public juce::Component,
                                 public B2JChooseInputStateProvider,
-                                public juce::ListBoxModel {
+                                public juce::ListBoxModel,
+                                public juce::AsyncUpdater {
 public:
   explicit B2JChooseInputComponent(std::optional<B2JChooseInputState> state);
   ~B2JChooseInputComponent() override;
@@ -30,6 +31,9 @@ public:
     juce::File fDirectory;
     juce::String fLevelName;
   };
+  class GameDirectoryScanThread;
+
+  void handleAsyncUpdate() override;
 
 private:
   void onNextButtonClicked();
@@ -48,6 +52,7 @@ private:
   std::unique_ptr<juce::Label> fMessage;
   std::unique_ptr<juce::TextButton> fBackButton;
   juce::File fBedrockGameDirectory;
+  std::unique_ptr<GameDirectoryScanThread> fThread;
 
   std::vector<GameDirectory> fGameDirectories;
 
