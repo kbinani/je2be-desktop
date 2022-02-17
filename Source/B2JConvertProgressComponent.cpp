@@ -207,11 +207,7 @@ void B2JConvertProgressComponent::onProgressUpdate(Phase phase, double done, dou
   double const weightUnzip = 0.5;
   double const weightConversion = 1 - weightUnzip;
 
-  if (fCancelRequested) {
-    return;
-  }
-
-  if (phase == Phase::Unzip) {
+  if (phase == Phase::Unzip && !fCancelRequested) {
     double progress = done / total;
     fUnzipProgress = progress;
     if (progress >= 1) {
@@ -222,7 +218,7 @@ void B2JConvertProgressComponent::onProgressUpdate(Phase phase, double done, dou
     }
     fTaskbarProgress->setState(TaskbarProgress::State::Normal);
     fTaskbarProgress->update(progress * weightUnzip);
-  } else if (phase == Phase::Conversion) {
+  } else if (phase == Phase::Conversion && fCancelRequested) {
     fLabel->setText(TRANS("Converting..."), dontSendNotification);
     double progress = done / total;
     if (progress > 0) {
@@ -247,12 +243,13 @@ void B2JConvertProgressComponent::onProgressUpdate(Phase phase, double done, dou
       fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
     }
   } else {
-    fFailed = true;
+    fFailed = fCancelRequested;
   }
   if (fFailed) {
     fLabel->setText(TRANS("The conversion failed."), dontSendNotification);
     fLabel->setColour(Label::textColourId, kErrorTextColor);
     fCancelButton->setButtonText(TRANS("Back"));
+    fCancelButton->setMouseCursor(MouseCursor::PointingHandCursor);
     fCancelButton->setEnabled(true);
     fUnzipProgressBar->setVisible(false);
     fConversionProgressBar->setVisible(false);

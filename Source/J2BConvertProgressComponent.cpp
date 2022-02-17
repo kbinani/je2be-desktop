@@ -266,6 +266,7 @@ void J2BConvertProgressComponent::onProgressUpdate(int phase, double done, doubl
     fLabel->setText(TRANS("The conversion failed."), dontSendNotification);
     fLabel->setColour(Label::textColourId, kErrorTextColor);
     fCancelButton->setButtonText(TRANS("Back"));
+    fCancelButton->setMouseCursor(MouseCursor::PointingHandCursor);
     fConversionProgressBar->setVisible(false);
     fCompactionProgressBar->setVisible(false);
   }
