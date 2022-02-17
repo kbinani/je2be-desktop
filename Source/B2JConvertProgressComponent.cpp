@@ -218,7 +218,7 @@ void B2JConvertProgressComponent::onProgressUpdate(Phase phase, double done, dou
     }
     fTaskbarProgress->setState(TaskbarProgress::State::Normal);
     fTaskbarProgress->update(progress * weightUnzip);
-  } else if (phase == Phase::Conversion && fCancelRequested) {
+  } else if (phase == Phase::Conversion && !fCancelRequested) {
     fLabel->setText(TRANS("Converting..."), dontSendNotification);
     double progress = done / total;
     if (progress > 0) {
