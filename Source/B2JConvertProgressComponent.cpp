@@ -215,6 +215,7 @@ void B2JConvertProgressComponent::onProgressUpdate(Phase phase, double done, dou
     double progress = done / total;
     fUnzipProgress = progress;
     if (progress >= 1) {
+      fLabel->setText(TRANS("Converting..."), dontSendNotification);
       fConversionProgress = -1;
     } else {
       fConversionProgress = 0;
