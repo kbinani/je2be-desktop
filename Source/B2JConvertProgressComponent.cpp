@@ -1,9 +1,11 @@
+#include <je2be.hpp>
+
 #include "B2JConvertProgressComponent.h"
 #include "CommandID.h"
 #include "Constants.h"
+#include "MainWindow.h"
 #include "TaskbarProgress.h"
 #include "TemporaryDirectory.h"
-#include <je2be.hpp>
 
 using namespace juce;
 
@@ -229,7 +231,7 @@ void B2JConvertProgressComponent::onProgressUpdate(Phase phase, double done, dou
     fTaskbarProgress->update(weightUnzip + progress * weightConversion);
   } else if (phase == Phase::Done) {
     if (fCommandWhenFinished != gui::toB2JChooseOutput && fState.fOutputDirectory.exists()) {
-      fState.fOutputDirectory.deleteRecursively();
+      MainWindow::QueueDeletingDirectory(fState.fOutputDirectory);
     }
     bool ok = fUpdater->fOk;
     if (ok) {

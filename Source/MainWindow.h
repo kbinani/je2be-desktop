@@ -30,10 +30,14 @@ public:
 
   void closeButtonPressed() override {
     sFileChooser.reset();
+    sAsyncTasks.reset();
     JUCEApplication::getInstance()->systemRequestedQuit();
   }
 
+  static void QueueDeletingDirectory(File directory);
+
   static std::unique_ptr<juce::FileChooser> sFileChooser;
+  static std::unique_ptr<juce::ThreadPool> sAsyncTasks;
 
 private:
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainWindow)

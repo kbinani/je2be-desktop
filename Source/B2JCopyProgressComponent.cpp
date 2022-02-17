@@ -2,6 +2,7 @@
 #include "CommandID.h"
 #include "ComponentState.h"
 #include "Constants.h"
+#include "MainWindow.h"
 #include "TaskbarProgress.h"
 
 using namespace juce;
@@ -117,7 +118,7 @@ void B2JCopyProgressComponent::handleAsyncUpdate() {
     fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
     NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::InfoIcon, TRANS("Completed"), TRANS("Saving completed."), nullptr, new InvokeToChooseInput);
     if (fState.fConvertState.fOutputDirectory.exists()) {
-      fState.fConvertState.fOutputDirectory.deleteRecursively();
+      MainWindow::QueueDeletingDirectory(fState.fConvertState.fOutputDirectory);
     }
   }
 }

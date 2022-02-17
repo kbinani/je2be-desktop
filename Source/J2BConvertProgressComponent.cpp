@@ -1,9 +1,11 @@
-#include "J2BConvertProgressComponent.h"
+#include <je2be.hpp>
+
 #include "CommandID.h"
 #include "Constants.h"
+#include "J2BConvertProgressComponent.h"
+#include "MainWindow.h"
 #include "TaskbarProgress.h"
 #include "TemporaryDirectory.h"
-#include <je2be.hpp>
 
 using namespace juce;
 
@@ -216,7 +218,7 @@ void J2BConvertProgressComponent::onProgressUpdate(int phase, double done, doubl
 
   if (phase == 2) {
     if (fCommandWhenFinished != gui::toJ2BChooseOutput && fState.fOutputDirectory.exists()) {
-      fState.fOutputDirectory.deleteRecursively();
+      MainWindow::QueueDeletingDirectory(fState.fOutputDirectory);
     }
     auto stat = fUpdater->fStat;
     if (stat) {
