@@ -6,7 +6,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(BUILD_SHARED_LIBS OFF)
-add_definitions(/DUNICODE /D_UNICODE /source-charset:utf-8 /we4828)
+add_definitions(
+  /DUNICODE
+  /D_UNICODE
+  /source-charset:utf-8
+  /we4828
+  /wd4100 # Suppress "unreferenced formal parameter" warnings
+)
 add_compile_options(
   $<$<CONFIG:Debug>:/MTd>
   $<$<CONFIG:Release>:/MT>
