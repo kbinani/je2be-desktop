@@ -129,7 +129,7 @@ void B2JChooseInputComponent::onNextButtonClicked() {
 
 void B2JChooseInputComponent::onChooseCustomButtonClicked() {
   int flags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles;
-  MainWindow::sFileChooser.reset(new FileChooser(TRANS("Select mcworld file to convert"), sLastDirectory, {}, false));
+  MainWindow::sFileChooser.reset(new FileChooser(TRANS("Select mcworld file to convert"), sLastDirectory, {}, true));
   MainWindow::sFileChooser->launchAsync(flags, [this](FileChooser const &chooser) { onCustomDirectorySelected(chooser); });
 }
 
