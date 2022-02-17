@@ -118,10 +118,7 @@ B2JChooseInputComponent::B2JChooseInputComponent(std::optional<B2JChooseInputSta
 
 B2JChooseInputComponent::~B2JChooseInputComponent() {
   fListComponent.reset();
-  if (fThread->isThreadRunning()) {
-    fThread->signalThreadShouldExit();
-    fThread->wait(-1);
-  }
+  fThread->stopThread(-1);
 }
 
 void B2JChooseInputComponent::paint(juce::Graphics &g) {}
