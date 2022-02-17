@@ -39,3 +39,12 @@ language: Japanese
 "Unzipping..." = "解凍中...";
 "Java to Bedrock" = "Java 版から 統合版に";
 "Bedrock to Java" = "統合版から Java 版に";
+
+"File already exists" = "ファイルが既に存在します";
+"There's already a file called: FLNM" = "FLNM は既に存在します。";
+"Are you sure you want to overwrite it?" = "上書きしますか?";
+"Overwrite" = "上書き";
+"New Folder" = "新しいフォルダーの作成";
+"Go up to parent directory" = "1 つ上のフォルダーへ";
+"Open" = "開く";
+"Choose" = "フォルダーの選択";
