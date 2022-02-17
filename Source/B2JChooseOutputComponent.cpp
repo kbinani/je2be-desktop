@@ -17,7 +17,10 @@ static File DecideDefaultOutputDirectory(B2JConvertState const &s, File director
       StringArray lines;
       levelNameFile.readLines(lines);
       if (!lines.isEmpty() && !lines[0].isEmpty()) {
-        name = lines[0];
+        String line = lines[0];
+        if (CharPointer_UTF8::isValidString(line.getCharPointer(), line.length())) {
+          name = line;
+        }
       }
     }
   } else {
