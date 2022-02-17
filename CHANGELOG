@@ -1,4 +1,8 @@
-Version 2.10.2 (TBD)
+Version 3.0.0 (TBD)
+- Added suport converting Bedrock to Java.
+- Improved conversion accuracy of entities when Java to Bedrock conversion.
+
+Version 2.10.2 (15 Jan 2022)
 - Fixed possible crash while reading chunk.
 
 Version 2.10.1 (14 Jan 2022)
