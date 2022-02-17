@@ -99,14 +99,23 @@ private:
 
     if (cancelled || currentThreadShouldExit()) {
       fResult = J2BCopyProgressComponent::Worker::Result::Cancelled;
-    } else {
-      auto stream = fTo.createOutputStream();
-      if (builder.writeToStream(*stream, fProgress)) {
-        fResult = J2BCopyProgressComponent::Worker::Result::Success;
-      } else {
-        fResult = J2BCopyProgressComponent::Worker::Result::Failed;
-      }
+      return;
     }
+    fResult = J2BCopyProgressComponent::Worker::Result::Failed;
+    auto stream = fTo.createOutputStream();
+    if (!stream) {
+      return;
+    }
+    if (auto result = stream->truncate(); !result.ok()) {
+      return;
+    }
+    if (!stream->setPosition(0)) {
+      return;
+    }
+    if (!builder.writeToStream(*stream, fProgress)) {
+      return;
+    }
+    fResult = J2BCopyProgressComponent::Worker::Result::Success;
   }
 
 private:
