@@ -98,17 +98,19 @@ public:
       }
       input = temp;
     }
-    je2be::toje::Converter c(
+    {
+      je2be::toje::Converter c(
 #if defined(_WIN32)
-        std::filesystem::path(input.getFullPathName().toWideCharPointer()),
-        std::filesystem::path(fOutput.getFullPathName().toWideCharPointer())
+          std::filesystem::path(input.getFullPathName().toWideCharPointer()),
+          std::filesystem::path(fOutput.getFullPathName().toWideCharPointer())
 #else
-        std::filesystem::path(input.getFullPathName().toStdString()),
-        std::filesystem::path(fOutput.getFullPathName().toStdString())
+          std::filesystem::path(input.getFullPathName().toStdString()),
+          std::filesystem::path(fOutput.getFullPathName().toStdString())
 #endif
-    );
-    bool ok = c.run(std::thread::hardware_concurrency(), this);
-    fUpdater->complete(ok);
+      );
+      bool ok = c.run(std::thread::hardware_concurrency(), this);
+      fUpdater->complete(ok);
+    }
     fUpdater->trigger(B2JConvertProgressComponent::Phase::Done, 1, 1);
   }
 
