@@ -75,16 +75,56 @@ public:
     }
   }
 
+
   void unsafeRun() {
-    File input = fInput;
+    using namespace leveldb;
+    namespace fs = std::filesystem;
+
+    File sessionTempDir = TemporaryDirectory::EnsureExisting();
+    juce::Uuid u;
+    File temp = sessionTempDir.getChildFile(u.toDashedString());
+    temp.createDirectory();
+
+    File input;
     if (fInput.isDirectory()) {
+      auto env = leveldb::Env::Default();
+
+      File lockFile = fInput.getChildFile("db").getChildFile("LOCK");
+      fs::path lockFilePath(lockFile.getFullPathName().toWideCharPointer());
+      FileLock *lock = nullptr;
+      if (auto st = env->LockFile(lockFilePath, &lock); !st.ok()) {
+        fUpdater->trigger(B2JConvertProgressComponent::Phase::Error, 1, 1);
+        return;
+      }
+      defer {
+        env->UnlockFile(lock);
+      };
+
+      for (auto &f : fInput.findChildFiles(File::findFiles, false)) {
+        if (f == lockFile) {
+          continue;
+        }
+        if (!f.copyFileTo(temp.getChildFile(f.getFileName()))) {
+          fUpdater->trigger(B2JConvertProgressComponent::Phase::Error, 1, 1);
+          return;
+        }
+      }
+      for (auto &f : fInput.findChildFiles(File::findDirectories, false)) {
+        if (!f.copyDirectoryTo(temp.getChildFile(f.getFileName()))) {
+          fUpdater->trigger(B2JConvertProgressComponent::Phase::Error, 1, 1);
+          return;
+        }
+      }
+
+      if (!fInput.copyDirectoryTo(temp)) {
+        fUpdater->trigger(B2JConvertProgressComponent::Phase::Error, 1, 1);
+        return;
+      }
+      input = temp;
+
       fUpdater->trigger(B2JConvertProgressComponent::Phase::Unzip, 1, 1);
     } else {
       fUpdater->trigger(B2JConvertProgressComponent::Phase::Unzip, 0, 1);
-      File sessionTempDir = TemporaryDirectory::EnsureExisting();
-      juce::Uuid u;
-      File temp = sessionTempDir.getChildFile(u.toDashedString());
-      temp.createDirectory();
       ZipFile zip(fInput);
       int numEntries = zip.getNumEntries();
       fUpdater->trigger(B2JConvertProgressComponent::Phase::Unzip, 0, numEntries);
@@ -110,6 +150,7 @@ public:
       );
       bool ok = c.run(std::thread::hardware_concurrency(), this);
       fUpdater->complete(ok);
+      MainWindow::QueueDeletingDirectory(temp);
     }
     fUpdater->trigger(B2JConvertProgressComponent::Phase::Done, 1, 1);
   }
