@@ -43,7 +43,6 @@ public:
 
     TemporaryDirectory::CleanupAsync();
 
-    MainWindow::sAsyncTasks.reset(new ThreadPool);
     fMainWindow.reset(new MainWindow(getApplicationName()));
   }
 
