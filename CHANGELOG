@@ -1,5 +1,5 @@
 Version 3.0.0 (TBD)
-- Added suport converting Bedrock to Java.
+- Added support converting Bedrock to Java.
 - Improved conversion accuracy of entities when Java to Bedrock conversion.
 
 Version 2.10.2 (15 Jan 2022)
