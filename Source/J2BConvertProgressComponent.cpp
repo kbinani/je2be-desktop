@@ -3,7 +3,6 @@
 #include "CommandID.h"
 #include "Constants.h"
 #include "J2BConvertProgressComponent.h"
-#include "MainWindow.h"
 #include "TaskbarProgress.h"
 #include "TemporaryDirectory.h"
 
@@ -218,7 +217,7 @@ void J2BConvertProgressComponent::onProgressUpdate(int phase, double done, doubl
 
   if (phase == 2) {
     if (fCommandWhenFinished != gui::toJ2BChooseOutput && fState.fOutputDirectory.exists()) {
-      MainWindow::QueueDeletingDirectory(fState.fOutputDirectory);
+      TemporaryDirectory::QueueDeletingDirectory(fState.fOutputDirectory);
     }
     auto stat = fUpdater->fStat;
     if (stat) {

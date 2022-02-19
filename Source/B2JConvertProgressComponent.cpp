@@ -3,7 +3,6 @@
 #include "B2JConvertProgressComponent.h"
 #include "CommandID.h"
 #include "Constants.h"
-#include "MainWindow.h"
 #include "TaskbarProgress.h"
 #include "TemporaryDirectory.h"
 
@@ -74,7 +73,6 @@ public:
       fUpdater->trigger(B2JConvertProgressComponent::Phase::Error, 1, 1);
     }
   }
-
 
   void unsafeRun() {
     using namespace leveldb;
@@ -150,7 +148,7 @@ public:
       );
       bool ok = c.run(std::thread::hardware_concurrency(), this);
       fUpdater->complete(ok);
-      MainWindow::QueueDeletingDirectory(temp);
+      TemporaryDirectory::QueueDeletingDirectory(temp);
     }
     fUpdater->trigger(B2JConvertProgressComponent::Phase::Done, 1, 1);
   }
@@ -274,7 +272,7 @@ void B2JConvertProgressComponent::onProgressUpdate(Phase phase, double done, dou
     fTaskbarProgress->update(weightUnzip + progress * weightConversion);
   } else if (phase == Phase::Done) {
     if (fCommandWhenFinished != gui::toB2JChooseOutput && fState.fOutputDirectory.exists()) {
-      MainWindow::QueueDeletingDirectory(fState.fOutputDirectory);
+      TemporaryDirectory::QueueDeletingDirectory(fState.fOutputDirectory);
     }
     bool ok = fUpdater->fOk;
     if (ok) {

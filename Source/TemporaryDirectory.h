@@ -32,6 +32,8 @@ public:
     th.detach();
   }
 
+  static void QueueDeletingDirectory(juce::File directory);
+
 private:
   static juce::File Get() {
     static juce::File const t(Create());

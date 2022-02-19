@@ -33,8 +33,6 @@ public:
     JUCEApplication::getInstance()->systemRequestedQuit();
   }
 
-  static void QueueDeletingDirectory(File directory);
-
   static std::unique_ptr<juce::FileChooser> sFileChooser;
 
 private:

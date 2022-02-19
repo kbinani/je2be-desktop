@@ -48,6 +48,7 @@ target_sources(je2be-gui
     Source/LocalizationHelper.h
     Source/Application.cpp
     Source/TemporaryDirectory.h
+    Source/TemporaryDirectory.cpp
     Source/MainWindow.h
     Source/MainWindow.cpp
     Source/TaskbarProgress.h
