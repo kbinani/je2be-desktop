@@ -49,9 +49,9 @@ private:
   B2JConvertState fState;
   std::unique_ptr<juce::Thread> fThread;
   std::shared_ptr<Updater> fUpdater;
-  std::unique_ptr<juce::ProgressBar> fUnzipProgressBar;
+  std::unique_ptr<juce::ProgressBar> fUnzipOrCopyProgressBar;
   std::unique_ptr<juce::ProgressBar> fConversionProgressBar;
-  double fUnzipProgress;
+  double fUnzipOrCopyProgress;
   double fConversionProgress;
   std::unique_ptr<juce::Label> fLabel;
   juce::CommandID fCommandWhenFinished = gui::toB2JChooseOutput;

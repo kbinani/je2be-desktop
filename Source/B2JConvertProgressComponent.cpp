@@ -75,9 +75,6 @@ public:
   }
 
   void unsafeRun() {
-    using namespace leveldb;
-    namespace fs = std::filesystem;
-
     File sessionTempDir = TemporaryDirectory::EnsureExisting();
     juce::Uuid u;
     File temp = sessionTempDir.getChildFile(u.toDashedString());
@@ -85,54 +82,16 @@ public:
 
     File input;
     if (fInput.isDirectory()) {
-      auto env = leveldb::Env::Default();
-
-      File lockFile = fInput.getChildFile("db").getChildFile("LOCK");
-      fs::path lockFilePath(lockFile.getFullPathName().toWideCharPointer());
-      FileLock *lock = nullptr;
-      if (auto st = env->LockFile(lockFilePath, &lock); !st.ok()) {
-        fUpdater->trigger(B2JConvertProgressComponent::Phase::Error, 1, 1);
-        return;
-      }
-      defer {
-        env->UnlockFile(lock);
-      };
-
-      for (auto &f : fInput.findChildFiles(File::findFiles, false)) {
-        if (f == lockFile) {
-          continue;
-        }
-        if (!f.copyFileTo(temp.getChildFile(f.getFileName()))) {
-          fUpdater->trigger(B2JConvertProgressComponent::Phase::Error, 1, 1);
-          return;
-        }
-      }
-      for (auto &f : fInput.findChildFiles(File::findDirectories, false)) {
-        if (!f.copyDirectoryTo(temp.getChildFile(f.getFileName()))) {
-          fUpdater->trigger(B2JConvertProgressComponent::Phase::Error, 1, 1);
-          return;
-        }
-      }
-
-      if (!fInput.copyDirectoryTo(temp)) {
+      if (!copyInto(temp)) {
         fUpdater->trigger(B2JConvertProgressComponent::Phase::Error, 1, 1);
         return;
       }
       input = temp;
-
       fUpdater->trigger(B2JConvertProgressComponent::Phase::Unzip, 1, 1);
     } else {
-      fUpdater->trigger(B2JConvertProgressComponent::Phase::Unzip, 0, 1);
-      ZipFile zip(fInput);
-      int numEntries = zip.getNumEntries();
-      fUpdater->trigger(B2JConvertProgressComponent::Phase::Unzip, 0, numEntries);
-      for (int i = 0; i < numEntries; ++i) {
-        auto result = zip.uncompressEntry(i, temp);
-        if (result.failed()) {
-          fUpdater->trigger(B2JConvertProgressComponent::Phase::Error, 1, 1);
-          return;
-        }
-        fUpdater->trigger(B2JConvertProgressComponent::Phase::Unzip, i + 1, numEntries);
+      if (!unzipInto(temp)) {
+        fUpdater->trigger(B2JConvertProgressComponent::Phase::Error, 1, 1);
+        return;
       }
       input = temp;
     }
@@ -153,6 +112,52 @@ public:
     fUpdater->trigger(B2JConvertProgressComponent::Phase::Done, 1, 1);
   }
 
+  bool copyInto(File temp) {
+    using namespace leveldb;
+    namespace fs = std::filesystem;
+
+    auto env = leveldb::Env::Default();
+
+    File lockFile = fInput.getChildFile("db").getChildFile("LOCK");
+    fs::path lockFilePath(lockFile.getFullPathName().toWideCharPointer());
+    FileLock *lock = nullptr;
+    if (auto st = env->LockFile(lockFilePath, &lock); !st.ok()) {
+      return false;
+    }
+    defer {
+      env->UnlockFile(lock);
+    };
+
+    for (auto &f : fInput.findChildFiles(File::findFiles, false)) {
+      if (f == lockFile) {
+        continue;
+      }
+      if (!f.copyFileTo(temp.getChildFile(f.getFileName()))) {
+        return false;
+      }
+    }
+    for (auto &f : fInput.findChildFiles(File::findDirectories, false)) {
+      if (!f.copyDirectoryTo(temp.getChildFile(f.getFileName()))) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  bool unzipInto(File temp) {
+    ZipFile zip(fInput);
+    int numEntries = zip.getNumEntries();
+    for (int i = 0; i < numEntries; ++i) {
+      auto result = zip.uncompressEntry(i, temp);
+      if (result.failed()) {
+        return false;
+      }
+      fUpdater->trigger(B2JConvertProgressComponent::Phase::Unzip, i + 1, numEntries);
+    }
+    return true;
+  }
+
   bool report(double done, double total) override {
     fUpdater->trigger(B2JConvertProgressComponent::Phase::Conversion, done / total, 1.0);
     return !threadShouldExit();
@@ -169,46 +174,63 @@ B2JConvertProgressComponent::B2JConvertProgressComponent(B2JConfigState const &c
   auto height = kWindowHeight;
   setSize(width, height);
 
-  fUnzipProgress = -1;
+  fUnzipOrCopyProgress = -1;
   fConversionProgress = 0;
 
-  fCancelButton.reset(new TextButton(TRANS("Cancel")));
-  fCancelButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight, kButtonMinWidth, kButtonBaseHeight);
-  fCancelButton->setMouseCursor(MouseCursor::PointingHandCursor);
-  fCancelButton->onClick = [this]() { onCancelButtonClicked(); };
-  addAndMakeVisible(*fCancelButton);
+  {
+    fCancelButton.reset(new TextButton(TRANS("Cancel")));
+    fCancelButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight, kButtonMinWidth, kButtonBaseHeight);
+    fCancelButton->setMouseCursor(MouseCursor::PointingHandCursor);
+    fCancelButton->onClick = [this]() { onCancelButtonClicked(); };
+    addAndMakeVisible(*fCancelButton);
+  }
 
   bool needsUnzip = !configState.fInputState.fInputFileOrDirectory->isDirectory();
 
   int y = kMargin;
-  fLabel.reset(new Label("", TRANS("Unzipping...")));
-  fLabel->setBounds(kMargin, y, width - 2 * kMargin, kButtonBaseHeight);
-  fLabel->setJustificationType(Justification::topLeft);
-  addAndMakeVisible(*fLabel);
-  y += fLabel->getHeight() + kMargin;
+  {
+    String title;
+    if (needsUnzip) {
+      title = TRANS("Unzipping...");
+    } else {
+      title = TRANS("Copying...");
+    }
+    fLabel.reset(new Label("", title));
+    fLabel->setBounds(kMargin, y, width - 2 * kMargin, kButtonBaseHeight);
+    fLabel->setJustificationType(Justification::topLeft);
+    addAndMakeVisible(*fLabel);
+    y += fLabel->getHeight() + kMargin;
+  }
   int errorMessageY = y;
 
-  fUnzipProgressBar.reset(new ProgressBar(fUnzipProgress));
-  fUnzipProgressBar->setBounds(kMargin, y, width - 2 * kMargin, kButtonBaseHeight);
-  fUnzipProgressBar->setTextToDisplay("Unzip: ");
-  addAndMakeVisible(*fUnzipProgressBar);
-  if (needsUnzip) {
-    y += fUnzipProgressBar->getHeight() + kMargin;
-  } else {
-    fUnzipProgressBar->setVisible(false);
-    fLabel->setText(TRANS("Converting..."), dontSendNotification);
+  {
+    String title;
+    if (needsUnzip) {
+      title = "Unzip: ";
+    } else {
+      title = "Copy: ";
+    }
+    fUnzipOrCopyProgressBar.reset(new ProgressBar(fUnzipOrCopyProgress));
+    fUnzipOrCopyProgressBar->setBounds(kMargin, y, width - 2 * kMargin, kButtonBaseHeight);
+    fUnzipOrCopyProgressBar->setTextToDisplay(title);
+    addAndMakeVisible(*fUnzipOrCopyProgressBar);
+    y += fUnzipOrCopyProgressBar->getHeight() + kMargin;
   }
 
-  fConversionProgressBar.reset(new ProgressBar(fConversionProgress));
-  fConversionProgressBar->setBounds(kMargin, y, width - 2 * kMargin, kButtonBaseHeight);
-  fConversionProgressBar->setTextToDisplay("Conversion: ");
-  addAndMakeVisible(*fConversionProgressBar);
+  {
+    fConversionProgressBar.reset(new ProgressBar(fConversionProgress));
+    fConversionProgressBar->setBounds(kMargin, y, width - 2 * kMargin, kButtonBaseHeight);
+    fConversionProgressBar->setTextToDisplay("Conversion: ");
+    addAndMakeVisible(*fConversionProgressBar);
+  }
 
-  fErrorMessage.reset(new TextEditor());
-  fErrorMessage->setBounds(kMargin, errorMessageY, width - 2 * kMargin, fCancelButton->getY() - y - kMargin);
-  fErrorMessage->setEnabled(false);
-  fErrorMessage->setMultiLine(true);
-  addChildComponent(*fErrorMessage);
+  {
+    fErrorMessage.reset(new TextEditor());
+    fErrorMessage->setBounds(kMargin, errorMessageY, width - 2 * kMargin, fCancelButton->getY() - y - kMargin);
+    fErrorMessage->setEnabled(false);
+    fErrorMessage->setMultiLine(true);
+    addChildComponent(*fErrorMessage);
+  }
 
   fTaskbarProgress.reset(new TaskbarProgress());
 
@@ -252,7 +274,7 @@ void B2JConvertProgressComponent::onProgressUpdate(Phase phase, double done, dou
 
   if (phase == Phase::Unzip && !fCancelRequested) {
     double progress = done / total;
-    fUnzipProgress = progress;
+    fUnzipOrCopyProgress = progress;
     if (progress >= 1) {
       fLabel->setText(TRANS("Converting..."), dontSendNotification);
       fConversionProgress = -1;
@@ -267,7 +289,7 @@ void B2JConvertProgressComponent::onProgressUpdate(Phase phase, double done, dou
     if (progress > 0) {
       fConversionProgress = progress;
     }
-    fUnzipProgress = 1;
+    fUnzipOrCopyProgress = 1;
     fTaskbarProgress->setState(TaskbarProgress::State::Normal);
     fTaskbarProgress->update(weightUnzip + progress * weightConversion);
   } else if (phase == Phase::Done) {
@@ -294,7 +316,7 @@ void B2JConvertProgressComponent::onProgressUpdate(Phase phase, double done, dou
     fCancelButton->setButtonText(TRANS("Back"));
     fCancelButton->setMouseCursor(MouseCursor::PointingHandCursor);
     fCancelButton->setEnabled(true);
-    fUnzipProgressBar->setVisible(false);
+    fUnzipOrCopyProgressBar->setVisible(false);
     fConversionProgressBar->setVisible(false);
   }
 }
