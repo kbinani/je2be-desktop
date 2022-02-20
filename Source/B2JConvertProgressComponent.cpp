@@ -3,6 +3,7 @@
 #include "B2JConvertProgressComponent.h"
 #include "CommandID.h"
 #include "Constants.h"
+#include "File.h"
 #include "TaskbarProgress.h"
 #include "TemporaryDirectory.h"
 
@@ -96,15 +97,7 @@ public:
       input = temp;
     }
     {
-      je2be::toje::Converter c(
-#if defined(_WIN32)
-          std::filesystem::path(input.getFullPathName().toWideCharPointer()),
-          std::filesystem::path(fOutput.getFullPathName().toWideCharPointer())
-#else
-          std::filesystem::path(input.getFullPathName().toStdString()),
-          std::filesystem::path(fOutput.getFullPathName().toStdString())
-#endif
-      );
+      je2be::toje::Converter c(PathFromFile(input), PathFromFile(fOutput));
       bool ok = c.run(std::thread::hardware_concurrency(), this);
       fUpdater->complete(ok);
       TemporaryDirectory::QueueDeletingDirectory(temp);
