@@ -80,6 +80,9 @@ public:
     juce::Uuid u;
     File temp = sessionTempDir.getChildFile(u.toDashedString());
     temp.createDirectory();
+    defer {
+      TemporaryDirectory::QueueDeletingDirectory(temp);
+    };
 
     File input;
     if (fInput.isDirectory()) {
@@ -100,39 +103,63 @@ public:
       je2be::toje::Converter c(PathFromFile(input), PathFromFile(fOutput));
       bool ok = c.run(std::thread::hardware_concurrency(), this);
       fUpdater->complete(ok);
-      TemporaryDirectory::QueueDeletingDirectory(temp);
     }
     fUpdater->trigger(B2JConvertProgressComponent::Phase::Done, 1, 1);
   }
 
   bool copyInto(File temp) {
     using namespace leveldb;
-    namespace fs = std::filesystem;
 
     auto env = leveldb::Env::Default();
+    File db = fInput.getChildFile("db");
 
-    File lockFile = fInput.getChildFile("db").getChildFile("LOCK");
-    fs::path lockFilePath(lockFile.getFullPathName().toWideCharPointer());
+    if (!temp.getChildFile("db").createDirectory()) {
+      return false;
+    }
+
+    std::vector<File> exclude;
+
+    File lockFile = db.getChildFile("LOCK");
+    auto lockFilePath = PathFromFile(lockFile);
     FileLock *lock = nullptr;
     if (auto st = env->LockFile(lockFilePath, &lock); !st.ok()) {
       return false;
     }
+    exclude.push_back(lockFile);
     defer {
       env->UnlockFile(lock);
     };
 
-    for (auto &f : fInput.findChildFiles(File::findFiles, false)) {
-      if (f == lockFile) {
-        continue;
-      }
-      if (!f.copyFileTo(temp.getChildFile(f.getFileName()))) {
-        return false;
+    // Bedrock game client doesn't create or lock the "LOCK" file.
+    // The locking process above is for other app reading the db in regular manner.
+    // For bedrock game client, additionally lock the manifest file.
+    FileLock *manifestLock = nullptr;
+    File currentFile = db.getChildFile("CURRENT");
+    if (currentFile.existsAsFile()) {
+      String content = currentFile.loadFileAsString();
+      String manifestName = content.trimEnd();
+      File manifestFile = db.getChildFile(manifestName);
+      if (manifestFile.existsAsFile()) {
+
+        // This will success even when the game client is opening the db.
+        if (!manifestFile.copyFileTo(temp.getChildFile("db").getChildFile(manifestName))) {
+          return false;
+        }
+
+        if (auto st = env->LockFile(PathFromFile(manifestFile), &manifestLock); !st.ok()) {
+          return false;
+        }
+        exclude.push_back(manifestFile);
       }
     }
-    for (auto &f : fInput.findChildFiles(File::findDirectories, false)) {
-      if (!f.copyDirectoryTo(temp.getChildFile(f.getFileName()))) {
-        return false;
+    defer {
+      if (manifestLock) {
+        env->UnlockFile(manifestLock);
       }
+    };
+
+    if (!CopyDirectoryRecursive(fInput, temp, exclude)) {
+      return false;
     }
 
     return true;
@@ -301,7 +328,7 @@ void B2JConvertProgressComponent::onProgressUpdate(Phase phase, double done, dou
       fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
     }
   } else {
-    fFailed = fCancelRequested;
+    fFailed = true;
   }
   if (fFailed) {
     fLabel->setText(TRANS("The conversion failed."), dontSendNotification);
