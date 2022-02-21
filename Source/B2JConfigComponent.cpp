@@ -2,7 +2,7 @@
 #include "CommandID.h"
 #include "Constants.h"
 #include "GameDirectories.h"
-#include "nlohmann/json.hpp"
+#include <je2be.hpp>
 
 using namespace juce;
 
@@ -21,7 +21,7 @@ B2JConfigComponent::B2JConfigComponent(B2JChooseInputState const &chooseInputSta
   addAndMakeVisible(*fFileOrDirectory);
 
   y += 3 * kMargin;
-  fImportAccountFromLauncher.reset(new ToggleButton(TRANS("Import account information from the Minecraft Launcher, in order to correctly embed player id to converted data")));
+  fImportAccountFromLauncher.reset(new ToggleButton(TRANS("Import player ID from the Minecraft Launcher to embed it into level.dat as a local player ID")));
   fImportAccountFromLauncher->setBounds(kMargin, y, width - kMargin * 2, kButtonBaseHeight);
   fImportAccountFromLauncher->setMouseCursor(MouseCursor::PointingHandCursor);
   fImportAccountFromLauncher->onClick = [this] {
@@ -82,6 +82,14 @@ void B2JConfigComponent::timerCallback() {
 void B2JConfigComponent::paint(juce::Graphics &g) {}
 
 void B2JConfigComponent::onStartButtonClicked() {
+  if (fImportAccountFromLauncher->getToggleState()) {
+    int selected = fAccountList->getSelectedId();
+    int index = selected - 1;
+    if (0 <= index && index < fAccounts.size()) {
+      Account a = fAccounts[index];
+      fState.fLocalPlayer = a.fUuid;
+    }
+  }
   JUCEApplication::getInstance()->invoke(gui::toB2JConvert, true);
 }
 
@@ -121,7 +129,7 @@ public:
         auto localId = it["localId"].get<string>();
         auto type = it["type"].get<string>();
         auto username = it["username"].get<string>();
-        Uuid uuid(id);
+        juce::Uuid uuid(id);
         Account account;
         account.fName = name;
         account.fUuid = uuid;

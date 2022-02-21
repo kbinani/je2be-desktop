@@ -96,6 +96,7 @@ public:
   explicit B2JConfigState(B2JChooseInputState const &inputState)
       : fInputState(inputState) {}
   B2JChooseInputState const fInputState;
+  std::optional<juce::Uuid> fLocalPlayer;
 };
 
 class B2JConfigStateProvider {

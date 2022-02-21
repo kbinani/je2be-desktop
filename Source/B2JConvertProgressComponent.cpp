@@ -60,10 +60,10 @@ private:
 
 class B2JWorkerThread : public Thread, public je2be::toje::Progress {
 public:
-  B2JWorkerThread(File input, File output,
+  B2JWorkerThread(File input, je2be::toje::InputOption io, File output, je2be::toje::OutputOption oo,
                   std::shared_ptr<B2JConvertProgressComponent::Updater> updater)
-      : Thread("je2be::gui::B2JConvert"), fInput(input),
-        fOutput(output), fUpdater(updater) {}
+      : Thread("je2be::gui::B2JConvert"), fInput(input), fInputOption(io),
+        fOutput(output), fOutputOption(oo), fUpdater(updater) {}
 
   void run() override {
     try {
@@ -100,9 +100,7 @@ public:
       input = temp;
     }
     {
-      je2be::toje::InputOption io;
-      je2be::toje::OutputOption oo;
-      je2be::toje::Converter c(PathFromFile(input), io, PathFromFile(fOutput), oo);
+      je2be::toje::Converter c(PathFromFile(input), fInputOption, PathFromFile(fOutput), fOutputOption);
       bool ok = c.run(std::thread::hardware_concurrency(), this);
       fUpdater->complete(ok);
     }
@@ -187,7 +185,9 @@ public:
 
 private:
   File const fInput;
+  je2be::toje::InputOption fInputOption;
   File const fOutput;
+  je2be::toje::OutputOption fOutputOption;
   std::shared_ptr<B2JConvertProgressComponent::Updater> fUpdater;
 };
 
@@ -265,7 +265,19 @@ B2JConvertProgressComponent::B2JConvertProgressComponent(B2JConfigState const &c
   fUpdater = std::make_shared<Updater>();
   fUpdater->fTarget.store(this);
 
-  fThread.reset(new B2JWorkerThread(*configState.fInputState.fInputFileOrDirectory, fState.fOutputDirectory, fUpdater));
+  je2be::toje::InputOption io;
+  if (fState.fConfigState.fLocalPlayer) {
+    juce::Uuid juceUuid = *fState.fConfigState.fLocalPlayer;
+    je2be::Uuid uuid;
+    uint32_t *raw = (uint32_t *)juceUuid.getRawData();
+    uuid.f1 = raw[0];
+    uuid.f2 = raw[1];
+    uuid.f3 = raw[2];
+    uuid.f4 = raw[3];
+    io.fLocalPlayer = uuid;
+  }
+  je2be::toje::OutputOption oo;
+  fThread.reset(new B2JWorkerThread(*configState.fInputState.fInputFileOrDirectory, io, fState.fOutputDirectory, oo, fUpdater));
   fThread->startThread();
 }
 
