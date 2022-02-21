@@ -22,11 +22,21 @@ B2JConfigComponent::B2JConfigComponent(B2JChooseInputState const &chooseInputSta
   fImportAccountFromLauncher.reset(new ToggleButton(TRANS("Import account information from the Minecraft Launcher")));
   fImportAccountFromLauncher->setBounds(kMargin, y, width - kMargin * 2, kButtonBaseHeight);
   fImportAccountFromLauncher->setMouseCursor(MouseCursor::PointingHandCursor);
-  fImportAccountFromLauncher->onStateChange = [this] {
-    onImportAccountFromLauncherToggleStateChanged();
+  fImportAccountFromLauncher->onClick = [this] {
+    onClickImportAccountFromLauncherButton();
   };
   addAndMakeVisible(*fImportAccountFromLauncher);
   y += fImportAccountFromLauncher->getHeight();
+
+  {
+    int x = 46;
+    fAccountList.reset(new ComboBox());
+    fAccountList->setBounds(x, y, width - x - kMargin, kButtonBaseHeight);
+    fAccountList->setEnabled(false);
+    addAndMakeVisible(*fAccountList);
+    y += fAccountList->getHeight();
+  }
+
   int messageComponentY = y + kMargin;
 
   fStartButton.reset(new TextButton(TRANS("Start")));
@@ -77,8 +87,64 @@ void B2JConfigComponent::onBackButtonClicked() {
   JUCEApplication::getInstance()->invoke(gui::toB2JChooseInput, true);
 }
 
-void B2JConfigComponent::onImportAccountFromLauncherToggleStateChanged() {
-  //TODO:
+class B2JConfigComponent::ImportAccountWorker::Impl {
+public:
+  explicit Impl(B2JConfigComponent *parent) : fParent(parent) {}
+
+  void run() {
+    fParent->triggerAsyncUpdate();
+  }
+
+  B2JConfigComponent *const fParent;
+  std::vector<B2JConfigComponent::Account> fAccounts;
+};
+
+B2JConfigComponent::ImportAccountWorker::ImportAccountWorker(B2JConfigComponent *parent) : Thread("je2be::gui::B2JConfigComponent::ImportAccountWorker"), fImpl(new Impl(parent)) {}
+
+B2JConfigComponent::ImportAccountWorker::~ImportAccountWorker() {}
+
+void B2JConfigComponent::ImportAccountWorker::run() {
+  fImpl->run();
+}
+
+void B2JConfigComponent::ImportAccountWorker::copyAccounts(std::vector<B2JConfigComponent::Account> &buffer) {
+  fImpl->fAccounts.swap(buffer);
+}
+
+void B2JConfigComponent::onClickImportAccountFromLauncherButton() {
+  if (fImportAccountWorker) {
+    return;
+  }
+  if (fImportAccountFromLauncher->getToggleState()) {
+    if (fAccounts.empty()) {
+      fImportAccountFromLauncher->setEnabled(false);
+      stopTimer();
+      fStartButton->setEnabled(false);
+      fBackButton->setEnabled(false);
+      fImportAccountWorker.reset(new ImportAccountWorker(this));
+      fImportAccountWorker->startThread();
+    } else {
+      fAccountList->setEnabled(true);
+    }
+  } else {
+    fAccountList->setEnabled(false);
+  }
+}
+
+void B2JConfigComponent::handleAsyncUpdate() {
+  if (fImportAccountWorker) {
+    fImportAccountWorker->copyAccounts(fAccounts);
+  }
+  fImportAccountWorker.reset();
+  fAccountList->clear();
+  for (int i = 0; i < fAccounts.size(); i++) {
+    Account account = fAccounts[i];
+    fAccountList->addItem(account.fName, i);
+  }
+  fAccountList->setEnabled(true);
+  fImportAccountFromLauncher->setEnabled(true);
+  fStartButton->setEnabled(true);
+  fBackButton->setEnabled(true);
 }
 
 } // namespace je2be::gui::b2j
