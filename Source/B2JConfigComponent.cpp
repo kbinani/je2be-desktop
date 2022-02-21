@@ -11,11 +11,23 @@ B2JConfigComponent::B2JConfigComponent(B2JChooseInputState const &chooseInputSta
   auto height = kWindowHeight;
   setSize(width, height);
 
+  int y = kMargin;
   String label = (*fState.fInputState.fInputFileOrDirectory).getFullPathName();
   fFileOrDirectory.reset(new Label("", TRANS("Selected world:") + " " + label));
   fFileOrDirectory->setBounds(kMargin, kMargin, width - kMargin * 2, kButtonBaseHeight);
   fFileOrDirectory->setJustificationType(Justification::topLeft);
   addAndMakeVisible(*fFileOrDirectory);
+
+  y += 3 * kMargin;
+  fImportAccountFromLauncher.reset(new ToggleButton(TRANS("Import account information from the Minecraft Launcher")));
+  fImportAccountFromLauncher->setBounds(kMargin, y, width - kMargin * 2, kButtonBaseHeight);
+  fImportAccountFromLauncher->setMouseCursor(MouseCursor::PointingHandCursor);
+  fImportAccountFromLauncher->onStateChange = [this] {
+    onImportAccountFromLauncherToggleStateChanged();
+  };
+  addAndMakeVisible(*fImportAccountFromLauncher);
+  y += fImportAccountFromLauncher->getHeight();
+  int messageComponentY = y + kMargin;
 
   fStartButton.reset(new TextButton(TRANS("Start")));
   fStartButton->setBounds(width - kMargin - kButtonMinWidth, height - kMargin - kButtonBaseHeight, kButtonMinWidth, kButtonBaseHeight);
@@ -29,7 +41,7 @@ B2JConfigComponent::B2JConfigComponent(B2JChooseInputState const &chooseInputSta
   fBackButton->onClick = [this]() { onBackButtonClicked(); };
   addAndMakeVisible(*fBackButton);
 
-  //TODO: check given file or directory
+  // TODO: check given file or directory
   fOk = true;
 
   if (fOk) {
@@ -39,7 +51,7 @@ B2JConfigComponent::B2JConfigComponent(B2JChooseInputState const &chooseInputSta
                                        "in the specified directory.")));
     fMessage->setColour(Label::textColourId, kErrorTextColor);
   }
-  fMessage->setBounds(kMargin, kMargin + kButtonBaseHeight + kMargin, width - 2 * kMargin, kButtonBaseHeight);
+  fMessage->setBounds(kMargin, messageComponentY, width - 2 * kMargin, kButtonBaseHeight);
   addAndMakeVisible(*fMessage);
 
   startTimer(1000);
@@ -63,6 +75,10 @@ void B2JConfigComponent::onStartButtonClicked() {
 
 void B2JConfigComponent::onBackButtonClicked() {
   JUCEApplication::getInstance()->invoke(gui::toB2JChooseInput, true);
+}
+
+void B2JConfigComponent::onImportAccountFromLauncherToggleStateChanged() {
+  //TODO:
 }
 
 } // namespace je2be::gui::b2j

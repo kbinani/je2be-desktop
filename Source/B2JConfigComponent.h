@@ -27,6 +27,7 @@ public:
 private:
   void onBackButtonClicked();
   void onStartButtonClicked();
+  void onImportAccountFromLauncherToggleStateChanged();
 
 private:
   std::unique_ptr<juce::TextButton> fBackButton;
@@ -35,6 +36,7 @@ private:
   std::unique_ptr<juce::Label> fFileOrDirectory;
   bool fOk = false;
   std::unique_ptr<juce::Label> fMessage;
+  std::unique_ptr<juce::ToggleButton> fImportAccountFromLauncher;
 
 private:
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(B2JConfigComponent)
