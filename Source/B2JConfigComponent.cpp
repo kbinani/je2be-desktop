@@ -1,6 +1,8 @@
 #include "B2JConfigComponent.h"
 #include "CommandID.h"
 #include "Constants.h"
+#include "GameDirectories.h"
+#include "nlohmann/json.hpp"
 
 using namespace juce;
 
@@ -19,7 +21,7 @@ B2JConfigComponent::B2JConfigComponent(B2JChooseInputState const &chooseInputSta
   addAndMakeVisible(*fFileOrDirectory);
 
   y += 3 * kMargin;
-  fImportAccountFromLauncher.reset(new ToggleButton(TRANS("Import account information from the Minecraft Launcher")));
+  fImportAccountFromLauncher.reset(new ToggleButton(TRANS("Import account information from the Minecraft Launcher, in order to correctly embed player id to converted data")));
   fImportAccountFromLauncher->setBounds(kMargin, y, width - kMargin * 2, kButtonBaseHeight);
   fImportAccountFromLauncher->setMouseCursor(MouseCursor::PointingHandCursor);
   fImportAccountFromLauncher->onClick = [this] {
@@ -92,7 +94,63 @@ public:
   explicit Impl(B2JConfigComponent *parent) : fParent(parent) {}
 
   void run() {
+    try {
+      unsafeRun();
+    } catch (...) {
+    }
     fParent->triggerAsyncUpdate();
+  }
+
+  void unsafeRun() {
+    using namespace std;
+    File saves = JavaSaveDirectory();
+    File jsonFile = saves.getParentDirectory().getChildFile("launcher_accounts.json");
+    if (!jsonFile.existsAsFile()) {
+      return;
+    }
+    String jsonString = jsonFile.loadFileAsString();
+    string jsonStdString(jsonString.toUTF8(), jsonString.getNumBytesAsUTF8());
+    auto json = nlohmann::json::parse(jsonStdString);
+    auto accounts = json["accounts"];
+    unordered_map<string, Account> collected;
+    for (auto const &it : accounts) {
+      try {
+        auto profile = it["minecraftProfile"];
+        auto id = profile["id"].get<string>();
+        auto name = profile["name"].get<string>();
+        auto localId = it["localId"].get<string>();
+        auto type = it["type"].get<string>();
+        auto username = it["username"].get<string>();
+        Uuid uuid(id);
+        Account account;
+        account.fName = name;
+        account.fUuid = uuid;
+        account.fType = type;
+        account.fUsername = username;
+        collected[localId] = account;
+      } catch (...) {
+      }
+    }
+    if (collected.empty()) {
+      return;
+    }
+    if (collected.size() == 1) {
+      fAccounts.push_back(collected.begin()->second);
+      return;
+    }
+    string activeAccountLocalId;
+    try {
+      activeAccountLocalId = json["activeAccountLocalId"].get<string>();
+    } catch (...) {
+    }
+    auto first = collected.find(activeAccountLocalId);
+    if (first != collected.end()) {
+      fAccounts.push_back(first->second);
+      collected.erase(first);
+    }
+    for (auto const &it : collected) {
+      fAccounts.push_back(it.second);
+    }
   }
 
   B2JConfigComponent *const fParent;
@@ -139,7 +197,10 @@ void B2JConfigComponent::handleAsyncUpdate() {
   fAccountList->clear();
   for (int i = 0; i < fAccounts.size(); i++) {
     Account account = fAccounts[i];
-    fAccountList->addItem(account.fName, i);
+    fAccountList->addItem(account.toString(), i + 1);
+  }
+  if (fAccounts.size() >= 1) {
+    fAccountList->setSelectedId(1);
   }
   fAccountList->setEnabled(true);
   fImportAccountFromLauncher->setEnabled(true);

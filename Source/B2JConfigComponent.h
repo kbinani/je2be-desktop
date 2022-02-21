@@ -29,6 +29,12 @@ public:
   struct Account {
     juce::String fName;
     juce::Uuid fUuid;
+    juce::String fType;     // Mojang / Xbox
+    juce::String fUsername; // Mojang: mail address / Xbox: GamerTag
+
+    juce::String toString() const {
+      return fName + " (" + fType + ", " + fUsername + ")";
+    }
   };
 
   class ImportAccountWorker : public juce::Thread {
