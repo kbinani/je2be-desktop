@@ -1,6 +1,7 @@
 Version 3.1.0 (TBD)
 - Improved accuracy of metadata about ocean monument. [j2b, b2j]
 - Fixed possible crash while reading empty (means air only) chunks. [b2j]
+- Fixed an issue where the owner ID of animal enttities were set to invalid values. [b2j]
 
 Version 3.0.0 (19 Jan 2022)
 - Added support converting Bedrock to Java.
