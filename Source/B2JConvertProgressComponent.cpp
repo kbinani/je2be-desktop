@@ -100,7 +100,9 @@ public:
       input = temp;
     }
     {
-      je2be::toje::Converter c(PathFromFile(input), PathFromFile(fOutput));
+      je2be::toje::InputOption io;
+      je2be::toje::OutputOption oo;
+      je2be::toje::Converter c(PathFromFile(input), io, PathFromFile(fOutput), oo);
       bool ok = c.run(std::thread::hardware_concurrency(), this);
       fUpdater->complete(ok);
     }
