@@ -133,7 +133,7 @@ void J2BChooseOutputComponent::onSaveAsZipButtonClicked() {
     auto parent = init.getParentDirectory();
     init = parent.getNonexistentChildFile(fileName, ".mcworld", true);
   }
-  MainWindow::sFileChooser.reset(new FileChooser(TRANS("Choose where to export the file"), init, "*.mcworld", false));
+  MainWindow::sFileChooser.reset(new FileChooser(TRANS("Choose where to export the file"), init, "*.mcworld", true));
   int flags = FileBrowserComponent::saveMode | FileBrowserComponent::canSelectFiles | FileBrowserComponent::warnAboutOverwriting;
   MainWindow::sFileChooser->launchAsync(flags, [this](FileChooser const &chooser) { onZipDestinationFileSelected(chooser); });
 }
