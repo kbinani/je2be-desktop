@@ -64,6 +64,7 @@ private:
   std::unique_ptr<juce::Label> fMessage;
   std::unique_ptr<juce::ToggleButton> fImportAccountFromLauncher;
   std::unique_ptr<juce::ComboBox> fAccountList;
+  std::unique_ptr<juce::Label> fAccountListLabel;
   std::vector<Account> fAccounts;
   std::unique_ptr<ImportAccountWorker> fImportAccountWorker;
 

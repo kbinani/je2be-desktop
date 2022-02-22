@@ -41,6 +41,7 @@ language: Japanese
 "Java to Bedrock" = "Java 版から 統合版に";
 "Bedrock to Java" = "統合版から Java 版に";
 "Import player ID from the Minecraft Launcher to embed it into level.dat as a local player ID" = "Minecraft LauncherからプレイヤーIDをインポートし、level.datのプレイヤーIDとして設定します";
+"Account:" = "アカウント:";
 
 "File already exists" = "ファイルが既に存在します";
 "There's already a file called: FLNM" = "FLNM は既に存在します。";

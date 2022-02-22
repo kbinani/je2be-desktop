@@ -20,20 +20,30 @@ B2JConfigComponent::B2JConfigComponent(B2JChooseInputState const &chooseInputSta
   fFileOrDirectory->setJustificationType(Justification::topLeft);
   addAndMakeVisible(*fFileOrDirectory);
 
-  y += 3 * kMargin;
-  fImportAccountFromLauncher.reset(new ToggleButton(TRANS("Import player ID from the Minecraft Launcher to embed it into level.dat as a local player ID")));
-  fImportAccountFromLauncher->setBounds(kMargin, y, width - kMargin * 2, kButtonBaseHeight);
-  fImportAccountFromLauncher->setMouseCursor(MouseCursor::PointingHandCursor);
-  fImportAccountFromLauncher->onClick = [this] {
-    onClickImportAccountFromLauncherButton();
-  };
-  addAndMakeVisible(*fImportAccountFromLauncher);
-  y += fImportAccountFromLauncher->getHeight();
+  {
+    y += 3 * kMargin;
+    fImportAccountFromLauncher.reset(new ToggleButton(TRANS("Import player ID from the Minecraft Launcher to embed it into level.dat as a local player ID")));
+    fImportAccountFromLauncher->setBounds(kMargin, y, width - kMargin * 2, kButtonBaseHeight);
+    fImportAccountFromLauncher->setMouseCursor(MouseCursor::PointingHandCursor);
+    fImportAccountFromLauncher->onClick = [this] {
+      onClickImportAccountFromLauncherButton();
+    };
+    addAndMakeVisible(*fImportAccountFromLauncher);
+    y += fImportAccountFromLauncher->getHeight();
+  }
 
   {
-    int x = 46;
+    int x = 42;
+
+    String title = TRANS("Account:") + " ";
+    fAccountListLabel.reset(new Label("", title));
+    int labelWidth = getLookAndFeel().getLabelFont(*fAccountListLabel).getStringWidth(title) + 10;
+    fAccountListLabel->setBounds(x, y, labelWidth, kButtonBaseHeight);
+    fAccountListLabel->setJustificationType(Justification::centredLeft);
+    addAndMakeVisible(*fAccountListLabel);
+
     fAccountList.reset(new ComboBox());
-    fAccountList->setBounds(x, y, width - x - kMargin, kButtonBaseHeight);
+    fAccountList->setBounds(x + labelWidth, y, width - x - labelWidth - kMargin, kButtonBaseHeight);
     fAccountList->setEnabled(false);
     addAndMakeVisible(*fAccountList);
     y += fAccountList->getHeight();
