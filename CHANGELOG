@@ -1,3 +1,7 @@
+Version 3.2.0 (TBD)
+- Added the ability to read account information from Minecraft Launcher and set it in level.dat. [b2j]
+- Fixed an issue where the vehicle disappears when converting data with the player in the vehicle such as a boat. [j2b, b2j]
+
 Version 3.1.0 (21 Feb 2022)
 - Improved accuracy of metadata about ocean monument. [j2b, b2j]
 - Fixed possible crash while reading empty (means air only) chunks. [b2j]
