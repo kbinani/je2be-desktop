@@ -158,12 +158,30 @@ public:
     } catch (...) {
     }
     auto first = collected.find(activeAccountLocalId);
+    std::optional<Account> preferred;
     if (first != collected.end()) {
       fAccounts.push_back(first->second);
+      preferred = first->second;
       collected.erase(first);
     }
+    HashMap<juce::Uuid, Account> accountById;
+    if (preferred) {
+      accountById[preferred->fUuid] = *preferred;
+    }
     for (auto const &it : collected) {
-      fAccounts.push_back(it.second);
+      if (accountById.contains(it.second.fUuid)) {
+        if (it.second.fType == "Xbox") {
+          accountById[it.second.fUuid] = it.second;
+        }
+      } else {
+        accountById[it.second.fUuid] = it.second;
+      }
+    }
+    if (preferred) {
+      accountById.remove(preferred->fUuid);
+    }
+    for (auto const &it : accountById) {
+      fAccounts.push_back(it);
     }
   }
 
