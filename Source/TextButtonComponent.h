@@ -5,12 +5,15 @@
 namespace je2be::gui {
 
 class TextButtonComponent : public juce::TextButton {
+  using super = juce::TextButton;
+
 public:
   explicit TextButtonComponent(juce::String text) : juce::TextButton(text) {
     updateMouseCursor();
   }
 
   void enablementChanged() override {
+    super::enablementChanged();
     updateMouseCursor();
   }
 
