@@ -40,7 +40,7 @@ language: Japanese
 "Copying..." = "コピー中...";
 "Java to Bedrock" = "Java 版から 統合版に";
 "Bedrock to Java" = "統合版から Java 版に";
-"Import player ID from the Minecraft Launcher to embed it into level.dat as a local player ID" = "Minecraft LauncherからプレイヤーIDをインポートし、level.datのプレイヤーIDとして設定します";
+"Import player ID from the Minecraft Launcher to embed it into level.dat as a local player ID" = "Minecraft Launcher からプレイヤー ID をインポートし、level.dat のプレイヤー ID として設定します";
 "Account:" = "アカウント:";
 
 "File already exists" = "ファイルが既に存在します";
