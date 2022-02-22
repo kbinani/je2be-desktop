@@ -51,15 +51,14 @@ B2JConfigComponent::B2JConfigComponent(B2JChooseInputState const &chooseInputSta
 
   int messageComponentY = y + kMargin;
 
-  fStartButton.reset(new TextButton(TRANS("Start")));
+  fStartButton.reset(new TextButtonComponent(TRANS("Start")));
   fStartButton->setBounds(width - kMargin - kButtonMinWidth, height - kMargin - kButtonBaseHeight, kButtonMinWidth, kButtonBaseHeight);
   fStartButton->setEnabled(false);
   fStartButton->onClick = [this]() { onStartButtonClicked(); };
   addAndMakeVisible(*fStartButton);
 
-  fBackButton.reset(new TextButton(TRANS("Back")));
+  fBackButton.reset(new TextButtonComponent(TRANS("Back")));
   fBackButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight, kButtonMinWidth, kButtonBaseHeight);
-  fBackButton->setMouseCursor(MouseCursor::PointingHandCursor);
   fBackButton->onClick = [this]() { onBackButtonClicked(); };
   addAndMakeVisible(*fBackButton);
 
@@ -84,9 +83,6 @@ B2JConfigComponent::~B2JConfigComponent() {}
 void B2JConfigComponent::timerCallback() {
   stopTimer();
   fStartButton->setEnabled(fOk);
-  if (fOk) {
-    fStartButton->setMouseCursor(MouseCursor::PointingHandCursor);
-  }
 }
 
 void B2JConfigComponent::paint(juce::Graphics &g) {}

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <juce_gui_extra/juce_gui_extra.h>
+#include "TextButtonComponent.h"
 
 namespace je2be::gui {
 
@@ -17,9 +17,9 @@ public:
 
 private:
   std::unique_ptr<juce::Label> fLabel;
-  std::unique_ptr<juce::TextButton> fToJ2B;
-  std::unique_ptr<juce::TextButton> fToB2J;
-  std::unique_ptr<juce::TextButton> fAboutButton;
+  std::unique_ptr<TextButtonComponent> fToJ2B;
+  std::unique_ptr<TextButtonComponent> fToB2J;
+  std::unique_ptr<TextButtonComponent> fAboutButton;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ModeSelectComponent)
 };

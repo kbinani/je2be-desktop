@@ -21,25 +21,22 @@ ModeSelectComponent::ModeSelectComponent() {
 
   y += kMargin;
 
-  fToJ2B.reset(new TextButton(TRANS("Java to Bedrock")));
+  fToJ2B.reset(new TextButtonComponent(TRANS("Java to Bedrock")));
   fToJ2B->setBounds(kWindowWidth / 2 - buttonWidth / 2, y, buttonWidth, kButtonBaseHeight);
-  fToJ2B->setMouseCursor(MouseCursor::PointingHandCursor);
   fToJ2B->onClick = [this]() { onJ2BClicked(); };
   addAndMakeVisible(*fToJ2B);
   y += fToJ2B->getHeight();
 
   y += kMargin;
 
-  fToB2J.reset(new TextButton(TRANS("Bedrock to Java")));
+  fToB2J.reset(new TextButtonComponent(TRANS("Bedrock to Java")));
   fToB2J->setBounds(kWindowWidth / 2 - buttonWidth / 2, y, buttonWidth, kButtonBaseHeight);
-  fToB2J->setMouseCursor(MouseCursor::PointingHandCursor);
   fToB2J->onClick = [this]() { onB2JClicked(); };
   addAndMakeVisible(*fToB2J);
   y += fToB2J->getHeight();
 
-  fAboutButton.reset(new TextButton("About"));
+  fAboutButton.reset(new TextButtonComponent("About"));
   fAboutButton->setBounds(kMargin, kWindowHeight - kMargin - kButtonBaseHeight, kButtonMinWidth, kButtonBaseHeight);
-  fAboutButton->setMouseCursor(MouseCursor::PointingHandCursor);
   fAboutButton->onClick = [this]() { onAboutButtonClicked(); };
   addAndMakeVisible(*fAboutButton);
 }

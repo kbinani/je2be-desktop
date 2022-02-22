@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ComponentState.h"
+#include "TextButtonComponent.h"
 
 namespace je2be::gui::b2j {
 
@@ -34,9 +35,9 @@ private:
 
   B2JChooseOutputState fState;
   std::unique_ptr<juce::Label> fMessage;
-  std::unique_ptr<juce::TextButton> fBackButton;
-  std::unique_ptr<juce::TextButton> fSaveToDefaultDirectory;
-  std::unique_ptr<juce::TextButton> fSaveToCustomDirectory;
+  std::unique_ptr<TextButtonComponent> fBackButton;
+  std::unique_ptr<TextButtonComponent> fSaveToDefaultDirectory;
+  std::unique_ptr<TextButtonComponent> fSaveToCustomDirectory;
   juce::File fDefaultSaveDirectory;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(B2JChooseOutputComponent)

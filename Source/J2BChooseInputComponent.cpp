@@ -29,14 +29,13 @@ J2BChooseInputComponent::J2BChooseInputComponent(std::optional<J2BChooseInputSta
     addAndMakeVisible(*fMessage);
   }
   {
-    fBackButton.reset(new TextButton(TRANS("Back")));
+    fBackButton.reset(new TextButtonComponent(TRANS("Back")));
     fBackButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight, kButtonMinWidth, kButtonBaseHeight);
-    fBackButton->setMouseCursor(MouseCursor::PointingHandCursor);
     fBackButton->onClick = [this]() { onBackButtonClicked(); };
     addAndMakeVisible(*fBackButton);
   }
   {
-    fNextButton.reset(new TextButton(TRANS("Next")));
+    fNextButton.reset(new TextButtonComponent(TRANS("Next")));
     fNextButton->setBounds(width - kButtonMinWidth - kMargin, height - kButtonBaseHeight - kMargin, kButtonMinWidth, kButtonBaseHeight);
     fNextButton->onClick = [this]() { onNextButtonClicked(); };
     fNextButton->setEnabled(false);
@@ -44,9 +43,8 @@ J2BChooseInputComponent::J2BChooseInputComponent(std::optional<J2BChooseInputSta
   }
   {
     auto w = 160;
-    fChooseCustomButton.reset(new TextButton(TRANS("Select from other directories")));
+    fChooseCustomButton.reset(new TextButtonComponent(TRANS("Select from other directories")));
     fChooseCustomButton->setBounds(width - kMargin - fileListWidth, height - kButtonBaseHeight - kMargin, w, kButtonBaseHeight);
-    fChooseCustomButton->setMouseCursor(MouseCursor::PointingHandCursor);
     fChooseCustomButton->onClick = [this]() { onChooseCustomButtonClicked(); };
     addAndMakeVisible(*fChooseCustomButton);
   }
@@ -129,7 +127,6 @@ void J2BChooseInputComponent::selectionChanged() {
   }
   if (fState.fInputDirectory != std::nullopt) {
     fNextButton->setEnabled(true);
-    fNextButton->setMouseCursor(MouseCursor::PointingHandCursor);
   }
   fInitialSelection = std::nullopt;
   fList->removeChangeListener(this);

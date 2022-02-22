@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ComponentState.h"
+#include "TextButtonComponent.h"
 
 namespace je2be::gui::b2j {
 
@@ -56,8 +57,8 @@ private:
   void onClickImportAccountFromLauncherButton();
 
 private:
-  std::unique_ptr<juce::TextButton> fBackButton;
-  std::unique_ptr<juce::TextButton> fStartButton;
+  std::unique_ptr<TextButtonComponent> fBackButton;
+  std::unique_ptr<TextButtonComponent> fStartButton;
   B2JConfigState fState;
   std::unique_ptr<juce::Label> fFileOrDirectory;
   bool fOk = false;

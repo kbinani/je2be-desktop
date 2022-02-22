@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ComponentState.h"
+#include "TextButtonComponent.h"
 #include <optional>
 
 namespace je2be::gui::b2j {
@@ -45,12 +46,12 @@ private:
 private:
   static juce::File sLastDirectory;
 
-  std::unique_ptr<juce::TextButton> fNextButton;
-  std::unique_ptr<juce::TextButton> fChooseCustomButton;
+  std::unique_ptr<TextButtonComponent> fNextButton;
+  std::unique_ptr<TextButtonComponent> fChooseCustomButton;
   std::unique_ptr<juce::ListBox> fListComponent;
   B2JChooseInputState fState;
   std::unique_ptr<juce::Label> fMessage;
-  std::unique_ptr<juce::TextButton> fBackButton;
+  std::unique_ptr<TextButtonComponent> fBackButton;
   juce::File fBedrockGameDirectory;
   std::unique_ptr<GameDirectoryScanThread> fThread;
 

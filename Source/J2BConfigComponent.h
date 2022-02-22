@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ComponentState.h"
+#include "TextButtonComponent.h"
 
 namespace je2be::gui::j2b {
 
@@ -29,8 +30,8 @@ private:
   void onStartButtonClicked();
 
 private:
-  std::unique_ptr<juce::TextButton> fBackButton;
-  std::unique_ptr<juce::TextButton> fStartButton;
+  std::unique_ptr<TextButtonComponent> fBackButton;
+  std::unique_ptr<TextButtonComponent> fStartButton;
   J2BConfigState fState;
   std::unique_ptr<juce::Label> fDirectory;
   bool fOk = false;

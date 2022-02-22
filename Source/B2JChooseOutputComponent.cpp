@@ -55,29 +55,24 @@ B2JChooseOutputComponent::B2JChooseOutputComponent(B2JConvertState const &conver
   y += fMessage->getHeight();
 
   y += kMargin;
-  fSaveToDefaultDirectory.reset(new TextButton(TRANS("Save into Minecraft Java edition save folder")));
+  fSaveToDefaultDirectory.reset(new TextButtonComponent(TRANS("Save into Minecraft Java edition save folder")));
   fSaveToDefaultDirectory->setBounds(2 * kMargin, y, width - 4 * kMargin, kButtonBaseHeight);
   fSaveToDefaultDirectory->setEnabled(root.exists());
-  if (root.exists()) {
-    fSaveToDefaultDirectory->setMouseCursor(MouseCursor::PointingHandCursor);
-  }
   fSaveToDefaultDirectory->onClick = [this]() { onSaveToDefaultButtonClicked(); };
   addAndMakeVisible(*fSaveToDefaultDirectory);
   y += fSaveToDefaultDirectory->getHeight();
 
   y += kMargin;
-  fSaveToCustomDirectory.reset(new TextButton(TRANS("Save into custom folder")));
+  fSaveToCustomDirectory.reset(new TextButtonComponent(TRANS("Save into custom folder")));
   fSaveToCustomDirectory->setBounds(2 * kMargin, y, width - 4 * kMargin, kButtonBaseHeight);
-  fSaveToCustomDirectory->setMouseCursor(MouseCursor::PointingHandCursor);
   fSaveToCustomDirectory->onClick = [this]() { onSaveToCustomButtonClicked(); };
   addAndMakeVisible(*fSaveToCustomDirectory);
   y += fSaveToCustomDirectory->getHeight();
 
   {
     int w = 160;
-    fBackButton.reset(new TextButton(TRANS("Back to the beginning")));
+    fBackButton.reset(new TextButtonComponent(TRANS("Back to the beginning")));
     fBackButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight, w, kButtonBaseHeight);
-    fBackButton->setMouseCursor(MouseCursor::PointingHandCursor);
     fBackButton->onClick = [this]() { onBackButtonClicked(); };
     addAndMakeVisible(*fBackButton);
   }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ComponentState.h"
+#include "TextButtonComponent.h"
 #include <optional>
 
 namespace je2be::gui::j2b {
@@ -36,15 +37,15 @@ private:
 private:
   static juce::File sLastDirectory;
 
-  std::unique_ptr<juce::TextButton> fNextButton;
-  std::unique_ptr<juce::TextButton> fChooseCustomButton;
+  std::unique_ptr<TextButtonComponent> fNextButton;
+  std::unique_ptr<TextButtonComponent> fChooseCustomButton;
   std::unique_ptr<juce::FileListComponent> fListComponent;
   std::unique_ptr<juce::DirectoryContentsList> fList;
   juce::TimeSliceThread fListThread;
   J2BChooseInputState fState;
   std::unique_ptr<juce::Label> fMessage;
   std::optional<juce::File> fInitialSelection;
-  std::unique_ptr<juce::TextButton> fBackButton;
+  std::unique_ptr<TextButtonComponent> fBackButton;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(J2BChooseInputComponent)
 };

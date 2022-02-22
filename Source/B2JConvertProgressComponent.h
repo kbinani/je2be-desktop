@@ -2,6 +2,7 @@
 
 #include "CommandID.h"
 #include "ComponentState.h"
+#include "TextButtonComponent.h"
 
 namespace je2be::gui {
 class TaskbarProgress;
@@ -45,7 +46,7 @@ public:
   class Updater;
 
 private:
-  std::unique_ptr<juce::TextButton> fCancelButton;
+  std::unique_ptr<TextButtonComponent> fCancelButton;
   B2JConvertState fState;
   std::unique_ptr<juce::Thread> fThread;
   std::shared_ptr<Updater> fUpdater;

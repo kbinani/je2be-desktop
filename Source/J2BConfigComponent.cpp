@@ -29,15 +29,14 @@ J2BConfigComponent::J2BConfigComponent(J2BChooseInputState const &chooseInputSta
   fDirectory->setJustificationType(Justification::topLeft);
   addAndMakeVisible(*fDirectory);
 
-  fStartButton.reset(new TextButton(TRANS("Start")));
+  fStartButton.reset(new TextButtonComponent(TRANS("Start")));
   fStartButton->setBounds(width - kMargin - kButtonMinWidth, height - kMargin - kButtonBaseHeight, kButtonMinWidth, kButtonBaseHeight);
   fStartButton->setEnabled(false);
   fStartButton->onClick = [this]() { onStartButtonClicked(); };
   addAndMakeVisible(*fStartButton);
 
-  fBackButton.reset(new TextButton(TRANS("Back")));
+  fBackButton.reset(new TextButtonComponent(TRANS("Back")));
   fBackButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight, kButtonMinWidth, kButtonBaseHeight);
-  fBackButton->setMouseCursor(MouseCursor::PointingHandCursor);
   fBackButton->onClick = [this]() { onBackButtonClicked(); };
   addAndMakeVisible(*fBackButton);
 
@@ -71,9 +70,6 @@ J2BConfigComponent::~J2BConfigComponent() {}
 void J2BConfigComponent::timerCallback() {
   stopTimer();
   fStartButton->setEnabled(fOk);
-  if (fOk) {
-    fStartButton->setMouseCursor(MouseCursor::PointingHandCursor);
-  }
 }
 
 void J2BConfigComponent::paint(juce::Graphics &g) {}

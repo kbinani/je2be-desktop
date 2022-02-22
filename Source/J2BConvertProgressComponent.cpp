@@ -141,9 +141,8 @@ J2BConvertProgressComponent::J2BConvertProgressComponent(J2BConfigState const &c
   auto height = kWindowHeight;
   setSize(width, height);
 
-  fCancelButton.reset(new TextButton(TRANS("Cancel")));
+  fCancelButton.reset(new TextButtonComponent(TRANS("Cancel")));
   fCancelButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight, kButtonMinWidth, kButtonBaseHeight);
-  fCancelButton->setMouseCursor(MouseCursor::PointingHandCursor);
   fCancelButton->onClick = [this]() { onCancelButtonClicked(); };
   addAndMakeVisible(*fCancelButton);
 
@@ -203,7 +202,6 @@ void J2BConvertProgressComponent::onCancelButtonClicked() {
     JUCEApplication::getInstance()->invoke(gui::toJ2BChooseInput, true);
   } else {
     fCancelButton->setEnabled(false);
-    fCancelButton->setMouseCursor(MouseCursor::NormalCursor);
     fCommandWhenFinished = gui::toJ2BConfig;
     fThread->signalThreadShouldExit();
     fConversionProgress = -1;
@@ -267,7 +265,6 @@ void J2BConvertProgressComponent::onProgressUpdate(int phase, double done, doubl
     fLabel->setText(TRANS("The conversion failed."), dontSendNotification);
     fLabel->setColour(Label::textColourId, kErrorTextColor);
     fCancelButton->setButtonText(TRANS("Back"));
-    fCancelButton->setMouseCursor(MouseCursor::PointingHandCursor);
     fConversionProgressBar->setVisible(false);
     fCompactionProgressBar->setVisible(false);
   }

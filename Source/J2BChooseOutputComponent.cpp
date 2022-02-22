@@ -37,37 +37,31 @@ J2BChooseOutputComponent::J2BChooseOutputComponent(J2BConvertState const &conver
   y += fMessage->getHeight();
 
   y += kMargin;
-  fSaveToDefaultDirectory.reset(new TextButton(TRANS("Save into Minecraft Bedrock save folder")));
+  fSaveToDefaultDirectory.reset(new TextButtonComponent(TRANS("Save into Minecraft Bedrock save folder")));
   fSaveToDefaultDirectory->setBounds(2 * kMargin, y, width - 4 * kMargin, kButtonBaseHeight);
   fSaveToDefaultDirectory->setEnabled(root.exists());
-  if (root.exists()) {
-    fSaveToDefaultDirectory->setMouseCursor(MouseCursor::PointingHandCursor);
-  }
   fSaveToDefaultDirectory->onClick = [this]() { onSaveToDefaultButtonClicked(); };
   addAndMakeVisible(*fSaveToDefaultDirectory);
   y += fSaveToDefaultDirectory->getHeight();
 
   y += kMargin;
-  fSaveToCustomDirectory.reset(new TextButton(TRANS("Save into custom folder")));
+  fSaveToCustomDirectory.reset(new TextButtonComponent(TRANS("Save into custom folder")));
   fSaveToCustomDirectory->setBounds(2 * kMargin, y, width - 4 * kMargin, kButtonBaseHeight);
-  fSaveToCustomDirectory->setMouseCursor(MouseCursor::PointingHandCursor);
   fSaveToCustomDirectory->onClick = [this]() { onSaveToCustomButtonClicked(); };
   addAndMakeVisible(*fSaveToCustomDirectory);
   y += fSaveToCustomDirectory->getHeight();
 
   y += kMargin;
-  fSaveAsZipFile.reset(new TextButton(TRANS("Export as mcworld file")));
+  fSaveAsZipFile.reset(new TextButtonComponent(TRANS("Export as mcworld file")));
   fSaveAsZipFile->setBounds(2 * kMargin, y, width - 4 * kMargin, kButtonBaseHeight);
-  fSaveAsZipFile->setMouseCursor(MouseCursor::PointingHandCursor);
   fSaveAsZipFile->onClick = [this]() { onSaveAsZipButtonClicked(); };
   addAndMakeVisible(*fSaveAsZipFile);
   y += fSaveAsZipFile->getHeight();
 
   {
     int w = 160;
-    fBackButton.reset(new TextButton(TRANS("Back to the beginning")));
+    fBackButton.reset(new TextButtonComponent(TRANS("Back to the beginning")));
     fBackButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight, w, kButtonBaseHeight);
-    fBackButton->setMouseCursor(MouseCursor::PointingHandCursor);
     fBackButton->onClick = [this]() { onBackButtonClicked(); };
     addAndMakeVisible(*fBackButton);
   }

@@ -200,9 +200,8 @@ B2JConvertProgressComponent::B2JConvertProgressComponent(B2JConfigState const &c
   fConversionProgress = 0;
 
   {
-    fCancelButton.reset(new TextButton(TRANS("Cancel")));
+    fCancelButton.reset(new TextButtonComponent(TRANS("Cancel")));
     fCancelButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight, kButtonMinWidth, kButtonBaseHeight);
-    fCancelButton->setMouseCursor(MouseCursor::PointingHandCursor);
     fCancelButton->onClick = [this]() { onCancelButtonClicked(); };
     addAndMakeVisible(*fCancelButton);
   }
@@ -290,7 +289,6 @@ void B2JConvertProgressComponent::onCancelButtonClicked() {
     JUCEApplication::getInstance()->invoke(gui::toB2JChooseInput, true);
   } else {
     fCancelButton->setEnabled(false);
-    fCancelButton->setMouseCursor(MouseCursor::NormalCursor);
     fCommandWhenFinished = gui::toB2JConfig;
     fThread->signalThreadShouldExit();
     fConversionProgress = -1;
@@ -345,7 +343,6 @@ void B2JConvertProgressComponent::onProgressUpdate(Phase phase, double done, dou
     fLabel->setText(TRANS("The conversion failed."), dontSendNotification);
     fLabel->setColour(Label::textColourId, kErrorTextColor);
     fCancelButton->setButtonText(TRANS("Back"));
-    fCancelButton->setMouseCursor(MouseCursor::PointingHandCursor);
     fCancelButton->setEnabled(true);
     fUnzipOrCopyProgressBar->setVisible(false);
     fConversionProgressBar->setVisible(false);
