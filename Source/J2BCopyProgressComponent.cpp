@@ -184,7 +184,7 @@ void J2BCopyProgressComponent::handleAsyncUpdate() {
     JUCEApplication::getInstance()->invoke(gui::toJ2BChooseOutput, true);
   } else {
     fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
-    NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::InfoIcon, TRANS("Completed"), TRANS("Saving completed."), nullptr, new InvokeToChooseInput);
+    NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::InfoIcon, TRANS("Completed"), TRANS("Saving completed.") + "\n" + fState.fCopyDestination->getFullPathName(), nullptr, new InvokeToChooseInput);
     if (fState.fConvertState.fOutputDirectory.exists()) {
       TemporaryDirectory::QueueDeletingDirectory(fState.fConvertState.fOutputDirectory);
     }
