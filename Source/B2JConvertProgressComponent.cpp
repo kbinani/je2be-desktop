@@ -268,12 +268,9 @@ B2JConvertProgressComponent::B2JConvertProgressComponent(B2JConfigState const &c
   je2be::toje::InputOption io;
   if (fState.fConfigState.fLocalPlayer) {
     juce::Uuid juceUuid = *fState.fConfigState.fLocalPlayer;
-    je2be::Uuid uuid;
-    uint32_t *raw = (uint32_t *)juceUuid.getRawData();
-    uuid.f1 = raw[0];
-    uuid.f2 = raw[1];
-    uuid.f3 = raw[2];
-    uuid.f4 = raw[3];
+    uint8_t data[16];
+    std::copy_n(juceUuid.getRawData(), 16, data);
+    auto uuid = je2be::Uuid::FromData(data);
     io.fLocalPlayer = uuid;
   }
   je2be::toje::OutputOption oo;
