@@ -107,10 +107,10 @@ private:
     if (!stream) {
       return;
     }
-    if (auto result = stream->truncate(); !result.ok()) {
+    if (!stream->setPosition(0)) {
       return;
     }
-    if (!stream->setPosition(0)) {
+    if (auto result = stream->truncate(); !result.ok()) {
       return;
     }
     if (!builder.writeToStream(*stream, fProgress)) {
