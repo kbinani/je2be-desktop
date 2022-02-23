@@ -2,6 +2,7 @@
 
 #include "CommandID.h"
 #include "Constants.h"
+#include "File.h"
 #include "J2BConvertProgressComponent.h"
 #include "TaskbarProgress.h"
 #include "TemporaryDirectory.h"
@@ -58,26 +59,12 @@ private:
 
 class J2BWorkerThread : public Thread, public je2be::tobe::Progress {
 public:
-  J2BWorkerThread(File input, je2be::tobe::InputOption io, File output,
-                  je2be::tobe::OutputOption oo,
+  J2BWorkerThread(File input, File output, je2be::tobe::Options opt,
                   std::shared_ptr<J2BConvertProgressComponent::Updater> updater)
-      : Thread("je2be::gui::J2BConvert"), fInput(input), fInputOption(io),
-        fOutput(output), fOutputOption(oo), fUpdater(updater) {}
+      : Thread("je2be::gui::J2BConvert"), fInput(input), fOutput(output), fOptions(opt), fUpdater(updater) {}
 
   void run() override {
-    je2be::tobe::Converter c(
-#if defined(_WIN32)
-        std::filesystem::path(fInput.getFullPathName().toWideCharPointer()),
-        fInputOption,
-        std::filesystem::path(fOutput.getFullPathName().toWideCharPointer()),
-        fOutputOption
-#else
-        std::filesystem::path(fInput.getFullPathName().toStdString()),
-        fInputOption,
-        std::filesystem::path(fOutput.getFullPathName().toStdString()),
-        fOutputOption
-#endif
-    );
+    je2be::tobe::Converter c(PathFromFile(fInput), PathFromFile(fOutput), fOptions);
     try {
       auto stat = c.run(std::thread::hardware_concurrency(), this);
       if (stat) {
@@ -107,9 +94,8 @@ public:
 
 private:
   File const fInput;
-  je2be::tobe::InputOption const fInputOption;
   File const fOutput;
-  je2be::tobe::OutputOption const fOutputOption;
+  je2be::tobe::Options const fOptions;
   std::shared_ptr<J2BConvertProgressComponent::Updater> fUpdater;
 };
 
@@ -182,11 +168,11 @@ J2BConvertProgressComponent::J2BConvertProgressComponent(J2BConfigState const &c
   fUpdater = std::make_shared<Updater>();
   fUpdater->fTarget.store(this);
 
-  je2be::tobe::InputOption io;
+  je2be::tobe::Options opt;
   if (fState.fConfigState.fStructure == J2BConfigState::DirectoryStructure::Paper) {
-    io.fLevelDirectoryStructure = je2be::LevelDirectoryStructure::Paper;
+    opt.fLevelDirectoryStructure = je2be::LevelDirectoryStructure::Paper;
   }
-  fThread.reset(new J2BWorkerThread(*configState.fInputState.fInputDirectory, io, fState.fOutputDirectory, {}, fUpdater));
+  fThread.reset(new J2BWorkerThread(*configState.fInputState.fInputDirectory, fState.fOutputDirectory, opt, fUpdater));
   fThread->startThread();
 }
 

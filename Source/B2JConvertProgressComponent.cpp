@@ -60,10 +60,9 @@ private:
 
 class B2JWorkerThread : public Thread, public je2be::toje::Progress {
 public:
-  B2JWorkerThread(File input, je2be::toje::InputOption io, File output, je2be::toje::OutputOption oo,
+  B2JWorkerThread(File input, File output, je2be::toje::Options opt,
                   std::shared_ptr<B2JConvertProgressComponent::Updater> updater)
-      : Thread("je2be::gui::B2JConvert"), fInput(input), fInputOption(io),
-        fOutput(output), fOutputOption(oo), fUpdater(updater) {}
+      : Thread("je2be::gui::B2JConvert"), fInput(input), fOutput(output), fOptions(opt), fUpdater(updater) {}
 
   void run() override {
     try {
@@ -100,7 +99,7 @@ public:
       input = temp;
     }
     {
-      je2be::toje::Converter c(PathFromFile(input), fInputOption, PathFromFile(fOutput), fOutputOption);
+      je2be::toje::Converter c(PathFromFile(input), PathFromFile(fOutput), fOptions);
       bool ok = c.run(std::thread::hardware_concurrency(), this);
       fUpdater->complete(ok);
     }
@@ -185,9 +184,8 @@ public:
 
 private:
   File const fInput;
-  je2be::toje::InputOption fInputOption;
   File const fOutput;
-  je2be::toje::OutputOption fOutputOption;
+  je2be::toje::Options fOptions;
   std::shared_ptr<B2JConvertProgressComponent::Updater> fUpdater;
 };
 
@@ -264,16 +262,15 @@ B2JConvertProgressComponent::B2JConvertProgressComponent(B2JConfigState const &c
   fUpdater = std::make_shared<Updater>();
   fUpdater->fTarget.store(this);
 
-  je2be::toje::InputOption io;
+  je2be::toje::Options opt;
   if (fState.fConfigState.fLocalPlayer) {
     juce::Uuid juceUuid = *fState.fConfigState.fLocalPlayer;
     uint8_t data[16];
     std::copy_n(juceUuid.getRawData(), 16, data);
     auto uuid = je2be::Uuid::FromData(data);
-    io.fLocalPlayer = uuid;
+    opt.fLocalPlayer = uuid;
   }
-  je2be::toje::OutputOption oo;
-  fThread.reset(new B2JWorkerThread(*configState.fInputState.fInputFileOrDirectory, io, fState.fOutputDirectory, oo, fUpdater));
+  fThread.reset(new B2JWorkerThread(*configState.fInputState.fInputFileOrDirectory, fState.fOutputDirectory, opt, fUpdater));
   fThread->startThread();
 }
 
