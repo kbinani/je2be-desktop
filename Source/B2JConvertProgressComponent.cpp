@@ -135,8 +135,8 @@ public:
     FileLock *manifestLock = nullptr;
     File currentFile = db.getChildFile("CURRENT");
     if (currentFile.existsAsFile()) {
-      String content = currentFile.loadFileAsString();
-      String manifestName = content.trimEnd();
+      juce::String content = currentFile.loadFileAsString();
+      juce::String manifestName = content.trimEnd();
       File manifestFile = db.getChildFile(manifestName);
       if (manifestFile.existsAsFile()) {
 
@@ -208,7 +208,7 @@ B2JConvertProgressComponent::B2JConvertProgressComponent(B2JConfigState const &c
 
   int y = kMargin;
   {
-    String title;
+    juce::String title;
     if (needsUnzip) {
       title = TRANS("Unzipping...");
     } else {
@@ -223,7 +223,7 @@ B2JConvertProgressComponent::B2JConvertProgressComponent(B2JConfigState const &c
   int errorMessageY = y;
 
   {
-    String title;
+    juce::String title;
     if (needsUnzip) {
       title = "Unzip: ";
     } else {

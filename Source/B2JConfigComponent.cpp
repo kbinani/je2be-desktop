@@ -14,7 +14,7 @@ B2JConfigComponent::B2JConfigComponent(B2JChooseInputState const &chooseInputSta
   setSize(width, height);
 
   int y = kMargin;
-  String label = (*fState.fInputState.fInputFileOrDirectory).getFullPathName();
+  juce::String label = (*fState.fInputState.fInputFileOrDirectory).getFullPathName();
   fFileOrDirectory.reset(new Label("", TRANS("Selected world:") + " " + label));
   fFileOrDirectory->setBounds(kMargin, kMargin, width - kMargin * 2, kButtonBaseHeight);
   fFileOrDirectory->setJustificationType(Justification::topLeft);
@@ -35,7 +35,7 @@ B2JConfigComponent::B2JConfigComponent(B2JChooseInputState const &chooseInputSta
   {
     int x = 42;
 
-    String title = TRANS("Account:") + " ";
+    juce::String title = TRANS("Account:") + " ";
     fAccountListLabel.reset(new Label("", title));
     int labelWidth = getLookAndFeel().getLabelFont(*fAccountListLabel).getStringWidth(title) + 10;
     fAccountListLabel->setBounds(x, y, labelWidth, kButtonBaseHeight);
@@ -122,7 +122,7 @@ public:
     if (!jsonFile.existsAsFile()) {
       return;
     }
-    String jsonString = jsonFile.loadFileAsString();
+    juce::String jsonString = jsonFile.loadFileAsString();
     string jsonStdString(jsonString.toUTF8(), jsonString.getNumBytesAsUTF8());
     auto json = nlohmann::json::parse(jsonStdString);
     auto accounts = json["accounts"];

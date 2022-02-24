@@ -110,7 +110,7 @@ static J2BConvertStatistics Import(je2be::tobe::Statistics stat) {
   return ret;
 }
 
-static String DimensionToString(mcfile::Dimension dim) {
+static juce::String DimensionToString(mcfile::Dimension dim) {
   switch (dim) {
   case mcfile::Dimension::Overworld:
     return TRANS("Overworld");
@@ -210,13 +210,13 @@ void J2BConvertProgressComponent::onProgressUpdate(int phase, double done, doubl
         JUCEApplication::getInstance()->invoke(fCommandWhenFinished, true);
       } else {
         fFailed = true;
-        String msg = "Failed chunks:\n";
+        juce::String msg = "Failed chunks:\n";
         for (auto const &it : stat->fErrors) {
           int32_t regionX = it.fChunkX >> 5;
           int32_t regionZ = it.fChunkZ >> 5;
           msg += "    " + DimensionToString(it.fDim) + " chunk (" +
-                 String(it.fChunkX) + ", " + String(it.fChunkZ) + ") at r." +
-                 String(regionX) + "." + String(regionZ) + ".mca\n";
+                 juce::String(it.fChunkX) + ", " + juce::String(it.fChunkZ) + ") at r." +
+                 juce::String(regionX) + "." + juce::String(regionZ) + ".mca\n";
         }
         fErrorMessage->setText(msg);
         fErrorMessage->setVisible(true);
