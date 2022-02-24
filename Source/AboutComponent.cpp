@@ -4,37 +4,35 @@
 using namespace juce;
 
 namespace {
-int const kHeaderHeight = 204;
+
 double const kScrollSpeedPixelPerSec = 40;
 int const kLineHeight = 14;
-double const kSteadySeconds = 3;
-int const kTimerHz = 32;
+int const kScrollResetGapMilliSeconds = 3000;
+
+class HeaderComponent : public juce::Component {
+public:
+  void paint(Graphics &g) override {
+    auto color = findColour(ResizableWindow::backgroundColourId);
+    g.setColour(color);
+    g.fillRect(0, 0, getWidth(), getHeight());
+  }
+};
+
 } // namespace
 
 namespace je2be::gui {
 
 AboutComponent::AboutComponent() {
-  fHeaderLines = {
-      String("Version: ") + String::fromUTF8(JUCE_APPLICATION_VERSION_STRING),
-  };
-  fLines = {
+  std::vector<juce::String> lines = {
       "",
       "Copyright (C) 2020-2022 kbinani",
       "",
-      "This program is free software: you can redistribute it and/or",
-      "modify it under the terms of the GNU General Public License as",
-      "published by the Free Software Foundation, either version 3 of",
-      "the License, or (at your option) any later version.",
+      "This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.",
       "",
-      "This program is distributed in the hope that it will be useful,",
-      "but WITHOUT ANY WARRANTY; without even the implied",
-      "warranty of MERCHANTABILITY or FITNESS FOR A",
-      "PARTICULAR PURPOSE. See the GNU General Public License",
+      "This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License",
       "for more details.",
       "",
-      "You should have received a copy of the GNU General Public License",
-      "along with this program.",
-      "If not, see <http://www.gnu.org/licenses/>.",
+      "You should have received a copy of the GNU General Public License along with this program. If not, see <http://www.gnu.org/licenses/>.",
       "",
       "",
       "",
@@ -79,92 +77,103 @@ AboutComponent::AboutComponent() {
       "https://github.com/kbinani/libminecraft-file",
       "",
   };
-  fLogo = Drawable::createFromImageData(BinaryData::iconlarge_png, BinaryData::iconlarge_pngSize);
-  setSize(400, 500);
-  fLastTick = std::chrono::high_resolution_clock::now();
-  fScrollDuration = std::chrono::high_resolution_clock::duration(0);
-  startTimerHz(kTimerHz);
+
+  int width = 400;
+  int height = 500;
+  setSize(width, height);
+
+  fScrollContents.reset(new Component());
+  fScrollContents->setOpaque(false);
+  fScrollContents->setInterceptsMouseClicks(false, false);
+
+  fHeader.reset(new HeaderComponent());
+  fHeader->setInterceptsMouseClicks(false, false);
+
+  int margin = 10;
+  int const cwidth = width - 2 * margin;
+  int y = margin;
+  {
+    int logoHeight = 120;
+    fLogoComponent.reset(new ImageComponent());
+    auto logo = PNGImageFormat::loadFrom(BinaryData::iconlarge_png, BinaryData::iconlarge_pngSize);
+    fLogoComponent->setImage(logo);
+    fLogoComponent->setBounds(margin, y, cwidth, logoHeight);
+    fHeader->addAndMakeVisible(*fLogoComponent);
+    y += logoHeight;
+  }
+  {
+    y += margin;
+    fAppName.reset(new DrawableTextComponent(JUCE_APPLICATION_NAME_STRING, 40));
+    fAppName->setBounds(margin, y, cwidth, 0);
+    fAppName->shrinkToFit();
+    fHeader->addAndMakeVisible(*fAppName);
+    y += fAppName->getHeight();
+  }
+  {
+    String version = String("Version: ") + String::fromUTF8(JUCE_APPLICATION_VERSION_STRING);
+    fAppVersion.reset(new DrawableTextComponent(version, kLineHeight));
+    fAppVersion->setBounds(margin, y, cwidth, 0);
+    fAppVersion->shrinkToFit();
+    fHeader->addAndMakeVisible(*fAppVersion);
+    y += fAppVersion->getHeight();
+  }
+  y += margin / 2;
+  int const scrollerTop = y;
+  y = margin / 2;
+  {
+    for (juce::String const &line : lines) {
+      auto label = std::make_shared<DrawableTextComponent>(line, kLineHeight);
+      label->setBounds(margin, y, cwidth, 0);
+      label->shrinkToFit();
+      fScrollContents->addAndMakeVisible(*label);
+      fParagraphs.push_back(label);
+      y += label->getHeight();
+    }
+    y += margin;
+  }
+
+  addAndMakeVisible(*fScrollContents);
+  fScrollContents->setBounds(0, scrollerTop, width, y);
+
+  fHeader->setBounds(0, 0, width, scrollerTop);
+  addAndMakeVisible(*fHeader);
+
+  fAnimator.reset(new ComponentAnimator());
+  fNextScrollStartY = scrollerTop;
+  fNextStartSpeed = 0;
+  startTimer(kScrollResetGapMilliSeconds);
 }
 
 void AboutComponent::timerCallback() {
-  auto now = std::chrono::high_resolution_clock::now();
-  if (fScrolling) {
-    fScrollDuration += now - fLastTick;
-  }
-  fLastTick = now;
-  repaint();
-}
-
-void AboutComponent::paint(Graphics &g) {
-  Graphics::ScopedSaveState s(g);
-
-  int const margin = 10;
-  int const width = getWidth();
-  int const height = getHeight();
-
-  float scroll = 0;
-  auto sec = std::chrono::duration_cast<std::chrono::duration<double>>(fScrollDuration).count();
-  if (sec <= kSteadySeconds) {
-    scroll = 0;
-  } else {
-    scroll = (sec - kSteadySeconds) * kScrollSpeedPixelPerSec;
-  }
-  float y = kHeaderHeight;
-  g.setColour(Colours::white);
-  int fontSize = kLineHeight;
-  g.setFont(fontSize);
-  float scrollHeight = kLineHeight * (int)fLines.size() + (height - kHeaderHeight);
-  for (auto const &line : fLines) {
-    float pos = y - kHeaderHeight - scroll;
-    int vPos = fmod(fmod(pos, scrollHeight) + scrollHeight, scrollHeight) + kHeaderHeight;
-    g.drawSingleLineText(line, width / 2, vPos, Justification::horizontallyCentred);
-    y += kLineHeight;
-  }
-
-  y = margin;
-
-  g.setColour(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));
-  g.fillRect(0, 0, width, kHeaderHeight);
-
-  {
-    int const logoHeight = 120;
-    Rectangle<float> logoArea(margin, y, width - 2 * margin, logoHeight);
-    fLogo->drawWithin(g, logoArea, RectanglePlacement::centred, 1.0f);
-    y += logoHeight + margin;
-  }
-  {
-    int const titleHeight = 40;
-    g.setFont(titleHeight);
-    g.setColour(Colours::white);
-    g.drawText(JUCE_APPLICATION_NAME_STRING, margin, y, width - 2 * margin, titleHeight, Justification::centred);
-    y += titleHeight + margin;
-  }
-  g.setFont(fontSize);
-  g.setColour(Colours::white);
-  for (auto const &line : fHeaderLines) {
-    g.drawSingleLineText(line, width / 2, y, Justification::horizontallyCentred);
-    y += kLineHeight;
-  }
+  int duration = startScrollFrom(fNextScrollStartY, fNextStartSpeed);
+  fNextStartSpeed = 1.0;
+  stopTimer();
+  startTimer(duration);
 }
 
 void AboutComponent::mouseDown(MouseEvent const &e) {
   if (!e.mods.isLeftButtonDown()) {
     return;
   }
-  auto sec = std::chrono::duration_cast<std::chrono::duration<double>>(fScrollDuration).count();
-  if (sec <= kSteadySeconds) {
-    fScrolling = true;
-  } else {
-    fScrolling = !fScrolling;
+  bool animating = fAnimator->isAnimating();
+  fAnimator->cancelAnimation(fScrollContents.get(), false);
+  stopTimer();
+  if (!animating) {
+    int currentY = fScrollContents->getY();
+    int duration = startScrollFrom(currentY, 1.0);
+    startTimer(duration + kScrollResetGapMilliSeconds);
   }
-  if (fScrolling != isTimerRunning()) {
-    if (fScrolling) {
-      fLastTick = std::chrono::high_resolution_clock::now();
-      startTimerHz(kTimerHz);
-    } else {
-      stopTimer();
-    }
-  }
+}
+
+int AboutComponent::startScrollFrom(int startY, double startSpeed) {
+  int scrollerTop = fHeader->getBottom();
+  int finalY = scrollerTop - fScrollContents->getHeight();
+  Rectangle<int> finalBounds(0, finalY, fScrollContents->getWidth(), fScrollContents->getHeight());
+  int duration = (startY - finalY) * 1000 / kScrollSpeedPixelPerSec;
+  fScrollContents->setBounds(0, startY, fScrollContents->getWidth(), fScrollContents->getHeight());
+  fAnimator->animateComponent(fScrollContents.get(), finalBounds, 1, duration, false, startSpeed, 1.0);
+  fNextScrollStartY = getHeight();
+  return duration;
 }
 
 } // namespace je2be::gui

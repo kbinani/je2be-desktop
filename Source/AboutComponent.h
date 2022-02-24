@@ -1,24 +1,31 @@
 #pragma once
 
-#include <juce_gui_extra/juce_gui_extra.h>
+#include "DrawableTextComponent.h"
 
 namespace je2be::gui {
 
 class AboutComponent : public juce::Component, public juce::Timer {
 public:
   AboutComponent();
-  void paint(juce::Graphics &g) override;
 
-  void timerCallback() override;
   void mouseDown(juce::MouseEvent const &) override;
 
+  void timerCallback() override;
+
 private:
-  std::unique_ptr<juce::Drawable> fLogo;
-  std::vector<juce::String> fHeaderLines;
-  std::vector<juce::String> fLines;
-  std::chrono::high_resolution_clock::duration fScrollDuration;
-  bool fScrolling = true;
-  std::chrono::high_resolution_clock::time_point fLastTick;
+  int startScrollFrom(int startY, double startSpeed);
+
+private:
+  std::unique_ptr<juce::Component> fScrollContents;
+  std::unique_ptr<juce::Component> fHeader;
+  std::unique_ptr<juce::ImageComponent> fLogoComponent;
+  std::unique_ptr<DrawableTextComponent> fAppName;
+  std::unique_ptr<DrawableTextComponent> fAppVersion;
+  std::vector<std::shared_ptr<DrawableTextComponent>> fParagraphs;
+  std::unique_ptr<juce::ComponentAnimator> fAnimator;
+
+  int fNextScrollStartY;
+  double fNextStartSpeed;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AboutComponent)
 };

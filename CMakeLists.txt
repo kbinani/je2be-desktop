@@ -68,7 +68,8 @@ target_sources(je2be-gui
     Source/B2JCopyProgressComponent.cpp
     Source/B2JCopyProgressComponent.h
     Source/File.h
-    Source/TextButtonComponent.h)
+    Source/TextButtonComponent.h
+    Source/DrawableTextComponent.h)
 
 target_compile_definitions(je2be-gui
   PRIVATE
