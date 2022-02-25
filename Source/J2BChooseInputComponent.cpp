@@ -40,19 +40,27 @@ J2BChooseInputComponent::J2BChooseInputComponent(std::optional<J2BChooseInputSta
     addAndMakeVisible(*fNextButton);
   }
   {
-    auto w = 160;
+    auto w = 200;
     fChooseCustomButton.reset(new TextButtonComponent(TRANS("Select from other directories")));
     fChooseCustomButton->setBounds(width - kMargin - fNextButton->getWidth() - kMargin - w, height - kButtonBaseHeight - kMargin, w, kButtonBaseHeight);
     fChooseCustomButton->onClick = [this]() { onChooseCustomButtonClicked(); };
     addAndMakeVisible(*fChooseCustomButton);
   }
 
+  Rectangle<int> listBoxBounds(width - kMargin - kWorldListWidth, kMargin, kWorldListWidth, height - 3 * kMargin - kButtonBaseHeight);
   {
     fListComponent.reset(new ListBox("", this));
-    fListComponent->setBounds(width - kMargin - kWorldListWidth, kMargin, kWorldListWidth, height - 3 * kMargin - kButtonBaseHeight);
+    fListComponent->setBounds(listBoxBounds);
     fListComponent->setEnabled(false);
     fListComponent->setRowHeight(kWorldListRowHeight);
-    addAndMakeVisible(*fListComponent);
+    addChildComponent(*fListComponent);
+  }
+  {
+    fPlaceholder.reset(new Label({}, TRANS("Loading worlds in the save folder...")));
+    fPlaceholder->setBounds(listBoxBounds);
+    fPlaceholder->setColour(Label::ColourIds::backgroundColourId, fListComponent->findColour(ListBox::ColourIds::backgroundColourId));
+    fPlaceholder->setJustificationType(Justification::centred);
+    addAndMakeVisible(*fPlaceholder);
   }
   {
     fThread.reset(new GameDirectoryScanThreadJava(this));
@@ -133,8 +141,14 @@ void J2BChooseInputComponent::paintListBoxItem(int rowNumber,
 
 void J2BChooseInputComponent::handleAsyncUpdate() {
   fGameDirectories.swap(fThread->fGameDirectories);
-  fListComponent->updateContent();
-  fListComponent->setEnabled(true);
+  if (fGameDirectories.empty()) {
+    fPlaceholder->setText(TRANS("Nothing found in the save folder"), dontSendNotification);
+  } else {
+    fListComponent->updateContent();
+    fListComponent->setEnabled(true);
+    fListComponent->setVisible(true);
+    fPlaceholder->setVisible(false);
+  }
 }
 
 } // namespace je2be::gui::j2b

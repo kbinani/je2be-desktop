@@ -49,6 +49,7 @@ private:
   std::unique_ptr<juce::Label> fMessage;
   std::unique_ptr<TextButtonComponent> fBackButton;
   std::vector<GameDirectory> fGameDirectories;
+  std::unique_ptr<juce::Label> fPlaceholder;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(J2BChooseInputComponent)
 };

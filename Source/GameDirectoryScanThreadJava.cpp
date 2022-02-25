@@ -12,9 +12,9 @@ GameDirectoryScanThreadJava::GameDirectoryScanThreadJava(AsyncUpdater *owner) : 
 void GameDirectoryScanThreadJava::run() {
   try {
     unsafeRun();
-    fOwner->triggerAsyncUpdate();
   } catch (...) {
   }
+  fOwner->triggerAsyncUpdate();
 }
 
 void GameDirectoryScanThreadJava::unsafeRun() {

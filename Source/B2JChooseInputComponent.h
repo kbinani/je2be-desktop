@@ -50,6 +50,7 @@ private:
   std::unique_ptr<TextButtonComponent> fBackButton;
   juce::File fBedrockGameDirectory;
   std::unique_ptr<GameDirectoryScanThreadBedrock> fThread;
+  std::unique_ptr<juce::Label> fPlaceholder;
 
   std::vector<GameDirectory> fGameDirectories;
 

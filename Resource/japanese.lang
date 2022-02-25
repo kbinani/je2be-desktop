@@ -48,6 +48,8 @@ language: Japanese
 "Adventure Mode" = "アドベンチャーモード";
 "Spectator Mode" = "スペクテイターモード";
 "Survival Mode" = "サバイバルモード";
+"Loading worlds in the save folder..." = "セーブフォルダのワールドを読み込んでいます...";
+"Nothing found in the save folder" = "セーブフォルダにワールドがありませんでした";
 
 "File already exists" = "ファイルが既に存在します";
 "There's already a file called: FLNM" = "FLNM は既に存在します。";

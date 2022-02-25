@@ -12,9 +12,9 @@ GameDirectoryScanThreadBedrock::GameDirectoryScanThreadBedrock(AsyncUpdater *own
 void GameDirectoryScanThreadBedrock::run() {
   try {
     unsafeRun();
-    fOwner->triggerAsyncUpdate();
   } catch (...) {
   }
+  fOwner->triggerAsyncUpdate();
 }
 
 void GameDirectoryScanThreadBedrock::unsafeRun() {

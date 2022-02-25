@@ -6,10 +6,6 @@
 
 using namespace juce;
 
-namespace juce {
-Image juce_createIconForFile(const File &file);
-}
-
 namespace je2be::gui::b2j {
 
 File B2JChooseInputComponent::sLastDirectory;
@@ -53,12 +49,20 @@ B2JChooseInputComponent::B2JChooseInputComponent(std::optional<B2JChooseInputSta
     addAndMakeVisible(*fChooseCustomButton);
   }
 
+  Rectangle<int> listBoxBounds(width - kMargin - kWorldListWidth, kMargin, kWorldListWidth, height - 3 * kMargin - kButtonBaseHeight);
   {
     fListComponent.reset(new ListBox("", this));
-    fListComponent->setBounds(width - kMargin - kWorldListWidth, kMargin, kWorldListWidth, height - 3 * kMargin - kButtonBaseHeight);
+    fListComponent->setBounds(listBoxBounds);
     fListComponent->setEnabled(false);
     fListComponent->setRowHeight(kWorldListRowHeight);
-    addAndMakeVisible(*fListComponent);
+    addChildComponent(*fListComponent);
+  }
+  {
+    fPlaceholder.reset(new Label({}, TRANS("Loading worlds in the save folder...")));
+    fPlaceholder->setBounds(listBoxBounds);
+    fPlaceholder->setColour(Label::ColourIds::backgroundColourId, fListComponent->findColour(ListBox::ColourIds::backgroundColourId));
+    fPlaceholder->setJustificationType(Justification::centred);
+    addAndMakeVisible(*fPlaceholder);
   }
   {
     fThread.reset(new GameDirectoryScanThreadBedrock(this));
@@ -136,8 +140,14 @@ void B2JChooseInputComponent::paintListBoxItem(int rowNumber,
 
 void B2JChooseInputComponent::handleAsyncUpdate() {
   fGameDirectories.swap(fThread->fGameDirectories);
-  fListComponent->updateContent();
-  fListComponent->setEnabled(true);
+  if (fGameDirectories.empty()) {
+    fPlaceholder->setText(TRANS("Nothing found in the save folder"), dontSendNotification);
+  } else {
+    fListComponent->updateContent();
+    fListComponent->setEnabled(true);
+    fListComponent->setVisible(true);
+    fPlaceholder->setVisible(false);
+  }
 }
 
 } // namespace je2be::gui::b2j
