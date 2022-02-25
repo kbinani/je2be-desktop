@@ -71,7 +71,9 @@ target_sources(je2be-gui
     Source/DrawableTextComponent.h
     Source/GameDirectory.h
     Source/GameDirectoryScanThreadBedrock.h
-    Source/GameDirectoryScanThreadBedrock.cpp)
+    Source/GameDirectoryScanThreadBedrock.cpp
+    Source/GameDirectoryScanThreadJava.h
+    Source/GameDirectoryScanThreadJava.cpp)
 
 target_compile_definitions(je2be-gui
   PRIVATE

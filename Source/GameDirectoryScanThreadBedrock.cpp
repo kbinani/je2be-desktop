@@ -34,7 +34,7 @@ void GameDirectoryScanThreadBedrock::unsafeRun() {
       continue;
     }
     Time lastUpdate;
-    GameDirectory::GameMode mode;
+    GameDirectory::GameMode mode = GameDirectory::GameMode::SURVIVAL;
     juce::String version;
     bool commandsEnabled = false;
     auto s = std::make_shared<mcfile::stream::GzFileInputStream>(PathFromFile(level));

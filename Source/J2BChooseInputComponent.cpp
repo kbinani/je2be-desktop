@@ -10,8 +10,7 @@ namespace je2be::gui::j2b {
 
 File J2BChooseInputComponent::sLastDirectory;
 
-J2BChooseInputComponent::J2BChooseInputComponent(std::optional<J2BChooseInputState> state)
-    : fListThread("j2b::gui::J2BChooseInputComponent") {
+J2BChooseInputComponent::J2BChooseInputComponent(std::optional<J2BChooseInputState> state) {
   if (state) {
     fState = *state;
   }
@@ -49,44 +48,21 @@ J2BChooseInputComponent::J2BChooseInputComponent(std::optional<J2BChooseInputSta
     addAndMakeVisible(*fChooseCustomButton);
   }
 
-  fListThread.startThread();
-  fList.reset(new DirectoryContentsList(nullptr, fListThread));
-
-  File dir = GameDirectory::JavaSaveDirectory();
-  fList->setDirectory(dir, true, false);
-  fList->addChangeListener(this);
-
   {
-    fListComponent.reset(new FileListComponent(*fList));
+    fListComponent.reset(new ListBox("", this));
     fListComponent->setBounds(width - kMargin - fileListWidth, kMargin, fileListWidth, height - 3 * kMargin - kButtonBaseHeight);
-    fListComponent->addListener(this);
+    fListComponent->setEnabled(false);
+    fListComponent->setRowHeight(60);
     addAndMakeVisible(*fListComponent);
   }
-
-  if (state && state->fInputDirectory && state->fInputDirectory->getParentDirectory() == dir) {
-    fInitialSelection = state->fInputDirectory;
+  {
+    fThread.reset(new GameDirectoryScanThreadJava(this));
+    fThread->startThread();
   }
 }
 
 J2BChooseInputComponent::~J2BChooseInputComponent() {
   fListComponent.reset();
-  fList.reset();
-}
-
-void J2BChooseInputComponent::changeListenerCallback(ChangeBroadcaster *source) {
-  if (!source)
-    return;
-  if (source != fList.get()) {
-    return;
-  }
-  if (!fInitialSelection) {
-    return;
-  }
-  if (fList->contains(*fInitialSelection)) {
-    fListComponent->setSelectedFile(*fInitialSelection);
-    fInitialSelection = std::nullopt;
-    fList->removeChangeListener(this);
-  }
 }
 
 void J2BChooseInputComponent::paint(juce::Graphics &g) {}
@@ -96,9 +72,6 @@ void J2BChooseInputComponent::onNextButtonClicked() {
 }
 
 void J2BChooseInputComponent::onChooseCustomButtonClicked() {
-  fInitialSelection = std::nullopt;
-  fList->removeChangeListener(this);
-
   if (sLastDirectory == File()) {
     sLastDirectory = GameDirectory::JavaSaveDirectory();
   }
@@ -118,31 +91,51 @@ void J2BChooseInputComponent::onCustomDirectorySelected(juce::FileChooser const 
   JUCEApplication::getInstance()->invoke(gui::toJ2BConfig, true);
 }
 
-void J2BChooseInputComponent::selectionChanged() {
-  int num = fListComponent->getNumSelectedFiles();
-  if (num == 1) {
-    fState.fInputDirectory = fListComponent->getSelectedFile();
+void J2BChooseInputComponent::selectedRowsChanged(int lastRowSelected) {
+  int num = fListComponent->getNumSelectedRows();
+  if (num == 1 && 0 <= lastRowSelected && lastRowSelected < fGameDirectories.size()) {
+    GameDirectory gd = fGameDirectories[lastRowSelected];
+    fState.fInputDirectory = gd.fDirectory;
   } else {
     fState.fInputDirectory = std::nullopt;
   }
   if (fState.fInputDirectory != std::nullopt) {
     fNextButton->setEnabled(true);
   }
-  fInitialSelection = std::nullopt;
-  fList->removeChangeListener(this);
 }
 
-void J2BChooseInputComponent::fileClicked(const File &file, const MouseEvent &e) {}
-
-void J2BChooseInputComponent::fileDoubleClicked(const File &file) {
-  fState.fInputDirectory = file;
+void J2BChooseInputComponent::listBoxItemDoubleClicked(int row, const MouseEvent &) {
+  if (row < 0 || fGameDirectories.size() <= row) {
+    return;
+  }
+  GameDirectory gd = fGameDirectories[row];
+  fState.fInputDirectory = gd.fDirectory;
   JUCEApplication::getInstance()->invoke(gui::toJ2BConfig, false);
 }
 
-void J2BChooseInputComponent::browserRootChanged(const File &newRoot) {}
-
 void J2BChooseInputComponent::onBackButtonClicked() {
   JUCEApplication::getInstance()->invoke(gui::toModeSelect, true);
+}
+
+int J2BChooseInputComponent::getNumRows() {
+  return fGameDirectories.size();
+}
+
+void J2BChooseInputComponent::paintListBoxItem(int rowNumber,
+                                               juce::Graphics &g,
+                                               int width, int height,
+                                               bool rowIsSelected) {
+  if (rowNumber < 0 || fGameDirectories.size() <= rowNumber) {
+    return;
+  }
+  GameDirectory gd = fGameDirectories[rowNumber];
+  gd.paint(g, width, height, rowIsSelected, *this);
+}
+
+void J2BChooseInputComponent::handleAsyncUpdate() {
+  fGameDirectories.swap(fThread->fGameDirectories);
+  fListComponent->updateContent();
+  fListComponent->setEnabled(true);
 }
 
 } // namespace je2be::gui::j2b
