@@ -21,14 +21,13 @@ B2JChooseInputComponent::B2JChooseInputComponent(std::optional<B2JChooseInputSta
 
   auto width = kWindowWidth;
   auto height = kWindowHeight;
-  auto fileListWidth = 360;
 
   fBedrockGameDirectory = GameDirectory::BedrockSaveDirectory();
 
   setSize(width, height);
   {
-    fMessage.reset(new Label("", TRANS("Select the world you want to convert")));
-    fMessage->setBounds(kMargin, kMargin, width - kMargin - fileListWidth - kMargin - kMargin, height - kMargin - kButtonBaseHeight - kMargin - kMargin);
+    fMessage.reset(new Label("", TRANS("Select world to convert")));
+    fMessage->setBounds(kMargin, kMargin, width - kMargin - kWorldListWidth - kMargin - kMargin, height - kMargin - kButtonBaseHeight - kMargin - kMargin);
     fMessage->setJustificationType(Justification::topLeft);
     fMessage->setMinimumHorizontalScale(1);
     addAndMakeVisible(*fMessage);
@@ -56,9 +55,9 @@ B2JChooseInputComponent::B2JChooseInputComponent(std::optional<B2JChooseInputSta
 
   {
     fListComponent.reset(new ListBox("", this));
-    fListComponent->setBounds(width - kMargin - fileListWidth, kMargin, fileListWidth, height - 3 * kMargin - kButtonBaseHeight);
+    fListComponent->setBounds(width - kMargin - kWorldListWidth, kMargin, kWorldListWidth, height - 3 * kMargin - kButtonBaseHeight);
     fListComponent->setEnabled(false);
-    fListComponent->setRowHeight(60);
+    fListComponent->setRowHeight(kWorldListRowHeight);
     addAndMakeVisible(*fListComponent);
   }
   {

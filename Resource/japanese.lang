@@ -1,6 +1,6 @@
 language: Japanese
 
-"Select the world you want to convert" = "変換するワールドを選択してください"
+"Select world to convert" = "変換するワールドを選択してください"
 "Next" = "次へ"
 "Select from other directories" = "他のフォルダを選択"
 "Save" = "保存"
