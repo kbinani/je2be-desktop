@@ -1,6 +1,8 @@
 #pragma once
 
 #include "ComponentState.h"
+#include "GameDirectory.h"
+#include "GameDirectoryScanThreadBedrock.h"
 #include "TextButtonComponent.h"
 #include <optional>
 
@@ -28,12 +30,6 @@ public:
   void selectedRowsChanged(int lastRowSelected);
   void listBoxItemDoubleClicked(int row, const juce::MouseEvent &);
 
-  struct GameDirectory {
-    juce::File fDirectory;
-    juce::String fLevelName;
-  };
-  class GameDirectoryScanThread;
-
   void handleAsyncUpdate() override;
 
 private:
@@ -53,7 +49,7 @@ private:
   std::unique_ptr<juce::Label> fMessage;
   std::unique_ptr<TextButtonComponent> fBackButton;
   juce::File fBedrockGameDirectory;
-  std::unique_ptr<GameDirectoryScanThread> fThread;
+  std::unique_ptr<GameDirectoryScanThreadBedrock> fThread;
 
   std::vector<GameDirectory> fGameDirectories;
 

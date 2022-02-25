@@ -58,7 +58,6 @@ target_sources(je2be-gui
     Source/ModeSelectComponent.cpp
     Source/B2JChooseInputComponent.cpp
     Source/B2JChooseInputComponent.h
-    Source/GameDirectories.h
     Source/B2JConfigComponent.cpp
     Source/B2JConfigComponent.h
     Source/B2JConvertProgressComponent.cpp
@@ -69,7 +68,10 @@ target_sources(je2be-gui
     Source/B2JCopyProgressComponent.h
     Source/File.h
     Source/TextButtonComponent.h
-    Source/DrawableTextComponent.h)
+    Source/DrawableTextComponent.h
+    Source/GameDirectory.h
+    Source/GameDirectoryScanThreadBedrock.h
+    Source/GameDirectoryScanThreadBedrock.cpp)
 
 target_compile_definitions(je2be-gui
   PRIVATE

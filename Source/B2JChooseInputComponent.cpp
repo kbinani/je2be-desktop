@@ -1,7 +1,7 @@
 #include "B2JChooseInputComponent.h"
 #include "CommandID.h"
 #include "Constants.h"
-#include "GameDirectories.h"
+#include "GameDirectoryScanThreadBedrock.h"
 #include "MainWindow.h"
 
 using namespace juce;
@@ -14,54 +14,6 @@ namespace je2be::gui::b2j {
 
 File B2JChooseInputComponent::sLastDirectory;
 
-class B2JChooseInputComponent::GameDirectoryScanThread : public Thread {
-public:
-  std::vector<GameDirectory> fGameDirectories;
-  B2JChooseInputComponent *const fOwner;
-
-public:
-  explicit GameDirectoryScanThread(B2JChooseInputComponent *owner) : Thread("je2be::gui::B2JChooseInputComponent::GameDirectoryScanThread"), fOwner(owner) {}
-
-  void run() override {
-    try {
-      unsafeRun();
-      fOwner->triggerAsyncUpdate();
-    } catch (...) {
-    }
-  }
-
-  void unsafeRun() {
-    File dir = BedrockSaveDirectory();
-    auto directories = dir.findChildFiles(File::findDirectories, false);
-    for (File const &directory : directories) {
-      File db = directory.getChildFile("db");
-      if (threadShouldExit()) {
-        break;
-      }
-      if (!db.isDirectory()) {
-        continue;
-      }
-      File level = directory.getChildFile("level.dat");
-      if (!level.existsAsFile()) {
-        continue;
-      }
-      String levelName = directory.getFileName();
-      File levelNameFile = directory.getChildFile("levelname.txt");
-      if (levelNameFile.existsAsFile()) {
-        StringArray lines;
-        levelNameFile.readLines(lines);
-        if (!lines.isEmpty()) {
-          levelName = lines[0];
-        }
-      }
-      B2JChooseInputComponent::GameDirectory gd;
-      gd.fDirectory = directory;
-      gd.fLevelName = levelName;
-      fGameDirectories.push_back(gd);
-    }
-  }
-};
-
 B2JChooseInputComponent::B2JChooseInputComponent(std::optional<B2JChooseInputState> state) {
   if (state) {
     fState = *state;
@@ -71,7 +23,7 @@ B2JChooseInputComponent::B2JChooseInputComponent(std::optional<B2JChooseInputSta
   auto height = kWindowHeight;
   auto fileListWidth = 280;
 
-  fBedrockGameDirectory = BedrockSaveDirectory();
+  fBedrockGameDirectory = GameDirectory::BedrockSaveDirectory();
 
   setSize(width, height);
   {
@@ -106,10 +58,11 @@ B2JChooseInputComponent::B2JChooseInputComponent(std::optional<B2JChooseInputSta
     fListComponent.reset(new ListBox("", this));
     fListComponent->setBounds(width - kMargin - fileListWidth, kMargin, fileListWidth, height - 3 * kMargin - kButtonBaseHeight);
     fListComponent->setEnabled(false);
+    fListComponent->setRowHeight(60);
     addAndMakeVisible(*fListComponent);
   }
   {
-    fThread.reset(new GameDirectoryScanThread(this));
+    fThread.reset(new GameDirectoryScanThreadBedrock(this));
     fThread->startThread();
   }
 }
@@ -179,29 +132,7 @@ void B2JChooseInputComponent::paintListBoxItem(int rowNumber,
     return;
   }
   GameDirectory gd = fGameDirectories[rowNumber];
-
-  if (rowIsSelected) {
-    g.fillAll(findColour(DirectoryContentsDisplayComponent::highlightColourId));
-  }
-
-  const int x = 32;
-  g.setColour(Colours::black);
-
-  if (auto *d = getLookAndFeel().getDefaultFolderImage()) {
-    d->drawWithin(g, Rectangle<float>(2.0f, 2.0f, x - 4.0f, (float)height - 4.0f),
-                  RectanglePlacement::centred | RectanglePlacement::onlyReduceInSize, 1.0f);
-  }
-  if (rowIsSelected) {
-    g.setColour(findColour(DirectoryContentsDisplayComponent::highlightedTextColourId));
-  } else {
-    g.setColour(findColour(DirectoryContentsDisplayComponent::textColourId));
-  }
-
-  g.setFont((float)height * 0.7f);
-  String name = gd.fLevelName + " [" + gd.fDirectory.getFileName() + "]";
-  g.drawFittedText(name,
-                   x, 0, width - x, height,
-                   Justification::centredLeft, 1);
+  gd.paint(g, width, height, rowIsSelected, *this);
 }
 
 void B2JChooseInputComponent::handleAsyncUpdate() {
