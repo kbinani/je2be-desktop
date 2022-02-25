@@ -42,6 +42,12 @@ language: Japanese
 "Bedrock to Java" = "統合版から Java 版に";
 "Import player ID from the Minecraft Launcher to embed it into level.dat as a local player ID" = "Minecraft Launcher からプレイヤー ID をインポートし、level.dat のプレイヤー ID として設定します";
 "Account:" = "アカウント:";
+"Cheats" = "チート";
+"Version" = "バージョン";
+"Creative Mode" = "クリエイティブモード";
+"Adventure Mode" = "アドベンチャーモード";
+"Spectator Mode" = "スペクテイターモード";
+"Survival Mode" = "サバイバルモード";
 
 "File already exists" = "ファイルが既に存在します";
 "There's already a file called: FLNM" = "FLNM は既に存在します。";

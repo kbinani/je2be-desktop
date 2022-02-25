@@ -1,7 +1,7 @@
 #include "J2BChooseInputComponent.h"
 #include "CommandID.h"
 #include "Constants.h"
-#include "GameDirectories.h"
+#include "GameDirectory.h"
 #include "MainWindow.h"
 
 using namespace juce;
@@ -52,7 +52,7 @@ J2BChooseInputComponent::J2BChooseInputComponent(std::optional<J2BChooseInputSta
   fListThread.startThread();
   fList.reset(new DirectoryContentsList(nullptr, fListThread));
 
-  File dir = JavaSaveDirectory();
+  File dir = GameDirectory::JavaSaveDirectory();
   fList->setDirectory(dir, true, false);
   fList->addChangeListener(this);
 
@@ -100,7 +100,7 @@ void J2BChooseInputComponent::onChooseCustomButtonClicked() {
   fList->removeChangeListener(this);
 
   if (sLastDirectory == File()) {
-    sLastDirectory = JavaSaveDirectory();
+    sLastDirectory = GameDirectory::JavaSaveDirectory();
   }
 
   int flags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectDirectories;

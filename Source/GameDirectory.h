@@ -8,6 +8,18 @@ struct GameDirectory {
   juce::File fDirectory;
   juce::String fLevelName;
   juce::Image fIcon;
+  juce::Time fLastUpdate;
+
+  enum GameMode : int32_t {
+    SURVIVAL = 0,
+    CREATIVE = 1,
+    ADVENTURE = 2,
+    SPECTATOR = 3,
+  };
+  GameMode fGameMode = SURVIVAL;
+
+  juce::String fVersion;
+  bool fCommandsEnabled;
 
   void paint(juce::Graphics &g, int width, int height, bool selected, juce::Component &component) const {
     using namespace juce;
@@ -19,7 +31,7 @@ struct GameDirectory {
 
     int margin = 5;
     int iconSize = height - 2 * margin;
-    Rectangle<int> iconBounds(margin, margin, iconSize, iconSize);
+    juce::Rectangle<int> iconBounds(margin, margin, iconSize, iconSize);
     if (fIcon.isValid()) {
       int iconWidth = iconSize * fIcon.getWidth() / fIcon.getHeight();
       iconBounds.setWidth(iconWidth);
@@ -41,9 +53,19 @@ struct GameDirectory {
     int lineWidth = width - x - margin;
     int y = margin;
     g.drawFittedText(fLevelName, x, y, lineWidth, lineHeight, Justification::centredLeft, 1);
+
     y += lineHeight;
     g.setColour(textColour.darker(0.8));
-    g.drawFittedText(fDirectory.getFileName(), x, y, lineWidth, lineHeight, Justification::centredLeft, 1);
+    juce::String secondLine = fDirectory.getFileName() + " (" + StringFromTime(fLastUpdate) + ")";
+    g.drawFittedText(secondLine, x, y, lineWidth, lineHeight, Justification::centredLeft, 1);
+
+    y += lineHeight;
+    juce::String thirdLine = StringFromGameMode(fGameMode) + ", ";
+    if (fCommandsEnabled) {
+      thirdLine += TRANS("Cheats") + ", ";
+    }
+    thirdLine += TRANS("Version") + ": " + fVersion;
+    g.drawFittedText(thirdLine, x, y, lineWidth, lineHeight, Justification::centredLeft, 1);
   }
 
   static juce::File BedrockSaveDirectory() {
@@ -60,6 +82,29 @@ struct GameDirectory {
 
   static juce::File JavaSaveDirectory() {
     return juce::File::getSpecialLocation(juce::File::userApplicationDataDirectory).getChildFile(".minecraft").getChildFile("saves");
+  }
+
+  static juce::String StringFromTime(juce::Time const &t) {
+    int year = t.getYear();
+    int month = t.getMonth() + 1;
+    int day = t.getDayOfMonth();
+    int hour = t.getHours();
+    int minute = t.getMinutes();
+    return juce::String(year) + "/" + juce::String::formatted("%02d", month) + "/" + juce::String::formatted("%02d", day) + " " + juce::String(hour) + ":" + juce::String::formatted("%02d", minute);
+  }
+
+  static juce::String StringFromGameMode(GameMode m) {
+    switch (m) {
+    case CREATIVE:
+      return TRANS("Creative Mode");
+    case ADVENTURE:
+      return TRANS("Adventure Mode");
+    case SPECTATOR:
+      return TRANS("Spectator Mode");
+    case SURVIVAL:
+    default:
+      return TRANS("Survival Mode");
+    }
   }
 };
 
