@@ -1,7 +1,7 @@
 #include "B2JChooseOutputComponent.h"
 #include "CommandID.h"
 #include "Constants.h"
-#include "GameDirectories.h"
+#include "GameDirectory.h"
 #include "MainWindow.h"
 
 using namespace juce;
@@ -45,7 +45,7 @@ B2JChooseOutputComponent::B2JChooseOutputComponent(B2JConvertState const &conver
   auto height = kWindowHeight;
   setSize(width, height);
 
-  File root = JavaSaveDirectory();
+  File root = GameDirectory::JavaSaveDirectory();
   fDefaultSaveDirectory = DecideDefaultOutputDirectory(convertState, root);
 
   int y = kMargin;
@@ -89,7 +89,7 @@ void B2JChooseOutputComponent::onSaveToDefaultButtonClicked() {
 
 void B2JChooseOutputComponent::onSaveToCustomButtonClicked() {
   if (sLastCustomDirectory == File()) {
-    sLastCustomDirectory = JavaSaveDirectory();
+    sLastCustomDirectory = GameDirectory::JavaSaveDirectory();
   }
 
   File directory = sLastCustomDirectory;

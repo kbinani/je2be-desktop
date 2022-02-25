@@ -1,7 +1,7 @@
 #include "B2JConfigComponent.h"
 #include "CommandID.h"
 #include "Constants.h"
-#include "GameDirectories.h"
+#include "GameDirectory.h"
 #include <je2be.hpp>
 
 using namespace juce;
@@ -117,7 +117,7 @@ public:
 
   void unsafeRun() {
     using namespace std;
-    File saves = JavaSaveDirectory();
+    File saves = GameDirectory::JavaSaveDirectory();
     File jsonFile = saves.getParentDirectory().getChildFile("launcher_accounts.json");
     if (!jsonFile.existsAsFile()) {
       return;

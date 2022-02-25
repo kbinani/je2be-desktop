@@ -1,7 +1,7 @@
 #include "J2BChooseOutputComponent.h"
 #include "CommandID.h"
 #include "Constants.h"
-#include "GameDirectories.h"
+#include "GameDirectory.h"
 #include "MainWindow.h"
 
 using namespace juce;
@@ -27,7 +27,7 @@ J2BChooseOutputComponent::J2BChooseOutputComponent(J2BConvertState const &conver
   auto height = kWindowHeight;
   setSize(width, height);
 
-  File root = BedrockSaveDirectory();
+  File root = GameDirectory::BedrockSaveDirectory();
   fDefaultSaveDirectory = DecideDefaultOutputDirectory(convertState, root);
 
   int y = kMargin;
@@ -79,7 +79,7 @@ void J2BChooseOutputComponent::onSaveToDefaultButtonClicked() {
 
 void J2BChooseOutputComponent::onSaveToCustomButtonClicked() {
   if (sLastCustomDirectory == File()) {
-    sLastCustomDirectory = BedrockSaveDirectory();
+    sLastCustomDirectory = GameDirectory::BedrockSaveDirectory();
   }
   File directory = sLastCustomDirectory;
   if (auto candidate = DecideDefaultOutputDirectory(fState.fConvertState, directory); candidate != File()) {
