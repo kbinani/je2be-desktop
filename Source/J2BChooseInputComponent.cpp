@@ -18,7 +18,7 @@ J2BChooseInputComponent::J2BChooseInputComponent(std::optional<J2BChooseInputSta
 
   auto width = kWindowWidth;
   auto height = kWindowHeight;
-  auto fileListWidth = 280;
+  auto fileListWidth = 360;
 
   setSize(width, height);
   {
@@ -44,7 +44,7 @@ J2BChooseInputComponent::J2BChooseInputComponent(std::optional<J2BChooseInputSta
   {
     auto w = 160;
     fChooseCustomButton.reset(new TextButtonComponent(TRANS("Select from other directories")));
-    fChooseCustomButton->setBounds(width - kMargin - fileListWidth, height - kButtonBaseHeight - kMargin, w, kButtonBaseHeight);
+    fChooseCustomButton->setBounds(width - kMargin - fNextButton->getWidth() - kMargin - w, height - kButtonBaseHeight - kMargin, w, kButtonBaseHeight);
     fChooseCustomButton->onClick = [this]() { onChooseCustomButtonClicked(); };
     addAndMakeVisible(*fChooseCustomButton);
   }

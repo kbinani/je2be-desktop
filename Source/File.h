@@ -1,5 +1,7 @@
 #pragma once
 
+#include <juce_gui_extra/juce_gui_extra.h>
+
 namespace je2be::gui {
 
 static inline std::filesystem::path PathFromFile(juce::File file) {

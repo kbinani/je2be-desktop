@@ -21,7 +21,7 @@ B2JChooseInputComponent::B2JChooseInputComponent(std::optional<B2JChooseInputSta
 
   auto width = kWindowWidth;
   auto height = kWindowHeight;
-  auto fileListWidth = 280;
+  auto fileListWidth = 360;
 
   fBedrockGameDirectory = GameDirectory::BedrockSaveDirectory();
 
@@ -49,7 +49,7 @@ B2JChooseInputComponent::B2JChooseInputComponent(std::optional<B2JChooseInputSta
   {
     auto w = 160;
     fChooseCustomButton.reset(new TextButtonComponent(TRANS("Select mcworld file")));
-    fChooseCustomButton->setBounds(width - kMargin - fileListWidth, height - kButtonBaseHeight - kMargin, w, kButtonBaseHeight);
+    fChooseCustomButton->setBounds(width - kMargin - fNextButton->getWidth() - kMargin - w, height - kButtonBaseHeight - kMargin, w, kButtonBaseHeight);
     fChooseCustomButton->onClick = [this]() { onChooseCustomButtonClicked(); };
     addAndMakeVisible(*fChooseCustomButton);
   }
