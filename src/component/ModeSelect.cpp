@@ -1,13 +1,13 @@
 #include "component/ModeSelect.h"
-#include "component/About.h"
 #include "CommandID.h"
 #include "Constants.h"
+#include "component/About.h"
 
 using namespace juce;
 
 namespace je2be::gui::component {
 
-ModeSelectComponent::ModeSelectComponent() {
+ModeSelect::ModeSelect() {
   setSize(kWindowWidth, kWindowHeight);
 
   int const buttonWidth = kWindowWidth / 2;
@@ -21,7 +21,7 @@ ModeSelectComponent::ModeSelectComponent() {
 
   y += kMargin;
 
-  fToJ2B.reset(new TextButtonComponent(TRANS("Java to Bedrock")));
+  fToJ2B.reset(new TextButton(TRANS("Java to Bedrock")));
   fToJ2B->setBounds(kWindowWidth / 2 - buttonWidth / 2, y, buttonWidth, kButtonBaseHeight);
   fToJ2B->onClick = [this]() { onJ2BClicked(); };
   addAndMakeVisible(*fToJ2B);
@@ -29,27 +29,27 @@ ModeSelectComponent::ModeSelectComponent() {
 
   y += kMargin;
 
-  fToB2J.reset(new TextButtonComponent(TRANS("Bedrock to Java")));
+  fToB2J.reset(new TextButton(TRANS("Bedrock to Java")));
   fToB2J->setBounds(kWindowWidth / 2 - buttonWidth / 2, y, buttonWidth, kButtonBaseHeight);
   fToB2J->onClick = [this]() { onB2JClicked(); };
   addAndMakeVisible(*fToB2J);
   y += fToB2J->getHeight();
 
-  fAboutButton.reset(new TextButtonComponent("About"));
+  fAboutButton.reset(new TextButton("About"));
   fAboutButton->setBounds(kMargin, kWindowHeight - kMargin - kButtonBaseHeight, kButtonMinWidth, kButtonBaseHeight);
   fAboutButton->onClick = [this]() { onAboutButtonClicked(); };
   addAndMakeVisible(*fAboutButton);
 }
 
-ModeSelectComponent::~ModeSelectComponent() {
+ModeSelect::~ModeSelect() {
 }
 
-void ModeSelectComponent::paint(juce::Graphics &g) {
+void ModeSelect::paint(juce::Graphics &g) {
 }
 
-void ModeSelectComponent::onAboutButtonClicked() {
+void ModeSelect::onAboutButtonClicked() {
   DialogWindow::LaunchOptions options;
-  options.content.setOwned(new AboutComponent());
+  options.content.setOwned(new About());
   options.dialogTitle = "About";
   options.useNativeTitleBar = true;
   options.escapeKeyTriggersCloseButton = true;
@@ -58,12 +58,12 @@ void ModeSelectComponent::onAboutButtonClicked() {
   options.launchAsync();
 }
 
-void ModeSelectComponent::onB2JClicked() {
+void ModeSelect::onB2JClicked() {
   JUCEApplication::getInstance()->invoke(gui::toB2JChooseInput, true);
 }
 
-void ModeSelectComponent::onJ2BClicked() {
+void ModeSelect::onJ2BClicked() {
   JUCEApplication::getInstance()->invoke(gui::toJ2BChooseInput, true);
 }
 
-} // namespace je2be::gui
+} // namespace je2be::gui::component

@@ -9,22 +9,22 @@ using namespace juce;
 
 namespace je2be::gui::component::j2b {
 
-class J2BCopyThread : public J2BCopyProgressComponent::Worker {
+class J2BCopyThread : public J2BCopyProgress::Worker {
 public:
   J2BCopyThread(AsyncUpdater *updater, File from, File to, double *progress)
-      : J2BCopyProgressComponent::Worker("j2b::gui::J2BCopyThread"),
+      : J2BCopyProgress::Worker("j2b::gui::J2BCopyThread"),
         fUpdater(updater), fFrom(from), fTo(to), fProgress(progress) {}
 
   void run() override {
     try {
       unsafeRun();
     } catch (...) {
-      fResult = J2BCopyProgressComponent::Worker::Result::Failed;
+      fResult = J2BCopyProgress::Worker::Result::Failed;
     }
     fUpdater->triggerAsyncUpdate();
   }
 
-  std::optional<J2BCopyProgressComponent::Worker::Result> result() const override {
+  std::optional<J2BCopyProgress::Worker::Result> result() const override {
     return fResult;
   }
 
@@ -42,43 +42,43 @@ private:
       if (!dir.exists()) {
         auto result = dir.createDirectory();
         if (!result.wasOk()) {
-          fResult = J2BCopyProgressComponent::Worker::Result::Failed;
+          fResult = J2BCopyProgress::Worker::Result::Failed;
           return;
         }
       }
       if (!from.copyFileTo(destination)) {
-        fResult = J2BCopyProgressComponent::Worker::Result::Failed;
+        fResult = J2BCopyProgress::Worker::Result::Failed;
         return;
       }
       *fProgress = (double)item.getEstimatedProgress();
     }
-    fResult = J2BCopyProgressComponent::Worker::Result::Success;
+    fResult = J2BCopyProgress::Worker::Result::Success;
   }
 
 private:
   AsyncUpdater *const fUpdater;
   File fFrom;
   File fTo;
-  std::optional<J2BCopyProgressComponent::Worker::Result> fResult;
+  std::optional<J2BCopyProgress::Worker::Result> fResult;
   double *const fProgress;
 };
 
-class ZipThread : public J2BCopyProgressComponent::Worker {
+class ZipThread : public J2BCopyProgress::Worker {
 public:
   ZipThread(AsyncUpdater *updater, File from, File to, double *progress)
-      : J2BCopyProgressComponent::Worker("j2b::gui::ZipThread"), fUpdater(updater),
+      : J2BCopyProgress::Worker("j2b::gui::ZipThread"), fUpdater(updater),
         fFrom(from), fTo(to), fProgress(progress) {}
 
   void run() override {
     try {
       unsafeRun();
     } catch (...) {
-      fResult = J2BCopyProgressComponent::Worker::Result::Failed;
+      fResult = J2BCopyProgress::Worker::Result::Failed;
     }
     fUpdater->triggerAsyncUpdate();
   }
 
-  std::optional<J2BCopyProgressComponent::Worker::Result> result() const override {
+  std::optional<J2BCopyProgress::Worker::Result> result() const override {
     return fResult;
   }
 
@@ -99,10 +99,10 @@ private:
     }
 
     if (cancelled || currentThreadShouldExit()) {
-      fResult = J2BCopyProgressComponent::Worker::Result::Cancelled;
+      fResult = J2BCopyProgress::Worker::Result::Cancelled;
       return;
     }
-    fResult = J2BCopyProgressComponent::Worker::Result::Failed;
+    fResult = J2BCopyProgress::Worker::Result::Failed;
     auto stream = fTo.createOutputStream();
     if (!stream) {
       return;
@@ -116,18 +116,18 @@ private:
     if (!builder.writeToStream(*stream, fProgress)) {
       return;
     }
-    fResult = J2BCopyProgressComponent::Worker::Result::Success;
+    fResult = J2BCopyProgress::Worker::Result::Success;
   }
 
 private:
   AsyncUpdater *const fUpdater;
   File fFrom;
   File fTo;
-  std::optional<J2BCopyProgressComponent::Worker::Result> fResult;
+  std::optional<J2BCopyProgress::Worker::Result> fResult;
   double *const fProgress;
 };
 
-J2BCopyProgressComponent::J2BCopyProgressComponent(J2BChooseOutputState const &state) : fState(state) {
+J2BCopyProgress::J2BCopyProgress(J2BChooseOutputState const &state) : fState(state) {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
   setSize(width, height);
@@ -153,13 +153,13 @@ J2BCopyProgressComponent::J2BCopyProgressComponent(J2BChooseOutputState const &s
   startTimerHz(12);
 }
 
-J2BCopyProgressComponent::~J2BCopyProgressComponent() {
+J2BCopyProgress::~J2BCopyProgress() {
   fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
 }
 
-void J2BCopyProgressComponent::paint(juce::Graphics &g) {}
+void J2BCopyProgress::paint(juce::Graphics &g) {}
 
-void J2BCopyProgressComponent::handleAsyncUpdate() {
+void J2BCopyProgress::handleAsyncUpdate() {
   struct InvokeToChooseOutput : public ModalComponentManager::Callback {
     void modalStateFinished(int returnValue) override {
       JUCEApplication::getInstance()->invoke(gui::toJ2BChooseOutput, true);
@@ -175,10 +175,10 @@ void J2BCopyProgressComponent::handleAsyncUpdate() {
   stopTimer();
 
   auto result = fCopyThread->result();
-  if (!result || *result == J2BCopyProgressComponent::Worker::Result::Failed) {
+  if (!result || *result == J2BCopyProgress::Worker::Result::Failed) {
     fTaskbarProgress->setState(TaskbarProgress::State::Error);
     NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::WarningIcon, TRANS("Failed"), TRANS("Saving failed."), nullptr, new InvokeToChooseOutput);
-  } else if (*result == J2BCopyProgressComponent::Worker::Result::Cancelled) {
+  } else if (*result == J2BCopyProgress::Worker::Result::Cancelled) {
     fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
     NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::InfoIcon, TRANS("Cancelled"), TRANS("Saving cancelled."), nullptr, new InvokeToChooseOutput);
     JUCEApplication::getInstance()->invoke(gui::toJ2BChooseOutput, true);
@@ -191,9 +191,9 @@ void J2BCopyProgressComponent::handleAsyncUpdate() {
   }
 }
 
-void J2BCopyProgressComponent::timerCallback() {
+void J2BCopyProgress::timerCallback() {
   double progress = fProgress;
   fTaskbarProgress->update(progress);
 }
 
-} // namespace je2be::gui::j2b
+} // namespace je2be::gui::component::j2b

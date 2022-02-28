@@ -16,7 +16,7 @@ public:
                 juce::ResizableWindow::backgroundColourId),
             DocumentWindow::closeButton | DocumentWindow::minimiseButton) {
     setUsingNativeTitleBar(true);
-    setContentOwned(new ModeSelectComponent, true);
+    setContentOwned(new ModeSelect, true);
 
 #if JUCE_IOS || JUCE_ANDROID
     setFullScreen(true);
@@ -39,4 +39,4 @@ private:
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainWindow)
 };
 
-} // namespace je2be::gui
+} // namespace je2be::gui::component

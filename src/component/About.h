@@ -4,9 +4,9 @@
 
 namespace je2be::gui::component {
 
-class AboutComponent : public juce::Component, public juce::Timer {
+class About : public juce::Component, public juce::Timer {
 public:
-  AboutComponent();
+  About();
 
   void mouseDown(juce::MouseEvent const &) override;
 
@@ -19,15 +19,15 @@ private:
   std::unique_ptr<juce::Component> fScrollContents;
   std::unique_ptr<juce::Component> fHeader;
   std::unique_ptr<juce::ImageComponent> fLogoComponent;
-  std::unique_ptr<DrawableTextComponent> fAppName;
-  std::unique_ptr<DrawableTextComponent> fAppVersion;
-  std::vector<std::shared_ptr<DrawableTextComponent>> fParagraphs;
+  std::unique_ptr<DrawableText> fAppName;
+  std::unique_ptr<DrawableText> fAppVersion;
+  std::vector<std::shared_ptr<DrawableText>> fParagraphs;
   std::unique_ptr<juce::ComponentAnimator> fAnimator;
 
   int fNextScrollStartY;
   double fNextStartSpeed;
 
-  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AboutComponent)
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(About)
 };
 
-} // namespace je2be::gui
+} // namespace je2be::gui::component

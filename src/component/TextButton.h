@@ -4,11 +4,11 @@
 
 namespace je2be::gui::component {
 
-class TextButtonComponent : public juce::TextButton {
+class TextButton : public juce::TextButton {
   using super = juce::TextButton;
 
 public:
-  explicit TextButtonComponent(juce::String text) : juce::TextButton(text) {
+  explicit TextButton(juce::String text) : juce::TextButton(text) {
     updateMouseCursor();
   }
 
@@ -27,4 +27,4 @@ private:
   }
 };
 
-} // namespace je2be::gui
+} // namespace je2be::gui::component

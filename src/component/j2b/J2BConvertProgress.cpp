@@ -3,15 +3,15 @@
 #include "CommandID.h"
 #include "Constants.h"
 #include "File.h"
-#include "component/j2b/J2BConvertProgress.h"
 #include "TaskbarProgress.h"
 #include "TemporaryDirectory.h"
+#include "component/j2b/J2BConvertProgress.h"
 
 using namespace juce;
 
 namespace je2be::gui::component::j2b {
 
-class J2BConvertProgressComponent::Updater : public AsyncUpdater {
+class J2BConvertProgress::Updater : public AsyncUpdater {
   struct Entry {
     int fPhase;
     double fDone;
@@ -49,7 +49,7 @@ public:
     fStat = stat;
   }
 
-  std::atomic<J2BConvertProgressComponent *> fTarget;
+  std::atomic<J2BConvertProgress *> fTarget;
   std::optional<je2be::tobe::Statistics> fStat;
 
 private:
@@ -60,7 +60,7 @@ private:
 class J2BWorkerThread : public Thread, public je2be::tobe::Progress {
 public:
   J2BWorkerThread(File input, File output, je2be::tobe::Options opt,
-                  std::shared_ptr<J2BConvertProgressComponent::Updater> updater)
+                  std::shared_ptr<J2BConvertProgress::Updater> updater)
       : Thread("je2be::gui::J2BConvert"), fInput(input), fOutput(output), fOptions(opt), fUpdater(updater) {}
 
   void run() override {
@@ -96,7 +96,7 @@ private:
   File const fInput;
   File const fOutput;
   je2be::tobe::Options const fOptions;
-  std::shared_ptr<J2BConvertProgressComponent::Updater> fUpdater;
+  std::shared_ptr<J2BConvertProgress::Updater> fUpdater;
 };
 
 static J2BConvertStatistics Import(je2be::tobe::Statistics stat) {
@@ -122,12 +122,12 @@ static juce::String DimensionToString(mcfile::Dimension dim) {
   return "Unknown";
 }
 
-J2BConvertProgressComponent::J2BConvertProgressComponent(J2BConfigState const &configState) : fState(configState) {
+J2BConvertProgress::J2BConvertProgress(J2BConfigState const &configState) : fState(configState) {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
   setSize(width, height);
 
-  fCancelButton.reset(new TextButtonComponent(TRANS("Cancel")));
+  fCancelButton.reset(new component::TextButton(TRANS("Cancel")));
   fCancelButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight, kButtonMinWidth, kButtonBaseHeight);
   fCancelButton->onClick = [this]() { onCancelButtonClicked(); };
   addAndMakeVisible(*fCancelButton);
@@ -176,14 +176,14 @@ J2BConvertProgressComponent::J2BConvertProgressComponent(J2BConfigState const &c
   fThread->startThread();
 }
 
-J2BConvertProgressComponent::~J2BConvertProgressComponent() {
+J2BConvertProgress::~J2BConvertProgress() {
   fThread->stopThread(-1);
   fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
 }
 
-void J2BConvertProgressComponent::paint(juce::Graphics &g) {}
+void J2BConvertProgress::paint(juce::Graphics &g) {}
 
-void J2BConvertProgressComponent::onCancelButtonClicked() {
+void J2BConvertProgress::onCancelButtonClicked() {
   if (fFailed) {
     JUCEApplication::getInstance()->invoke(gui::toJ2BChooseInput, true);
   } else {
@@ -195,7 +195,7 @@ void J2BConvertProgressComponent::onCancelButtonClicked() {
   }
 }
 
-void J2BConvertProgressComponent::onProgressUpdate(int phase, double done, double total) {
+void J2BConvertProgress::onProgressUpdate(int phase, double done, double total) {
   double weightConversion = 0.67;
   double weightCompaction = 1 - weightConversion;
 
@@ -256,4 +256,4 @@ void J2BConvertProgressComponent::onProgressUpdate(int phase, double done, doubl
   }
 }
 
-} // namespace je2be::gui::j2b
+} // namespace je2be::gui::component::j2b

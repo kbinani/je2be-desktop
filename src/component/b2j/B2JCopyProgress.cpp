@@ -9,22 +9,22 @@ using namespace juce;
 
 namespace je2be::gui::component::b2j {
 
-class B2JCopyThread : public B2JCopyProgressComponent::Worker {
+class B2JCopyThread : public B2JCopyProgress::Worker {
 public:
   B2JCopyThread(AsyncUpdater *updater, File from, File to, double *progress)
-      : B2JCopyProgressComponent::Worker("j2b::gui::B2JCopyThread"),
+      : B2JCopyProgress::Worker("j2b::gui::B2JCopyThread"),
         fUpdater(updater), fFrom(from), fTo(to), fProgress(progress) {}
 
   void run() override {
     try {
       unsafeRun();
     } catch (...) {
-      fResult = B2JCopyProgressComponent::Worker::Result::Failed;
+      fResult = B2JCopyProgress::Worker::Result::Failed;
     }
     fUpdater->triggerAsyncUpdate();
   }
 
-  std::optional<B2JCopyProgressComponent::Worker::Result> result() const override {
+  std::optional<B2JCopyProgress::Worker::Result> result() const override {
     return fResult;
   }
 
@@ -42,28 +42,28 @@ private:
       if (!dir.exists()) {
         auto result = dir.createDirectory();
         if (!result.wasOk()) {
-          fResult = B2JCopyProgressComponent::Worker::Result::Failed;
+          fResult = B2JCopyProgress::Worker::Result::Failed;
           return;
         }
       }
       if (!from.copyFileTo(destination)) {
-        fResult = B2JCopyProgressComponent::Worker::Result::Failed;
+        fResult = B2JCopyProgress::Worker::Result::Failed;
         return;
       }
       *fProgress = (double)item.getEstimatedProgress();
     }
-    fResult = B2JCopyProgressComponent::Worker::Result::Success;
+    fResult = B2JCopyProgress::Worker::Result::Success;
   }
 
 private:
   AsyncUpdater *const fUpdater;
   File fFrom;
   File fTo;
-  std::optional<B2JCopyProgressComponent::Worker::Result> fResult;
+  std::optional<B2JCopyProgress::Worker::Result> fResult;
   double *const fProgress;
 };
 
-B2JCopyProgressComponent::B2JCopyProgressComponent(B2JChooseOutputState const &state) : fState(state) {
+B2JCopyProgress::B2JCopyProgress(B2JChooseOutputState const &state) : fState(state) {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
   setSize(width, height);
@@ -85,13 +85,13 @@ B2JCopyProgressComponent::B2JCopyProgressComponent(B2JChooseOutputState const &s
   startTimerHz(12);
 }
 
-B2JCopyProgressComponent::~B2JCopyProgressComponent() {
+B2JCopyProgress::~B2JCopyProgress() {
   fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
 }
 
-void B2JCopyProgressComponent::paint(juce::Graphics &g) {}
+void B2JCopyProgress::paint(juce::Graphics &g) {}
 
-void B2JCopyProgressComponent::handleAsyncUpdate() {
+void B2JCopyProgress::handleAsyncUpdate() {
   struct InvokeToChooseOutput : public ModalComponentManager::Callback {
     void modalStateFinished(int returnValue) override {
       JUCEApplication::getInstance()->invoke(gui::toB2JChooseOutput, true);
@@ -107,10 +107,10 @@ void B2JCopyProgressComponent::handleAsyncUpdate() {
   stopTimer();
 
   auto result = fCopyThread->result();
-  if (!result || *result == B2JCopyProgressComponent::Worker::Result::Failed) {
+  if (!result || *result == B2JCopyProgress::Worker::Result::Failed) {
     fTaskbarProgress->setState(TaskbarProgress::State::Error);
     NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::WarningIcon, TRANS("Failed"), TRANS("Saving failed."), nullptr, new InvokeToChooseOutput);
-  } else if (*result == B2JCopyProgressComponent::Worker::Result::Cancelled) {
+  } else if (*result == B2JCopyProgress::Worker::Result::Cancelled) {
     fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
     NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::InfoIcon, TRANS("Cancelled"), TRANS("Saving cancelled."), nullptr, new InvokeToChooseOutput);
     JUCEApplication::getInstance()->invoke(gui::toB2JChooseOutput, true);
@@ -123,9 +123,9 @@ void B2JCopyProgressComponent::handleAsyncUpdate() {
   }
 }
 
-void B2JCopyProgressComponent::timerCallback() {
+void B2JCopyProgress::timerCallback() {
   double progress = fProgress;
   fTaskbarProgress->update(progress);
 }
 
-} // namespace je2be::gui::b2j
+} // namespace je2be::gui::component::b2j

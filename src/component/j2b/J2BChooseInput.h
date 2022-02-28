@@ -7,13 +7,13 @@
 
 namespace je2be::gui::component::j2b {
 
-class J2BChooseInputComponent : public juce::Component,
-                                public J2BChooseInputStateProvider,
-                                public juce::AsyncUpdater,
-                                public juce::ListBoxModel {
+class J2BChooseInput : public juce::Component,
+                       public J2BChooseInputStateProvider,
+                       public juce::AsyncUpdater,
+                       public juce::ListBoxModel {
 public:
-  explicit J2BChooseInputComponent(std::optional<J2BChooseInputState> state);
-  ~J2BChooseInputComponent() override;
+  explicit J2BChooseInput(std::optional<J2BChooseInputState> state);
+  ~J2BChooseInput() override;
 
   void paint(juce::Graphics &) override;
 
@@ -41,17 +41,17 @@ private:
 private:
   static juce::File sLastDirectory;
 
-  std::unique_ptr<TextButtonComponent> fNextButton;
-  std::unique_ptr<TextButtonComponent> fChooseCustomButton;
+  std::unique_ptr<TextButton> fNextButton;
+  std::unique_ptr<TextButton> fChooseCustomButton;
   std::unique_ptr<juce::ListBox> fListComponent;
   std::unique_ptr<GameDirectoryScanThreadJava> fThread;
   J2BChooseInputState fState;
   std::unique_ptr<juce::Label> fMessage;
-  std::unique_ptr<TextButtonComponent> fBackButton;
+  std::unique_ptr<TextButton> fBackButton;
   std::vector<GameDirectory> fGameDirectories;
   std::unique_ptr<juce::Label> fPlaceholder;
 
-  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(J2BChooseInputComponent)
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(J2BChooseInput)
 };
 
-} // namespace je2be::gui::j2b
+} // namespace je2be::gui::component::j2b

@@ -4,9 +4,9 @@
 
 namespace je2be::gui::component {
 
-class DrawableTextComponent : public juce::Component {
+class DrawableText : public juce::Component {
 public:
-  explicit DrawableTextComponent(juce::String text, float fontSize) : fString(text) {
+  DrawableText(juce::String text, float fontSize) : fString(text) {
     auto label = std::make_unique<juce::Label>();
     auto font = label->getFont().withHeight(fontSize);
     fString.setFont(font);
@@ -54,4 +54,4 @@ private:
   int fMinHeight;
 };
 
-} // namespace je2be::gui
+} // namespace je2be::gui::component

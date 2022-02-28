@@ -1,17 +1,17 @@
 #include <je2be.hpp>
 
-#include "component/b2j/B2JConvertProgress.h"
 #include "CommandID.h"
 #include "Constants.h"
 #include "File.h"
 #include "TaskbarProgress.h"
 #include "TemporaryDirectory.h"
+#include "component/b2j/B2JConvertProgress.h"
 
 using namespace juce;
 
 namespace je2be::gui::component::b2j {
 
-class B2JConvertProgressComponent::Updater : public AsyncUpdater {
+class B2JConvertProgress::Updater : public AsyncUpdater {
   struct Entry {
     Phase fPhase;
     double fDone;
@@ -50,7 +50,7 @@ public:
     fOk = ok;
   }
 
-  std::atomic<B2JConvertProgressComponent *> fTarget;
+  std::atomic<B2JConvertProgress *> fTarget;
   bool fOk = false;
 
 private:
@@ -61,16 +61,16 @@ private:
 class B2JWorkerThread : public Thread, public je2be::toje::Progress {
 public:
   B2JWorkerThread(File input, File output, je2be::toje::Options opt,
-                  std::shared_ptr<B2JConvertProgressComponent::Updater> updater)
+                  std::shared_ptr<B2JConvertProgress::Updater> updater)
       : Thread("je2be::gui::B2JConvert"), fInput(input), fOutput(output), fOptions(opt), fUpdater(updater) {}
 
   void run() override {
     try {
       unsafeRun();
     } catch (std::filesystem::filesystem_error &e) {
-      fUpdater->trigger(B2JConvertProgressComponent::Phase::Error, 1, 1);
+      fUpdater->trigger(B2JConvertProgress::Phase::Error, 1, 1);
     } catch (...) {
-      fUpdater->trigger(B2JConvertProgressComponent::Phase::Error, 1, 1);
+      fUpdater->trigger(B2JConvertProgress::Phase::Error, 1, 1);
     }
   }
 
@@ -86,14 +86,14 @@ public:
     File input;
     if (fInput.isDirectory()) {
       if (!copyInto(temp)) {
-        fUpdater->trigger(B2JConvertProgressComponent::Phase::Error, 1, 1);
+        fUpdater->trigger(B2JConvertProgress::Phase::Error, 1, 1);
         return;
       }
       input = temp;
-      fUpdater->trigger(B2JConvertProgressComponent::Phase::Unzip, 1, 1);
+      fUpdater->trigger(B2JConvertProgress::Phase::Unzip, 1, 1);
     } else {
       if (!unzipInto(temp)) {
-        fUpdater->trigger(B2JConvertProgressComponent::Phase::Error, 1, 1);
+        fUpdater->trigger(B2JConvertProgress::Phase::Error, 1, 1);
         return;
       }
       input = temp;
@@ -103,7 +103,7 @@ public:
       bool ok = c.run(std::thread::hardware_concurrency(), this);
       fUpdater->complete(ok);
     }
-    fUpdater->trigger(B2JConvertProgressComponent::Phase::Done, 1, 1);
+    fUpdater->trigger(B2JConvertProgress::Phase::Done, 1, 1);
   }
 
   bool copyInto(File temp) {
@@ -172,13 +172,13 @@ public:
       if (result.failed()) {
         return false;
       }
-      fUpdater->trigger(B2JConvertProgressComponent::Phase::Unzip, i + 1, numEntries);
+      fUpdater->trigger(B2JConvertProgress::Phase::Unzip, i + 1, numEntries);
     }
     return true;
   }
 
   bool report(double done, double total) override {
-    fUpdater->trigger(B2JConvertProgressComponent::Phase::Conversion, done / total, 1.0);
+    fUpdater->trigger(B2JConvertProgress::Phase::Conversion, done / total, 1.0);
     return !threadShouldExit();
   }
 
@@ -186,10 +186,10 @@ private:
   File const fInput;
   File const fOutput;
   je2be::toje::Options fOptions;
-  std::shared_ptr<B2JConvertProgressComponent::Updater> fUpdater;
+  std::shared_ptr<B2JConvertProgress::Updater> fUpdater;
 };
 
-B2JConvertProgressComponent::B2JConvertProgressComponent(B2JConfigState const &configState) : fState(configState) {
+B2JConvertProgress::B2JConvertProgress(B2JConfigState const &configState) : fState(configState) {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
   setSize(width, height);
@@ -198,7 +198,7 @@ B2JConvertProgressComponent::B2JConvertProgressComponent(B2JConfigState const &c
   fConversionProgress = 0;
 
   {
-    fCancelButton.reset(new TextButtonComponent(TRANS("Cancel")));
+    fCancelButton.reset(new component::TextButton(TRANS("Cancel")));
     fCancelButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight, kButtonMinWidth, kButtonBaseHeight);
     fCancelButton->onClick = [this]() { onCancelButtonClicked(); };
     addAndMakeVisible(*fCancelButton);
@@ -274,14 +274,14 @@ B2JConvertProgressComponent::B2JConvertProgressComponent(B2JConfigState const &c
   fThread->startThread();
 }
 
-B2JConvertProgressComponent::~B2JConvertProgressComponent() {
+B2JConvertProgress::~B2JConvertProgress() {
   fThread->stopThread(-1);
   fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
 }
 
-void B2JConvertProgressComponent::paint(juce::Graphics &g) {}
+void B2JConvertProgress::paint(juce::Graphics &g) {}
 
-void B2JConvertProgressComponent::onCancelButtonClicked() {
+void B2JConvertProgress::onCancelButtonClicked() {
   if (fFailed) {
     JUCEApplication::getInstance()->invoke(gui::toB2JChooseInput, true);
   } else {
@@ -294,7 +294,7 @@ void B2JConvertProgressComponent::onCancelButtonClicked() {
   }
 }
 
-void B2JConvertProgressComponent::onProgressUpdate(Phase phase, double done, double total) {
+void B2JConvertProgress::onProgressUpdate(Phase phase, double done, double total) {
   double const weightUnzip = 0.5;
   double const weightConversion = 1 - weightUnzip;
 
@@ -346,4 +346,4 @@ void B2JConvertProgressComponent::onProgressUpdate(Phase phase, double done, dou
   }
 }
 
-} // namespace je2be::gui::b2j
+} // namespace je2be::gui::component::b2j

@@ -37,10 +37,10 @@ static File DecideDefaultOutputDirectory(B2JConvertState const &s, File director
   return candidate;
 }
 
-File B2JChooseOutputComponent::sLastCustomDirectory;
-File B2JChooseOutputComponent::sLastZipFile;
+File B2JChooseOutput::sLastCustomDirectory;
+File B2JChooseOutput::sLastZipFile;
 
-B2JChooseOutputComponent::B2JChooseOutputComponent(B2JConvertState const &convertState) : fState(convertState) {
+B2JChooseOutput::B2JChooseOutput(B2JConvertState const &convertState) : fState(convertState) {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
   setSize(width, height);
@@ -55,7 +55,7 @@ B2JChooseOutputComponent::B2JChooseOutputComponent(B2JConvertState const &conver
   y += fMessage->getHeight();
 
   y += kMargin;
-  fSaveToDefaultDirectory.reset(new TextButtonComponent(TRANS("Save into Minecraft Java edition save folder")));
+  fSaveToDefaultDirectory.reset(new component::TextButton(TRANS("Save into Minecraft Java edition save folder")));
   fSaveToDefaultDirectory->setBounds(2 * kMargin, y, width - 4 * kMargin, kButtonBaseHeight);
   fSaveToDefaultDirectory->setEnabled(root.exists());
   fSaveToDefaultDirectory->onClick = [this]() { onSaveToDefaultButtonClicked(); };
@@ -63,7 +63,7 @@ B2JChooseOutputComponent::B2JChooseOutputComponent(B2JConvertState const &conver
   y += fSaveToDefaultDirectory->getHeight();
 
   y += kMargin;
-  fSaveToCustomDirectory.reset(new TextButtonComponent(TRANS("Save into custom folder")));
+  fSaveToCustomDirectory.reset(new component::TextButton(TRANS("Save into custom folder")));
   fSaveToCustomDirectory->setBounds(2 * kMargin, y, width - 4 * kMargin, kButtonBaseHeight);
   fSaveToCustomDirectory->onClick = [this]() { onSaveToCustomButtonClicked(); };
   addAndMakeVisible(*fSaveToCustomDirectory);
@@ -71,7 +71,7 @@ B2JChooseOutputComponent::B2JChooseOutputComponent(B2JConvertState const &conver
 
   {
     int w = 160;
-    fBackButton.reset(new TextButtonComponent(TRANS("Back to the beginning")));
+    fBackButton.reset(new component::TextButton(TRANS("Back to the beginning")));
     fBackButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight, w, kButtonBaseHeight);
     fBackButton->onClick = [this]() { onBackButtonClicked(); };
     addAndMakeVisible(*fBackButton);
@@ -80,14 +80,14 @@ B2JChooseOutputComponent::B2JChooseOutputComponent(B2JConvertState const &conver
   fBackButton->setExplicitFocusOrder(2);
 }
 
-B2JChooseOutputComponent::~B2JChooseOutputComponent() {}
+B2JChooseOutput::~B2JChooseOutput() {}
 
-void B2JChooseOutputComponent::onSaveToDefaultButtonClicked() {
+void B2JChooseOutput::onSaveToDefaultButtonClicked() {
   fState.fCopyDestination = fDefaultSaveDirectory;
   JUCEApplication::getInstance()->invoke(gui::toB2JCopy, true);
 }
 
-void B2JChooseOutputComponent::onSaveToCustomButtonClicked() {
+void B2JChooseOutput::onSaveToCustomButtonClicked() {
   if (sLastCustomDirectory == File()) {
     sLastCustomDirectory = GameDirectory::JavaSaveDirectory();
   }
@@ -103,7 +103,7 @@ void B2JChooseOutputComponent::onSaveToCustomButtonClicked() {
   MainWindow::sFileChooser->launchAsync(flags, [this](FileChooser const &chooser) { onCustomDestinationDirectorySelected(chooser); });
 }
 
-void B2JChooseOutputComponent::onCustomDestinationDirectorySelected(FileChooser const &chooser) {
+void B2JChooseOutput::onCustomDestinationDirectorySelected(FileChooser const &chooser) {
   File dest = chooser.getResult();
   if (dest == File()) {
     fSaveToCustomDirectory->setToggleState(false, dontSendNotification);
@@ -129,10 +129,10 @@ void B2JChooseOutputComponent::onCustomDestinationDirectorySelected(FileChooser 
   }
 }
 
-void B2JChooseOutputComponent::paint(juce::Graphics &g) {}
+void B2JChooseOutput::paint(juce::Graphics &g) {}
 
-void B2JChooseOutputComponent::onBackButtonClicked() {
+void B2JChooseOutput::onBackButtonClicked() {
   JUCEApplication::getInstance()->invoke(gui::toB2JChooseInput, true);
 }
 
-} // namespace je2be::gui::b2j
+} // namespace je2be::gui::component::b2j

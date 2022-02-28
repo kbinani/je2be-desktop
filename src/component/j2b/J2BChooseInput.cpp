@@ -8,9 +8,9 @@ using namespace juce;
 
 namespace je2be::gui::component::j2b {
 
-File J2BChooseInputComponent::sLastDirectory;
+File J2BChooseInput::sLastDirectory;
 
-J2BChooseInputComponent::J2BChooseInputComponent(std::optional<J2BChooseInputState> state) {
+J2BChooseInput::J2BChooseInput(std::optional<J2BChooseInputState> state) {
   if (state) {
     fState = *state;
   }
@@ -27,13 +27,13 @@ J2BChooseInputComponent::J2BChooseInputComponent(std::optional<J2BChooseInputSta
     addAndMakeVisible(*fMessage);
   }
   {
-    fBackButton.reset(new TextButtonComponent(TRANS("Back")));
+    fBackButton.reset(new component::TextButton(TRANS("Back")));
     fBackButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight, kButtonMinWidth, kButtonBaseHeight);
     fBackButton->onClick = [this]() { onBackButtonClicked(); };
     addAndMakeVisible(*fBackButton);
   }
   {
-    fNextButton.reset(new TextButtonComponent(TRANS("Next")));
+    fNextButton.reset(new component::TextButton(TRANS("Next")));
     fNextButton->setBounds(width - kButtonMinWidth - kMargin, height - kButtonBaseHeight - kMargin, kButtonMinWidth, kButtonBaseHeight);
     fNextButton->onClick = [this]() { onNextButtonClicked(); };
     fNextButton->setEnabled(false);
@@ -41,7 +41,7 @@ J2BChooseInputComponent::J2BChooseInputComponent(std::optional<J2BChooseInputSta
   }
   {
     auto w = 200;
-    fChooseCustomButton.reset(new TextButtonComponent(TRANS("Select from other directories")));
+    fChooseCustomButton.reset(new component::TextButton(TRANS("Select from other directories")));
     fChooseCustomButton->setBounds(width - kMargin - fNextButton->getWidth() - kMargin - w, height - kButtonBaseHeight - kMargin, w, kButtonBaseHeight);
     fChooseCustomButton->onClick = [this]() { onChooseCustomButtonClicked(); };
     addAndMakeVisible(*fChooseCustomButton);
@@ -68,17 +68,17 @@ J2BChooseInputComponent::J2BChooseInputComponent(std::optional<J2BChooseInputSta
   }
 }
 
-J2BChooseInputComponent::~J2BChooseInputComponent() {
+J2BChooseInput::~J2BChooseInput() {
   fListComponent.reset();
 }
 
-void J2BChooseInputComponent::paint(juce::Graphics &g) {}
+void J2BChooseInput::paint(juce::Graphics &g) {}
 
-void J2BChooseInputComponent::onNextButtonClicked() {
+void J2BChooseInput::onNextButtonClicked() {
   JUCEApplication::getInstance()->invoke(gui::toJ2BConfig, true);
 }
 
-void J2BChooseInputComponent::onChooseCustomButtonClicked() {
+void J2BChooseInput::onChooseCustomButtonClicked() {
   if (sLastDirectory == File()) {
     sLastDirectory = GameDirectory::JavaSaveDirectory();
   }
@@ -88,7 +88,7 @@ void J2BChooseInputComponent::onChooseCustomButtonClicked() {
   MainWindow::sFileChooser->launchAsync(flags, [this](FileChooser const &chooser) { onCustomDirectorySelected(chooser); });
 }
 
-void J2BChooseInputComponent::onCustomDirectorySelected(juce::FileChooser const &chooser) {
+void J2BChooseInput::onCustomDirectorySelected(juce::FileChooser const &chooser) {
   File result = chooser.getResult();
   if (result == File()) {
     return;
@@ -98,7 +98,7 @@ void J2BChooseInputComponent::onCustomDirectorySelected(juce::FileChooser const 
   JUCEApplication::getInstance()->invoke(gui::toJ2BConfig, true);
 }
 
-void J2BChooseInputComponent::selectedRowsChanged(int lastRowSelected) {
+void J2BChooseInput::selectedRowsChanged(int lastRowSelected) {
   int num = fListComponent->getNumSelectedRows();
   if (num == 1 && 0 <= lastRowSelected && lastRowSelected < fGameDirectories.size()) {
     GameDirectory gd = fGameDirectories[lastRowSelected];
@@ -111,7 +111,7 @@ void J2BChooseInputComponent::selectedRowsChanged(int lastRowSelected) {
   }
 }
 
-void J2BChooseInputComponent::listBoxItemDoubleClicked(int row, const MouseEvent &) {
+void J2BChooseInput::listBoxItemDoubleClicked(int row, const MouseEvent &) {
   if (row < 0 || fGameDirectories.size() <= row) {
     return;
   }
@@ -120,18 +120,18 @@ void J2BChooseInputComponent::listBoxItemDoubleClicked(int row, const MouseEvent
   JUCEApplication::getInstance()->invoke(gui::toJ2BConfig, false);
 }
 
-void J2BChooseInputComponent::onBackButtonClicked() {
+void J2BChooseInput::onBackButtonClicked() {
   JUCEApplication::getInstance()->invoke(gui::toModeSelect, true);
 }
 
-int J2BChooseInputComponent::getNumRows() {
+int J2BChooseInput::getNumRows() {
   return fGameDirectories.size();
 }
 
-void J2BChooseInputComponent::paintListBoxItem(int rowNumber,
-                                               juce::Graphics &g,
-                                               int width, int height,
-                                               bool rowIsSelected) {
+void J2BChooseInput::paintListBoxItem(int rowNumber,
+                                      juce::Graphics &g,
+                                      int width, int height,
+                                      bool rowIsSelected) {
   if (rowNumber < 0 || fGameDirectories.size() <= rowNumber) {
     return;
   }
@@ -139,7 +139,7 @@ void J2BChooseInputComponent::paintListBoxItem(int rowNumber,
   gd.paint(g, width, height, rowIsSelected, *this);
 }
 
-void J2BChooseInputComponent::handleAsyncUpdate() {
+void J2BChooseInput::handleAsyncUpdate() {
   fGameDirectories.swap(fThread->fGameDirectories);
   if (fGameDirectories.empty()) {
     fPlaceholder->setText(TRANS("Nothing found in the save folder"), dontSendNotification);
@@ -151,4 +151,4 @@ void J2BChooseInputComponent::handleAsyncUpdate() {
   }
 }
 
-} // namespace je2be::gui::j2b
+} // namespace je2be::gui::component::j2b

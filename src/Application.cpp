@@ -1,19 +1,19 @@
+#include "CommandID.h"
+#include "Constants.h"
+#include "LocalizationHelper.h"
+#include "LookAndFeel.h"
+#include "TemporaryDirectory.h"
+#include "component/MainWindow.h"
 #include "component/b2j/B2JChooseInput.h"
 #include "component/b2j/B2JChooseOutput.h"
 #include "component/b2j/B2JConfig.h"
 #include "component/b2j/B2JConvertProgress.h"
 #include "component/b2j/B2JCopyProgress.h"
-#include "CommandID.h"
-#include "Constants.h"
 #include "component/j2b/J2BChooseInput.h"
 #include "component/j2b/J2BChooseOutput.h"
 #include "component/j2b/J2BConfig.h"
 #include "component/j2b/J2BConvertProgress.h"
 #include "component/j2b/J2BCopyProgress.h"
-#include "LocalizationHelper.h"
-#include "LookAndFeel.h"
-#include "component/MainWindow.h"
-#include "TemporaryDirectory.h"
 
 using namespace juce;
 
@@ -71,7 +71,7 @@ public:
       if (!provider) {
         return false;
       }
-      auto config = new component::j2b::J2BConfigComponent(provider->getChooseInputState());
+      auto config = new component::j2b::J2BConfig(provider->getChooseInputState());
       fMainWindow->setContentOwned(config, true);
       return true;
     }
@@ -81,7 +81,7 @@ public:
       if (provider) {
         state = provider->getChooseInputState();
       }
-      auto chooseInput = new component::j2b::J2BChooseInputComponent(state);
+      auto chooseInput = new component::j2b::J2BChooseInput(state);
       fMainWindow->setContentOwned(chooseInput, true);
       fMainWindow->setName(getApplicationName() + " : " + TRANS("Java to Bedrock"));
       return true;
@@ -91,7 +91,7 @@ public:
       if (!provider) {
         return false;
       }
-      auto convert = new component::j2b::J2BConvertProgressComponent(provider->getConfigState());
+      auto convert = new component::j2b::J2BConvertProgress(provider->getConfigState());
       fMainWindow->setContentOwned(convert, true);
       return true;
     }
@@ -100,7 +100,7 @@ public:
       if (!provider) {
         return false;
       }
-      auto chooseOutput = new component::j2b::J2BChooseOutputComponent(provider->getConvertState());
+      auto chooseOutput = new component::j2b::J2BChooseOutput(provider->getConvertState());
       fMainWindow->setContentOwned(chooseOutput, true);
       return true;
     }
@@ -109,12 +109,12 @@ public:
       if (!provider) {
         return false;
       }
-      auto copy = new component::j2b::J2BCopyProgressComponent(provider->getChooseOutputState());
+      auto copy = new component::j2b::J2BCopyProgress(provider->getChooseOutputState());
       fMainWindow->setContentOwned(copy, true);
       return true;
     }
     case gui::toModeSelect: {
-      auto modeSelect = new component::ModeSelectComponent;
+      auto modeSelect = new component::ModeSelect;
       fMainWindow->setContentOwned(modeSelect, true);
       fMainWindow->setName(Application::getApplicationName());
       return true;
@@ -125,7 +125,7 @@ public:
       if (provider) {
         state = provider->getChooseInputState();
       }
-      auto chooseInput = new component::b2j::B2JChooseInputComponent(state);
+      auto chooseInput = new component::b2j::B2JChooseInput(state);
       fMainWindow->setContentOwned(chooseInput, true);
       fMainWindow->setName(getApplicationName() + " : " + TRANS("Bedrock to Java"));
       return true;
@@ -135,7 +135,7 @@ public:
       if (!provider) {
         return false;
       }
-      auto config = new component::b2j::B2JConfigComponent(provider->getChooseInputState());
+      auto config = new component::b2j::B2JConfig(provider->getChooseInputState());
       fMainWindow->setContentOwned(config, true);
       return true;
     }
@@ -144,7 +144,7 @@ public:
       if (!provider) {
         return false;
       }
-      auto convert = new component::b2j::B2JConvertProgressComponent(provider->getConfigState());
+      auto convert = new component::b2j::B2JConvertProgress(provider->getConfigState());
       fMainWindow->setContentOwned(convert, true);
       return true;
     }
@@ -153,7 +153,7 @@ public:
       if (!provider) {
         return false;
       }
-      auto chooseOutput = new component::b2j::B2JChooseOutputComponent(provider->getConvertState());
+      auto chooseOutput = new component::b2j::B2JChooseOutput(provider->getConvertState());
       fMainWindow->setContentOwned(chooseOutput, true);
       return true;
     }
@@ -162,7 +162,7 @@ public:
       if (!provider) {
         return false;
       }
-      auto copy = new component::b2j::B2JCopyProgressComponent(provider->getChooseOutputState());
+      auto copy = new component::b2j::B2JCopyProgress(provider->getChooseOutputState());
       fMainWindow->setContentOwned(copy, true);
       return true;
     }

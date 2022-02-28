@@ -18,7 +18,7 @@ static std::optional<J2BConfigState::DirectoryStructure> SniffDirectoryStructure
   return std::nullopt;
 }
 
-J2BConfigComponent::J2BConfigComponent(J2BChooseInputState const &chooseInputState) : fState(chooseInputState) {
+J2BConfig::J2BConfig(J2BChooseInputState const &chooseInputState) : fState(chooseInputState) {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
   setSize(width, height);
@@ -29,13 +29,13 @@ J2BConfigComponent::J2BConfigComponent(J2BChooseInputState const &chooseInputSta
   fDirectory->setJustificationType(Justification::topLeft);
   addAndMakeVisible(*fDirectory);
 
-  fStartButton.reset(new TextButtonComponent(TRANS("Start")));
+  fStartButton.reset(new component::TextButton(TRANS("Start")));
   fStartButton->setBounds(width - kMargin - kButtonMinWidth, height - kMargin - kButtonBaseHeight, kButtonMinWidth, kButtonBaseHeight);
   fStartButton->setEnabled(false);
   fStartButton->onClick = [this]() { onStartButtonClicked(); };
   addAndMakeVisible(*fStartButton);
 
-  fBackButton.reset(new TextButtonComponent(TRANS("Back")));
+  fBackButton.reset(new component::TextButton(TRANS("Back")));
   fBackButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight, kButtonMinWidth, kButtonBaseHeight);
   fBackButton->onClick = [this]() { onBackButtonClicked(); };
   addAndMakeVisible(*fBackButton);
@@ -65,21 +65,21 @@ J2BConfigComponent::J2BConfigComponent(J2BChooseInputState const &chooseInputSta
   startTimer(1000);
 }
 
-J2BConfigComponent::~J2BConfigComponent() {}
+J2BConfig::~J2BConfig() {}
 
-void J2BConfigComponent::timerCallback() {
+void J2BConfig::timerCallback() {
   stopTimer();
   fStartButton->setEnabled(fOk);
 }
 
-void J2BConfigComponent::paint(juce::Graphics &g) {}
+void J2BConfig::paint(juce::Graphics &g) {}
 
-void J2BConfigComponent::onStartButtonClicked() {
+void J2BConfig::onStartButtonClicked() {
   JUCEApplication::getInstance()->invoke(gui::toJ2BConvert, true);
 }
 
-void J2BConfigComponent::onBackButtonClicked() {
+void J2BConfig::onBackButtonClicked() {
   JUCEApplication::getInstance()->invoke(gui::toJ2BChooseInput, true);
 }
 
-} // namespace je2be::gui::j2b
+} // namespace je2be::gui::component::j2b

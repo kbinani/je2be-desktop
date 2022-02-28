@@ -19,10 +19,10 @@ static File DecideDefaultOutputDirectory(J2BConvertState const &s, File root) {
   return candidate;
 }
 
-File J2BChooseOutputComponent::sLastCustomDirectory;
-File J2BChooseOutputComponent::sLastZipFile;
+File J2BChooseOutput::sLastCustomDirectory;
+File J2BChooseOutput::sLastZipFile;
 
-J2BChooseOutputComponent::J2BChooseOutputComponent(J2BConvertState const &convertState) : fState(convertState) {
+J2BChooseOutput::J2BChooseOutput(J2BConvertState const &convertState) : fState(convertState) {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
   setSize(width, height);
@@ -37,7 +37,7 @@ J2BChooseOutputComponent::J2BChooseOutputComponent(J2BConvertState const &conver
   y += fMessage->getHeight();
 
   y += kMargin;
-  fSaveToDefaultDirectory.reset(new TextButtonComponent(TRANS("Save into Minecraft Bedrock save folder")));
+  fSaveToDefaultDirectory.reset(new component::TextButton(TRANS("Save into Minecraft Bedrock save folder")));
   fSaveToDefaultDirectory->setBounds(2 * kMargin, y, width - 4 * kMargin, kButtonBaseHeight);
   fSaveToDefaultDirectory->setEnabled(root.exists());
   fSaveToDefaultDirectory->onClick = [this]() { onSaveToDefaultButtonClicked(); };
@@ -45,14 +45,14 @@ J2BChooseOutputComponent::J2BChooseOutputComponent(J2BConvertState const &conver
   y += fSaveToDefaultDirectory->getHeight();
 
   y += kMargin;
-  fSaveToCustomDirectory.reset(new TextButtonComponent(TRANS("Save into custom folder")));
+  fSaveToCustomDirectory.reset(new component::TextButton(TRANS("Save into custom folder")));
   fSaveToCustomDirectory->setBounds(2 * kMargin, y, width - 4 * kMargin, kButtonBaseHeight);
   fSaveToCustomDirectory->onClick = [this]() { onSaveToCustomButtonClicked(); };
   addAndMakeVisible(*fSaveToCustomDirectory);
   y += fSaveToCustomDirectory->getHeight();
 
   y += kMargin;
-  fSaveAsZipFile.reset(new TextButtonComponent(TRANS("Export as mcworld file")));
+  fSaveAsZipFile.reset(new component::TextButton(TRANS("Export as mcworld file")));
   fSaveAsZipFile->setBounds(2 * kMargin, y, width - 4 * kMargin, kButtonBaseHeight);
   fSaveAsZipFile->onClick = [this]() { onSaveAsZipButtonClicked(); };
   addAndMakeVisible(*fSaveAsZipFile);
@@ -60,7 +60,7 @@ J2BChooseOutputComponent::J2BChooseOutputComponent(J2BConvertState const &conver
 
   {
     int w = 160;
-    fBackButton.reset(new TextButtonComponent(TRANS("Back to the beginning")));
+    fBackButton.reset(new component::TextButton(TRANS("Back to the beginning")));
     fBackButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight, w, kButtonBaseHeight);
     fBackButton->onClick = [this]() { onBackButtonClicked(); };
     addAndMakeVisible(*fBackButton);
@@ -69,15 +69,15 @@ J2BChooseOutputComponent::J2BChooseOutputComponent(J2BConvertState const &conver
   fBackButton->setExplicitFocusOrder(2);
 }
 
-J2BChooseOutputComponent::~J2BChooseOutputComponent() {}
+J2BChooseOutput::~J2BChooseOutput() {}
 
-void J2BChooseOutputComponent::onSaveToDefaultButtonClicked() {
+void J2BChooseOutput::onSaveToDefaultButtonClicked() {
   fState.fCopyDestination = fDefaultSaveDirectory;
   fState.fFormat = J2BOutputFormat::Directory;
   JUCEApplication::getInstance()->invoke(gui::toJ2BCopy, true);
 }
 
-void J2BChooseOutputComponent::onSaveToCustomButtonClicked() {
+void J2BChooseOutput::onSaveToCustomButtonClicked() {
   if (sLastCustomDirectory == File()) {
     sLastCustomDirectory = GameDirectory::BedrockSaveDirectory();
   }
@@ -91,7 +91,7 @@ void J2BChooseOutputComponent::onSaveToCustomButtonClicked() {
   MainWindow::sFileChooser->launchAsync(flags, [this](FileChooser const &chooser) { onCustomDestinationDirectorySelected(chooser); });
 }
 
-void J2BChooseOutputComponent::onCustomDestinationDirectorySelected(FileChooser const &chooser) {
+void J2BChooseOutput::onCustomDestinationDirectorySelected(FileChooser const &chooser) {
   File dest = chooser.getResult();
   if (dest == File()) {
     fSaveToCustomDirectory->setToggleState(false, dontSendNotification);
@@ -118,7 +118,7 @@ void J2BChooseOutputComponent::onCustomDestinationDirectorySelected(FileChooser 
   }
 }
 
-void J2BChooseOutputComponent::onSaveAsZipButtonClicked() {
+void J2BChooseOutput::onSaveAsZipButtonClicked() {
   File init = sLastZipFile;
   String fileName = fState.fConvertState.fConfigState.fInputState.fInputDirectory->getFileName();
   if (init == File()) {
@@ -132,7 +132,7 @@ void J2BChooseOutputComponent::onSaveAsZipButtonClicked() {
   MainWindow::sFileChooser->launchAsync(flags, [this](FileChooser const &chooser) { onZipDestinationFileSelected(chooser); });
 }
 
-void J2BChooseOutputComponent::onZipDestinationFileSelected(FileChooser const &chooser) {
+void J2BChooseOutput::onZipDestinationFileSelected(FileChooser const &chooser) {
   File dest = chooser.getResult();
   if (dest == File()) {
     fSaveAsZipFile->setToggleState(false, dontSendNotification);
@@ -145,10 +145,10 @@ void J2BChooseOutputComponent::onZipDestinationFileSelected(FileChooser const &c
   JUCEApplication::getInstance()->invoke(gui::toJ2BCopy, true);
 }
 
-void J2BChooseOutputComponent::paint(juce::Graphics &g) {}
+void J2BChooseOutput::paint(juce::Graphics &g) {}
 
-void J2BChooseOutputComponent::onBackButtonClicked() {
+void J2BChooseOutput::onBackButtonClicked() {
   JUCEApplication::getInstance()->invoke(gui::toJ2BChooseInput, true);
 }
 
-} // namespace je2be::gui::j2b
+} // namespace je2be::gui::component::j2b

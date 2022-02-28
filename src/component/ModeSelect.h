@@ -4,10 +4,10 @@
 
 namespace je2be::gui::component {
 
-class ModeSelectComponent : public juce::Component {
+class ModeSelect : public juce::Component {
 public:
-  explicit ModeSelectComponent();
-  ~ModeSelectComponent() override;
+  explicit ModeSelect();
+  ~ModeSelect() override;
 
   void paint(juce::Graphics &) override;
 
@@ -17,11 +17,11 @@ public:
 
 private:
   std::unique_ptr<juce::Label> fLabel;
-  std::unique_ptr<TextButtonComponent> fToJ2B;
-  std::unique_ptr<TextButtonComponent> fToB2J;
-  std::unique_ptr<TextButtonComponent> fAboutButton;
+  std::unique_ptr<TextButton> fToJ2B;
+  std::unique_ptr<TextButton> fToB2J;
+  std::unique_ptr<TextButton> fAboutButton;
 
-  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ModeSelectComponent)
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ModeSelect)
 };
 
-} // namespace je2be::gui
+} // namespace je2be::gui::component

@@ -9,13 +9,13 @@ class TaskbarProgress;
 
 namespace je2be::gui::component::j2b {
 
-class J2BCopyProgressComponent : public juce::Component,
-                                 public juce::AsyncUpdater,
-                                 public J2BConvertStateProvider,
-                                 public juce::Timer {
+class J2BCopyProgress : public juce::Component,
+                        public juce::AsyncUpdater,
+                        public J2BConvertStateProvider,
+                        public juce::Timer {
 public:
-  explicit J2BCopyProgressComponent(J2BChooseOutputState const &chooseOutputState);
-  ~J2BCopyProgressComponent() override;
+  explicit J2BCopyProgress(J2BChooseOutputState const &chooseOutputState);
+  ~J2BCopyProgress() override;
 
   void paint(juce::Graphics &) override;
 
@@ -49,7 +49,7 @@ private:
   double fProgress = -1;
   std::unique_ptr<TaskbarProgress> fTaskbarProgress;
 
-  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(J2BCopyProgressComponent)
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(J2BCopyProgress)
 };
 
-} // namespace je2be::gui::j2b
+} // namespace je2be::gui::component::j2b

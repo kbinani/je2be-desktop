@@ -5,14 +5,14 @@
 
 namespace je2be::gui::component::b2j {
 
-class B2JConfigComponent : public juce::Component,
-                           public B2JChooseInputStateProvider,
-                           public B2JConfigStateProvider,
-                           public juce::Timer,
-                           public juce::AsyncUpdater {
+class B2JConfig : public juce::Component,
+                  public B2JChooseInputStateProvider,
+                  public B2JConfigStateProvider,
+                  public juce::Timer,
+                  public juce::AsyncUpdater {
 public:
-  explicit B2JConfigComponent(B2JChooseInputState const &inputState);
-  ~B2JConfigComponent() override;
+  explicit B2JConfig(B2JChooseInputState const &inputState);
+  ~B2JConfig() override;
 
   void paint(juce::Graphics &) override;
 
@@ -40,7 +40,7 @@ public:
 
   class ImportAccountWorker : public juce::Thread {
   public:
-    explicit ImportAccountWorker(B2JConfigComponent *parent);
+    explicit ImportAccountWorker(B2JConfig *parent);
     ~ImportAccountWorker();
 
     void run() override;
@@ -57,8 +57,8 @@ private:
   void onClickImportAccountFromLauncherButton();
 
 private:
-  std::unique_ptr<TextButtonComponent> fBackButton;
-  std::unique_ptr<TextButtonComponent> fStartButton;
+  std::unique_ptr<TextButton> fBackButton;
+  std::unique_ptr<TextButton> fStartButton;
   B2JConfigState fState;
   std::unique_ptr<juce::Label> fFileOrDirectory;
   bool fOk = false;
@@ -70,7 +70,7 @@ private:
   std::unique_ptr<ImportAccountWorker> fImportAccountWorker;
 
 private:
-  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(B2JConfigComponent)
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(B2JConfig)
 };
 
-} // namespace je2be::gui::b2j
+} // namespace je2be::gui::component::b2j

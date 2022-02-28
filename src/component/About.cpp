@@ -22,7 +22,7 @@ public:
 
 namespace je2be::gui::component {
 
-AboutComponent::AboutComponent() {
+About::About() {
   std::vector<juce::String> lines = {
       "",
       "Copyright (C) 2020-2022 kbinani",
@@ -103,7 +103,7 @@ AboutComponent::AboutComponent() {
   }
   {
     y += margin;
-    fAppName.reset(new DrawableTextComponent(JUCE_APPLICATION_NAME_STRING, 40));
+    fAppName.reset(new DrawableText(JUCE_APPLICATION_NAME_STRING, 40));
     fAppName->setBounds(margin, y, cwidth, 0);
     fAppName->shrinkToFit();
     fHeader->addAndMakeVisible(*fAppName);
@@ -111,7 +111,7 @@ AboutComponent::AboutComponent() {
   }
   {
     String version = String("Version: ") + String::fromUTF8(JUCE_APPLICATION_VERSION_STRING);
-    fAppVersion.reset(new DrawableTextComponent(version, kLineHeight));
+    fAppVersion.reset(new DrawableText(version, kLineHeight));
     fAppVersion->setBounds(margin, y, cwidth, 0);
     fAppVersion->shrinkToFit();
     fHeader->addAndMakeVisible(*fAppVersion);
@@ -122,7 +122,7 @@ AboutComponent::AboutComponent() {
   y = margin / 2;
   {
     for (juce::String const &line : lines) {
-      auto label = std::make_shared<DrawableTextComponent>(line, kLineHeight);
+      auto label = std::make_shared<DrawableText>(line, kLineHeight);
       label->setBounds(margin, y, cwidth, 0);
       label->shrinkToFit();
       fScrollContents->addAndMakeVisible(*label);
@@ -144,14 +144,14 @@ AboutComponent::AboutComponent() {
   startTimer(kScrollResetGapMilliSeconds);
 }
 
-void AboutComponent::timerCallback() {
+void About::timerCallback() {
   int duration = startScrollFrom(fNextScrollStartY, fNextStartSpeed);
   fNextStartSpeed = 1.0;
   stopTimer();
   startTimer(duration);
 }
 
-void AboutComponent::mouseDown(MouseEvent const &e) {
+void About::mouseDown(MouseEvent const &e) {
   if (!e.mods.isLeftButtonDown()) {
     return;
   }
@@ -165,7 +165,7 @@ void AboutComponent::mouseDown(MouseEvent const &e) {
   }
 }
 
-int AboutComponent::startScrollFrom(int startY, double startSpeed) {
+int About::startScrollFrom(int startY, double startSpeed) {
   int scrollerTop = fHeader->getBottom();
   int finalY = scrollerTop - fScrollContents->getHeight();
   Rectangle<int> finalBounds(0, finalY, fScrollContents->getWidth(), fScrollContents->getHeight());
@@ -176,4 +176,4 @@ int AboutComponent::startScrollFrom(int startY, double startSpeed) {
   return duration;
 }
 
-} // namespace je2be::gui
+} // namespace je2be::gui::component

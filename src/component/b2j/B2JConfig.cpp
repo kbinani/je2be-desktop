@@ -8,7 +8,7 @@ using namespace juce;
 
 namespace je2be::gui::component::b2j {
 
-B2JConfigComponent::B2JConfigComponent(B2JChooseInputState const &chooseInputState) : fState(chooseInputState) {
+B2JConfig::B2JConfig(B2JChooseInputState const &chooseInputState) : fState(chooseInputState) {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
   setSize(width, height);
@@ -51,13 +51,13 @@ B2JConfigComponent::B2JConfigComponent(B2JChooseInputState const &chooseInputSta
 
   int messageComponentY = y + kMargin;
 
-  fStartButton.reset(new TextButtonComponent(TRANS("Start")));
+  fStartButton.reset(new component::TextButton(TRANS("Start")));
   fStartButton->setBounds(width - kMargin - kButtonMinWidth, height - kMargin - kButtonBaseHeight, kButtonMinWidth, kButtonBaseHeight);
   fStartButton->setEnabled(false);
   fStartButton->onClick = [this]() { onStartButtonClicked(); };
   addAndMakeVisible(*fStartButton);
 
-  fBackButton.reset(new TextButtonComponent(TRANS("Back")));
+  fBackButton.reset(new component::TextButton(TRANS("Back")));
   fBackButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight, kButtonMinWidth, kButtonBaseHeight);
   fBackButton->onClick = [this]() { onBackButtonClicked(); };
   addAndMakeVisible(*fBackButton);
@@ -78,16 +78,16 @@ B2JConfigComponent::B2JConfigComponent(B2JChooseInputState const &chooseInputSta
   startTimer(1000);
 }
 
-B2JConfigComponent::~B2JConfigComponent() {}
+B2JConfig::~B2JConfig() {}
 
-void B2JConfigComponent::timerCallback() {
+void B2JConfig::timerCallback() {
   stopTimer();
   fStartButton->setEnabled(fOk);
 }
 
-void B2JConfigComponent::paint(juce::Graphics &g) {}
+void B2JConfig::paint(juce::Graphics &g) {}
 
-void B2JConfigComponent::onStartButtonClicked() {
+void B2JConfig::onStartButtonClicked() {
   if (fImportAccountFromLauncher->getToggleState()) {
     int selected = fAccountList->getSelectedId();
     int index = selected - 1;
@@ -99,13 +99,13 @@ void B2JConfigComponent::onStartButtonClicked() {
   JUCEApplication::getInstance()->invoke(gui::toB2JConvert, true);
 }
 
-void B2JConfigComponent::onBackButtonClicked() {
+void B2JConfig::onBackButtonClicked() {
   JUCEApplication::getInstance()->invoke(gui::toB2JChooseInput, true);
 }
 
-class B2JConfigComponent::ImportAccountWorker::Impl {
+class B2JConfig::ImportAccountWorker::Impl {
 public:
-  explicit Impl(B2JConfigComponent *parent) : fParent(parent) {}
+  explicit Impl(B2JConfig *parent) : fParent(parent) {}
 
   void run() {
     try {
@@ -185,23 +185,23 @@ public:
     }
   }
 
-  B2JConfigComponent *const fParent;
-  std::vector<B2JConfigComponent::Account> fAccounts;
+  B2JConfig *const fParent;
+  std::vector<B2JConfig::Account> fAccounts;
 };
 
-B2JConfigComponent::ImportAccountWorker::ImportAccountWorker(B2JConfigComponent *parent) : Thread("je2be::gui::B2JConfigComponent::ImportAccountWorker"), fImpl(new Impl(parent)) {}
+B2JConfig::ImportAccountWorker::ImportAccountWorker(B2JConfig *parent) : Thread("je2be::gui::B2JConfigComponent::ImportAccountWorker"), fImpl(new Impl(parent)) {}
 
-B2JConfigComponent::ImportAccountWorker::~ImportAccountWorker() {}
+B2JConfig::ImportAccountWorker::~ImportAccountWorker() {}
 
-void B2JConfigComponent::ImportAccountWorker::run() {
+void B2JConfig::ImportAccountWorker::run() {
   fImpl->run();
 }
 
-void B2JConfigComponent::ImportAccountWorker::copyAccounts(std::vector<B2JConfigComponent::Account> &buffer) {
+void B2JConfig::ImportAccountWorker::copyAccounts(std::vector<B2JConfig::Account> &buffer) {
   fImpl->fAccounts.swap(buffer);
 }
 
-void B2JConfigComponent::onClickImportAccountFromLauncherButton() {
+void B2JConfig::onClickImportAccountFromLauncherButton() {
   if (fImportAccountWorker) {
     return;
   }
@@ -221,7 +221,7 @@ void B2JConfigComponent::onClickImportAccountFromLauncherButton() {
   }
 }
 
-void B2JConfigComponent::handleAsyncUpdate() {
+void B2JConfig::handleAsyncUpdate() {
   if (fImportAccountWorker) {
     fImportAccountWorker->copyAccounts(fAccounts);
   }
@@ -240,4 +240,4 @@ void B2JConfigComponent::handleAsyncUpdate() {
   fBackButton->setEnabled(true);
 }
 
-} // namespace je2be::gui::b2j
+} // namespace je2be::gui::component::b2j
