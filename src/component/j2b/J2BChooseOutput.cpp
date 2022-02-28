@@ -1,8 +1,8 @@
-#include "J2BChooseOutputComponent.h"
+#include "component/j2b/J2BChooseOutput.h"
 #include "CommandID.h"
 #include "Constants.h"
 #include "GameDirectory.h"
-#include "MainWindow.h"
+#include "component/MainWindow.h"
 
 using namespace juce;
 

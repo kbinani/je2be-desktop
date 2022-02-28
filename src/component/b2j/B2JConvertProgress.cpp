@@ -1,6 +1,6 @@
 #include <je2be.hpp>
 
-#include "B2JConvertProgressComponent.h"
+#include "component/b2j/B2JConvertProgress.h"
 #include "CommandID.h"
 #include "Constants.h"
 #include "File.h"

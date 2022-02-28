@@ -1,8 +1,8 @@
-#include "B2JChooseOutputComponent.h"
+#include "component/b2j/B2JChooseOutput.h"
 #include "CommandID.h"
 #include "Constants.h"
 #include "GameDirectory.h"
-#include "MainWindow.h"
+#include "component/MainWindow.h"
 
 using namespace juce;
 

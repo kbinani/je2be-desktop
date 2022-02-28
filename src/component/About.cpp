@@ -1,4 +1,4 @@
-#include "AboutComponent.h"
+#include "component/About.h"
 #include "BinaryData.h"
 
 using namespace juce;

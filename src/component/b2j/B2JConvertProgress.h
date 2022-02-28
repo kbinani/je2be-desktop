@@ -2,7 +2,7 @@
 
 #include "CommandID.h"
 #include "ComponentState.h"
-#include "TextButtonComponent.h"
+#include "component/TextButton.h"
 
 namespace je2be::gui {
 class TaskbarProgress;

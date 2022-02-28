@@ -46,34 +46,34 @@ set(je2be_gui_files
   src/TaskbarProgress.h
   src/TemporaryDirectory.cpp
   src/TemporaryDirectory.h
-  src/component/AboutComponent.cpp
-  src/component/AboutComponent.h
-  src/component/DrawableTextComponent.h
+  src/component/About.cpp
+  src/component/About.h
+  src/component/DrawableText.h
   src/component/MainWindow.cpp
   src/component/MainWindow.h
-  src/component/ModeSelectComponent.cpp
-  src/component/ModeSelectComponent.h
-  src/component/TextButtonComponent.h
-  src/component/b2j/B2JChooseInputComponent.cpp
-  src/component/b2j/B2JChooseInputComponent.h
-  src/component/b2j/B2JChooseOutputComponent.cpp
-  src/component/b2j/B2JChooseOutputComponent.h
-  src/component/b2j/B2JConfigComponent.cpp
-  src/component/b2j/B2JConfigComponent.h
-  src/component/b2j/B2JConvertProgressComponent.cpp
-  src/component/b2j/B2JConvertProgressComponent.h
-  src/component/b2j/B2JCopyProgressComponent.cpp
-  src/component/b2j/B2JCopyProgressComponent.h
-  src/component/j2b/J2BChooseInputComponent.cpp
-  src/component/j2b/J2BChooseInputComponent.h
-  src/component/j2b/J2BChooseOutputComponent.cpp
-  src/component/j2b/J2BChooseOutputComponent.h
-  src/component/j2b/J2BConfigComponent.cpp
-  src/component/j2b/J2BConfigComponent.h
-  src/component/j2b/J2BConvertProgressComponent.cpp
-  src/component/j2b/J2BConvertProgressComponent.h
-  src/component/j2b/J2BCopyProgressComponent.cpp
-  src/component/j2b/J2BCopyProgressComponent.h
+  src/component/ModeSelect.cpp
+  src/component/ModeSelect.h
+  src/component/TextButton.h
+  src/component/b2j/B2JChooseInput.cpp
+  src/component/b2j/B2JChooseInput.h
+  src/component/b2j/B2JChooseOutput.cpp
+  src/component/b2j/B2JChooseOutput.h
+  src/component/b2j/B2JConfig.cpp
+  src/component/b2j/B2JConfig.h
+  src/component/b2j/B2JConvertProgress.cpp
+  src/component/b2j/B2JConvertProgress.h
+  src/component/b2j/B2JCopyProgress.cpp
+  src/component/b2j/B2JCopyProgress.h
+  src/component/j2b/J2BChooseInput.cpp
+  src/component/j2b/J2BChooseInput.h
+  src/component/j2b/J2BChooseOutput.cpp
+  src/component/j2b/J2BChooseOutput.h
+  src/component/j2b/J2BConfig.cpp
+  src/component/j2b/J2BConfig.h
+  src/component/j2b/J2BConvertProgress.cpp
+  src/component/j2b/J2BConvertProgress.h
+  src/component/j2b/J2BCopyProgress.cpp
+  src/component/j2b/J2BCopyProgress.h
   #end je2be-gui
 )
 

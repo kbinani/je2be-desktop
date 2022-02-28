@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ComponentState.h"
-#include "TextButtonComponent.h"
+#include "component/TextButton.h"
 
 namespace je2be::gui::component::j2b {
 

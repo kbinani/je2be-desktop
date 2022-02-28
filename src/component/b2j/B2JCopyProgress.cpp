@@ -1,4 +1,4 @@
-#include "B2JCopyProgressComponent.h"
+#include "component/b2j/B2JCopyProgress.h"
 #include "CommandID.h"
 #include "ComponentState.h"
 #include "Constants.h"

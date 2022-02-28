@@ -1,4 +1,4 @@
-#include "J2BCopyProgressComponent.h"
+#include "component/j2b/J2BCopyProgress.h"
 #include "CommandID.h"
 #include "ComponentState.h"
 #include "Constants.h"

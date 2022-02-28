@@ -3,7 +3,7 @@
 #include "CommandID.h"
 #include "Constants.h"
 #include "File.h"
-#include "component/J2BConvertProgressComponent.h"
+#include "component/j2b/J2BConvertProgress.h"
 #include "TaskbarProgress.h"
 #include "TemporaryDirectory.h"
 

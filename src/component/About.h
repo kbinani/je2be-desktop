@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DrawableTextComponent.h"
+#include "component/DrawableText.h"
 
 namespace je2be::gui::component {
 

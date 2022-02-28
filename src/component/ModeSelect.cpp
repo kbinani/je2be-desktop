@@ -1,5 +1,5 @@
-#include "ModeSelectComponent.h"
-#include "AboutComponent.h"
+#include "component/ModeSelect.h"
+#include "component/About.h"
 #include "CommandID.h"
 #include "Constants.h"
 

@@ -1,24 +1,23 @@
 #pragma once
 
 #include "ComponentState.h"
-#include "GameDirectory.h"
-#include "GameDirectoryScanThreadBedrock.h"
-#include "TextButtonComponent.h"
+#include "GameDirectoryScanThreadJava.h"
+#include "component/TextButton.h"
 #include <optional>
 
-namespace je2be::gui::component::b2j {
+namespace je2be::gui::component::j2b {
 
-class B2JChooseInputComponent : public juce::Component,
-                                public B2JChooseInputStateProvider,
-                                public juce::ListBoxModel,
-                                public juce::AsyncUpdater {
+class J2BChooseInputComponent : public juce::Component,
+                                public J2BChooseInputStateProvider,
+                                public juce::AsyncUpdater,
+                                public juce::ListBoxModel {
 public:
-  explicit B2JChooseInputComponent(std::optional<B2JChooseInputState> state);
-  ~B2JChooseInputComponent() override;
+  explicit J2BChooseInputComponent(std::optional<J2BChooseInputState> state);
+  ~J2BChooseInputComponent() override;
 
   void paint(juce::Graphics &) override;
 
-  B2JChooseInputState getChooseInputState() const override {
+  J2BChooseInputState getChooseInputState() const override {
     return fState;
   }
 
@@ -45,16 +44,14 @@ private:
   std::unique_ptr<TextButtonComponent> fNextButton;
   std::unique_ptr<TextButtonComponent> fChooseCustomButton;
   std::unique_ptr<juce::ListBox> fListComponent;
-  B2JChooseInputState fState;
+  std::unique_ptr<GameDirectoryScanThreadJava> fThread;
+  J2BChooseInputState fState;
   std::unique_ptr<juce::Label> fMessage;
   std::unique_ptr<TextButtonComponent> fBackButton;
-  juce::File fBedrockGameDirectory;
-  std::unique_ptr<GameDirectoryScanThreadBedrock> fThread;
+  std::vector<GameDirectory> fGameDirectories;
   std::unique_ptr<juce::Label> fPlaceholder;
 
-  std::vector<GameDirectory> fGameDirectories;
-
-  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(B2JChooseInputComponent)
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(J2BChooseInputComponent)
 };
 
-} // namespace je2be::gui::b2j
+} // namespace je2be::gui::j2b

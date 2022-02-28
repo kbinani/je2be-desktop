@@ -1,4 +1,4 @@
-#include "B2JConfigComponent.h"
+#include "component/b2j/B2JConfig.h"
 #include "CommandID.h"
 #include "Constants.h"
 #include "GameDirectory.h"

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "TextButtonComponent.h"
+#include "component/TextButton.h"
 
 namespace je2be::gui::component {
 

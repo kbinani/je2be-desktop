@@ -1,4 +1,4 @@
-#include "J2BConfigComponent.h"
+#include "component/j2b/J2BConfig.h"
 #include "CommandID.h"
 #include "Constants.h"
 
