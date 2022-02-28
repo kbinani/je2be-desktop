@@ -1,7 +1,10 @@
 #pragma once
 
 #include "ComponentState.h"
-#include "component/TextButton.h"
+
+namespace je2be::gui::component {
+class TextButton;
+}
 
 namespace je2be::gui::component::j2b {
 

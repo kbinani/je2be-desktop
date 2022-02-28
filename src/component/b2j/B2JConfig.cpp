@@ -1,8 +1,10 @@
-#include "component/b2j/B2JConfig.h"
+#include <je2be.hpp>
+
 #include "CommandID.h"
 #include "Constants.h"
 #include "GameDirectory.h"
-#include <je2be.hpp>
+#include "component/TextButton.h"
+#include "component/b2j/B2JConfig.h"
 
 using namespace juce;
 

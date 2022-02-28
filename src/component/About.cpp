@@ -1,5 +1,6 @@
 #include "component/About.h"
 #include "BinaryData.h"
+#include "component/DrawableText.h"
 
 using namespace juce;
 

@@ -3,6 +3,7 @@
 #include "Constants.h"
 #include "GameDirectoryScanThreadBedrock.h"
 #include "component/MainWindow.h"
+#include "component/TextButton.h"
 
 using namespace juce;
 

@@ -5,6 +5,7 @@
 #include "File.h"
 #include "TaskbarProgress.h"
 #include "TemporaryDirectory.h"
+#include "component/TextButton.h"
 #include "component/b2j/B2JConvertProgress.h"
 
 using namespace juce;

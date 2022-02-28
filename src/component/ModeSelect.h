@@ -1,8 +1,10 @@
 #pragma once
 
-#include "component/TextButton.h"
+#include <juce_gui_extra/juce_gui_extra.h>
 
 namespace je2be::gui::component {
+
+class TextButton;
 
 class ModeSelect : public juce::Component {
 public:

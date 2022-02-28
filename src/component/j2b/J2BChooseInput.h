@@ -1,9 +1,15 @@
 #pragma once
 
 #include "ComponentState.h"
-#include "GameDirectoryScanThreadJava.h"
-#include "component/TextButton.h"
-#include <optional>
+#include "GameDirectory.h"
+
+namespace je2be::gui {
+class GameDirectoryScanThreadJava;
+}
+
+namespace je2be::gui::component {
+class TextButton;
+}
 
 namespace je2be::gui::component::j2b {
 

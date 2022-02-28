@@ -1,8 +1,9 @@
 #include "component/j2b/J2BChooseInput.h"
 #include "CommandID.h"
 #include "Constants.h"
-#include "GameDirectory.h"
+#include "GameDirectoryScanThreadJava.h"
 #include "component/MainWindow.h"
+#include "component/TextButton.h"
 
 using namespace juce;
 

@@ -2,9 +2,14 @@
 
 #include "ComponentState.h"
 #include "GameDirectory.h"
-#include "GameDirectoryScanThreadBedrock.h"
-#include "component/TextButton.h"
-#include <optional>
+
+namespace je2be::gui {
+class GameDirectoryScanThreadBedrock;
+}
+
+namespace je2be::gui::component {
+class TextButton;
+}
 
 namespace je2be::gui::component::b2j {
 

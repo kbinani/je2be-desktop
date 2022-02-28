@@ -2,10 +2,13 @@
 
 #include "CommandID.h"
 #include "ComponentState.h"
-#include "component/TextButton.h"
 
 namespace je2be::gui {
 class TaskbarProgress;
+}
+
+namespace je2be::gui::component {
+class TextButton;
 }
 
 namespace je2be::gui::component::b2j {

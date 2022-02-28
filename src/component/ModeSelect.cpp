@@ -2,6 +2,7 @@
 #include "CommandID.h"
 #include "Constants.h"
 #include "component/About.h"
+#include "component/TextButton.h"
 
 using namespace juce;
 

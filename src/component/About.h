@@ -1,8 +1,10 @@
 #pragma once
 
-#include "component/DrawableText.h"
+#include <juce_gui_extra/juce_gui_extra.h>
 
 namespace je2be::gui::component {
+
+class DrawableText;
 
 class About : public juce::Component, public juce::Timer {
 public:

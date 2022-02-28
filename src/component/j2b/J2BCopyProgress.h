@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ComponentState.h"
-#include <optional>
 
 namespace je2be::gui {
 class TaskbarProgress;
