@@ -1,4 +1,4 @@
-Version 3.2.0 (TBD)
+Version 3.2.0 (26 Feb 2022)
 - Added the ability to read account information from Minecraft Launcher and set it in level.dat. [b2j]
 - The time setting for wandering trader to despawn is now correctly converted. [j2b, b2j]
 - NBT tags of items are now converted. [j2b, b2j]
