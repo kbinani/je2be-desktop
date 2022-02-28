@@ -6,7 +6,7 @@
 
 using namespace juce;
 
-namespace je2be::gui::b2j {
+namespace je2be::gui::component::b2j {
 
 B2JConfigComponent::B2JConfigComponent(B2JChooseInputState const &chooseInputState) : fState(chooseInputState) {
   auto width = kWindowWidth;

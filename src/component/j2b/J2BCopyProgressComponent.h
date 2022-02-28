@@ -7,7 +7,7 @@ namespace je2be::gui {
 class TaskbarProgress;
 }
 
-namespace je2be::gui::j2b {
+namespace je2be::gui::component::j2b {
 
 class J2BCopyProgressComponent : public juce::Component,
                                  public juce::AsyncUpdater,

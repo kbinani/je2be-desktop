@@ -10,7 +10,7 @@ class TaskbarProgress;
 
 }
 
-namespace je2be::gui::j2b {
+namespace je2be::gui::component::j2b {
 
 class J2BConvertProgressComponent : public juce::Component,
                                     public J2BConvertStateProvider,
@@ -41,7 +41,7 @@ public:
   class Updater;
 
 private:
-  std::unique_ptr<TextButtonComponent> fCancelButton;
+  std::unique_ptr<component::TextButtonComponent> fCancelButton;
   J2BConvertState fState;
   std::unique_ptr<juce::Thread> fThread;
   std::shared_ptr<Updater> fUpdater;

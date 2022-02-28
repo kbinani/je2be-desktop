@@ -8,7 +8,7 @@ namespace je2be::gui {
 class TaskbarProgress;
 }
 
-namespace je2be::gui::b2j {
+namespace je2be::gui::component::b2j {
 
 class B2JConvertProgressComponent : public juce::Component,
                                     public B2JConvertStateProvider,

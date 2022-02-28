@@ -4,7 +4,7 @@
 
 using namespace juce;
 
-namespace je2be::gui::j2b {
+namespace je2be::gui::component::j2b {
 
 static std::optional<J2BConfigState::DirectoryStructure> SniffDirectoryStructure(File input) {
   File vanillaLevelDat = input.getChildFile("level.dat");

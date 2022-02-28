@@ -6,7 +6,7 @@
 
 using namespace juce;
 
-namespace je2be::gui::j2b {
+namespace je2be::gui::component::j2b {
 
 static File DecideDefaultOutputDirectory(J2BConvertState const &s, File root) {
   String name = s.fConfigState.fInputState.fInputDirectory->getFileName();

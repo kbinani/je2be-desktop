@@ -2,7 +2,7 @@
 
 #include <juce_gui_extra/juce_gui_extra.h>
 
-namespace je2be::gui {
+namespace je2be::gui::component {
 
 class DrawableTextComponent : public juce::Component {
 public:

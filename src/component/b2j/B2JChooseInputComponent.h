@@ -6,7 +6,7 @@
 #include "TextButtonComponent.h"
 #include <optional>
 
-namespace je2be::gui::b2j {
+namespace je2be::gui::component::b2j {
 
 class B2JChooseInputComponent : public juce::Component,
                                 public B2JChooseInputStateProvider,

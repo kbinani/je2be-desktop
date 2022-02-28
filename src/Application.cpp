@@ -1,18 +1,18 @@
-#include "B2JChooseInputComponent.h"
-#include "B2JChooseOutputComponent.h"
-#include "B2JConfigComponent.h"
-#include "B2JConvertProgressComponent.h"
-#include "B2JCopyProgressComponent.h"
+#include "component/B2JChooseInputComponent.h"
+#include "component/B2JChooseOutputComponent.h"
+#include "component/B2JConfigComponent.h"
+#include "component/B2JConvertProgressComponent.h"
+#include "component/B2JCopyProgressComponent.h"
 #include "CommandID.h"
 #include "Constants.h"
-#include "J2BChooseInputComponent.h"
-#include "J2BChooseOutputComponent.h"
-#include "J2BConfigComponent.h"
-#include "J2BConvertProgressComponent.h"
-#include "J2BCopyProgressComponent.h"
+#include "component/J2BChooseInputComponent.h"
+#include "component/J2BChooseOutputComponent.h"
+#include "component/J2BConfigComponent.h"
+#include "component/J2BConvertProgressComponent.h"
+#include "component/J2BCopyProgressComponent.h"
 #include "LocalizationHelper.h"
 #include "LookAndFeel.h"
-#include "MainWindow.h"
+#include "component/MainWindow.h"
 #include "TemporaryDirectory.h"
 
 using namespace juce;
@@ -43,7 +43,7 @@ public:
 
     TemporaryDirectory::CleanupAsync();
 
-    fMainWindow.reset(new MainWindow(getApplicationName()));
+    fMainWindow.reset(new component::MainWindow(getApplicationName()));
   }
 
   void shutdown() override {
@@ -71,7 +71,7 @@ public:
       if (!provider) {
         return false;
       }
-      auto config = new j2b::J2BConfigComponent(provider->getChooseInputState());
+      auto config = new component::j2b::J2BConfigComponent(provider->getChooseInputState());
       fMainWindow->setContentOwned(config, true);
       return true;
     }
@@ -81,7 +81,7 @@ public:
       if (provider) {
         state = provider->getChooseInputState();
       }
-      auto chooseInput = new j2b::J2BChooseInputComponent(state);
+      auto chooseInput = new component::j2b::J2BChooseInputComponent(state);
       fMainWindow->setContentOwned(chooseInput, true);
       fMainWindow->setName(getApplicationName() + " : " + TRANS("Java to Bedrock"));
       return true;
@@ -91,7 +91,7 @@ public:
       if (!provider) {
         return false;
       }
-      auto convert = new j2b::J2BConvertProgressComponent(provider->getConfigState());
+      auto convert = new component::j2b::J2BConvertProgressComponent(provider->getConfigState());
       fMainWindow->setContentOwned(convert, true);
       return true;
     }
@@ -100,7 +100,7 @@ public:
       if (!provider) {
         return false;
       }
-      auto chooseOutput = new j2b::J2BChooseOutputComponent(provider->getConvertState());
+      auto chooseOutput = new component::j2b::J2BChooseOutputComponent(provider->getConvertState());
       fMainWindow->setContentOwned(chooseOutput, true);
       return true;
     }
@@ -109,12 +109,12 @@ public:
       if (!provider) {
         return false;
       }
-      auto copy = new j2b::J2BCopyProgressComponent(provider->getChooseOutputState());
+      auto copy = new component::j2b::J2BCopyProgressComponent(provider->getChooseOutputState());
       fMainWindow->setContentOwned(copy, true);
       return true;
     }
     case gui::toModeSelect: {
-      auto modeSelect = new ModeSelectComponent;
+      auto modeSelect = new component::ModeSelectComponent;
       fMainWindow->setContentOwned(modeSelect, true);
       fMainWindow->setName(Application::getApplicationName());
       return true;
@@ -125,7 +125,7 @@ public:
       if (provider) {
         state = provider->getChooseInputState();
       }
-      auto chooseInput = new b2j::B2JChooseInputComponent(state);
+      auto chooseInput = new component::b2j::B2JChooseInputComponent(state);
       fMainWindow->setContentOwned(chooseInput, true);
       fMainWindow->setName(getApplicationName() + " : " + TRANS("Bedrock to Java"));
       return true;
@@ -135,7 +135,7 @@ public:
       if (!provider) {
         return false;
       }
-      auto config = new b2j::B2JConfigComponent(provider->getChooseInputState());
+      auto config = new component::b2j::B2JConfigComponent(provider->getChooseInputState());
       fMainWindow->setContentOwned(config, true);
       return true;
     }
@@ -144,7 +144,7 @@ public:
       if (!provider) {
         return false;
       }
-      auto convert = new b2j::B2JConvertProgressComponent(provider->getConfigState());
+      auto convert = new component::b2j::B2JConvertProgressComponent(provider->getConfigState());
       fMainWindow->setContentOwned(convert, true);
       return true;
     }
@@ -153,7 +153,7 @@ public:
       if (!provider) {
         return false;
       }
-      auto chooseOutput = new b2j::B2JChooseOutputComponent(provider->getConvertState());
+      auto chooseOutput = new component::b2j::B2JChooseOutputComponent(provider->getConvertState());
       fMainWindow->setContentOwned(chooseOutput, true);
       return true;
     }
@@ -162,7 +162,7 @@ public:
       if (!provider) {
         return false;
       }
-      auto copy = new b2j::B2JCopyProgressComponent(provider->getChooseOutputState());
+      auto copy = new component::b2j::B2JCopyProgressComponent(provider->getChooseOutputState());
       fMainWindow->setContentOwned(copy, true);
       return true;
     }
@@ -172,7 +172,7 @@ public:
   }
 
 private:
-  std::unique_ptr<MainWindow> fMainWindow;
+  std::unique_ptr<component::MainWindow> fMainWindow;
   SharedResourcePointer<TooltipWindow> fTooltipWindow;
   std::unique_ptr<je2be::gui::LookAndFeel> fLaf;
 };

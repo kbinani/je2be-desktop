@@ -5,7 +5,7 @@
 
 using namespace juce;
 
-namespace je2be::gui {
+namespace je2be::gui::component {
 
 class MainWindow : public juce::DocumentWindow {
 public:

@@ -5,7 +5,7 @@
 #include "TextButtonComponent.h"
 #include <optional>
 
-namespace je2be::gui::j2b {
+namespace je2be::gui::component::j2b {
 
 class J2BChooseInputComponent : public juce::Component,
                                 public J2BChooseInputStateProvider,

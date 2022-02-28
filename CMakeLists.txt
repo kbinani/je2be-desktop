@@ -29,51 +29,51 @@ juce_add_gui_app(je2be-gui
 
 set(je2be_gui_files
   #begin je2be-gui
-  src/AboutComponent.cpp
-  src/AboutComponent.h
   src/Application.cpp
-  src/B2JChooseInputComponent.cpp
-  src/B2JChooseInputComponent.h
-  src/B2JChooseOutputComponent.cpp
-  src/B2JChooseOutputComponent.h
-  src/B2JConfigComponent.cpp
-  src/B2JConfigComponent.h
-  src/B2JConvertProgressComponent.cpp
-  src/B2JConvertProgressComponent.h
-  src/B2JCopyProgressComponent.cpp
-  src/B2JCopyProgressComponent.h
   src/CommandID.h
   src/ComponentState.h
   src/Constants.h
-  src/DrawableTextComponent.h
   src/File.h
   src/GameDirectory.h
   src/GameDirectoryScanThreadBedrock.cpp
   src/GameDirectoryScanThreadBedrock.h
   src/GameDirectoryScanThreadJava.cpp
   src/GameDirectoryScanThreadJava.h
-  src/J2BChooseInputComponent.cpp
-  src/J2BChooseInputComponent.h
-  src/J2BChooseOutputComponent.cpp
-  src/J2BChooseOutputComponent.h
-  src/J2BConfigComponent.cpp
-  src/J2BConfigComponent.h
-  src/J2BConvertProgressComponent.cpp
-  src/J2BConvertProgressComponent.h
-  src/J2BCopyProgressComponent.cpp
-  src/J2BCopyProgressComponent.h
   src/LocalizationHelper.cpp
   src/LocalizationHelper.h
   src/LookAndFeel.h
-  src/MainWindow.cpp
-  src/MainWindow.h
-  src/ModeSelectComponent.cpp
-  src/ModeSelectComponent.h
   src/TaskbarProgress.cpp
   src/TaskbarProgress.h
   src/TemporaryDirectory.cpp
   src/TemporaryDirectory.h
-  src/TextButtonComponent.h
+  src/component/AboutComponent.cpp
+  src/component/AboutComponent.h
+  src/component/DrawableTextComponent.h
+  src/component/MainWindow.cpp
+  src/component/MainWindow.h
+  src/component/ModeSelectComponent.cpp
+  src/component/ModeSelectComponent.h
+  src/component/TextButtonComponent.h
+  src/component/b2j/B2JChooseInputComponent.cpp
+  src/component/b2j/B2JChooseInputComponent.h
+  src/component/b2j/B2JChooseOutputComponent.cpp
+  src/component/b2j/B2JChooseOutputComponent.h
+  src/component/b2j/B2JConfigComponent.cpp
+  src/component/b2j/B2JConfigComponent.h
+  src/component/b2j/B2JConvertProgressComponent.cpp
+  src/component/b2j/B2JConvertProgressComponent.h
+  src/component/b2j/B2JCopyProgressComponent.cpp
+  src/component/b2j/B2JCopyProgressComponent.h
+  src/component/j2b/J2BChooseInputComponent.cpp
+  src/component/j2b/J2BChooseInputComponent.h
+  src/component/j2b/J2BChooseOutputComponent.cpp
+  src/component/j2b/J2BChooseOutputComponent.h
+  src/component/j2b/J2BConfigComponent.cpp
+  src/component/j2b/J2BConfigComponent.h
+  src/component/j2b/J2BConvertProgressComponent.cpp
+  src/component/j2b/J2BConvertProgressComponent.h
+  src/component/j2b/J2BCopyProgressComponent.cpp
+  src/component/j2b/J2BCopyProgressComponent.h
   #end je2be-gui
 )
 
@@ -113,6 +113,8 @@ target_link_libraries(je2be-gui
     juce::juce_recommended_config_flags
     juce::juce_recommended_lto_flags
     juce::juce_recommended_warning_flags)
+
+target_include_directories(je2be-gui PRIVATE src)
 
 include_external_msproject(Package Package/Package.wapproj
   TYPE C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5

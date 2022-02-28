@@ -9,7 +9,7 @@
 
 using namespace juce;
 
-namespace je2be::gui::b2j {
+namespace je2be::gui::component::b2j {
 
 class B2JConvertProgressComponent::Updater : public AsyncUpdater {
   struct Entry {

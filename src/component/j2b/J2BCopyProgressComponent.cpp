@@ -7,7 +7,7 @@
 
 using namespace juce;
 
-namespace je2be::gui::j2b {
+namespace je2be::gui::component::j2b {
 
 class J2BCopyThread : public J2BCopyProgressComponent::Worker {
 public:

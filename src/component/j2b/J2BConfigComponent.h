@@ -3,7 +3,7 @@
 #include "ComponentState.h"
 #include "TextButtonComponent.h"
 
-namespace je2be::gui::j2b {
+namespace je2be::gui::component::j2b {
 
 class J2BConfigComponent : public juce::Component,
                            public J2BChooseInputStateProvider,

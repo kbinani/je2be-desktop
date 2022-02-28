@@ -3,13 +3,13 @@
 #include "CommandID.h"
 #include "Constants.h"
 #include "File.h"
-#include "J2BConvertProgressComponent.h"
+#include "component/J2BConvertProgressComponent.h"
 #include "TaskbarProgress.h"
 #include "TemporaryDirectory.h"
 
 using namespace juce;
 
-namespace je2be::gui::j2b {
+namespace je2be::gui::component::j2b {
 
 class J2BConvertProgressComponent::Updater : public AsyncUpdater {
   struct Entry {

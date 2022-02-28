@@ -6,7 +6,7 @@
 
 using namespace juce;
 
-namespace je2be::gui::b2j {
+namespace je2be::gui::component::b2j {
 
 static File DecideDefaultOutputDirectory(B2JConvertState const &s, File directory) {
   auto input = s.fConfigState.fInputState.fInputFileOrDirectory;

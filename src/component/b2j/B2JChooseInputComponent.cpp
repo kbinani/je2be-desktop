@@ -1,22 +1,24 @@
-#include "J2BChooseInputComponent.h"
+#include "B2JChooseInputComponent.h"
 #include "CommandID.h"
 #include "Constants.h"
-#include "GameDirectory.h"
+#include "GameDirectoryScanThreadBedrock.h"
 #include "MainWindow.h"
 
 using namespace juce;
 
-namespace je2be::gui::j2b {
+namespace je2be::gui::component::b2j {
 
-File J2BChooseInputComponent::sLastDirectory;
+File B2JChooseInputComponent::sLastDirectory;
 
-J2BChooseInputComponent::J2BChooseInputComponent(std::optional<J2BChooseInputState> state) {
+B2JChooseInputComponent::B2JChooseInputComponent(std::optional<B2JChooseInputState> state) {
   if (state) {
     fState = *state;
   }
 
   auto width = kWindowWidth;
   auto height = kWindowHeight;
+
+  fBedrockGameDirectory = GameDirectory::BedrockSaveDirectory();
 
   setSize(width, height);
   {
@@ -40,8 +42,8 @@ J2BChooseInputComponent::J2BChooseInputComponent(std::optional<J2BChooseInputSta
     addAndMakeVisible(*fNextButton);
   }
   {
-    auto w = 200;
-    fChooseCustomButton.reset(new TextButtonComponent(TRANS("Select from other directories")));
+    auto w = 160;
+    fChooseCustomButton.reset(new TextButtonComponent(TRANS("Select mcworld file")));
     fChooseCustomButton->setBounds(width - kMargin - fNextButton->getWidth() - kMargin - w, height - kButtonBaseHeight - kMargin, w, kButtonBaseHeight);
     fChooseCustomButton->onClick = [this]() { onChooseCustomButtonClicked(); };
     addAndMakeVisible(*fChooseCustomButton);
@@ -63,72 +65,69 @@ J2BChooseInputComponent::J2BChooseInputComponent(std::optional<J2BChooseInputSta
     addAndMakeVisible(*fPlaceholder);
   }
   {
-    fThread.reset(new GameDirectoryScanThreadJava(this));
+    fThread.reset(new GameDirectoryScanThreadBedrock(this));
     fThread->startThread();
   }
 }
 
-J2BChooseInputComponent::~J2BChooseInputComponent() {
+B2JChooseInputComponent::~B2JChooseInputComponent() {
   fListComponent.reset();
+  fThread->stopThread(-1);
 }
 
-void J2BChooseInputComponent::paint(juce::Graphics &g) {}
+void B2JChooseInputComponent::paint(juce::Graphics &g) {}
 
-void J2BChooseInputComponent::onNextButtonClicked() {
-  JUCEApplication::getInstance()->invoke(gui::toJ2BConfig, true);
+void B2JChooseInputComponent::onNextButtonClicked() {
+  JUCEApplication::getInstance()->invoke(gui::toB2JConfig, true);
 }
 
-void J2BChooseInputComponent::onChooseCustomButtonClicked() {
-  if (sLastDirectory == File()) {
-    sLastDirectory = GameDirectory::JavaSaveDirectory();
-  }
-
-  int flags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectDirectories;
-  MainWindow::sFileChooser.reset(new FileChooser(TRANS("Select save data folder of Minecraft"), sLastDirectory, {}, true));
+void B2JChooseInputComponent::onChooseCustomButtonClicked() {
+  int flags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles;
+  MainWindow::sFileChooser.reset(new FileChooser(TRANS("Select mcworld file to convert"), sLastDirectory, {}, true));
   MainWindow::sFileChooser->launchAsync(flags, [this](FileChooser const &chooser) { onCustomDirectorySelected(chooser); });
 }
 
-void J2BChooseInputComponent::onCustomDirectorySelected(juce::FileChooser const &chooser) {
+void B2JChooseInputComponent::onCustomDirectorySelected(juce::FileChooser const &chooser) {
   File result = chooser.getResult();
   if (result == File()) {
     return;
   }
-  fState.fInputDirectory = result;
+  fState.fInputFileOrDirectory = result;
   sLastDirectory = result.getParentDirectory();
-  JUCEApplication::getInstance()->invoke(gui::toJ2BConfig, true);
+  JUCEApplication::getInstance()->invoke(gui::toB2JConfig, true);
 }
 
-void J2BChooseInputComponent::selectedRowsChanged(int lastRowSelected) {
+void B2JChooseInputComponent::selectedRowsChanged(int lastRowSelected) {
   int num = fListComponent->getNumSelectedRows();
   if (num == 1 && 0 <= lastRowSelected && lastRowSelected < fGameDirectories.size()) {
     GameDirectory gd = fGameDirectories[lastRowSelected];
-    fState.fInputDirectory = gd.fDirectory;
+    fState.fInputFileOrDirectory = gd.fDirectory;
   } else {
-    fState.fInputDirectory = std::nullopt;
+    fState.fInputFileOrDirectory = std::nullopt;
   }
-  if (fState.fInputDirectory != std::nullopt) {
+  if (fState.fInputFileOrDirectory != std::nullopt) {
     fNextButton->setEnabled(true);
   }
 }
 
-void J2BChooseInputComponent::listBoxItemDoubleClicked(int row, const MouseEvent &) {
+void B2JChooseInputComponent::listBoxItemDoubleClicked(int row, const MouseEvent &) {
   if (row < 0 || fGameDirectories.size() <= row) {
     return;
   }
   GameDirectory gd = fGameDirectories[row];
-  fState.fInputDirectory = gd.fDirectory;
-  JUCEApplication::getInstance()->invoke(gui::toJ2BConfig, false);
+  fState.fInputFileOrDirectory = gd.fDirectory;
+  JUCEApplication::getInstance()->invoke(gui::toB2JConfig, false);
 }
 
-void J2BChooseInputComponent::onBackButtonClicked() {
+void B2JChooseInputComponent::onBackButtonClicked() {
   JUCEApplication::getInstance()->invoke(gui::toModeSelect, true);
 }
 
-int J2BChooseInputComponent::getNumRows() {
+int B2JChooseInputComponent::getNumRows() {
   return fGameDirectories.size();
 }
 
-void J2BChooseInputComponent::paintListBoxItem(int rowNumber,
+void B2JChooseInputComponent::paintListBoxItem(int rowNumber,
                                                juce::Graphics &g,
                                                int width, int height,
                                                bool rowIsSelected) {
@@ -139,7 +138,7 @@ void J2BChooseInputComponent::paintListBoxItem(int rowNumber,
   gd.paint(g, width, height, rowIsSelected, *this);
 }
 
-void J2BChooseInputComponent::handleAsyncUpdate() {
+void B2JChooseInputComponent::handleAsyncUpdate() {
   fGameDirectories.swap(fThread->fGameDirectories);
   if (fGameDirectories.empty()) {
     fPlaceholder->setText(TRANS("Nothing found in the save folder"), dontSendNotification);
@@ -151,4 +150,4 @@ void J2BChooseInputComponent::handleAsyncUpdate() {
   }
 }
 
-} // namespace je2be::gui::j2b
+} // namespace je2be::gui::b2j
