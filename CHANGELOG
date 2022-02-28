@@ -1,3 +1,8 @@
+Version 3.3.0 (TBD)
+- The target selector part of the command stored in command blocks is now converted. [j2b, b2j]
+- Superflat world configurations will be exported correctly. [b2j]
+- Fixed an issue where the stony_peaks biome was not converted correctly. [b2j]
+
 Version 3.2.0 (26 Feb 2022)
 - Added the ability to read account information from Minecraft Launcher and set it in level.dat. [b2j]
 - The time setting for wandering trader to despawn is now correctly converted. [j2b, b2j]
