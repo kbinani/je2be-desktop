@@ -101,8 +101,8 @@ target_link_options(zlib PRIVATE $<$<CONFIG:Release>:/DEBUG>)
 
 juce_add_binary_data(app-data
   SOURCES
-    Resource/icon-large.png
-    Resource/japanese.lang)
+    resource/icon-large.png
+    resource/japanese.lang)
 
 target_link_libraries(je2be-gui
   PRIVATE
