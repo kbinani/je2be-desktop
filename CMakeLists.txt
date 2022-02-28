@@ -27,53 +27,60 @@ juce_add_gui_app(je2be-gui
   ICON_SMALL "Resource/icon-small.png"
   PRODUCT_NAME "je2be")
 
+set(je2be_gui_files
+  #begin je2be-gui
+  src/AboutComponent.cpp
+  src/AboutComponent.h
+  src/Application.cpp
+  src/B2JChooseInputComponent.cpp
+  src/B2JChooseInputComponent.h
+  src/B2JChooseOutputComponent.cpp
+  src/B2JChooseOutputComponent.h
+  src/B2JConfigComponent.cpp
+  src/B2JConfigComponent.h
+  src/B2JConvertProgressComponent.cpp
+  src/B2JConvertProgressComponent.h
+  src/B2JCopyProgressComponent.cpp
+  src/B2JCopyProgressComponent.h
+  src/CommandID.h
+  src/ComponentState.h
+  src/Constants.h
+  src/DrawableTextComponent.h
+  src/File.h
+  src/GameDirectory.h
+  src/GameDirectoryScanThreadBedrock.cpp
+  src/GameDirectoryScanThreadBedrock.h
+  src/GameDirectoryScanThreadJava.cpp
+  src/GameDirectoryScanThreadJava.h
+  src/J2BChooseInputComponent.cpp
+  src/J2BChooseInputComponent.h
+  src/J2BChooseOutputComponent.cpp
+  src/J2BChooseOutputComponent.h
+  src/J2BConfigComponent.cpp
+  src/J2BConfigComponent.h
+  src/J2BConvertProgressComponent.cpp
+  src/J2BConvertProgressComponent.h
+  src/J2BCopyProgressComponent.cpp
+  src/J2BCopyProgressComponent.h
+  src/LocalizationHelper.cpp
+  src/LocalizationHelper.h
+  src/LookAndFeel.h
+  src/MainWindow.cpp
+  src/MainWindow.h
+  src/ModeSelectComponent.cpp
+  src/ModeSelectComponent.h
+  src/TaskbarProgress.cpp
+  src/TaskbarProgress.h
+  src/TemporaryDirectory.cpp
+  src/TemporaryDirectory.h
+  src/TextButtonComponent.h
+  #end je2be-gui
+)
+
 target_sources(je2be-gui
   PRIVATE
-    Source/AboutComponent.cpp
-    Source/AboutComponent.h
-    Source/J2BChooseInputComponent.cpp
-    Source/J2BChooseInputComponent.h
-    Source/J2BChooseOutputComponent.cpp
-    Source/J2BChooseOutputComponent.h
-    Source/CommandID.h
-    Source/ComponentState.h
-    Source/J2BConfigComponent.cpp
-    Source/J2BConfigComponent.h
-    Source/Constants.h
-    Source/J2BConvertProgressComponent.cpp
-    Source/J2BConvertProgressComponent.h
-    Source/J2BCopyProgressComponent.cpp
-    Source/J2BCopyProgressComponent.h
-    Source/LocalizationHelper.cpp
-    Source/LocalizationHelper.h
-    Source/Application.cpp
-    Source/TemporaryDirectory.h
-    Source/TemporaryDirectory.cpp
-    Source/MainWindow.h
-    Source/MainWindow.cpp
-    Source/TaskbarProgress.h
-    Source/TaskbarProgress.cpp
-    Source/LookAndFeel.h
-    Source/ModeSelectComponent.h
-    Source/ModeSelectComponent.cpp
-    Source/B2JChooseInputComponent.cpp
-    Source/B2JChooseInputComponent.h
-    Source/B2JConfigComponent.cpp
-    Source/B2JConfigComponent.h
-    Source/B2JConvertProgressComponent.cpp
-    Source/B2JConvertProgressComponent.h
-    Source/B2JChooseOutputComponent.cpp
-    Source/B2JChooseOutputComponent.h
-    Source/B2JCopyProgressComponent.cpp
-    Source/B2JCopyProgressComponent.h
-    Source/File.h
-    Source/TextButtonComponent.h
-    Source/DrawableTextComponent.h
-    Source/GameDirectory.h
-    Source/GameDirectoryScanThreadBedrock.h
-    Source/GameDirectoryScanThreadBedrock.cpp
-    Source/GameDirectoryScanThreadJava.h
-    Source/GameDirectoryScanThreadJava.cpp)
+  ${je2be_gui_files}
+)
 
 target_compile_definitions(je2be-gui
   PRIVATE
@@ -112,3 +119,5 @@ include_external_msproject(Package Package/Package.wapproj
   GUID 713653CB-7989-4C22-8171-0F1951271B8D)
 
 configure_file(Builds/Package/Package.appxmanifest.in Package/Package.appxmanifest)
+
+setup_source_groups("${je2be_gui_files}" "${CMAKE_CURRENT_SOURCE_DIR}")
