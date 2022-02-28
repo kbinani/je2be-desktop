@@ -52,6 +52,8 @@ private:
   std::unique_ptr<juce::TextLayout> fLayout;
   int fWidthWhenLayout = 0;
   int fMinHeight;
+
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(DrawableText)
 };
 
 } // namespace je2be::gui::component

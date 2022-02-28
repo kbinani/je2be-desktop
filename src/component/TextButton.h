@@ -25,6 +25,8 @@ private:
       setMouseCursor(juce::MouseCursor::NormalCursor);
     }
   }
+
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TextButton)
 };
 
 } // namespace je2be::gui::component
