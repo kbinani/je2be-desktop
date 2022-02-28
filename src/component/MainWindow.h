@@ -2,18 +2,12 @@
 
 #include "component/ModeSelect.h"
 
-using namespace juce;
-
 namespace je2be::gui::component {
 
 class MainWindow : public juce::DocumentWindow {
 public:
-  MainWindow(juce::String name)
-      : DocumentWindow(
-            name,
-            juce::Desktop::getInstance().getDefaultLookAndFeel().findColour(
-                juce::ResizableWindow::backgroundColourId),
-            DocumentWindow::closeButton | DocumentWindow::minimiseButton) {
+  explicit MainWindow(juce::String name)
+      : juce::DocumentWindow(name, juce::Desktop::getInstance().getDefaultLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId), juce::DocumentWindow::closeButton | juce::DocumentWindow::minimiseButton) {
     setUsingNativeTitleBar(true);
     setContentOwned(new ModeSelect, true);
 
@@ -29,7 +23,7 @@ public:
 
   void closeButtonPressed() override {
     sFileChooser.reset();
-    JUCEApplication::getInstance()->systemRequestedQuit();
+    juce::JUCEApplication::getInstance()->systemRequestedQuit();
   }
 
   static std::unique_ptr<juce::FileChooser> sFileChooser;
