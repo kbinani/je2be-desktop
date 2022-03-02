@@ -1,4 +1,9 @@
-Version 3.3.0 (TBD)
+Version 3.4.0 (TBD)
+- The parrots on the player's shoulders are now converted correctly. [j2b, b2j]
+- Fixed an issue in which the upper and lower halves of the contents of a large chest were sometimes swapped. [j2b, b2j]
+- Fixed a problem in which the player's game mode was not converted correctly. [b2j]
+
+Version 3.3.0 (1 Mar 2022)
 - The target selector part of the command stored in command blocks is now converted. [j2b, b2j]
 - Superflat world configurations will be exported correctly. [b2j]
 - Fixed an issue where the stony_peaks biome was not converted correctly. [b2j]
