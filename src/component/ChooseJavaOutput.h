@@ -8,7 +8,7 @@ class TextButton;
 
 class ChooseJavaOutput : public juce::Component,
                          public B2JChooseOutputStateProvider,
-                         public B2JChooseInputStateProvider {
+                         public ChooseInputStateProvider {
 public:
   explicit ChooseJavaOutput(B2JConvertState const &convertState);
   ~ChooseJavaOutput() override;
@@ -19,7 +19,7 @@ public:
     return fState;
   }
 
-  B2JChooseInputState getChooseInputState() const override {
+  std::optional<ChooseInputState> getChooseInputState() const override {
     return fState.fConvertState.fConfigState.fInputState;
   }
 

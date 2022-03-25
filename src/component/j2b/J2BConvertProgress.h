@@ -16,7 +16,7 @@ namespace je2be::gui::component::j2b {
 class J2BConvertProgress : public juce::Component,
                            public J2BConvertStateProvider,
                            public J2BConfigStateProvider,
-                           public J2BChooseInputStateProvider {
+                           public ChooseInputStateProvider {
 public:
   explicit J2BConvertProgress(J2BConfigState const &configState);
   ~J2BConvertProgress() override;
@@ -31,7 +31,7 @@ public:
     return fState;
   }
 
-  J2BChooseInputState getChooseInputState() const override {
+  std::optional<ChooseInputState> getChooseInputState() const override {
     return fState.fConfigState.fInputState;
   }
 

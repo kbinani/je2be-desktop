@@ -6,22 +6,31 @@
 
 namespace je2be::gui {
 
-class J2BChooseInputState {
-public:
-  std::optional<juce::File> fInputDirectory;
+enum class InputType {
+  Java,
+  Bedrock,
 };
 
-class J2BChooseInputStateProvider {
+class ChooseInputState {
 public:
-  virtual ~J2BChooseInputStateProvider() {}
-  virtual J2BChooseInputState getChooseInputState() const = 0;
+  ChooseInputState(InputType type, juce::File input, juce::String worldName) : fType(type), fInput(input), fWorldName(worldName) {}
+
+  InputType fType;
+  juce::File fInput;
+  juce::String fWorldName;
+};
+
+class ChooseInputStateProvider {
+public:
+  virtual ~ChooseInputStateProvider() {}
+  virtual std::optional<ChooseInputState> getChooseInputState() const = 0;
 };
 
 class J2BConfigState {
 public:
-  explicit J2BConfigState(J2BChooseInputState const &inputState)
+  explicit J2BConfigState(ChooseInputState const &inputState)
       : fInputState(inputState) {}
-  J2BChooseInputState const fInputState;
+  ChooseInputState const fInputState;
   enum class DirectoryStructure {
     Vanilla,
     Paper,
@@ -80,22 +89,11 @@ public:
   virtual J2BChooseOutputState getChooseOutputState() const = 0;
 };
 
-class B2JChooseInputState {
-public:
-  std::optional<juce::File> fInputFileOrDirectory;
-};
-
-class B2JChooseInputStateProvider {
-public:
-  virtual ~B2JChooseInputStateProvider() {}
-  virtual B2JChooseInputState getChooseInputState() const = 0;
-};
-
 class B2JConfigState {
 public:
-  explicit B2JConfigState(B2JChooseInputState const &inputState)
+  explicit B2JConfigState(ChooseInputState const &inputState)
       : fInputState(inputState) {}
-  B2JChooseInputState const fInputState;
+  ChooseInputState const fInputState;
   std::optional<juce::Uuid> fLocalPlayer;
 };
 

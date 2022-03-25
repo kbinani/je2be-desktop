@@ -10,7 +10,7 @@ using namespace juce;
 namespace je2be::gui::component {
 
 static File DecideDefaultOutputDirectory(J2BConvertState const &s, File root) {
-  String name = s.fConfigState.fInputState.fInputDirectory->getFileName();
+  String name = s.fConfigState.fInputState.fWorldName;
   File candidate = root.getChildFile(name);
   int count = 0;
   while (candidate.exists()) {
@@ -121,7 +121,7 @@ void ChooseBedrockOutput::onCustomDestinationDirectorySelected(FileChooser const
 
 void ChooseBedrockOutput::onSaveAsZipButtonClicked() {
   File init = sLastZipFile;
-  String fileName = fState.fConvertState.fConfigState.fInputState.fInputDirectory->getFileName();
+  String fileName = fState.fConvertState.fConfigState.fInputState.fWorldName;
   if (init == File()) {
     init = File(fileName + ".mcworld");
   } else {

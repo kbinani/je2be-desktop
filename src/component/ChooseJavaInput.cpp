@@ -11,7 +11,7 @@ namespace je2be::gui::component {
 
 File ChooseJavaInput::sLastDirectory;
 
-ChooseJavaInput::ChooseJavaInput(std::optional<J2BChooseInputState> state) {
+ChooseJavaInput::ChooseJavaInput(std::optional<ChooseInputState> state) {
   if (state) {
     fState = *state;
   }
@@ -94,7 +94,7 @@ void ChooseJavaInput::onCustomDirectorySelected(juce::FileChooser const &chooser
   if (result == File()) {
     return;
   }
-  fState.fInputDirectory = result;
+  fState = ChooseInputState(InputType::Java, result, result.getFileName());
   sLastDirectory = result.getParentDirectory();
   JUCEApplication::getInstance()->invoke(gui::toJ2BConfig, true);
 }
@@ -103,11 +103,11 @@ void ChooseJavaInput::selectedRowsChanged(int lastRowSelected) {
   int num = fListComponent->getNumSelectedRows();
   if (num == 1 && 0 <= lastRowSelected && lastRowSelected < fGameDirectories.size()) {
     GameDirectory gd = fGameDirectories[lastRowSelected];
-    fState.fInputDirectory = gd.fDirectory;
+    fState = ChooseInputState(InputType::Java, gd.fDirectory, gd.fDirectory.getFileName());
   } else {
-    fState.fInputDirectory = std::nullopt;
+    fState = std::nullopt;
   }
-  if (fState.fInputDirectory != std::nullopt) {
+  if (fState != std::nullopt) {
     fNextButton->setEnabled(true);
   }
 }
@@ -117,7 +117,7 @@ void ChooseJavaInput::listBoxItemDoubleClicked(int row, const MouseEvent &) {
     return;
   }
   GameDirectory gd = fGameDirectories[row];
-  fState.fInputDirectory = gd.fDirectory;
+  fState = ChooseInputState(InputType::Java, gd.fDirectory, gd.fDirectory.getFileName());
   JUCEApplication::getInstance()->invoke(gui::toJ2BConfig, false);
 }
 

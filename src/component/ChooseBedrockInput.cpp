@@ -11,7 +11,29 @@ namespace je2be::gui::component {
 
 File ChooseBedrockInput::sLastDirectory;
 
-ChooseBedrockInput::ChooseBedrockInput(std::optional<B2JChooseInputState> state) {
+static String GetWorldName(File input) {
+  String name = input.getFileName();
+  if (input.isDirectory()) {
+    File levelNameFile = input.getChildFile("levelname.txt");
+    if (levelNameFile.existsAsFile()) {
+      StringArray lines;
+      levelNameFile.readLines(lines);
+      if (!lines.isEmpty() && !lines[0].isEmpty()) {
+        String line = lines[0];
+        if (CharPointer_UTF8::isValidString(line.getCharPointer(), line.length())) {
+          name = line;
+        }
+      }
+    }
+  } else {
+    if (input.getFileExtension().isNotEmpty()) {
+      name = input.getFileNameWithoutExtension();
+    }
+  }
+  return name;
+}
+
+ChooseBedrockInput::ChooseBedrockInput(std::optional<ChooseInputState> state) {
   if (state) {
     fState = *state;
   }
@@ -93,7 +115,8 @@ void ChooseBedrockInput::onCustomDirectorySelected(juce::FileChooser const &choo
   if (result == File()) {
     return;
   }
-  fState.fInputFileOrDirectory = result;
+  String worldName = GetWorldName(result);
+  fState = ChooseInputState(InputType::Bedrock, result, worldName);
   sLastDirectory = result.getParentDirectory();
   JUCEApplication::getInstance()->invoke(gui::toB2JConfig, true);
 }
@@ -102,11 +125,12 @@ void ChooseBedrockInput::selectedRowsChanged(int lastRowSelected) {
   int num = fListComponent->getNumSelectedRows();
   if (num == 1 && 0 <= lastRowSelected && lastRowSelected < fGameDirectories.size()) {
     GameDirectory gd = fGameDirectories[lastRowSelected];
-    fState.fInputFileOrDirectory = gd.fDirectory;
+    String worldName = GetWorldName(gd.fDirectory);
+    fState = ChooseInputState(InputType::Bedrock, gd.fDirectory, worldName);
   } else {
-    fState.fInputFileOrDirectory = std::nullopt;
+    fState = std::nullopt;
   }
-  if (fState.fInputFileOrDirectory != std::nullopt) {
+  if (fState != std::nullopt) {
     fNextButton->setEnabled(true);
   }
 }
@@ -116,7 +140,8 @@ void ChooseBedrockInput::listBoxItemDoubleClicked(int row, const MouseEvent &) {
     return;
   }
   GameDirectory gd = fGameDirectories[row];
-  fState.fInputFileOrDirectory = gd.fDirectory;
+  String worldName = GetWorldName(gd.fDirectory);
+  fState = ChooseInputState(InputType::Bedrock, gd.fDirectory, worldName);
   JUCEApplication::getInstance()->invoke(gui::toB2JConfig, false);
 }
 

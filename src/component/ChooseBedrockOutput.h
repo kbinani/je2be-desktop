@@ -8,7 +8,7 @@ class TextButton;
 
 class ChooseBedrockOutput : public juce::Component,
                             public J2BChooseOutputStateProvider,
-                            public J2BChooseInputStateProvider {
+                            public ChooseInputStateProvider {
 public:
   explicit ChooseBedrockOutput(J2BConvertState const &convertState);
   ~ChooseBedrockOutput() override;
@@ -19,7 +19,7 @@ public:
     return fState;
   }
 
-  J2BChooseInputState getChooseInputState() const override {
+  std::optional<ChooseInputState> getChooseInputState() const override {
     return fState.fConvertState.fConfigState.fInputState;
   }
 

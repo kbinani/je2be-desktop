@@ -12,16 +12,16 @@ namespace je2be::gui::component {
 class TextButton;
 
 class ChooseJavaInput : public juce::Component,
-                        public J2BChooseInputStateProvider,
+                        public ChooseInputStateProvider,
                         public juce::AsyncUpdater,
                         public juce::ListBoxModel {
 public:
-  explicit ChooseJavaInput(std::optional<J2BChooseInputState> state);
+  explicit ChooseJavaInput(std::optional<ChooseInputState> state);
   ~ChooseJavaInput() override;
 
   void paint(juce::Graphics &) override;
 
-  J2BChooseInputState getChooseInputState() const override {
+  std::optional<ChooseInputState> getChooseInputState() const override {
     return fState;
   }
 
@@ -49,7 +49,7 @@ private:
   std::unique_ptr<TextButton> fChooseCustomButton;
   std::unique_ptr<juce::ListBox> fListComponent;
   std::unique_ptr<GameDirectoryScanThreadJava> fThread;
-  J2BChooseInputState fState;
+  std::optional<ChooseInputState> fState;
   std::unique_ptr<juce::Label> fMessage;
   std::unique_ptr<TextButton> fBackButton;
   std::vector<GameDirectory> fGameDirectories;

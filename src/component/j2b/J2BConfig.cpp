@@ -19,12 +19,12 @@ static std::optional<J2BConfigState::DirectoryStructure> SniffDirectoryStructure
   return std::nullopt;
 }
 
-J2BConfig::J2BConfig(J2BChooseInputState const &chooseInputState) : fState(chooseInputState) {
+J2BConfig::J2BConfig(ChooseInputState const &chooseInputState) : fState(chooseInputState) {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
   setSize(width, height);
 
-  String label = (*fState.fInputState.fInputDirectory).getFullPathName();
+  String label = fState.fInputState.fInput.getFullPathName();
   fDirectory.reset(new Label("", TRANS("Selected world:") + " " + label));
   fDirectory->setBounds(kMargin, kMargin, width - kMargin * 2, kButtonBaseHeight);
   fDirectory->setJustificationType(Justification::topLeft);
@@ -41,12 +41,10 @@ J2BConfig::J2BConfig(J2BChooseInputState const &chooseInputState) : fState(choos
   fBackButton->onClick = [this]() { onBackButtonClicked(); };
   addAndMakeVisible(*fBackButton);
 
-  if (fState.fInputState.fInputDirectory) {
-    auto structure = SniffDirectoryStructure(*fState.fInputState.fInputDirectory);
-    if (structure) {
-      fState.fStructure = *structure;
-      fOk = true;
-    }
+  auto structure = SniffDirectoryStructure(fState.fInputState.fInput);
+  if (structure) {
+    fState.fStructure = *structure;
+    fOk = true;
   }
 
   if (fOk) {

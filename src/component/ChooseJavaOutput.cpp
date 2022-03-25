@@ -10,25 +10,7 @@ using namespace juce;
 namespace je2be::gui::component {
 
 static File DecideDefaultOutputDirectory(B2JConvertState const &s, File directory) {
-  auto input = s.fConfigState.fInputState.fInputFileOrDirectory;
-  String name = input->getFileName();
-  if (input->isDirectory()) {
-    File levelNameFile = input->getChildFile("levelname.txt");
-    if (levelNameFile.existsAsFile()) {
-      StringArray lines;
-      levelNameFile.readLines(lines);
-      if (!lines.isEmpty() && !lines[0].isEmpty()) {
-        String line = lines[0];
-        if (CharPointer_UTF8::isValidString(line.getCharPointer(), line.length())) {
-          name = line;
-        }
-      }
-    }
-  } else {
-    if (input->getFileExtension().isNotEmpty()) {
-      name = input->getFileNameWithoutExtension();
-    }
-  }
+  String name = s.fConfigState.fInputState.fWorldName;
   File candidate = directory.getChildFile(name);
   int count = 0;
   while (candidate.exists()) {

@@ -10,13 +10,13 @@ using namespace juce;
 
 namespace je2be::gui::component::b2j {
 
-B2JConfig::B2JConfig(B2JChooseInputState const &chooseInputState) : fState(chooseInputState) {
+B2JConfig::B2JConfig(ChooseInputState const &chooseInputState) : fState(chooseInputState) {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
   setSize(width, height);
 
   int y = kMargin;
-  juce::String label = (*fState.fInputState.fInputFileOrDirectory).getFullPathName();
+  juce::String label = fState.fInputState.fInput.getFullPathName();
   fFileOrDirectory.reset(new Label("", TRANS("Selected world:") + " " + label));
   fFileOrDirectory->setBounds(kMargin, kMargin, width - kMargin * 2, kButtonBaseHeight);
   fFileOrDirectory->setJustificationType(Justification::topLeft);

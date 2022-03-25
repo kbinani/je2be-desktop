@@ -9,17 +9,17 @@ class TextButton;
 namespace je2be::gui::component::b2j {
 
 class B2JConfig : public juce::Component,
-                  public B2JChooseInputStateProvider,
+                  public ChooseInputStateProvider,
                   public B2JConfigStateProvider,
                   public juce::Timer,
                   public juce::AsyncUpdater {
 public:
-  explicit B2JConfig(B2JChooseInputState const &inputState);
+  explicit B2JConfig(ChooseInputState const &inputState);
   ~B2JConfig() override;
 
   void paint(juce::Graphics &) override;
 
-  B2JChooseInputState getChooseInputState() const override {
+  std::optional<ChooseInputState> getChooseInputState() const override {
     return fState.fInputState;
   }
 

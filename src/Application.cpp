@@ -67,17 +67,24 @@ public:
     Component *current = fMainWindow->getContentComponent();
     switch (info.commandID) {
     case gui::toJ2BConfig: {
-      auto provider = dynamic_cast<J2BChooseInputStateProvider *>(current);
+      auto provider = dynamic_cast<ChooseInputStateProvider *>(current);
       if (!provider) {
         return false;
       }
-      auto config = new component::j2b::J2BConfig(provider->getChooseInputState());
+      auto state = provider->getChooseInputState();
+      if (!state) {
+        return false;
+      }
+      if (state->fType != InputType::Java) {
+        return false;
+      }
+      auto config = new component::j2b::J2BConfig(*state);
       fMainWindow->setContentOwned(config, true);
       return true;
     }
     case gui::toJ2BChooseInput: {
-      std::optional<J2BChooseInputState> state;
-      auto provider = dynamic_cast<J2BChooseInputStateProvider *>(current);
+      std::optional<ChooseInputState> state;
+      auto provider = dynamic_cast<ChooseInputStateProvider *>(current);
       if (provider) {
         state = provider->getChooseInputState();
       }
@@ -120,8 +127,8 @@ public:
       return true;
     }
     case gui::toB2JChooseInput: {
-      std::optional<B2JChooseInputState> state;
-      auto provider = dynamic_cast<B2JChooseInputStateProvider *>(current);
+      std::optional<ChooseInputState> state;
+      auto provider = dynamic_cast<ChooseInputStateProvider *>(current);
       if (provider) {
         state = provider->getChooseInputState();
       }
@@ -131,11 +138,18 @@ public:
       return true;
     }
     case gui::toB2JConfig: {
-      auto provider = dynamic_cast<B2JChooseInputStateProvider *>(current);
+      auto provider = dynamic_cast<ChooseInputStateProvider *>(current);
       if (!provider) {
         return false;
       }
-      auto config = new component::b2j::B2JConfig(provider->getChooseInputState());
+      auto state = provider->getChooseInputState();
+      if (!state) {
+        return false;
+      }
+      if (state->fType != InputType::Bedrock) {
+        return false;
+      }
+      auto config = new component::b2j::B2JConfig(*state);
       fMainWindow->setContentOwned(config, true);
       return true;
     }

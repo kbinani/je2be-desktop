@@ -16,7 +16,7 @@ namespace je2be::gui::component::b2j {
 class B2JConvertProgress : public juce::Component,
                            public B2JConvertStateProvider,
                            public B2JConfigStateProvider,
-                           public B2JChooseInputStateProvider {
+                           public ChooseInputStateProvider {
 public:
   explicit B2JConvertProgress(B2JConfigState const &configState);
   ~B2JConvertProgress() override;
@@ -31,7 +31,7 @@ public:
     return fState;
   }
 
-  B2JChooseInputState getChooseInputState() const override {
+  std::optional<ChooseInputState> getChooseInputState() const override {
     return fState.fConfigState.fInputState;
   }
 

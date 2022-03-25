@@ -12,16 +12,16 @@ namespace je2be::gui::component {
 class TextButton;
 
 class ChooseBedrockInput : public juce::Component,
-                           public B2JChooseInputStateProvider,
+                           public ChooseInputStateProvider,
                            public juce::ListBoxModel,
                            public juce::AsyncUpdater {
 public:
-  explicit ChooseBedrockInput(std::optional<B2JChooseInputState> state);
+  explicit ChooseBedrockInput(std::optional<ChooseInputState> state);
   ~ChooseBedrockInput() override;
 
   void paint(juce::Graphics &) override;
 
-  B2JChooseInputState getChooseInputState() const override {
+  std::optional<ChooseInputState> getChooseInputState() const override {
     return fState;
   }
 
@@ -48,7 +48,7 @@ private:
   std::unique_ptr<TextButton> fNextButton;
   std::unique_ptr<TextButton> fChooseCustomButton;
   std::unique_ptr<juce::ListBox> fListComponent;
-  B2JChooseInputState fState;
+  std::optional<ChooseInputState> fState;
   std::unique_ptr<juce::Label> fMessage;
   std::unique_ptr<TextButton> fBackButton;
   juce::File fBedrockGameDirectory;

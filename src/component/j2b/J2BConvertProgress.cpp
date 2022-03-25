@@ -174,7 +174,7 @@ J2BConvertProgress::J2BConvertProgress(J2BConfigState const &configState) : fSta
   if (fState.fConfigState.fStructure == J2BConfigState::DirectoryStructure::Paper) {
     opt.fLevelDirectoryStructure = je2be::LevelDirectoryStructure::Paper;
   }
-  fThread.reset(new J2BWorkerThread(*configState.fInputState.fInputDirectory, fState.fOutputDirectory, opt, fUpdater));
+  fThread.reset(new J2BWorkerThread(configState.fInputState.fInput, fState.fOutputDirectory, opt, fUpdater));
   fThread->startThread();
 }
 

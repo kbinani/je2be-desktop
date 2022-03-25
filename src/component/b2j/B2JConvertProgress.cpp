@@ -205,7 +205,7 @@ B2JConvertProgress::B2JConvertProgress(B2JConfigState const &configState) : fSta
     addAndMakeVisible(*fCancelButton);
   }
 
-  bool needsUnzip = !configState.fInputState.fInputFileOrDirectory->isDirectory();
+  bool needsUnzip = !configState.fInputState.fInput.isDirectory();
 
   int y = kMargin;
   {
@@ -272,7 +272,7 @@ B2JConvertProgress::B2JConvertProgress(B2JConfigState const &configState) : fSta
     auto uuid = je2be::Uuid::FromData(data);
     opt.fLocalPlayer = uuid;
   }
-  fThread.reset(new B2JWorkerThread(*configState.fInputState.fInputFileOrDirectory, fState.fOutputDirectory, opt, fUpdater));
+  fThread.reset(new B2JWorkerThread(configState.fInputState.fInput, fState.fOutputDirectory, opt, fUpdater));
   fThread->startThread();
 }
 
