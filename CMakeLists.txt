@@ -48,14 +48,14 @@ set(je2be_gui_files
   src/TemporaryDirectory.h
   src/component/About.cpp
   src/component/About.h
+  src/component/ChooseBedrockInput.cpp
+  src/component/ChooseBedrockInput.h
   src/component/DrawableText.h
   src/component/MainWindow.cpp
   src/component/MainWindow.h
   src/component/ModeSelect.cpp
   src/component/ModeSelect.h
   src/component/TextButton.h
-  src/component/b2j/B2JChooseInput.cpp
-  src/component/b2j/B2JChooseInput.h
   src/component/b2j/B2JChooseOutput.cpp
   src/component/b2j/B2JChooseOutput.h
   src/component/b2j/B2JConfig.cpp

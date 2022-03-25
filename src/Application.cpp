@@ -3,8 +3,8 @@
 #include "LocalizationHelper.h"
 #include "LookAndFeel.h"
 #include "TemporaryDirectory.h"
+#include "component/ChooseBedrockInput.h"
 #include "component/MainWindow.h"
-#include "component/b2j/B2JChooseInput.h"
 #include "component/b2j/B2JChooseOutput.h"
 #include "component/b2j/B2JConfig.h"
 #include "component/b2j/B2JConvertProgress.h"
@@ -125,7 +125,7 @@ public:
       if (provider) {
         state = provider->getChooseInputState();
       }
-      auto chooseInput = new component::b2j::B2JChooseInput(state);
+      auto chooseInput = new component::ChooseBedrockInput(state);
       fMainWindow->setContentOwned(chooseInput, true);
       fMainWindow->setName(getApplicationName() + " : " + TRANS("Bedrock to Java"));
       return true;
