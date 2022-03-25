@@ -66,8 +66,25 @@ About::About() {
       "https://github.com/zlib-ng/zlib-ng",
       "",
 
+      "minizip-ng",
+      "https://github.com/zlib-ng/minizip-ng",
+      "",
+
       "hwm.task",
       "https://github.com/hotwatermorning/hwm.task",
+      "",
+
+      "Velocity",
+      "https://github.com/hetelek/Velocity",
+      "https://github.com/Gualdimar/Velocity",
+      "",
+
+      "libmspack",
+      "https://www.cabextract.org.uk/libmspack",
+      "",
+
+      "XBox to PC Minecraft converter",
+      "https://sourceforge.net/projects/xboxtopcminecraftconverter",
       "",
 
       "je2be (core library)",
