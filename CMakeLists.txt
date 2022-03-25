@@ -50,24 +50,24 @@ set(je2be_gui_files
   src/component/About.h
   src/component/ChooseBedrockInput.cpp
   src/component/ChooseBedrockInput.h
+  src/component/ChooseBedrockOutput.cpp
+  src/component/ChooseBedrockOutput.h
   src/component/ChooseJavaInput.cpp
   src/component/ChooseJavaInput.h
+  src/component/ChooseJavaOutput.cpp
+  src/component/ChooseJavaOutput.h
   src/component/DrawableText.h
   src/component/MainWindow.cpp
   src/component/MainWindow.h
   src/component/ModeSelect.cpp
   src/component/ModeSelect.h
   src/component/TextButton.h
-  src/component/b2j/B2JChooseOutput.cpp
-  src/component/b2j/B2JChooseOutput.h
   src/component/b2j/B2JConfig.cpp
   src/component/b2j/B2JConfig.h
   src/component/b2j/B2JConvertProgress.cpp
   src/component/b2j/B2JConvertProgress.h
   src/component/b2j/B2JCopyProgress.cpp
   src/component/b2j/B2JCopyProgress.h
-  src/component/j2b/J2BChooseOutput.cpp
-  src/component/j2b/J2BChooseOutput.h
   src/component/j2b/J2BConfig.cpp
   src/component/j2b/J2BConfig.h
   src/component/j2b/J2BConvertProgress.cpp

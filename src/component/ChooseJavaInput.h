@@ -12,9 +12,9 @@ namespace je2be::gui::component {
 class TextButton;
 
 class ChooseJavaInput : public juce::Component,
-                       public J2BChooseInputStateProvider,
-                       public juce::AsyncUpdater,
-                       public juce::ListBoxModel {
+                        public J2BChooseInputStateProvider,
+                        public juce::AsyncUpdater,
+                        public juce::ListBoxModel {
 public:
   explicit ChooseJavaInput(std::optional<J2BChooseInputState> state);
   ~ChooseJavaInput() override;
@@ -58,4 +58,4 @@ private:
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChooseJavaInput)
 };
 
-} // namespace je2be::gui::component::j2b
+} // namespace je2be::gui::component

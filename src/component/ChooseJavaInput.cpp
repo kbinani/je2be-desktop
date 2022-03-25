@@ -130,9 +130,9 @@ int ChooseJavaInput::getNumRows() {
 }
 
 void ChooseJavaInput::paintListBoxItem(int rowNumber,
-                                      juce::Graphics &g,
-                                      int width, int height,
-                                      bool rowIsSelected) {
+                                       juce::Graphics &g,
+                                       int width, int height,
+                                       bool rowIsSelected) {
   if (rowNumber < 0 || fGameDirectories.size() <= rowNumber) {
     return;
   }
@@ -152,4 +152,4 @@ void ChooseJavaInput::handleAsyncUpdate() {
   }
 }
 
-} // namespace je2be::gui::component::j2b
+} // namespace je2be::gui::component

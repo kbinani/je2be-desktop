@@ -4,13 +4,13 @@
 #include "LookAndFeel.h"
 #include "TemporaryDirectory.h"
 #include "component/ChooseBedrockInput.h"
+#include "component/ChooseBedrockOutput.h"
+#include "component/ChooseJavaInput.h"
+#include "component/ChooseJavaOutput.h"
 #include "component/MainWindow.h"
-#include "component/b2j/B2JChooseOutput.h"
 #include "component/b2j/B2JConfig.h"
 #include "component/b2j/B2JConvertProgress.h"
 #include "component/b2j/B2JCopyProgress.h"
-#include "component/ChooseJavaInput.h"
-#include "component/j2b/J2BChooseOutput.h"
 #include "component/j2b/J2BConfig.h"
 #include "component/j2b/J2BConvertProgress.h"
 #include "component/j2b/J2BCopyProgress.h"
@@ -100,7 +100,7 @@ public:
       if (!provider) {
         return false;
       }
-      auto chooseOutput = new component::j2b::J2BChooseOutput(provider->getConvertState());
+      auto chooseOutput = new component::ChooseBedrockOutput(provider->getConvertState());
       fMainWindow->setContentOwned(chooseOutput, true);
       return true;
     }
@@ -153,7 +153,7 @@ public:
       if (!provider) {
         return false;
       }
-      auto chooseOutput = new component::b2j::B2JChooseOutput(provider->getConvertState());
+      auto chooseOutput = new component::ChooseJavaOutput(provider->getConvertState());
       fMainWindow->setContentOwned(chooseOutput, true);
       return true;
     }
