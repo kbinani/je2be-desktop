@@ -9,7 +9,7 @@
 #include "component/b2j/B2JConfig.h"
 #include "component/b2j/B2JConvertProgress.h"
 #include "component/b2j/B2JCopyProgress.h"
-#include "component/j2b/J2BChooseInput.h"
+#include "component/ChooseJavaInput.h"
 #include "component/j2b/J2BChooseOutput.h"
 #include "component/j2b/J2BConfig.h"
 #include "component/j2b/J2BConvertProgress.h"
@@ -81,7 +81,7 @@ public:
       if (provider) {
         state = provider->getChooseInputState();
       }
-      auto chooseInput = new component::j2b::J2BChooseInput(state);
+      auto chooseInput = new component::ChooseJavaInput(state);
       fMainWindow->setContentOwned(chooseInput, true);
       fMainWindow->setName(getApplicationName() + " : " + TRANS("Java to Bedrock"));
       return true;
