@@ -166,7 +166,7 @@ public:
   }
 
   bool unzipInto(File temp) {
-    ZipFile zip(fInput);
+    juce::ZipFile zip(fInput);
     int numEntries = zip.getNumEntries();
     for (int i = 0; i < numEntries; ++i) {
       auto result = zip.uncompressEntry(i, temp);
