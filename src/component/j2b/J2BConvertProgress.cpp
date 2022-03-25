@@ -170,6 +170,7 @@ J2BConvertProgress::J2BConvertProgress(J2BConfigState const &configState) : fSta
   fUpdater->fTarget.store(this);
 
   je2be::tobe::Options opt;
+  opt.fTempDirectory = PathFromFile(temp);
   if (fState.fConfigState.fStructure == J2BConfigState::DirectoryStructure::Paper) {
     opt.fLevelDirectoryStructure = je2be::LevelDirectoryStructure::Paper;
   }

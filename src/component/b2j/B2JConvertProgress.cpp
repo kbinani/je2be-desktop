@@ -264,6 +264,7 @@ B2JConvertProgress::B2JConvertProgress(B2JConfigState const &configState) : fSta
   fUpdater->fTarget.store(this);
 
   je2be::toje::Options opt;
+  opt.fTempDirectory = PathFromFile(temp);
   if (fState.fConfigState.fLocalPlayer) {
     juce::Uuid juceUuid = *fState.fConfigState.fLocalPlayer;
     uint8_t data[16];
