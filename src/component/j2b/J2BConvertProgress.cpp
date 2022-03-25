@@ -202,7 +202,7 @@ void J2BConvertProgress::onProgressUpdate(int phase, double done, double total) 
   double weightCompaction = 1 - weightConversion;
 
   if (phase == 2) {
-    if (fCommandWhenFinished != gui::toJ2BChooseOutput && fState.fOutputDirectory.exists()) {
+    if (fCommandWhenFinished != gui::toChooseBedrockOutput && fState.fOutputDirectory.exists()) {
       TemporaryDirectory::QueueDeletingDirectory(fState.fOutputDirectory);
     }
     auto stat = fUpdater->fStat;

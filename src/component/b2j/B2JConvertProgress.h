@@ -58,7 +58,7 @@ private:
   double fUnzipOrCopyProgress;
   double fConversionProgress;
   std::unique_ptr<juce::Label> fLabel;
-  juce::CommandID fCommandWhenFinished = gui::toB2JChooseOutput;
+  juce::CommandID fCommandWhenFinished = gui::toChooseJavaOutput;
   bool fFailed = false;
   std::unique_ptr<juce::TextEditor> fErrorMessage;
   std::unique_ptr<TaskbarProgress> fTaskbarProgress;

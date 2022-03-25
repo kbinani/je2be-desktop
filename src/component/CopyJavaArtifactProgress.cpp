@@ -94,7 +94,7 @@ void CopyJavaArtifactProgress::paint(juce::Graphics &g) {}
 void CopyJavaArtifactProgress::handleAsyncUpdate() {
   struct InvokeToChooseOutput : public ModalComponentManager::Callback {
     void modalStateFinished(int returnValue) override {
-      JUCEApplication::getInstance()->invoke(gui::toB2JChooseOutput, true);
+      JUCEApplication::getInstance()->invoke(gui::toChooseJavaOutput, true);
     }
   };
 
@@ -113,7 +113,7 @@ void CopyJavaArtifactProgress::handleAsyncUpdate() {
   } else if (*result == CopyJavaArtifactProgress::Worker::Result::Cancelled) {
     fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
     NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::InfoIcon, TRANS("Cancelled"), TRANS("Saving cancelled."), nullptr, new InvokeToChooseOutput);
-    JUCEApplication::getInstance()->invoke(gui::toB2JChooseOutput, true);
+    JUCEApplication::getInstance()->invoke(gui::toChooseJavaOutput, true);
   } else {
     fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
     NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::InfoIcon, TRANS("Completed"), TRANS("Saving completed.") + "\n" + fState.fCopyDestination->getFullPathName(), nullptr, new InvokeToChooseInput);

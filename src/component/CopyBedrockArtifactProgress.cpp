@@ -162,7 +162,7 @@ void CopyBedrockArtifactProgress::paint(juce::Graphics &g) {}
 void CopyBedrockArtifactProgress::handleAsyncUpdate() {
   struct InvokeToChooseOutput : public ModalComponentManager::Callback {
     void modalStateFinished(int returnValue) override {
-      JUCEApplication::getInstance()->invoke(gui::toJ2BChooseOutput, true);
+      JUCEApplication::getInstance()->invoke(gui::toChooseBedrockOutput, true);
     }
   };
 
@@ -181,7 +181,7 @@ void CopyBedrockArtifactProgress::handleAsyncUpdate() {
   } else if (*result == CopyBedrockArtifactProgress::Worker::Result::Cancelled) {
     fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
     NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::InfoIcon, TRANS("Cancelled"), TRANS("Saving cancelled."), nullptr, new InvokeToChooseOutput);
-    JUCEApplication::getInstance()->invoke(gui::toJ2BChooseOutput, true);
+    JUCEApplication::getInstance()->invoke(gui::toChooseBedrockOutput, true);
   } else {
     fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
     NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::InfoIcon, TRANS("Completed"), TRANS("Saving completed.") + "\n" + fState.fCopyDestination->getFullPathName(), nullptr, new InvokeToChooseInput);

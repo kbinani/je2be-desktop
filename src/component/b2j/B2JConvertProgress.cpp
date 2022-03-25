@@ -321,7 +321,7 @@ void B2JConvertProgress::onProgressUpdate(Phase phase, double done, double total
     fTaskbarProgress->setState(TaskbarProgress::State::Normal);
     fTaskbarProgress->update(weightUnzip + progress * weightConversion);
   } else if (phase == Phase::Done) {
-    if (fCommandWhenFinished != gui::toB2JChooseOutput && fState.fOutputDirectory.exists()) {
+    if (fCommandWhenFinished != gui::toChooseJavaOutput && fState.fOutputDirectory.exists()) {
       TemporaryDirectory::QueueDeletingDirectory(fState.fOutputDirectory);
     }
     bool ok = fUpdater->fOk;

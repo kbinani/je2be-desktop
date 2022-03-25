@@ -75,7 +75,7 @@ ChooseBedrockOutput::~ChooseBedrockOutput() {}
 void ChooseBedrockOutput::onSaveToDefaultButtonClicked() {
   fState.fCopyDestination = fDefaultSaveDirectory;
   fState.fFormat = J2BOutputFormat::Directory;
-  JUCEApplication::getInstance()->invoke(gui::toJ2BCopy, true);
+  JUCEApplication::getInstance()->invoke(gui::toCopyBedrockArtifact, true);
 }
 
 void ChooseBedrockOutput::onSaveToCustomButtonClicked() {
@@ -115,7 +115,7 @@ void ChooseBedrockOutput::onCustomDestinationDirectorySelected(FileChooser const
   } else {
     fState.fCopyDestination = dest;
     fState.fFormat = J2BOutputFormat::Directory;
-    JUCEApplication::getInstance()->invoke(gui::toJ2BCopy, true);
+    JUCEApplication::getInstance()->invoke(gui::toCopyBedrockArtifact, true);
   }
 }
 
@@ -143,7 +143,7 @@ void ChooseBedrockOutput::onZipDestinationFileSelected(FileChooser const &choose
   sLastZipFile = dest;
   fState.fCopyDestination = dest;
   fState.fFormat = J2BOutputFormat::MCWorld;
-  JUCEApplication::getInstance()->invoke(gui::toJ2BCopy, true);
+  JUCEApplication::getInstance()->invoke(gui::toCopyBedrockArtifact, true);
 }
 
 void ChooseBedrockOutput::paint(juce::Graphics &g) {}

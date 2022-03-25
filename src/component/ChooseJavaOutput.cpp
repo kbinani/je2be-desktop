@@ -67,7 +67,7 @@ ChooseJavaOutput::~ChooseJavaOutput() {}
 
 void ChooseJavaOutput::onSaveToDefaultButtonClicked() {
   fState.fCopyDestination = fDefaultSaveDirectory;
-  JUCEApplication::getInstance()->invoke(gui::toB2JCopy, true);
+  JUCEApplication::getInstance()->invoke(gui::toCopyJavaArtifact, true);
 }
 
 void ChooseJavaOutput::onSaveToCustomButtonClicked() {
@@ -108,7 +108,7 @@ void ChooseJavaOutput::onCustomDestinationDirectorySelected(FileChooser const &c
                                                 "empty folder"));
   } else {
     fState.fCopyDestination = dest;
-    JUCEApplication::getInstance()->invoke(gui::toB2JCopy, true);
+    JUCEApplication::getInstance()->invoke(gui::toCopyJavaArtifact, true);
   }
 }
 

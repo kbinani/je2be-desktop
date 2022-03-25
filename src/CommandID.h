@@ -8,14 +8,16 @@ enum {
   toJ2BChooseInput,
   toJ2BConfig,
   toJ2BConvert,
-  toJ2BChooseOutput,
-  toJ2BCopy,
 
   toB2JChooseInput,
   toB2JConfig,
   toB2JConvert,
-  toB2JChooseOutput,
-  toB2JCopy,
+
+  toChooseBedrockOutput,
+  toChooseJavaOutput,
+
+  toCopyBedrockArtifact,
+  toCopyJavaArtifact,
 };
 
 }

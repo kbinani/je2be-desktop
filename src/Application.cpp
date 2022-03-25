@@ -56,7 +56,7 @@ public:
 
   void getAllCommands(Array<CommandID> &commands) override {
     JUCEApplication::getAllCommands(commands);
-    commands.addArray({gui::toJ2BConfig, gui::toJ2BChooseInput, gui::toJ2BConvert, gui::toJ2BChooseOutput, gui::toJ2BCopy, gui::toModeSelect, gui::toB2JChooseInput, gui::toB2JConfig, gui::toB2JConvert, gui::toB2JChooseOutput, gui::toB2JCopy});
+    commands.addArray({gui::toJ2BConfig, gui::toJ2BChooseInput, gui::toJ2BConvert, gui::toChooseBedrockOutput, gui::toCopyBedrockArtifact, gui::toModeSelect, gui::toB2JChooseInput, gui::toB2JConfig, gui::toB2JConvert, gui::toChooseJavaOutput, gui::toCopyJavaArtifact});
   }
 
   void getCommandInfo(CommandID commandID, ApplicationCommandInfo &result) override {
@@ -102,7 +102,7 @@ public:
       fMainWindow->setContentOwned(convert, true);
       return true;
     }
-    case gui::toJ2BChooseOutput: {
+    case gui::toChooseBedrockOutput: {
       auto provider = dynamic_cast<J2BConvertStateProvider *>(current);
       if (!provider) {
         return false;
@@ -111,7 +111,7 @@ public:
       fMainWindow->setContentOwned(chooseOutput, true);
       return true;
     }
-    case gui::toJ2BCopy: {
+    case gui::toCopyBedrockArtifact: {
       auto provider = dynamic_cast<J2BChooseOutputStateProvider *>(current);
       if (!provider) {
         return false;
@@ -162,7 +162,7 @@ public:
       fMainWindow->setContentOwned(convert, true);
       return true;
     }
-    case gui::toB2JChooseOutput: {
+    case gui::toChooseJavaOutput: {
       auto provider = dynamic_cast<B2JConvertStateProvider *>(current);
       if (!provider) {
         return false;
@@ -171,7 +171,7 @@ public:
       fMainWindow->setContentOwned(chooseOutput, true);
       return true;
     }
-    case gui::toB2JCopy: {
+    case gui::toCopyJavaArtifact: {
       auto provider = dynamic_cast<B2JChooseOutputStateProvider *>(current);
       if (!provider) {
         return false;

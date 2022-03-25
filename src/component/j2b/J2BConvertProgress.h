@@ -51,7 +51,7 @@ private:
   double fConversionProgress = 0;
   double fCompactionProgress = 0;
   std::unique_ptr<juce::Label> fLabel;
-  juce::CommandID fCommandWhenFinished = gui::toJ2BChooseOutput;
+  juce::CommandID fCommandWhenFinished = gui::toChooseBedrockOutput;
   bool fFailed = false;
   std::unique_ptr<juce::TextEditor> fErrorMessage;
   std::unique_ptr<TaskbarProgress> fTaskbarProgress;
