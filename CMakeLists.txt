@@ -56,6 +56,10 @@ set(je2be_gui_files
   src/component/ChooseJavaInput.h
   src/component/ChooseJavaOutput.cpp
   src/component/ChooseJavaOutput.h
+  src/component/CopyBedrockArtifactProgress.cpp
+  src/component/CopyBedrockArtifactProgress.h
+  src/component/CopyJavaArtifactProgress.cpp
+  src/component/CopyJavaArtifactProgress.h
   src/component/DrawableText.h
   src/component/MainWindow.cpp
   src/component/MainWindow.h
@@ -66,14 +70,10 @@ set(je2be_gui_files
   src/component/b2j/B2JConfig.h
   src/component/b2j/B2JConvertProgress.cpp
   src/component/b2j/B2JConvertProgress.h
-  src/component/b2j/B2JCopyProgress.cpp
-  src/component/b2j/B2JCopyProgress.h
   src/component/j2b/J2BConfig.cpp
   src/component/j2b/J2BConfig.h
   src/component/j2b/J2BConvertProgress.cpp
   src/component/j2b/J2BConvertProgress.h
-  src/component/j2b/J2BCopyProgress.cpp
-  src/component/j2b/J2BCopyProgress.h
   #end je2be-gui
 )
 

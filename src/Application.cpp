@@ -7,13 +7,13 @@
 #include "component/ChooseBedrockOutput.h"
 #include "component/ChooseJavaInput.h"
 #include "component/ChooseJavaOutput.h"
+#include "component/CopyBedrockArtifactProgress.h"
+#include "component/CopyJavaArtifactProgress.h"
 #include "component/MainWindow.h"
 #include "component/b2j/B2JConfig.h"
 #include "component/b2j/B2JConvertProgress.h"
-#include "component/b2j/B2JCopyProgress.h"
 #include "component/j2b/J2BConfig.h"
 #include "component/j2b/J2BConvertProgress.h"
-#include "component/j2b/J2BCopyProgress.h"
 
 using namespace juce;
 
@@ -109,7 +109,7 @@ public:
       if (!provider) {
         return false;
       }
-      auto copy = new component::j2b::J2BCopyProgress(provider->getChooseOutputState());
+      auto copy = new component::CopyBedrockArtifactProgress(provider->getChooseOutputState());
       fMainWindow->setContentOwned(copy, true);
       return true;
     }
@@ -162,7 +162,7 @@ public:
       if (!provider) {
         return false;
       }
-      auto copy = new component::b2j::B2JCopyProgress(provider->getChooseOutputState());
+      auto copy = new component::CopyJavaArtifactProgress(provider->getChooseOutputState());
       fMainWindow->setContentOwned(copy, true);
       return true;
     }
