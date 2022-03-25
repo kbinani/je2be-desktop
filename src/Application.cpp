@@ -56,7 +56,7 @@ public:
 
   void getAllCommands(Array<CommandID> &commands) override {
     JUCEApplication::getAllCommands(commands);
-    commands.addArray({gui::toJ2BConfig, gui::toJ2BChooseInput, gui::toJ2BConvert, gui::toChooseBedrockOutput, gui::toCopyBedrockArtifact, gui::toModeSelect, gui::toB2JChooseInput, gui::toB2JConfig, gui::toB2JConvert, gui::toChooseJavaOutput, gui::toCopyJavaArtifact});
+    commands.addArray({gui::toJ2BConfig, gui::toChooseJavaInput, gui::toJ2BConvert, gui::toChooseBedrockOutput, gui::toCopyBedrockArtifact, gui::toModeSelect, gui::toChooseBedrockInput, gui::toB2JConfig, gui::toB2JConvert, gui::toChooseJavaOutput, gui::toCopyJavaArtifact});
   }
 
   void getCommandInfo(CommandID commandID, ApplicationCommandInfo &result) override {
@@ -82,7 +82,7 @@ public:
       fMainWindow->setContentOwned(config, true);
       return true;
     }
-    case gui::toJ2BChooseInput: {
+    case gui::toChooseJavaInput: {
       std::optional<ChooseInputState> state;
       auto provider = dynamic_cast<ChooseInputStateProvider *>(current);
       if (provider) {
@@ -90,7 +90,7 @@ public:
       }
       auto chooseInput = new component::ChooseJavaInput(state);
       fMainWindow->setContentOwned(chooseInput, true);
-      fMainWindow->setName(getApplicationName() + " : " + TRANS("Java to Bedrock"));
+      fMainWindow->setName(getApplicationName() + " : " + TRANS("Convert Java map"));
       return true;
     }
     case gui::toJ2BConvert: {
@@ -126,7 +126,7 @@ public:
       fMainWindow->setName(Application::getApplicationName());
       return true;
     }
-    case gui::toB2JChooseInput: {
+    case gui::toChooseBedrockInput: {
       std::optional<ChooseInputState> state;
       auto provider = dynamic_cast<ChooseInputStateProvider *>(current);
       if (provider) {
@@ -134,7 +134,7 @@ public:
       }
       auto chooseInput = new component::ChooseBedrockInput(state);
       fMainWindow->setContentOwned(chooseInput, true);
-      fMainWindow->setName(getApplicationName() + " : " + TRANS("Bedrock to Java"));
+      fMainWindow->setName(getApplicationName() + " : " + TRANS("Convert Bedrock map"));
       return true;
     }
     case gui::toB2JConfig: {

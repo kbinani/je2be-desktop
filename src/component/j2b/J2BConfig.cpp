@@ -78,7 +78,7 @@ void J2BConfig::onStartButtonClicked() {
 }
 
 void J2BConfig::onBackButtonClicked() {
-  JUCEApplication::getInstance()->invoke(gui::toJ2BChooseInput, true);
+  JUCEApplication::getInstance()->invoke(gui::toChooseJavaInput, true);
 }
 
 } // namespace je2be::gui::component::j2b

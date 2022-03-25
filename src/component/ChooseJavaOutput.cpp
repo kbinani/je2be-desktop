@@ -115,7 +115,7 @@ void ChooseJavaOutput::onCustomDestinationDirectorySelected(FileChooser const &c
 void ChooseJavaOutput::paint(juce::Graphics &g) {}
 
 void ChooseJavaOutput::onBackButtonClicked() {
-  JUCEApplication::getInstance()->invoke(gui::toB2JChooseInput, true);
+  JUCEApplication::getInstance()->invoke(gui::toModeSelect, true);
 }
 
 } // namespace je2be::gui::component

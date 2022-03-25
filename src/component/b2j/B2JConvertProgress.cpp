@@ -285,7 +285,7 @@ void B2JConvertProgress::paint(juce::Graphics &g) {}
 
 void B2JConvertProgress::onCancelButtonClicked() {
   if (fFailed) {
-    JUCEApplication::getInstance()->invoke(gui::toB2JChooseInput, true);
+    JUCEApplication::getInstance()->invoke(gui::toChooseBedrockInput, true);
   } else {
     fCancelButton->setEnabled(false);
     fCommandWhenFinished = gui::toB2JConfig;

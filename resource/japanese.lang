@@ -31,8 +31,8 @@ language: Japanese
 "Save into custom folder" = "保存先を自分で選ぶ";
 "Export as mcworld file" = "mcworld 形式で保存";
 "Select conversion mode" = "変換モードを選んでください";
-"Java to Bedrock" = "Java版 から 統合版に";
-"Bedrock to Java" = "統合版 から Java版に";
+"Convert Java map" = "Java版 のデータを変換";
+"Convert Bedrock map" = "統合版 のデータを変換";
 "Select mcworld file" = "mcworld ファイルを選ぶ";
 "Select mcworld file to convert" = "変換する mcworld ファイルを選んでください";
 "Save into Minecraft Java edition save folder" = "Minecraft Java 版のセーブフォルダに保存";

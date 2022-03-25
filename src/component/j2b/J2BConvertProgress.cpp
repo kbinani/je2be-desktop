@@ -187,7 +187,7 @@ void J2BConvertProgress::paint(juce::Graphics &g) {}
 
 void J2BConvertProgress::onCancelButtonClicked() {
   if (fFailed) {
-    JUCEApplication::getInstance()->invoke(gui::toJ2BChooseInput, true);
+    JUCEApplication::getInstance()->invoke(gui::toChooseJavaInput, true);
   } else {
     fCancelButton->setEnabled(false);
     fCommandWhenFinished = gui::toJ2BConfig;

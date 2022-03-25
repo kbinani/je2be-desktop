@@ -102,7 +102,7 @@ void B2JConfig::onStartButtonClicked() {
 }
 
 void B2JConfig::onBackButtonClicked() {
-  JUCEApplication::getInstance()->invoke(gui::toB2JChooseInput, true);
+  JUCEApplication::getInstance()->invoke(gui::toChooseBedrockInput, true);
 }
 
 class B2JConfig::ImportAccountWorker::Impl {

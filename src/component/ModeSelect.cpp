@@ -22,7 +22,7 @@ ModeSelect::ModeSelect() {
 
   y += kMargin;
 
-  fToJ2B.reset(new TextButton(TRANS("Java to Bedrock")));
+  fToJ2B.reset(new TextButton(TRANS("Convert Java map")));
   fToJ2B->setBounds(kWindowWidth / 2 - buttonWidth / 2, y, buttonWidth, kButtonBaseHeight);
   fToJ2B->onClick = [this]() { onJ2BClicked(); };
   addAndMakeVisible(*fToJ2B);
@@ -30,7 +30,7 @@ ModeSelect::ModeSelect() {
 
   y += kMargin;
 
-  fToB2J.reset(new TextButton(TRANS("Bedrock to Java")));
+  fToB2J.reset(new TextButton(TRANS("Convert Bedrock map")));
   fToB2J->setBounds(kWindowWidth / 2 - buttonWidth / 2, y, buttonWidth, kButtonBaseHeight);
   fToB2J->onClick = [this]() { onB2JClicked(); };
   addAndMakeVisible(*fToB2J);
@@ -60,11 +60,11 @@ void ModeSelect::onAboutButtonClicked() {
 }
 
 void ModeSelect::onB2JClicked() {
-  JUCEApplication::getInstance()->invoke(gui::toB2JChooseInput, true);
+  JUCEApplication::getInstance()->invoke(gui::toChooseBedrockInput, true);
 }
 
 void ModeSelect::onJ2BClicked() {
-  JUCEApplication::getInstance()->invoke(gui::toJ2BChooseInput, true);
+  JUCEApplication::getInstance()->invoke(gui::toChooseJavaInput, true);
 }
 
 } // namespace je2be::gui::component

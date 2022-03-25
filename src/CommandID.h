@@ -5,11 +5,11 @@ namespace je2be::gui {
 enum {
   toModeSelect = 1,
 
-  toJ2BChooseInput,
+  toChooseJavaInput,
   toJ2BConfig,
   toJ2BConvert,
 
-  toB2JChooseInput,
+  toChooseBedrockInput,
   toB2JConfig,
   toB2JConvert,
 

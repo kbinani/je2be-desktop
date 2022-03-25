@@ -166,9 +166,9 @@ void CopyBedrockArtifactProgress::handleAsyncUpdate() {
     }
   };
 
-  struct InvokeToChooseInput : public ModalComponentManager::Callback {
+  struct InvokeToModeSelect : public ModalComponentManager::Callback {
     void modalStateFinished(int returnValue) override {
-      JUCEApplication::getInstance()->invoke(gui::toJ2BChooseInput, true);
+      JUCEApplication::getInstance()->invoke(gui::toModeSelect, true);
     }
   };
 
@@ -184,7 +184,7 @@ void CopyBedrockArtifactProgress::handleAsyncUpdate() {
     JUCEApplication::getInstance()->invoke(gui::toChooseBedrockOutput, true);
   } else {
     fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
-    NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::InfoIcon, TRANS("Completed"), TRANS("Saving completed.") + "\n" + fState.fCopyDestination->getFullPathName(), nullptr, new InvokeToChooseInput);
+    NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::InfoIcon, TRANS("Completed"), TRANS("Saving completed.") + "\n" + fState.fCopyDestination->getFullPathName(), nullptr, new InvokeToModeSelect);
     if (fState.fConvertState.fOutputDirectory.exists()) {
       TemporaryDirectory::QueueDeletingDirectory(fState.fConvertState.fOutputDirectory);
     }
