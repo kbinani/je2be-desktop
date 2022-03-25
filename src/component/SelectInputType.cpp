@@ -1,4 +1,4 @@
-#include "component/ModeSelect.h"
+#include "component/SelectInputType.h"
 #include "CommandID.h"
 #include "Constants.h"
 #include "component/About.h"
@@ -8,13 +8,13 @@ using namespace juce;
 
 namespace je2be::gui::component {
 
-ModeSelect::ModeSelect() {
+SelectInputType::SelectInputType() {
   setSize(kWindowWidth, kWindowHeight);
 
   int const buttonWidth = kWindowWidth / 2;
 
   int y = kMargin;
-  fLabel.reset(new Label("", TRANS("Select conversion mode") + ":"));
+  fLabel.reset(new Label("", TRANS("Select the game edition of map to convert") + ":"));
   fLabel->setJustificationType(Justification::centred);
   fLabel->setBounds(kMargin, y, kWindowWidth - 2 * kMargin, kButtonBaseHeight);
   addAndMakeVisible(*fLabel);
@@ -22,19 +22,19 @@ ModeSelect::ModeSelect() {
 
   y += kMargin;
 
-  fToJ2B.reset(new TextButton(TRANS("Convert Java map")));
-  fToJ2B->setBounds(kWindowWidth / 2 - buttonWidth / 2, y, buttonWidth, kButtonBaseHeight);
-  fToJ2B->onClick = [this]() { onJ2BClicked(); };
-  addAndMakeVisible(*fToJ2B);
-  y += fToJ2B->getHeight();
+  fConvertJava.reset(new TextButton(TRANS("Convert Java map")));
+  fConvertJava->setBounds(kWindowWidth / 2 - buttonWidth / 2, y, buttonWidth, kButtonBaseHeight);
+  fConvertJava->onClick = [this]() { onConvertJavaClicked(); };
+  addAndMakeVisible(*fConvertJava);
+  y += fConvertJava->getHeight();
 
   y += kMargin;
 
-  fToB2J.reset(new TextButton(TRANS("Convert Bedrock map")));
-  fToB2J->setBounds(kWindowWidth / 2 - buttonWidth / 2, y, buttonWidth, kButtonBaseHeight);
-  fToB2J->onClick = [this]() { onB2JClicked(); };
-  addAndMakeVisible(*fToB2J);
-  y += fToB2J->getHeight();
+  fConvertBedrock.reset(new TextButton(TRANS("Convert Bedrock map")));
+  fConvertBedrock->setBounds(kWindowWidth / 2 - buttonWidth / 2, y, buttonWidth, kButtonBaseHeight);
+  fConvertBedrock->onClick = [this]() { onConvertBedrockClicked(); };
+  addAndMakeVisible(*fConvertBedrock);
+  y += fConvertBedrock->getHeight();
 
   fAboutButton.reset(new TextButton("About"));
   fAboutButton->setBounds(kMargin, kWindowHeight - kMargin - kButtonBaseHeight, kButtonMinWidth, kButtonBaseHeight);
@@ -42,13 +42,13 @@ ModeSelect::ModeSelect() {
   addAndMakeVisible(*fAboutButton);
 }
 
-ModeSelect::~ModeSelect() {
+SelectInputType::~SelectInputType() {
 }
 
-void ModeSelect::paint(juce::Graphics &g) {
+void SelectInputType::paint(juce::Graphics &g) {
 }
 
-void ModeSelect::onAboutButtonClicked() {
+void SelectInputType::onAboutButtonClicked() {
   DialogWindow::LaunchOptions options;
   options.content.setOwned(new About());
   options.dialogTitle = "About";
@@ -59,11 +59,11 @@ void ModeSelect::onAboutButtonClicked() {
   options.launchAsync();
 }
 
-void ModeSelect::onB2JClicked() {
+void SelectInputType::onConvertBedrockClicked() {
   JUCEApplication::getInstance()->invoke(gui::toChooseBedrockInput, true);
 }
 
-void ModeSelect::onJ2BClicked() {
+void SelectInputType::onConvertJavaClicked() {
   JUCEApplication::getInstance()->invoke(gui::toChooseJavaInput, true);
 }
 

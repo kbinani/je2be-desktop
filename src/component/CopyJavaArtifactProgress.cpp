@@ -100,7 +100,7 @@ void CopyJavaArtifactProgress::handleAsyncUpdate() {
 
   struct InvokeToModeSelect : public ModalComponentManager::Callback {
     void modalStateFinished(int returnValue) override {
-      JUCEApplication::getInstance()->invoke(gui::toModeSelect, true);
+      JUCEApplication::getInstance()->invoke(gui::toSelectInputType, true);
     }
   };
 

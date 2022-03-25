@@ -149,7 +149,7 @@ void ChooseBedrockOutput::onZipDestinationFileSelected(FileChooser const &choose
 void ChooseBedrockOutput::paint(juce::Graphics &g) {}
 
 void ChooseBedrockOutput::onBackButtonClicked() {
-  JUCEApplication::getInstance()->invoke(gui::toModeSelect, true);
+  JUCEApplication::getInstance()->invoke(gui::toSelectInputType, true);
 }
 
 } // namespace je2be::gui::component

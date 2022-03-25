@@ -1,6 +1,6 @@
 #pragma once
 
-#include "component/ModeSelect.h"
+#include "component/SelectInputType.h"
 
 namespace je2be::gui::component {
 
@@ -9,7 +9,7 @@ public:
   explicit MainWindow(juce::String name)
       : juce::DocumentWindow(name, juce::Desktop::getInstance().getDefaultLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId), juce::DocumentWindow::closeButton | juce::DocumentWindow::minimiseButton) {
     setUsingNativeTitleBar(true);
-    setContentOwned(new ModeSelect, true);
+    setContentOwned(new SelectInputType, true);
 
 #if JUCE_IOS || JUCE_ANDROID
     setFullScreen(true);

@@ -3,13 +3,14 @@
 namespace je2be::gui {
 
 enum {
-  toModeSelect = 1,
+  toSelectInputType = 1,
 
   toChooseJavaInput,
+  toChooseBedrockInput,
+
   toJ2BConfig,
   toJ2BConvert,
 
-  toChooseBedrockInput,
   toB2JConfig,
   toB2JConvert,
 

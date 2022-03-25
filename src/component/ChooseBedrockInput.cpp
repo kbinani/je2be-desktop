@@ -146,7 +146,7 @@ void ChooseBedrockInput::listBoxItemDoubleClicked(int row, const MouseEvent &) {
 }
 
 void ChooseBedrockInput::onBackButtonClicked() {
-  JUCEApplication::getInstance()->invoke(gui::toModeSelect, true);
+  JUCEApplication::getInstance()->invoke(gui::toSelectInputType, true);
 }
 
 int ChooseBedrockInput::getNumRows() {
