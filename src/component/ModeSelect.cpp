@@ -22,19 +22,35 @@ ModeSelect::ModeSelect() {
 
   y += kMargin;
 
-  fToJ2B.reset(new TextButton(TRANS("Convert Java map")));
-  fToJ2B->setBounds(kWindowWidth / 2 - buttonWidth / 2, y, buttonWidth, kButtonBaseHeight);
-  fToJ2B->onClick = [this]() { onJ2BClicked(); };
-  addAndMakeVisible(*fToJ2B);
-  y += fToJ2B->getHeight();
+  fJavaToBedrockButton.reset(new TextButton(TRANS("Java to Bedrock")));
+  fJavaToBedrockButton->setBounds(kWindowWidth / 2 - buttonWidth / 2, y, buttonWidth, kButtonBaseHeight);
+  fJavaToBedrockButton->onClick = [this]() { onJavaToBedrockButtonClicked(); };
+  addAndMakeVisible(*fJavaToBedrockButton);
+  y += fJavaToBedrockButton->getHeight();
 
   y += kMargin;
 
-  fToB2J.reset(new TextButton(TRANS("Convert Bedrock map")));
-  fToB2J->setBounds(kWindowWidth / 2 - buttonWidth / 2, y, buttonWidth, kButtonBaseHeight);
-  fToB2J->onClick = [this]() { onB2JClicked(); };
-  addAndMakeVisible(*fToB2J);
-  y += fToB2J->getHeight();
+  fBedrockToJavaButton.reset(new TextButton(TRANS("Bedrock to Java")));
+  fBedrockToJavaButton->setBounds(kWindowWidth / 2 - buttonWidth / 2, y, buttonWidth, kButtonBaseHeight);
+  fBedrockToJavaButton->onClick = [this]() { onBedrockToJavaButtonClicked(); };
+  addAndMakeVisible(*fBedrockToJavaButton);
+  y += fBedrockToJavaButton->getHeight();
+
+  y += kMargin;
+
+  fXbox360ToBedrockButton.reset(new TextButton(TRANS("Xbox360 to Bedrock")));
+  fXbox360ToBedrockButton->setBounds(kWindowWidth / 2 - buttonWidth / 2, y, buttonWidth, kButtonBaseHeight);
+  fXbox360ToBedrockButton->onClick = [this]() { onXbox360ToBedrockButtonClicked(); };
+  addAndMakeVisible(*fXbox360ToBedrockButton);
+  y += fXbox360ToBedrockButton->getHeight();
+
+  y += kMargin;
+
+  fXbox360ToJavaButton.reset(new TextButton(TRANS("Xbox360 to Java")));
+  fXbox360ToJavaButton->setBounds(kWindowWidth / 2 - buttonWidth / 2, y, buttonWidth, kButtonBaseHeight);
+  fXbox360ToJavaButton->onClick = [this]() { onXbox360ToJavaButtonClicked(); };
+  addAndMakeVisible(*fXbox360ToJavaButton);
+  y += fXbox360ToJavaButton->getHeight();
 
   fAboutButton.reset(new TextButton("About"));
   fAboutButton->setBounds(kMargin, kWindowHeight - kMargin - kButtonBaseHeight, kButtonMinWidth, kButtonBaseHeight);
@@ -59,12 +75,20 @@ void ModeSelect::onAboutButtonClicked() {
   options.launchAsync();
 }
 
-void ModeSelect::onB2JClicked() {
+void ModeSelect::onBedrockToJavaButtonClicked() {
   JUCEApplication::getInstance()->invoke(gui::toChooseBedrockInput, true);
 }
 
-void ModeSelect::onJ2BClicked() {
+void ModeSelect::onJavaToBedrockButtonClicked() {
   JUCEApplication::getInstance()->invoke(gui::toChooseJavaInput, true);
+}
+
+void ModeSelect::onXbox360ToJavaButtonClicked() {
+  JUCEApplication::getInstance()->invoke(gui::toChooseXbox360InputToJava, true);
+}
+
+void ModeSelect::onXbox360ToBedrockButtonClicked() {
+  JUCEApplication::getInstance()->invoke(gui::toChooseXbox360InputToBedrock, true);
 }
 
 } // namespace je2be::gui::component

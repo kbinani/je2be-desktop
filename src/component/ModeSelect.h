@@ -9,18 +9,22 @@ class TextButton;
 class ModeSelect : public juce::Component {
 public:
   explicit ModeSelect();
-  ~ModeSelect() override;
+  ~ModeSelect();
 
   void paint(juce::Graphics &) override;
 
   void onAboutButtonClicked();
-  void onJ2BClicked();
-  void onB2JClicked();
+  void onJavaToBedrockButtonClicked();
+  void onBedrockToJavaButtonClicked();
+  void onXbox360ToJavaButtonClicked();
+  void onXbox360ToBedrockButtonClicked();
 
 private:
   std::unique_ptr<juce::Label> fLabel;
-  std::unique_ptr<TextButton> fToJ2B;
-  std::unique_ptr<TextButton> fToB2J;
+  std::unique_ptr<TextButton> fJavaToBedrockButton;
+  std::unique_ptr<TextButton> fBedrockToJavaButton;
+  std::unique_ptr<TextButton> fXbox360ToJavaButton;
+  std::unique_ptr<TextButton> fXbox360ToBedrockButton;
   std::unique_ptr<TextButton> fAboutButton;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ModeSelect)

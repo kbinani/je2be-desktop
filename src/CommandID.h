@@ -6,10 +6,13 @@ enum {
   toModeSelect = 1,
 
   toChooseJavaInput,
+  toChooseBedrockInput,
+  toChooseXbox360InputToJava,
+  toChooseXbox360InputToBedrock,
+
   toJ2BConfig,
   toJ2BConvert,
 
-  toChooseBedrockInput,
   toB2JConfig,
   toB2JConvert,
 
