@@ -122,7 +122,7 @@ void ChooseJavaInput::listBoxItemDoubleClicked(int row, const MouseEvent &) {
 }
 
 void ChooseJavaInput::onBackButtonClicked() {
-  JUCEApplication::getInstance()->invoke(gui::toSelectInputType, true);
+  JUCEApplication::getInstance()->invoke(gui::toModeSelect, true);
 }
 
 int ChooseJavaInput::getNumRows() {

@@ -56,7 +56,7 @@ public:
 
   void getAllCommands(Array<CommandID> &commands) override {
     JUCEApplication::getAllCommands(commands);
-    commands.addArray({gui::toJ2BConfig, gui::toChooseJavaInput, gui::toJ2BConvert, gui::toChooseBedrockOutput, gui::toCopyBedrockArtifact, gui::toSelectInputType, gui::toChooseBedrockInput, gui::toB2JConfig, gui::toB2JConvert, gui::toChooseJavaOutput, gui::toCopyJavaArtifact});
+    commands.addArray({gui::toJ2BConfig, gui::toChooseJavaInput, gui::toJ2BConvert, gui::toChooseBedrockOutput, gui::toCopyBedrockArtifact, gui::toModeSelect, gui::toChooseBedrockInput, gui::toB2JConfig, gui::toB2JConvert, gui::toChooseJavaOutput, gui::toCopyJavaArtifact});
   }
 
   void getCommandInfo(CommandID commandID, ApplicationCommandInfo &result) override {
@@ -120,9 +120,9 @@ public:
       fMainWindow->setContentOwned(copy, true);
       return true;
     }
-    case gui::toSelectInputType: {
-      auto selectInputType = new component::SelectInputType;
-      fMainWindow->setContentOwned(selectInputType, true);
+    case gui::toModeSelect: {
+      auto modeSelect = new component::ModeSelect;
+      fMainWindow->setContentOwned(modeSelect, true);
       fMainWindow->setName(Application::getApplicationName());
       return true;
     }

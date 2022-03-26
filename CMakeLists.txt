@@ -63,8 +63,8 @@ set(je2be_gui_files
   src/component/DrawableText.h
   src/component/MainWindow.cpp
   src/component/MainWindow.h
-  src/component/SelectInputType.cpp
-  src/component/SelectInputType.h
+  src/component/ModeSelect.cpp
+  src/component/ModeSelect.h
   src/component/TextButton.h
   src/component/b2j/B2JConfig.cpp
   src/component/b2j/B2JConfig.h
