@@ -1,7 +1,10 @@
-#include "component/ChooseXbox360Input.h"
+#include <je2be.hpp>
+
 #include "CommandID.h"
 #include "Constants.h"
+#include "File.h"
 #include "GameDirectoryScanThreadXbox360.h"
+#include "component/ChooseXbox360Input.h"
 #include "component/MainWindow.h"
 #include "component/TextButton.h"
 
@@ -11,26 +14,29 @@ namespace je2be::gui::component {
 
 File ChooseXbox360Input::sLastDirectory;
 
-static String GetWorldName(File input) {
-  String name = input.getFileName();
-  if (input.isDirectory()) {
-    File levelNameFile = input.getChildFile("levelname.txt");
-    if (levelNameFile.existsAsFile()) {
-      StringArray lines;
-      levelNameFile.readLines(lines);
-      if (!lines.isEmpty() && !lines[0].isEmpty()) {
-        String line = lines[0];
-        if (CharPointer_UTF8::isValidString(line.getCharPointer(), line.length())) {
-          name = line;
-        }
-      }
-    }
-  } else {
-    if (input.getFileExtension().isNotEmpty()) {
-      name = input.getFileNameWithoutExtension();
+static juce::String GetWorldName(File input, std::vector<GameDirectory> const &buffer) {
+  for (auto const &gd : buffer) {
+    if (gd.fDirectory == input) {
+      return gd.fLevelName;
     }
   }
-  return name;
+
+  auto parent = input.getParentDirectory();
+  auto saveInfo = parent.getChildFile("_MinecraftSaveInfo");
+  if (!saveInfo.existsAsFile()) {
+    return input.getFileNameWithoutExtension();
+  }
+  std::vector<je2be::box360::MinecraftSaveInfo::SaveBin> bins;
+  je2be::box360::MinecraftSaveInfo::Parse(PathFromFile(saveInfo), bins);
+  for (auto const &bin : bins) {
+    if (input.getFileName() == juce::String(bin.fFileName)) {
+      std::u16string const &title = bin.fTitle;
+      juce::String name(CharPointer_UTF16((CharPointer_UTF16::CharType const *)title.c_str()), title.size());
+      return name;
+    }
+  }
+
+  return input.getFileNameWithoutExtension();
 }
 
 ChooseXbox360Input::ChooseXbox360Input(juce::CommandID destinationAfterChoose, std::optional<ChooseInputState> state) : fDestinationAfterChoose(destinationAfterChoose) {
@@ -72,7 +78,7 @@ ChooseXbox360Input::ChooseXbox360Input(juce::CommandID destinationAfterChoose, s
     addAndMakeVisible(*fChooseCustomButton);
   }
 
-  Rectangle<int> listBoxBounds(width - kMargin - kWorldListWidth, kMargin, kWorldListWidth, height - 3 * kMargin - kButtonBaseHeight);
+  juce::Rectangle<int> listBoxBounds(width - kMargin - kWorldListWidth, kMargin, kWorldListWidth, height - 3 * kMargin - kButtonBaseHeight);
   {
     fListComponent.reset(new ListBox("", this));
     fListComponent->setBounds(listBoxBounds);
@@ -101,7 +107,7 @@ ChooseXbox360Input::~ChooseXbox360Input() {
 void ChooseXbox360Input::paint(juce::Graphics &g) {}
 
 void ChooseXbox360Input::onNextButtonClicked() {
-  JUCEApplication::getInstance()->invoke(gui::toB2JConfig, true);
+  JUCEApplication::getInstance()->invoke(fDestinationAfterChoose, true);
 }
 
 void ChooseXbox360Input::onChooseCustomButtonClicked() {
@@ -115,17 +121,17 @@ void ChooseXbox360Input::onCustomDirectorySelected(juce::FileChooser const &choo
   if (result == File()) {
     return;
   }
-  String worldName = GetWorldName(result);
+  juce::String worldName = GetWorldName(result, fGameDirectories);
   fState = ChooseInputState(InputType::Bedrock, result, worldName);
   sLastDirectory = result.getParentDirectory();
-  JUCEApplication::getInstance()->invoke(gui::toB2JConfig, true);
+  JUCEApplication::getInstance()->invoke(fDestinationAfterChoose, true);
 }
 
 void ChooseXbox360Input::selectedRowsChanged(int lastRowSelected) {
   int num = fListComponent->getNumSelectedRows();
   if (num == 1 && 0 <= lastRowSelected && lastRowSelected < fGameDirectories.size()) {
     GameDirectory gd = fGameDirectories[lastRowSelected];
-    String worldName = GetWorldName(gd.fDirectory);
+    juce::String worldName = gd.fLevelName;
     fState = ChooseInputState(InputType::Bedrock, gd.fDirectory, worldName);
   } else {
     fState = std::nullopt;
@@ -140,9 +146,9 @@ void ChooseXbox360Input::listBoxItemDoubleClicked(int row, const MouseEvent &) {
     return;
   }
   GameDirectory gd = fGameDirectories[row];
-  String worldName = GetWorldName(gd.fDirectory);
+  juce::String worldName = gd.fLevelName;
   fState = ChooseInputState(InputType::Bedrock, gd.fDirectory, worldName);
-  JUCEApplication::getInstance()->invoke(gui::toB2JConfig, false);
+  JUCEApplication::getInstance()->invoke(fDestinationAfterChoose, false);
 }
 
 void ChooseXbox360Input::onBackButtonClicked() {
