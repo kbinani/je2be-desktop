@@ -7,20 +7,15 @@ namespace je2be::gui::component {
 class TextButton;
 
 class ChooseBedrockOutput : public juce::Component,
-                            public J2BChooseOutputStateProvider,
-                            public ChooseInputStateProvider {
+                            public BedrockOutputChoosenStateProvider {
 public:
-  explicit ChooseBedrockOutput(J2BConvertState const &convertState);
+  explicit ChooseBedrockOutput(BedrockConvertedState const &convertState);
   ~ChooseBedrockOutput() override;
 
   void paint(juce::Graphics &) override;
 
-  J2BChooseOutputState getChooseOutputState() const override {
+  BedrockOutputChoosenState getBedrockOutputChoosenState() const override {
     return fState;
-  }
-
-  std::optional<ChooseInputState> getChooseInputState() const override {
-    return fState.fConvertState.fConfigState.fInputState;
   }
 
   void onBackButtonClicked();
@@ -36,7 +31,7 @@ private:
   static juce::File sLastCustomDirectory;
   static juce::File sLastZipFile;
 
-  J2BChooseOutputState fState;
+  BedrockOutputChoosenState fState;
   std::unique_ptr<juce::Label> fMessage;
   std::unique_ptr<TextButton> fBackButton;
   std::unique_ptr<TextButton> fSaveToDefaultDirectory;

@@ -9,8 +9,8 @@ using namespace juce;
 
 namespace je2be::gui::component {
 
-static File DecideDefaultOutputDirectory(J2BConvertState const &s, File root) {
-  String name = s.fConfigState.fInputState.fWorldName;
+static File DecideDefaultOutputDirectory(BedrockConvertedState const &s, File root) {
+  String name = s.fWorldName;
   File candidate = root.getChildFile(name);
   int count = 0;
   while (candidate.exists()) {
@@ -23,7 +23,7 @@ static File DecideDefaultOutputDirectory(J2BConvertState const &s, File root) {
 File ChooseBedrockOutput::sLastCustomDirectory;
 File ChooseBedrockOutput::sLastZipFile;
 
-ChooseBedrockOutput::ChooseBedrockOutput(J2BConvertState const &convertState) : fState(convertState) {
+ChooseBedrockOutput::ChooseBedrockOutput(BedrockConvertedState const &convertState) : fState(convertState) {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
   setSize(width, height);
@@ -74,7 +74,7 @@ ChooseBedrockOutput::~ChooseBedrockOutput() {}
 
 void ChooseBedrockOutput::onSaveToDefaultButtonClicked() {
   fState.fCopyDestination = fDefaultSaveDirectory;
-  fState.fFormat = J2BOutputFormat::Directory;
+  fState.fFormat = BedrockOutputFormat::Directory;
   JUCEApplication::getInstance()->invoke(gui::toCopyBedrockArtifact, true);
 }
 
@@ -83,7 +83,7 @@ void ChooseBedrockOutput::onSaveToCustomButtonClicked() {
     sLastCustomDirectory = GameDirectory::BedrockSaveDirectory();
   }
   File directory = sLastCustomDirectory;
-  if (auto candidate = DecideDefaultOutputDirectory(fState.fConvertState, directory); candidate != File()) {
+  if (auto candidate = DecideDefaultOutputDirectory(fState.fConvertedState, directory); candidate != File()) {
     directory = candidate;
   }
 
@@ -114,14 +114,14 @@ void ChooseBedrockOutput::onCustomDestinationDirectorySelected(FileChooser const
                                                 "empty folder"));
   } else {
     fState.fCopyDestination = dest;
-    fState.fFormat = J2BOutputFormat::Directory;
+    fState.fFormat = BedrockOutputFormat::Directory;
     JUCEApplication::getInstance()->invoke(gui::toCopyBedrockArtifact, true);
   }
 }
 
 void ChooseBedrockOutput::onSaveAsZipButtonClicked() {
   File init = sLastZipFile;
-  String fileName = fState.fConvertState.fConfigState.fInputState.fWorldName;
+  String fileName = fState.fConvertedState.fWorldName;
   if (init == File()) {
     init = File(fileName + ".mcworld");
   } else {
@@ -142,7 +142,7 @@ void ChooseBedrockOutput::onZipDestinationFileSelected(FileChooser const &choose
   }
   sLastZipFile = dest;
   fState.fCopyDestination = dest;
-  fState.fFormat = J2BOutputFormat::MCWorld;
+  fState.fFormat = BedrockOutputFormat::MCWorld;
   JUCEApplication::getInstance()->invoke(gui::toCopyBedrockArtifact, true);
 }
 

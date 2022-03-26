@@ -14,7 +14,7 @@ class TextButton;
 namespace je2be::gui::component::j2b {
 
 class J2BConvertProgress : public juce::Component,
-                           public J2BConvertStateProvider,
+                           public BedrockConvertedStateProvider,
                            public J2BConfigStateProvider,
                            public ChooseInputStateProvider {
 public:
@@ -24,15 +24,15 @@ public:
   void paint(juce::Graphics &) override;
 
   J2BConfigState getConfigState() const override {
-    return fState.fConfigState;
+    return fConfigState;
   }
 
-  J2BConvertState getConvertState() const override {
+  std::optional<BedrockConvertedState> getConvertedState() const override {
     return fState;
   }
 
   std::optional<ChooseInputState> getChooseInputState() const override {
-    return fState.fConfigState.fInputState;
+    return fConfigState.fInputState;
   }
 
   void onCancelButtonClicked();
@@ -43,7 +43,9 @@ public:
 
 private:
   std::unique_ptr<TextButton> fCancelButton;
-  J2BConvertState fState;
+  J2BConfigState fConfigState;
+  std::optional<BedrockConvertedState> fState;
+  juce::File fOutputDirectory;
   std::unique_ptr<juce::Thread> fThread;
   std::shared_ptr<Updater> fUpdater;
   std::unique_ptr<juce::ProgressBar> fConversionProgressBar;

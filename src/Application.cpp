@@ -122,20 +122,24 @@ public:
       return true;
     }
     case gui::toChooseBedrockOutput: {
-      auto provider = dynamic_cast<J2BConvertStateProvider *>(current);
+      auto provider = dynamic_cast<BedrockConvertedStateProvider *>(current);
       if (!provider) {
         return false;
       }
-      auto chooseOutput = new component::ChooseBedrockOutput(provider->getConvertState());
+      auto state = provider->getConvertedState();
+      if (!state) {
+        return false;
+      }
+      auto chooseOutput = new component::ChooseBedrockOutput(*state);
       fMainWindow->setContentOwned(chooseOutput, true);
       return true;
     }
     case gui::toCopyBedrockArtifact: {
-      auto provider = dynamic_cast<J2BChooseOutputStateProvider *>(current);
+      auto provider = dynamic_cast<BedrockOutputChoosenStateProvider *>(current);
       if (!provider) {
         return false;
       }
-      auto copy = new component::CopyBedrockArtifactProgress(provider->getChooseOutputState());
+      auto copy = new component::CopyBedrockArtifactProgress(provider->getBedrockOutputChoosenState());
       fMainWindow->setContentOwned(copy, true);
       return true;
     }

@@ -127,7 +127,7 @@ private:
   double *const fProgress;
 };
 
-CopyBedrockArtifactProgress::CopyBedrockArtifactProgress(J2BChooseOutputState const &state) : fState(state) {
+CopyBedrockArtifactProgress::CopyBedrockArtifactProgress(BedrockOutputChoosenState const &state) : fState(state) {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
   setSize(width, height);
@@ -143,10 +143,10 @@ CopyBedrockArtifactProgress::CopyBedrockArtifactProgress(J2BChooseOutputState co
 
   fTaskbarProgress.reset(new TaskbarProgress());
 
-  if (state.fFormat == J2BOutputFormat::Directory) {
-    fCopyThread.reset(new J2BCopyThread(this, state.fConvertState.fOutputDirectory, *state.fCopyDestination, &fProgress));
+  if (state.fFormat == BedrockOutputFormat::Directory) {
+    fCopyThread.reset(new J2BCopyThread(this, state.fConvertedState.fOutputDirectory, *state.fCopyDestination, &fProgress));
   } else {
-    fCopyThread.reset(new ZipThread(this, state.fConvertState.fOutputDirectory, *state.fCopyDestination, &fProgress));
+    fCopyThread.reset(new ZipThread(this, state.fConvertedState.fOutputDirectory, *state.fCopyDestination, &fProgress));
   }
   fCopyThread->startThread();
   fTaskbarProgress->setState(TaskbarProgress::State::Normal);
@@ -185,8 +185,8 @@ void CopyBedrockArtifactProgress::handleAsyncUpdate() {
   } else {
     fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
     NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::InfoIcon, TRANS("Completed"), TRANS("Saving completed.") + "\n" + fState.fCopyDestination->getFullPathName(), nullptr, new InvokeToModeSelect);
-    if (fState.fConvertState.fOutputDirectory.exists()) {
-      TemporaryDirectory::QueueDeletingDirectory(fState.fConvertState.fOutputDirectory);
+    if (fState.fConvertedState.fOutputDirectory.exists()) {
+      TemporaryDirectory::QueueDeletingDirectory(fState.fConvertedState.fOutputDirectory);
     }
   }
 }

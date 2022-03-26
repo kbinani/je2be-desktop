@@ -123,7 +123,7 @@ static juce::String DimensionToString(mcfile::Dimension dim) {
   return "Unknown";
 }
 
-J2BConvertProgress::J2BConvertProgress(J2BConfigState const &configState) : fState(configState) {
+J2BConvertProgress::J2BConvertProgress(J2BConfigState const &configState) : fConfigState(configState) {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
   setSize(width, height);
@@ -164,17 +164,17 @@ J2BConvertProgress::J2BConvertProgress(J2BConfigState const &configState) : fSta
   juce::Uuid u;
   File outputDir = temp.getChildFile(u.toDashedString());
   outputDir.createDirectory();
-  fState.fOutputDirectory = outputDir;
+  fOutputDirectory = outputDir;
 
   fUpdater = std::make_shared<Updater>();
   fUpdater->fTarget.store(this);
 
   je2be::tobe::Options opt;
   opt.fTempDirectory = PathFromFile(temp);
-  if (fState.fConfigState.fStructure == J2BConfigState::DirectoryStructure::Paper) {
+  if (fConfigState.fStructure == J2BConfigState::DirectoryStructure::Paper) {
     opt.fLevelDirectoryStructure = je2be::LevelDirectoryStructure::Paper;
   }
-  fThread.reset(new J2BWorkerThread(configState.fInputState.fInput, fState.fOutputDirectory, opt, fUpdater));
+  fThread.reset(new J2BWorkerThread(configState.fInputState.fInput, outputDir, opt, fUpdater));
   fThread->startThread();
 }
 
@@ -202,13 +202,13 @@ void J2BConvertProgress::onProgressUpdate(int phase, double done, double total) 
   double weightCompaction = 1 - weightConversion;
 
   if (phase == 2) {
-    if (fCommandWhenFinished != gui::toChooseBedrockOutput && fState.fOutputDirectory.exists()) {
-      TemporaryDirectory::QueueDeletingDirectory(fState.fOutputDirectory);
+    if (fCommandWhenFinished != gui::toChooseBedrockOutput && fOutputDirectory.exists()) {
+      TemporaryDirectory::QueueDeletingDirectory(fOutputDirectory);
     }
     auto stat = fUpdater->fStat;
     if (stat) {
-      fState.fStat = Import(*stat);
       if (stat->fErrors.empty()) {
+        fState = BedrockConvertedState(fConfigState.fInputState.fWorldName, fOutputDirectory, Import(*stat));
         JUCEApplication::getInstance()->invoke(fCommandWhenFinished, true);
       } else {
         fFailed = true;

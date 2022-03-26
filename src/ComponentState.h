@@ -55,39 +55,39 @@ public:
   uint64_t fNumEntities = 0;
 };
 
-class J2BConvertState {
+class BedrockConvertedState {
 public:
-  explicit J2BConvertState(J2BConfigState const &configState) : fConfigState(configState) {}
-  J2BConfigState const fConfigState;
+  BedrockConvertedState(juce::String const &worldName, juce::File const &outputDirectory, J2BConvertStatistics const &stat) : fWorldName(worldName), fOutputDirectory(outputDirectory), fStat(stat) {}
+  juce::String fWorldName;
   juce::File fOutputDirectory;
   J2BConvertStatistics fStat;
 };
 
-class J2BConvertStateProvider {
+class BedrockConvertedStateProvider {
 public:
-  virtual ~J2BConvertStateProvider() {}
-  virtual J2BConvertState getConvertState() const = 0;
+  virtual ~BedrockConvertedStateProvider() {}
+  virtual std::optional<BedrockConvertedState> getConvertedState() const = 0;
 };
 
-enum class J2BOutputFormat {
+enum class BedrockOutputFormat {
   Directory,
   MCWorld,
 };
 
-class J2BChooseOutputState {
+class BedrockOutputChoosenState {
 public:
-  explicit J2BChooseOutputState(J2BConvertState const &convertState)
-      : fConvertState(convertState), fFormat(J2BOutputFormat::Directory) {}
+  explicit BedrockOutputChoosenState(BedrockConvertedState const &convertedState)
+      : fConvertedState(convertedState), fFormat(BedrockOutputFormat::Directory) {}
 
-  J2BConvertState const fConvertState;
-  J2BOutputFormat fFormat;
+  BedrockConvertedState const fConvertedState;
+  BedrockOutputFormat fFormat;
   std::optional<juce::File> fCopyDestination;
 };
 
-class J2BChooseOutputStateProvider {
+class BedrockOutputChoosenStateProvider {
 public:
-  virtual ~J2BChooseOutputStateProvider() {}
-  virtual J2BChooseOutputState getChooseOutputState() const = 0;
+  virtual ~BedrockOutputChoosenStateProvider() {}
+  virtual BedrockOutputChoosenState getBedrockOutputChoosenState() const = 0;
 };
 
 class B2JConfigState {
