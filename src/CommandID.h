@@ -16,6 +16,9 @@ enum {
   toB2JConfig,
   toB2JConvert,
 
+  toXbox360ToBedrockConfig,
+  toXbox360ToJavaConfig,
+
   toChooseBedrockOutput,
   toChooseJavaOutput,
 

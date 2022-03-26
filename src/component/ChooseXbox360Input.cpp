@@ -1,0 +1,179 @@
+#include "component/ChooseXbox360Input.h"
+#include "CommandID.h"
+#include "Constants.h"
+#include "GameDirectoryScanThreadXbox360.h"
+#include "component/MainWindow.h"
+#include "component/TextButton.h"
+
+using namespace juce;
+
+namespace je2be::gui::component {
+
+File ChooseXbox360Input::sLastDirectory;
+
+static String GetWorldName(File input) {
+  String name = input.getFileName();
+  if (input.isDirectory()) {
+    File levelNameFile = input.getChildFile("levelname.txt");
+    if (levelNameFile.existsAsFile()) {
+      StringArray lines;
+      levelNameFile.readLines(lines);
+      if (!lines.isEmpty() && !lines[0].isEmpty()) {
+        String line = lines[0];
+        if (CharPointer_UTF8::isValidString(line.getCharPointer(), line.length())) {
+          name = line;
+        }
+      }
+    }
+  } else {
+    if (input.getFileExtension().isNotEmpty()) {
+      name = input.getFileNameWithoutExtension();
+    }
+  }
+  return name;
+}
+
+ChooseXbox360Input::ChooseXbox360Input(juce::CommandID destinationAfterChoose, std::optional<ChooseInputState> state) : fDestinationAfterChoose(destinationAfterChoose) {
+  if (state) {
+    fState = *state;
+  }
+
+  auto width = kWindowWidth;
+  auto height = kWindowHeight;
+
+  fBedrockGameDirectory = GameDirectory::BedrockSaveDirectory();
+
+  setSize(width, height);
+  {
+    fMessage.reset(new Label("", TRANS("Select world to convert")));
+    fMessage->setBounds(kMargin, kMargin, width - kMargin - kWorldListWidth - kMargin - kMargin, height - kMargin - kButtonBaseHeight - kMargin - kMargin);
+    fMessage->setJustificationType(Justification::topLeft);
+    fMessage->setMinimumHorizontalScale(1);
+    addAndMakeVisible(*fMessage);
+  }
+  {
+    fBackButton.reset(new TextButton(TRANS("Back")));
+    fBackButton->setBounds(kMargin, height - kMargin - kButtonBaseHeight, kButtonMinWidth, kButtonBaseHeight);
+    fBackButton->onClick = [this]() { onBackButtonClicked(); };
+    addAndMakeVisible(*fBackButton);
+  }
+  {
+    fNextButton.reset(new TextButton(TRANS("Next")));
+    fNextButton->setBounds(width - kButtonMinWidth - kMargin, height - kButtonBaseHeight - kMargin, kButtonMinWidth, kButtonBaseHeight);
+    fNextButton->onClick = [this]() { onNextButtonClicked(); };
+    fNextButton->setEnabled(false);
+    addAndMakeVisible(*fNextButton);
+  }
+  {
+    auto w = 160;
+    fChooseCustomButton.reset(new TextButton(TRANS("Select *.bin file")));
+    fChooseCustomButton->setBounds(width - kMargin - fNextButton->getWidth() - kMargin - w, height - kButtonBaseHeight - kMargin, w, kButtonBaseHeight);
+    fChooseCustomButton->onClick = [this]() { onChooseCustomButtonClicked(); };
+    addAndMakeVisible(*fChooseCustomButton);
+  }
+
+  Rectangle<int> listBoxBounds(width - kMargin - kWorldListWidth, kMargin, kWorldListWidth, height - 3 * kMargin - kButtonBaseHeight);
+  {
+    fListComponent.reset(new ListBox("", this));
+    fListComponent->setBounds(listBoxBounds);
+    fListComponent->setEnabled(false);
+    fListComponent->setRowHeight(kWorldListRowHeight);
+    addChildComponent(*fListComponent);
+  }
+  {
+    fPlaceholder.reset(new Label({}, TRANS("Loading worlds in the save folder...")));
+    fPlaceholder->setBounds(listBoxBounds);
+    fPlaceholder->setColour(Label::ColourIds::backgroundColourId, fListComponent->findColour(ListBox::ColourIds::backgroundColourId));
+    fPlaceholder->setJustificationType(Justification::centred);
+    addAndMakeVisible(*fPlaceholder);
+  }
+  {
+    fThread.reset(new GameDirectoryScanThreadXbox360(this));
+    fThread->startThread();
+  }
+}
+
+ChooseXbox360Input::~ChooseXbox360Input() {
+  fListComponent.reset();
+  fThread->stopThread(-1);
+}
+
+void ChooseXbox360Input::paint(juce::Graphics &g) {}
+
+void ChooseXbox360Input::onNextButtonClicked() {
+  JUCEApplication::getInstance()->invoke(gui::toB2JConfig, true);
+}
+
+void ChooseXbox360Input::onChooseCustomButtonClicked() {
+  int flags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles;
+  MainWindow::sFileChooser.reset(new FileChooser(TRANS("Select mcworld file to convert"), sLastDirectory, {}, true));
+  MainWindow::sFileChooser->launchAsync(flags, [this](FileChooser const &chooser) { onCustomDirectorySelected(chooser); });
+}
+
+void ChooseXbox360Input::onCustomDirectorySelected(juce::FileChooser const &chooser) {
+  File result = chooser.getResult();
+  if (result == File()) {
+    return;
+  }
+  String worldName = GetWorldName(result);
+  fState = ChooseInputState(InputType::Bedrock, result, worldName);
+  sLastDirectory = result.getParentDirectory();
+  JUCEApplication::getInstance()->invoke(gui::toB2JConfig, true);
+}
+
+void ChooseXbox360Input::selectedRowsChanged(int lastRowSelected) {
+  int num = fListComponent->getNumSelectedRows();
+  if (num == 1 && 0 <= lastRowSelected && lastRowSelected < fGameDirectories.size()) {
+    GameDirectory gd = fGameDirectories[lastRowSelected];
+    String worldName = GetWorldName(gd.fDirectory);
+    fState = ChooseInputState(InputType::Bedrock, gd.fDirectory, worldName);
+  } else {
+    fState = std::nullopt;
+  }
+  if (fState != std::nullopt) {
+    fNextButton->setEnabled(true);
+  }
+}
+
+void ChooseXbox360Input::listBoxItemDoubleClicked(int row, const MouseEvent &) {
+  if (row < 0 || fGameDirectories.size() <= row) {
+    return;
+  }
+  GameDirectory gd = fGameDirectories[row];
+  String worldName = GetWorldName(gd.fDirectory);
+  fState = ChooseInputState(InputType::Bedrock, gd.fDirectory, worldName);
+  JUCEApplication::getInstance()->invoke(gui::toB2JConfig, false);
+}
+
+void ChooseXbox360Input::onBackButtonClicked() {
+  JUCEApplication::getInstance()->invoke(gui::toModeSelect, true);
+}
+
+int ChooseXbox360Input::getNumRows() {
+  return fGameDirectories.size();
+}
+
+void ChooseXbox360Input::paintListBoxItem(int rowNumber,
+                                          juce::Graphics &g,
+                                          int width, int height,
+                                          bool rowIsSelected) {
+  if (rowNumber < 0 || fGameDirectories.size() <= rowNumber) {
+    return;
+  }
+  GameDirectory gd = fGameDirectories[rowNumber];
+  gd.paint(g, width, height, rowIsSelected, *this);
+}
+
+void ChooseXbox360Input::handleAsyncUpdate() {
+  fGameDirectories.swap(fThread->fGameDirectories);
+  if (fGameDirectories.empty()) {
+    fPlaceholder->setText(TRANS("Nothing found in the save folder"), dontSendNotification);
+  } else {
+    fListComponent->updateContent();
+    fListComponent->setEnabled(true);
+    fListComponent->setVisible(true);
+    fPlaceholder->setVisible(false);
+  }
+}
+
+} // namespace je2be::gui::component

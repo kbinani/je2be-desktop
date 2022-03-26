@@ -39,6 +39,8 @@ set(je2be_desktop_files
   src/GameDirectoryScanThreadBedrock.h
   src/GameDirectoryScanThreadJava.cpp
   src/GameDirectoryScanThreadJava.h
+  src/GameDirectoryScanThreadXbox360.cpp
+  src/GameDirectoryScanThreadXbox360.h
   src/LocalizationHelper.cpp
   src/LocalizationHelper.h
   src/LookAndFeel.h
@@ -56,6 +58,8 @@ set(je2be_desktop_files
   src/component/ChooseJavaInput.h
   src/component/ChooseJavaOutput.cpp
   src/component/ChooseJavaOutput.h
+  src/component/ChooseXbox360Input.cpp
+  src/component/ChooseXbox360Input.h
   src/component/CopyBedrockArtifactProgress.cpp
   src/component/CopyBedrockArtifactProgress.h
   src/component/CopyJavaArtifactProgress.cpp

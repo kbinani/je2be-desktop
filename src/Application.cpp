@@ -7,6 +7,7 @@
 #include "component/ChooseBedrockOutput.h"
 #include "component/ChooseJavaInput.h"
 #include "component/ChooseJavaOutput.h"
+#include "component/ChooseXbox360Input.h"
 #include "component/CopyBedrockArtifactProgress.h"
 #include "component/CopyJavaArtifactProgress.h"
 #include "component/MainWindow.h"
@@ -56,7 +57,19 @@ public:
 
   void getAllCommands(Array<CommandID> &commands) override {
     JUCEApplication::getAllCommands(commands);
-    commands.addArray({gui::toJ2BConfig, gui::toChooseJavaInput, gui::toJ2BConvert, gui::toChooseBedrockOutput, gui::toCopyBedrockArtifact, gui::toModeSelect, gui::toChooseBedrockInput, gui::toB2JConfig, gui::toB2JConvert, gui::toChooseJavaOutput, gui::toCopyJavaArtifact});
+    commands.addArray({gui::toJ2BConfig,
+                       gui::toChooseJavaInput,
+                       gui::toJ2BConvert,
+                       gui::toChooseBedrockOutput,
+                       gui::toCopyBedrockArtifact,
+                       gui::toModeSelect,
+                       gui::toChooseBedrockInput,
+                       gui::toB2JConfig,
+                       gui::toB2JConvert,
+                       gui::toChooseJavaOutput,
+                       gui::toCopyJavaArtifact,
+                       gui::toChooseXbox360InputToBedrock,
+                       gui::toChooseXbox360InputToJava});
   }
 
   void getCommandInfo(CommandID commandID, ApplicationCommandInfo &result) override {
@@ -90,7 +103,7 @@ public:
       }
       auto chooseInput = new component::ChooseJavaInput(state);
       fMainWindow->setContentOwned(chooseInput, true);
-      fMainWindow->setName(getApplicationName() + " : " + TRANS("Convert Java map"));
+      fMainWindow->setName(getApplicationName() + " : " + TRANS("Java to Bedrock"));
       return true;
     }
     case gui::toJ2BConvert: {
@@ -134,7 +147,7 @@ public:
       }
       auto chooseInput = new component::ChooseBedrockInput(state);
       fMainWindow->setContentOwned(chooseInput, true);
-      fMainWindow->setName(getApplicationName() + " : " + TRANS("Convert Bedrock map"));
+      fMainWindow->setName(getApplicationName() + " : " + TRANS("Bedrock to Java"));
       return true;
     }
     case gui::toB2JConfig: {
@@ -178,6 +191,27 @@ public:
       }
       auto copy = new component::CopyJavaArtifactProgress(provider->getChooseOutputState());
       fMainWindow->setContentOwned(copy, true);
+      return true;
+    }
+    case gui::toChooseXbox360InputToBedrock:
+    case gui::toChooseXbox360InputToJava: {
+      std::optional<ChooseInputState> state;
+      auto provider = dynamic_cast<ChooseInputStateProvider *>(current);
+      if (provider) {
+        state = provider->getChooseInputState();
+      }
+      CommandID destination;
+      String title;
+      if (info.commandID == gui::toChooseXbox360InputToBedrock) {
+        destination = gui::toXbox360ToBedrockConfig;
+        title = TRANS("Xbox360 to Bedrock");
+      } else {
+        destination = gui::toXbox360ToJavaConfig;
+        title = TRANS("Xbox360 to Java");
+      }
+      auto chooseInput = new component::ChooseXbox360Input(destination, state);
+      fMainWindow->setContentOwned(chooseInput, true);
+      fMainWindow->setName(getApplicationName() + " : " + title);
       return true;
     }
     default:
