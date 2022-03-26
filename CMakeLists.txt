@@ -23,8 +23,8 @@ add_subdirectory(ext/je2be)
 add_subdirectory(ext/JUCE)
 
 juce_add_gui_app(je2be-desktop
-  ICON_BIG "Resource/icon-large.png"
-  ICON_SMALL "Resource/icon-small.png"
+  ICON_BIG "resource/icon-large.png"
+  ICON_SMALL "resource/icon-small.png"
   PRODUCT_NAME "je2be")
 
 set(je2be_desktop_files
@@ -122,4 +122,4 @@ include_external_msproject(Package Package/Package.wapproj
 
 configure_file(Builds/Package/Package.appxmanifest.in Package/Package.appxmanifest)
 
-setup_source_groups("${je2be_desktop_files}" "${CMAKE_CURRENT_SOURCE_DIR}")
+source_group(TREE ${CMAKE_CURRENT_LIST_DIR} FILES ${je2be_desktop_files})
