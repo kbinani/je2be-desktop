@@ -122,7 +122,7 @@ void ChooseXbox360Input::onCustomDirectorySelected(juce::FileChooser const &choo
     return;
   }
   juce::String worldName = GetWorldName(result, fGameDirectories);
-  fState = ChooseInputState(InputType::Bedrock, result, worldName);
+  fState = ChooseInputState(InputType::Xbox360, result, worldName);
   sLastDirectory = result.getParentDirectory();
   JUCEApplication::getInstance()->invoke(fDestinationAfterChoose, true);
 }
@@ -132,7 +132,7 @@ void ChooseXbox360Input::selectedRowsChanged(int lastRowSelected) {
   if (num == 1 && 0 <= lastRowSelected && lastRowSelected < fGameDirectories.size()) {
     GameDirectory gd = fGameDirectories[lastRowSelected];
     juce::String worldName = gd.fLevelName;
-    fState = ChooseInputState(InputType::Bedrock, gd.fDirectory, worldName);
+    fState = ChooseInputState(InputType::Xbox360, gd.fDirectory, worldName);
   } else {
     fState = std::nullopt;
   }
@@ -147,7 +147,7 @@ void ChooseXbox360Input::listBoxItemDoubleClicked(int row, const MouseEvent &) {
   }
   GameDirectory gd = fGameDirectories[row];
   juce::String worldName = gd.fLevelName;
-  fState = ChooseInputState(InputType::Bedrock, gd.fDirectory, worldName);
+  fState = ChooseInputState(InputType::Xbox360, gd.fDirectory, worldName);
   JUCEApplication::getInstance()->invoke(fDestinationAfterChoose, false);
 }
 
