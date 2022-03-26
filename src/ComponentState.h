@@ -45,9 +45,9 @@ public:
   virtual J2BConfigState getConfigState() const = 0;
 };
 
-class J2BConvertStatistics {
+class JavaConvertStatistics {
 public:
-  J2BConvertStatistics() = default;
+  JavaConvertStatistics() = default;
 
   std::unordered_map<uint32_t, uint64_t> fChunkDataVersions;
   uint64_t fNumChunks = 0;
@@ -57,10 +57,10 @@ public:
 
 class BedrockConvertedState {
 public:
-  BedrockConvertedState(juce::String const &worldName, juce::File const &outputDirectory, J2BConvertStatistics const &stat) : fWorldName(worldName), fOutputDirectory(outputDirectory), fStat(stat) {}
+  BedrockConvertedState(juce::String const &worldName, juce::File const &outputDirectory, JavaConvertStatistics const &stat) : fWorldName(worldName), fOutputDirectory(outputDirectory), fStat(stat) {}
   juce::String fWorldName;
   juce::File fOutputDirectory;
-  J2BConvertStatistics fStat;
+  JavaConvertStatistics fStat;
 };
 
 class BedrockConvertedStateProvider {

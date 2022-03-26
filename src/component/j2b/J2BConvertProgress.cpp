@@ -100,8 +100,8 @@ private:
   std::shared_ptr<J2BConvertProgress::Updater> fUpdater;
 };
 
-static J2BConvertStatistics Import(je2be::tobe::Statistics stat) {
-  J2BConvertStatistics ret;
+static JavaConvertStatistics Import(je2be::tobe::Statistics stat) {
+  JavaConvertStatistics ret;
   for (auto const &it : stat.fChunkDataVersions) {
     ret.fChunkDataVersions[it.first] = it.second;
   }
