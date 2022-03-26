@@ -8,7 +8,7 @@
 
 using namespace juce;
 
-namespace je2be::gui::component::b2j {
+namespace je2be::desktop::component::b2j {
 
 B2JConfig::B2JConfig(ChooseInputState const &chooseInputState) : fState(chooseInputState) {
   auto width = kWindowWidth;
@@ -98,11 +98,11 @@ void B2JConfig::onStartButtonClicked() {
       fState.fLocalPlayer = a.fUuid;
     }
   }
-  JUCEApplication::getInstance()->invoke(gui::toB2JConvert, true);
+  JUCEApplication::getInstance()->invoke(commands::toB2JConvert, true);
 }
 
 void B2JConfig::onBackButtonClicked() {
-  JUCEApplication::getInstance()->invoke(gui::toChooseBedrockInput, true);
+  JUCEApplication::getInstance()->invoke(commands::toChooseBedrockInput, true);
 }
 
 void B2JConfig::onClickImportAccountFromLauncherButton() {
@@ -144,4 +144,4 @@ void B2JConfig::handleAsyncUpdate() {
   fBackButton->setEnabled(true);
 }
 
-} // namespace je2be::gui::component::b2j
+} // namespace je2be::desktop::component::b2j

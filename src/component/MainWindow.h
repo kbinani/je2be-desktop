@@ -2,7 +2,7 @@
 
 #include "component/ModeSelect.h"
 
-namespace je2be::gui::component {
+namespace je2be::desktop::component {
 
 class MainWindow : public juce::DocumentWindow {
 public:
@@ -32,4 +32,4 @@ private:
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainWindow)
 };
 
-} // namespace je2be::gui::component
+} // namespace je2be::desktop::component

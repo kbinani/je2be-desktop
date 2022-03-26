@@ -22,7 +22,7 @@
 
 using namespace juce;
 
-namespace je2be::gui {
+namespace je2be::desktop {
 
 class Application : public juce::JUCEApplication {
 public:
@@ -41,7 +41,7 @@ public:
   }
 
   void initialise(const juce::String &commandLine) override {
-    fLaf.reset(new je2be::gui::LookAndFeel);
+    fLaf.reset(new je2be::desktop::LookAndFeel);
     LookAndFeel::setDefaultLookAndFeel(fLaf.get());
 
     LocalisedStrings::setCurrentMappings(LocalizationHelper::CurrentLocalisedStrings());
@@ -61,23 +61,23 @@ public:
 
   void getAllCommands(Array<CommandID> &commands) override {
     JUCEApplication::getAllCommands(commands);
-    commands.addArray({gui::toJ2BConfig,
-                       gui::toChooseJavaInput,
-                       gui::toJ2BConvert,
-                       gui::toChooseBedrockOutput,
-                       gui::toCopyBedrockArtifact,
-                       gui::toModeSelect,
-                       gui::toChooseBedrockInput,
-                       gui::toB2JConfig,
-                       gui::toB2JConvert,
-                       gui::toChooseJavaOutput,
-                       gui::toCopyJavaArtifact,
-                       gui::toChooseXbox360InputToBedrock,
-                       gui::toChooseXbox360InputToJava,
-                       gui::toXbox360ToJavaConfig,
-                       gui::toXbox360ToJavaConvert,
-                       gui::toXbox360ToBedrockConfig,
-                       gui::toXbox360ToBedrockConvert});
+    commands.addArray({commands::toJ2BConfig,
+                       commands::toChooseJavaInput,
+                       commands::toJ2BConvert,
+                       commands::toChooseBedrockOutput,
+                       commands::toCopyBedrockArtifact,
+                       commands::toModeSelect,
+                       commands::toChooseBedrockInput,
+                       commands::toB2JConfig,
+                       commands::toB2JConvert,
+                       commands::toChooseJavaOutput,
+                       commands::toCopyJavaArtifact,
+                       commands::toChooseXbox360InputToBedrock,
+                       commands::toChooseXbox360InputToJava,
+                       commands::toXbox360ToJavaConfig,
+                       commands::toXbox360ToJavaConvert,
+                       commands::toXbox360ToBedrockConfig,
+                       commands::toXbox360ToBedrockConvert});
   }
 
   void getCommandInfo(CommandID commandID, ApplicationCommandInfo &result) override {
@@ -87,7 +87,7 @@ public:
   bool perform(InvocationInfo const &info) override {
     Component *current = fMainWindow->getContentComponent();
     switch (info.commandID) {
-    case gui::toJ2BConfig: {
+    case commands::toJ2BConfig: {
       auto provider = dynamic_cast<ChooseInputStateProvider *>(current);
       if (!provider) {
         return false;
@@ -103,7 +103,7 @@ public:
       fMainWindow->setContentOwned(config, true);
       return true;
     }
-    case gui::toChooseJavaInput: {
+    case commands::toChooseJavaInput: {
       std::optional<ChooseInputState> state;
       auto provider = dynamic_cast<ChooseInputStateProvider *>(current);
       if (provider) {
@@ -114,7 +114,7 @@ public:
       fMainWindow->setName(getApplicationName() + " : " + TRANS("Java to Bedrock"));
       return true;
     }
-    case gui::toJ2BConvert: {
+    case commands::toJ2BConvert: {
       auto provider = dynamic_cast<J2BConfigStateProvider *>(current);
       if (!provider) {
         return false;
@@ -123,7 +123,7 @@ public:
       fMainWindow->setContentOwned(convert, true);
       return true;
     }
-    case gui::toChooseBedrockOutput: {
+    case commands::toChooseBedrockOutput: {
       auto provider = dynamic_cast<BedrockConvertedStateProvider *>(current);
       if (!provider) {
         return false;
@@ -136,7 +136,7 @@ public:
       fMainWindow->setContentOwned(chooseOutput, true);
       return true;
     }
-    case gui::toCopyBedrockArtifact: {
+    case commands::toCopyBedrockArtifact: {
       auto provider = dynamic_cast<BedrockOutputChoosenStateProvider *>(current);
       if (!provider) {
         return false;
@@ -145,13 +145,13 @@ public:
       fMainWindow->setContentOwned(copy, true);
       return true;
     }
-    case gui::toModeSelect: {
+    case commands::toModeSelect: {
       auto modeSelect = new component::ModeSelect;
       fMainWindow->setContentOwned(modeSelect, true);
       fMainWindow->setName(Application::getApplicationName());
       return true;
     }
-    case gui::toChooseBedrockInput: {
+    case commands::toChooseBedrockInput: {
       std::optional<ChooseInputState> state;
       auto provider = dynamic_cast<ChooseInputStateProvider *>(current);
       if (provider) {
@@ -162,7 +162,7 @@ public:
       fMainWindow->setName(getApplicationName() + " : " + TRANS("Bedrock to Java"));
       return true;
     }
-    case gui::toB2JConfig: {
+    case commands::toB2JConfig: {
       auto provider = dynamic_cast<ChooseInputStateProvider *>(current);
       if (!provider) {
         return false;
@@ -178,7 +178,7 @@ public:
       fMainWindow->setContentOwned(config, true);
       return true;
     }
-    case gui::toB2JConvert: {
+    case commands::toB2JConvert: {
       auto provider = dynamic_cast<B2JConfigStateProvider *>(current);
       if (!provider) {
         return false;
@@ -187,7 +187,7 @@ public:
       fMainWindow->setContentOwned(convert, true);
       return true;
     }
-    case gui::toChooseJavaOutput: {
+    case commands::toChooseJavaOutput: {
       auto provider = dynamic_cast<JavaConvertedStateProvider *>(current);
       if (!provider) {
         return false;
@@ -200,7 +200,7 @@ public:
       fMainWindow->setContentOwned(chooseOutput, true);
       return true;
     }
-    case gui::toCopyJavaArtifact: {
+    case commands::toCopyJavaArtifact: {
       auto provider = dynamic_cast<JavaOutputChoosenStateProvider *>(current);
       if (!provider) {
         return false;
@@ -209,8 +209,8 @@ public:
       fMainWindow->setContentOwned(copy, true);
       return true;
     }
-    case gui::toChooseXbox360InputToBedrock:
-    case gui::toChooseXbox360InputToJava: {
+    case commands::toChooseXbox360InputToBedrock:
+    case commands::toChooseXbox360InputToJava: {
       std::optional<ChooseInputState> state;
       auto provider = dynamic_cast<ChooseInputStateProvider *>(current);
       if (provider) {
@@ -218,11 +218,11 @@ public:
       }
       CommandID destination;
       String title;
-      if (info.commandID == gui::toChooseXbox360InputToBedrock) {
-        destination = gui::toXbox360ToBedrockConfig;
+      if (info.commandID == commands::toChooseXbox360InputToBedrock) {
+        destination = commands::toXbox360ToBedrockConfig;
         title = TRANS("Xbox360 to Bedrock");
       } else {
-        destination = gui::toXbox360ToJavaConfig;
+        destination = commands::toXbox360ToJavaConfig;
         title = TRANS("Xbox360 to Java");
       }
       auto chooseInput = new component::ChooseXbox360Input(destination, state);
@@ -230,7 +230,7 @@ public:
       fMainWindow->setName(getApplicationName() + " : " + title);
       return true;
     }
-    case gui::toXbox360ToJavaConfig: {
+    case commands::toXbox360ToJavaConfig: {
       auto provider = dynamic_cast<ChooseInputStateProvider *>(current);
       if (!provider) {
         return false;
@@ -246,7 +246,7 @@ public:
       fMainWindow->setContentOwned(config, true);
       return true;
     }
-    case gui::toXbox360ToJavaConvert: {
+    case commands::toXbox360ToJavaConvert: {
       auto provider = dynamic_cast<X2JConfigStateProvider *>(current);
       if (!provider) {
         return false;
@@ -255,7 +255,7 @@ public:
       fMainWindow->setContentOwned(convert, true);
       return true;
     }
-    case gui::toXbox360ToBedrockConfig: {
+    case commands::toXbox360ToBedrockConfig: {
       auto provider = dynamic_cast<ChooseInputStateProvider *>(current);
       if (!provider) {
         return false;
@@ -271,7 +271,7 @@ public:
       fMainWindow->setContentOwned(config, true);
       return true;
     }
-    case gui::toXbox360ToBedrockConvert: {
+    case commands::toXbox360ToBedrockConvert: {
       auto provider = dynamic_cast<X2BConfigStateProvider *>(current);
       if (!provider) {
         return false;
@@ -288,9 +288,9 @@ public:
 private:
   std::unique_ptr<component::MainWindow> fMainWindow;
   SharedResourcePointer<TooltipWindow> fTooltipWindow;
-  std::unique_ptr<je2be::gui::LookAndFeel> fLaf;
+  std::unique_ptr<je2be::desktop::LookAndFeel> fLaf;
 };
 
-} // namespace je2be::gui
+} // namespace je2be::desktop
 
-START_JUCE_APPLICATION(je2be::gui::Application)
+START_JUCE_APPLICATION(je2be::desktop::Application)

@@ -2,7 +2,7 @@
 
 #include <juce_gui_extra/juce_gui_extra.h>
 
-namespace je2be::gui {
+namespace je2be::desktop {
 
 class TaskbarProgress {
 public:
@@ -27,4 +27,4 @@ private:
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TaskbarProgress)
 };
 
-} // namespace je2be::gui
+} // namespace je2be::desktop

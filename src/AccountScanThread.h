@@ -2,7 +2,7 @@
 
 #include <juce_gui_extra/juce_gui_extra.h>
 
-namespace je2be::gui {
+namespace je2be::desktop {
 
 struct Account {
   juce::String fName;
@@ -28,4 +28,4 @@ private:
   std::unique_ptr<Impl> fImpl;
 };
 
-} // namespace je2be::gui
+} // namespace je2be::desktop

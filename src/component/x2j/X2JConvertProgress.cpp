@@ -10,7 +10,7 @@
 
 using namespace juce;
 
-namespace je2be::gui::component::x2j {
+namespace je2be::desktop::component::x2j {
 
 class X2JConvertProgress::Updater : public AsyncUpdater {
   struct Entry {
@@ -63,7 +63,7 @@ class X2JWorkerThread : public Thread, public je2be::box360::Progress {
 public:
   X2JWorkerThread(File input, File output, je2be::box360::Options opt,
                   std::shared_ptr<X2JConvertProgress::Updater> updater)
-      : Thread("je2be::gui::X2JConvert"), fInput(input), fOutput(output), fOptions(opt), fUpdater(updater) {}
+      : Thread("je2be::desktop::component::x2j::X2JWorkerThread"), fInput(input), fOutput(output), fOptions(opt), fUpdater(updater) {}
 
   void run() override {
     try {
@@ -174,10 +174,10 @@ void X2JConvertProgress::paint(juce::Graphics &g) {}
 
 void X2JConvertProgress::onCancelButtonClicked() {
   if (fFailed) {
-    JUCEApplication::getInstance()->invoke(gui::toChooseXbox360InputToJava, true);
+    JUCEApplication::getInstance()->invoke(commands::toChooseXbox360InputToJava, true);
   } else {
     fCancelButton->setEnabled(false);
-    fCommandWhenFinished = gui::toXbox360ToJavaConfig;
+    fCommandWhenFinished = commands::toXbox360ToJavaConfig;
     fThread->signalThreadShouldExit();
     fConversionProgress = -1;
     fCancelRequested = true;
@@ -200,7 +200,7 @@ void X2JConvertProgress::onProgressUpdate(Phase phase, double done, double total
     fTaskbarProgress->update(weightUnzip + progress * weightConversion);
   } else if (phase == Phase::Done && !fCancelRequested) {
     fState = JavaConvertedState(fConfigState.fInputState.fWorldName, fOutputDirectory);
-    if (fCommandWhenFinished != gui::toChooseJavaOutput && fOutputDirectory.exists()) {
+    if (fCommandWhenFinished != commands::toChooseJavaOutput && fOutputDirectory.exists()) {
       TemporaryDirectory::QueueDeletingDirectory(fOutputDirectory);
     }
     bool ok = fUpdater->fOk;
@@ -226,4 +226,4 @@ void X2JConvertProgress::onProgressUpdate(Phase phase, double done, double total
   }
 }
 
-} // namespace je2be::gui::component::x2j
+} // namespace je2be::desktop::component::x2j

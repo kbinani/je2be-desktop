@@ -10,7 +10,7 @@
 
 using namespace juce;
 
-namespace je2be::gui::component::x2b {
+namespace je2be::desktop::component::x2b {
 
 class X2BConvertProgress::Updater : public AsyncUpdater {
   struct Entry {
@@ -61,10 +61,10 @@ private:
 class X2BWorkerThread : public Thread, public je2be::box360::Progress, public je2be::tobe::Progress {
 public:
   X2BWorkerThread(File input, File output, std::shared_ptr<X2BConvertProgress::Updater> updater, File tempRoot)
-      : Thread("je2be::gui::X2BConvert"), fInput(input), fOutput(output), fUpdater(updater), fTempRoot(tempRoot) {}
+      : Thread("je2be::desktop::component::x2b::X2BWorkerThread"), fInput(input), fOutput(output), fUpdater(updater), fTempRoot(tempRoot) {}
 
   void run() override {
-    using Phase = je2be::gui::component::x2b::X2BConvertProgress::Phase;
+    using Phase = je2be::desktop::component::x2b::X2BConvertProgress::Phase;
 
     try {
       unsafeRun();
@@ -74,7 +74,7 @@ public:
   }
 
   void unsafeRun() {
-    using Phase = je2be::gui::component::x2b::X2BConvertProgress::Phase;
+    using Phase = je2be::desktop::component::x2b::X2BConvertProgress::Phase;
 
     juce::Uuid u;
     File javaIntermediateDirectory = fTempRoot.getChildFile(u.toDashedString());
@@ -108,14 +108,14 @@ public:
   }
 
   bool report(double done, double total) override {
-    using Phase = je2be::gui::component::x2b::X2BConvertProgress::Phase;
+    using Phase = je2be::desktop::component::x2b::X2BConvertProgress::Phase;
 
     fUpdater->trigger(Phase::XboxToJavaConversion, done, total);
     return !threadShouldExit();
   }
 
   bool report(je2be::tobe::Progress::Phase phase, double done, double total) override {
-    using Phase = je2be::gui::component::x2b::X2BConvertProgress::Phase;
+    using Phase = je2be::desktop::component::x2b::X2BConvertProgress::Phase;
 
     switch (phase) {
     case je2be::tobe::Progress::Phase::Convert:
@@ -223,11 +223,11 @@ void X2BConvertProgress::paint(juce::Graphics &g) {}
 
 void X2BConvertProgress::onCancelButtonClicked() {
   if (fFailed) {
-    JUCEApplication::getInstance()->invoke(gui::toModeSelect, true);
+    JUCEApplication::getInstance()->invoke(commands::toModeSelect, true);
   } else {
     fCancelRequested = true;
     fCancelButton->setEnabled(false);
-    fCommandWhenFinished = gui::toXbox360ToBedrockConfig;
+    fCommandWhenFinished = commands::toXbox360ToBedrockConfig;
     fThread->signalThreadShouldExit();
     fXbox360ToJavaConversionProgress = -1;
     fXbox360ToJavaConversionProgressBar->setVisible(true);
@@ -241,7 +241,7 @@ void X2BConvertProgress::onCancelButtonClicked() {
 void X2BConvertProgress::onProgressUpdate(Phase phase, double done, double total) {
   double progress = done / total;
   if (phase == Phase::Done && !fCancelRequested) {
-    if (fCommandWhenFinished != gui::toChooseBedrockOutput && fOutputDirectory.exists()) {
+    if (fCommandWhenFinished != commands::toChooseBedrockOutput && fOutputDirectory.exists()) {
       TemporaryDirectory::QueueDeletingDirectory(fOutputDirectory);
     }
     auto stat = fUpdater->fStat;
@@ -319,4 +319,4 @@ void X2BConvertProgress::onProgressUpdate(Phase phase, double done, double total
   }
 }
 
-} // namespace je2be::gui::component::x2b
+} // namespace je2be::desktop::component::x2b

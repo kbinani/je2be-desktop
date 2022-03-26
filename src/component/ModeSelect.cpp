@@ -6,7 +6,7 @@
 
 using namespace juce;
 
-namespace je2be::gui::component {
+namespace je2be::desktop::component {
 
 ModeSelect::ModeSelect() {
   setSize(kWindowWidth, kWindowHeight);
@@ -76,19 +76,19 @@ void ModeSelect::onAboutButtonClicked() {
 }
 
 void ModeSelect::onBedrockToJavaButtonClicked() {
-  JUCEApplication::getInstance()->invoke(gui::toChooseBedrockInput, true);
+  JUCEApplication::getInstance()->invoke(commands::toChooseBedrockInput, true);
 }
 
 void ModeSelect::onJavaToBedrockButtonClicked() {
-  JUCEApplication::getInstance()->invoke(gui::toChooseJavaInput, true);
+  JUCEApplication::getInstance()->invoke(commands::toChooseJavaInput, true);
 }
 
 void ModeSelect::onXbox360ToJavaButtonClicked() {
-  JUCEApplication::getInstance()->invoke(gui::toChooseXbox360InputToJava, true);
+  JUCEApplication::getInstance()->invoke(commands::toChooseXbox360InputToJava, true);
 }
 
 void ModeSelect::onXbox360ToBedrockButtonClicked() {
-  JUCEApplication::getInstance()->invoke(gui::toChooseXbox360InputToBedrock, true);
+  JUCEApplication::getInstance()->invoke(commands::toChooseXbox360InputToBedrock, true);
 }
 
-} // namespace je2be::gui::component
+} // namespace je2be::desktop::component

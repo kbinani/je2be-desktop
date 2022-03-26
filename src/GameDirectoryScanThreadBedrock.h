@@ -2,7 +2,7 @@
 
 #include "GameDirectory.h"
 
-namespace je2be::gui {
+namespace je2be::desktop {
 
 class GameDirectoryScanThreadBedrock : public juce::Thread {
 public:
@@ -19,4 +19,4 @@ public:
   void unsafeRun();
 };
 
-} // namespace je2be::gui
+} // namespace je2be::desktop

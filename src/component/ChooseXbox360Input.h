@@ -3,13 +3,13 @@
 #include "ComponentState.h"
 #include "GameDirectory.h"
 
-namespace je2be::gui {
+namespace je2be::desktop {
 
 class GameDirectoryScanThreadXbox360;
 
 }
 
-namespace je2be::gui::component {
+namespace je2be::desktop::component {
 
 class TextButton;
 
@@ -62,4 +62,4 @@ private:
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChooseXbox360Input)
 };
 
-} // namespace je2be::gui::component
+} // namespace je2be::desktop::component

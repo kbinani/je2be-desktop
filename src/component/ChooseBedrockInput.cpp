@@ -7,7 +7,7 @@
 
 using namespace juce;
 
-namespace je2be::gui::component {
+namespace je2be::desktop::component {
 
 File ChooseBedrockInput::sLastDirectory;
 
@@ -101,7 +101,7 @@ ChooseBedrockInput::~ChooseBedrockInput() {
 void ChooseBedrockInput::paint(juce::Graphics &g) {}
 
 void ChooseBedrockInput::onNextButtonClicked() {
-  JUCEApplication::getInstance()->invoke(gui::toB2JConfig, true);
+  JUCEApplication::getInstance()->invoke(commands::toB2JConfig, true);
 }
 
 void ChooseBedrockInput::onChooseCustomButtonClicked() {
@@ -118,7 +118,7 @@ void ChooseBedrockInput::onCustomDirectorySelected(juce::FileChooser const &choo
   String worldName = GetWorldName(result);
   fState = ChooseInputState(InputType::Bedrock, result, worldName);
   sLastDirectory = result.getParentDirectory();
-  JUCEApplication::getInstance()->invoke(gui::toB2JConfig, true);
+  JUCEApplication::getInstance()->invoke(commands::toB2JConfig, true);
 }
 
 void ChooseBedrockInput::selectedRowsChanged(int lastRowSelected) {
@@ -142,11 +142,11 @@ void ChooseBedrockInput::listBoxItemDoubleClicked(int row, const MouseEvent &) {
   GameDirectory gd = fGameDirectories[row];
   String worldName = GetWorldName(gd.fDirectory);
   fState = ChooseInputState(InputType::Bedrock, gd.fDirectory, worldName);
-  JUCEApplication::getInstance()->invoke(gui::toB2JConfig, false);
+  JUCEApplication::getInstance()->invoke(commands::toB2JConfig, false);
 }
 
 void ChooseBedrockInput::onBackButtonClicked() {
-  JUCEApplication::getInstance()->invoke(gui::toModeSelect, true);
+  JUCEApplication::getInstance()->invoke(commands::toModeSelect, true);
 }
 
 int ChooseBedrockInput::getNumRows() {
@@ -176,4 +176,4 @@ void ChooseBedrockInput::handleAsyncUpdate() {
   }
 }
 
-} // namespace je2be::gui::component
+} // namespace je2be::desktop::component

@@ -10,7 +10,7 @@
 
 using namespace juce;
 
-namespace je2be::gui::component::j2b {
+namespace je2be::desktop::component::j2b {
 
 class J2BConvertProgress::Updater : public AsyncUpdater {
   struct Entry {
@@ -62,7 +62,7 @@ class J2BWorkerThread : public Thread, public je2be::tobe::Progress {
 public:
   J2BWorkerThread(File input, File output, je2be::tobe::Options opt,
                   std::shared_ptr<J2BConvertProgress::Updater> updater)
-      : Thread("je2be::gui::J2BConvert"), fInput(input), fOutput(output), fOptions(opt), fUpdater(updater) {}
+      : Thread("je2be::desktop::component::j2b::J2BWorkerThread"), fInput(input), fOutput(output), fOptions(opt), fUpdater(updater) {}
 
   void run() override {
     je2be::tobe::Converter c(PathFromFile(fInput), PathFromFile(fOutput), fOptions);
@@ -187,10 +187,10 @@ void J2BConvertProgress::paint(juce::Graphics &g) {}
 
 void J2BConvertProgress::onCancelButtonClicked() {
   if (fFailed) {
-    JUCEApplication::getInstance()->invoke(gui::toChooseJavaInput, true);
+    JUCEApplication::getInstance()->invoke(commands::toChooseJavaInput, true);
   } else {
     fCancelButton->setEnabled(false);
-    fCommandWhenFinished = gui::toJ2BConfig;
+    fCommandWhenFinished = commands::toJ2BConfig;
     fThread->signalThreadShouldExit();
     fConversionProgress = -1;
     fLabel->setText(TRANS("Waiting for the worker thread to finish"), dontSendNotification);
@@ -202,7 +202,7 @@ void J2BConvertProgress::onProgressUpdate(int phase, double done, double total) 
   double weightCompaction = 1 - weightConversion;
 
   if (phase == 2) {
-    if (fCommandWhenFinished != gui::toChooseBedrockOutput && fOutputDirectory.exists()) {
+    if (fCommandWhenFinished != commands::toChooseBedrockOutput && fOutputDirectory.exists()) {
       TemporaryDirectory::QueueDeletingDirectory(fOutputDirectory);
     }
     auto stat = fUpdater->fStat;
@@ -258,4 +258,4 @@ void J2BConvertProgress::onProgressUpdate(int phase, double done, double total) 
   }
 }
 
-} // namespace je2be::gui::component::j2b
+} // namespace je2be::desktop::component::j2b

@@ -7,7 +7,7 @@
 
 using namespace juce;
 
-namespace je2be::gui::component {
+namespace je2be::desktop::component {
 
 static File DecideDefaultOutputDirectory(JavaConvertedState const &s, File directory) {
   String name = s.fWorldName;
@@ -67,7 +67,7 @@ ChooseJavaOutput::~ChooseJavaOutput() {}
 
 void ChooseJavaOutput::onSaveToDefaultButtonClicked() {
   fState.fCopyDestination = fDefaultSaveDirectory;
-  JUCEApplication::getInstance()->invoke(gui::toCopyJavaArtifact, true);
+  JUCEApplication::getInstance()->invoke(commands::toCopyJavaArtifact, true);
 }
 
 void ChooseJavaOutput::onSaveToCustomButtonClicked() {
@@ -108,14 +108,14 @@ void ChooseJavaOutput::onCustomDestinationDirectorySelected(FileChooser const &c
                                                 "empty folder"));
   } else {
     fState.fCopyDestination = dest;
-    JUCEApplication::getInstance()->invoke(gui::toCopyJavaArtifact, true);
+    JUCEApplication::getInstance()->invoke(commands::toCopyJavaArtifact, true);
   }
 }
 
 void ChooseJavaOutput::paint(juce::Graphics &g) {}
 
 void ChooseJavaOutput::onBackButtonClicked() {
-  JUCEApplication::getInstance()->invoke(gui::toModeSelect, true);
+  JUCEApplication::getInstance()->invoke(commands::toModeSelect, true);
 }
 
-} // namespace je2be::gui::component
+} // namespace je2be::desktop::component

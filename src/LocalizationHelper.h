@@ -2,7 +2,7 @@
 
 #include <juce_gui_extra/juce_gui_extra.h>
 
-namespace je2be::gui {
+namespace je2be::desktop {
 
 class LocalizationHelper {
 public:
@@ -21,4 +21,4 @@ private:
   LocalizationHelper() = delete;
 };
 
-} // namespace je2be::gui
+} // namespace je2be::desktop

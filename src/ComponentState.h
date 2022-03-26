@@ -4,7 +4,7 @@
 #include <optional>
 #include <unordered_map>
 
-namespace je2be::gui {
+namespace je2be::desktop {
 
 enum class InputType {
   Java,
@@ -159,4 +159,4 @@ public:
   virtual X2BConfigState getConfigState() const = 0;
 };
 
-} // namespace je2be::gui
+} // namespace je2be::desktop

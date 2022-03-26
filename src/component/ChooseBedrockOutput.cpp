@@ -7,7 +7,7 @@
 
 using namespace juce;
 
-namespace je2be::gui::component {
+namespace je2be::desktop::component {
 
 static File DecideDefaultOutputDirectory(BedrockConvertedState const &s, File root) {
   String name = s.fWorldName;
@@ -75,7 +75,7 @@ ChooseBedrockOutput::~ChooseBedrockOutput() {}
 void ChooseBedrockOutput::onSaveToDefaultButtonClicked() {
   fState.fCopyDestination = fDefaultSaveDirectory;
   fState.fFormat = BedrockOutputFormat::Directory;
-  JUCEApplication::getInstance()->invoke(gui::toCopyBedrockArtifact, true);
+  JUCEApplication::getInstance()->invoke(commands::toCopyBedrockArtifact, true);
 }
 
 void ChooseBedrockOutput::onSaveToCustomButtonClicked() {
@@ -115,7 +115,7 @@ void ChooseBedrockOutput::onCustomDestinationDirectorySelected(FileChooser const
   } else {
     fState.fCopyDestination = dest;
     fState.fFormat = BedrockOutputFormat::Directory;
-    JUCEApplication::getInstance()->invoke(gui::toCopyBedrockArtifact, true);
+    JUCEApplication::getInstance()->invoke(commands::toCopyBedrockArtifact, true);
   }
 }
 
@@ -143,13 +143,13 @@ void ChooseBedrockOutput::onZipDestinationFileSelected(FileChooser const &choose
   sLastZipFile = dest;
   fState.fCopyDestination = dest;
   fState.fFormat = BedrockOutputFormat::MCWorld;
-  JUCEApplication::getInstance()->invoke(gui::toCopyBedrockArtifact, true);
+  JUCEApplication::getInstance()->invoke(commands::toCopyBedrockArtifact, true);
 }
 
 void ChooseBedrockOutput::paint(juce::Graphics &g) {}
 
 void ChooseBedrockOutput::onBackButtonClicked() {
-  JUCEApplication::getInstance()->invoke(gui::toModeSelect, true);
+  JUCEApplication::getInstance()->invoke(commands::toModeSelect, true);
 }
 
-} // namespace je2be::gui::component
+} // namespace je2be::desktop::component

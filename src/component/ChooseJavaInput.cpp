@@ -7,7 +7,7 @@
 
 using namespace juce;
 
-namespace je2be::gui::component {
+namespace je2be::desktop::component {
 
 File ChooseJavaInput::sLastDirectory;
 
@@ -76,7 +76,7 @@ ChooseJavaInput::~ChooseJavaInput() {
 void ChooseJavaInput::paint(juce::Graphics &g) {}
 
 void ChooseJavaInput::onNextButtonClicked() {
-  JUCEApplication::getInstance()->invoke(gui::toJ2BConfig, true);
+  JUCEApplication::getInstance()->invoke(commands::toJ2BConfig, true);
 }
 
 void ChooseJavaInput::onChooseCustomButtonClicked() {
@@ -96,7 +96,7 @@ void ChooseJavaInput::onCustomDirectorySelected(juce::FileChooser const &chooser
   }
   fState = ChooseInputState(InputType::Java, result, result.getFileName());
   sLastDirectory = result.getParentDirectory();
-  JUCEApplication::getInstance()->invoke(gui::toJ2BConfig, true);
+  JUCEApplication::getInstance()->invoke(commands::toJ2BConfig, true);
 }
 
 void ChooseJavaInput::selectedRowsChanged(int lastRowSelected) {
@@ -118,11 +118,11 @@ void ChooseJavaInput::listBoxItemDoubleClicked(int row, const MouseEvent &) {
   }
   GameDirectory gd = fGameDirectories[row];
   fState = ChooseInputState(InputType::Java, gd.fDirectory, gd.fDirectory.getFileName());
-  JUCEApplication::getInstance()->invoke(gui::toJ2BConfig, false);
+  JUCEApplication::getInstance()->invoke(commands::toJ2BConfig, false);
 }
 
 void ChooseJavaInput::onBackButtonClicked() {
-  JUCEApplication::getInstance()->invoke(gui::toModeSelect, true);
+  JUCEApplication::getInstance()->invoke(commands::toModeSelect, true);
 }
 
 int ChooseJavaInput::getNumRows() {
@@ -152,4 +152,4 @@ void ChooseJavaInput::handleAsyncUpdate() {
   }
 }
 
-} // namespace je2be::gui::component
+} // namespace je2be::desktop::component

@@ -3,7 +3,7 @@
 
 using namespace juce;
 
-namespace je2be::gui {
+namespace je2be::desktop {
 
 namespace {
 struct CallbackArgs {
@@ -123,4 +123,4 @@ void TaskbarProgress::update(double progress) {
   fImpl->update(progress);
 }
 
-} // namespace je2be::gui
+} // namespace je2be::desktop

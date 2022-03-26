@@ -2,11 +2,11 @@
 
 #include "ComponentState.h"
 
-namespace je2be::gui {
+namespace je2be::desktop {
 class TaskbarProgress;
 }
 
-namespace je2be::gui::component {
+namespace je2be::desktop::component {
 
 class CopyJavaArtifactProgress : public juce::Component,
                                  public juce::AsyncUpdater,
@@ -51,4 +51,4 @@ private:
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CopyJavaArtifactProgress)
 };
 
-} // namespace je2be::gui::component
+} // namespace je2be::desktop::component

@@ -7,12 +7,12 @@
 
 using namespace juce;
 
-namespace je2be::gui::component {
+namespace je2be::desktop::component {
 
-class J2BCopyThread : public CopyBedrockArtifactProgress::Worker {
+class CopyBedrockArtifactThread : public CopyBedrockArtifactProgress::Worker {
 public:
-  J2BCopyThread(AsyncUpdater *updater, File from, File to, double *progress)
-      : CopyBedrockArtifactProgress::Worker("j2b::gui::J2BCopyThread"),
+  CopyBedrockArtifactThread(AsyncUpdater *updater, File from, File to, double *progress)
+      : CopyBedrockArtifactProgress::Worker("je2be::desktop::component::CopyBedrockArtifactThread"),
         fUpdater(updater), fFrom(from), fTo(to), fProgress(progress) {}
 
   void run() override {
@@ -63,10 +63,10 @@ private:
   double *const fProgress;
 };
 
-class ZipThread : public CopyBedrockArtifactProgress::Worker {
+class ZipBedrockArtifactThread : public CopyBedrockArtifactProgress::Worker {
 public:
-  ZipThread(AsyncUpdater *updater, File from, File to, double *progress)
-      : CopyBedrockArtifactProgress::Worker("j2b::gui::ZipThread"), fUpdater(updater),
+  ZipBedrockArtifactThread(AsyncUpdater *updater, File from, File to, double *progress)
+      : CopyBedrockArtifactProgress::Worker("je2be::desktop::component::ZipBedrockArtifactThread"), fUpdater(updater),
         fFrom(from), fTo(to), fProgress(progress) {}
 
   void run() override {
@@ -144,9 +144,9 @@ CopyBedrockArtifactProgress::CopyBedrockArtifactProgress(BedrockOutputChoosenSta
   fTaskbarProgress.reset(new TaskbarProgress());
 
   if (state.fFormat == BedrockOutputFormat::Directory) {
-    fCopyThread.reset(new J2BCopyThread(this, state.fConvertedState.fOutputDirectory, *state.fCopyDestination, &fProgress));
+    fCopyThread.reset(new CopyBedrockArtifactThread(this, state.fConvertedState.fOutputDirectory, *state.fCopyDestination, &fProgress));
   } else {
-    fCopyThread.reset(new ZipThread(this, state.fConvertedState.fOutputDirectory, *state.fCopyDestination, &fProgress));
+    fCopyThread.reset(new ZipBedrockArtifactThread(this, state.fConvertedState.fOutputDirectory, *state.fCopyDestination, &fProgress));
   }
   fCopyThread->startThread();
   fTaskbarProgress->setState(TaskbarProgress::State::Normal);
@@ -162,13 +162,13 @@ void CopyBedrockArtifactProgress::paint(juce::Graphics &g) {}
 void CopyBedrockArtifactProgress::handleAsyncUpdate() {
   struct InvokeToChooseOutput : public ModalComponentManager::Callback {
     void modalStateFinished(int returnValue) override {
-      JUCEApplication::getInstance()->invoke(gui::toChooseBedrockOutput, true);
+      JUCEApplication::getInstance()->invoke(commands::toChooseBedrockOutput, true);
     }
   };
 
   struct InvokeToModeSelect : public ModalComponentManager::Callback {
     void modalStateFinished(int returnValue) override {
-      JUCEApplication::getInstance()->invoke(gui::toModeSelect, true);
+      JUCEApplication::getInstance()->invoke(commands::toModeSelect, true);
     }
   };
 
@@ -181,7 +181,7 @@ void CopyBedrockArtifactProgress::handleAsyncUpdate() {
   } else if (*result == CopyBedrockArtifactProgress::Worker::Result::Cancelled) {
     fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
     NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::InfoIcon, TRANS("Cancelled"), TRANS("Saving cancelled."), nullptr, new InvokeToChooseOutput);
-    JUCEApplication::getInstance()->invoke(gui::toChooseBedrockOutput, true);
+    JUCEApplication::getInstance()->invoke(commands::toChooseBedrockOutput, true);
   } else {
     fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
     NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::InfoIcon, TRANS("Completed"), TRANS("Saving completed.") + "\n" + fState.fCopyDestination->getFullPathName(), nullptr, new InvokeToModeSelect);
@@ -196,4 +196,4 @@ void CopyBedrockArtifactProgress::timerCallback() {
   fTaskbarProgress->update(progress);
 }
 
-} // namespace je2be::gui::component
+} // namespace je2be::desktop::component

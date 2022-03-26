@@ -5,9 +5,9 @@
 
 using namespace juce;
 
-namespace je2be::gui {
+namespace je2be::desktop {
 
-GameDirectoryScanThreadJava::GameDirectoryScanThreadJava(AsyncUpdater *owner) : Thread("je2be::gui::GameDirectoryScanThreadJava"), fOwner(owner) {}
+GameDirectoryScanThreadJava::GameDirectoryScanThreadJava(AsyncUpdater *owner) : Thread("je2be::desktop::GameDirectoryScanThreadJava"), fOwner(owner) {}
 
 void GameDirectoryScanThreadJava::run() {
   try {
@@ -77,4 +77,4 @@ void GameDirectoryScanThreadJava::unsafeRun() {
   });
 }
 
-} // namespace je2be::gui
+} // namespace je2be::desktop

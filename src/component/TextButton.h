@@ -2,7 +2,7 @@
 
 #include <juce_gui_extra/juce_gui_extra.h>
 
-namespace je2be::gui::component {
+namespace je2be::desktop::component {
 
 class TextButton : public juce::TextButton {
   using super = juce::TextButton;
@@ -29,4 +29,4 @@ private:
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TextButton)
 };
 
-} // namespace je2be::gui::component
+} // namespace je2be::desktop::component

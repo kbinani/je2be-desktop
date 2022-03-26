@@ -3,15 +3,15 @@
 #include "CommandID.h"
 #include "ComponentState.h"
 
-namespace je2be::gui {
+namespace je2be::desktop {
 class TaskbarProgress;
 }
 
-namespace je2be::gui::component {
+namespace je2be::desktop::component {
 class TextButton;
 }
 
-namespace je2be::gui::component::x2b {
+namespace je2be::desktop::component::x2b {
 
 class X2BConvertProgress : public juce::Component,
                            public BedrockConvertedStateProvider,
@@ -63,7 +63,7 @@ private:
   double fJavaToBedrockConversionProgress = 0;
   double fJavaToBedrockCompactionProgress = 0;
   std::unique_ptr<juce::Label> fLabel;
-  juce::CommandID fCommandWhenFinished = gui::toChooseBedrockOutput;
+  juce::CommandID fCommandWhenFinished = commands::toChooseBedrockOutput;
   bool fFailed = false;
   std::unique_ptr<juce::TextEditor> fErrorMessage;
   std::unique_ptr<TaskbarProgress> fTaskbarProgress;
@@ -73,4 +73,4 @@ private:
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(X2BConvertProgress)
 };
 
-} // namespace je2be::gui::component::x2b
+} // namespace je2be::desktop::component::x2b

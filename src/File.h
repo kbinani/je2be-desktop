@@ -2,7 +2,7 @@
 
 #include <juce_gui_extra/juce_gui_extra.h>
 
-namespace je2be::gui {
+namespace je2be::desktop {
 
 static inline std::filesystem::path PathFromFile(juce::File file) {
 #if defined(_WIN32)
@@ -50,4 +50,4 @@ static bool CopyDirectoryRecursive(juce::File from, juce::File to, std::vector<j
   return true;
 }
 
-} // namespace je2be::gui
+} // namespace je2be::desktop

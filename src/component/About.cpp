@@ -21,7 +21,7 @@ public:
 
 } // namespace
 
-namespace je2be::gui::component {
+namespace je2be::desktop::component {
 
 About::About() {
   std::vector<juce::String> lines = {
@@ -194,4 +194,4 @@ int About::startScrollFrom(int startY, double startSpeed) {
   return duration;
 }
 
-} // namespace je2be::gui::component
+} // namespace je2be::desktop::component

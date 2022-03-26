@@ -2,11 +2,11 @@
 
 #include "ComponentState.h"
 
-namespace je2be::gui::component {
+namespace je2be::desktop::component {
 class TextButton;
 }
 
-namespace je2be::gui::component::j2b {
+namespace je2be::desktop::component::j2b {
 
 class J2BConfig : public juce::Component,
                   public ChooseInputStateProvider,
@@ -44,4 +44,4 @@ private:
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(J2BConfig)
 };
 
-} // namespace je2be::gui::component::j2b
+} // namespace je2be::desktop::component::j2b

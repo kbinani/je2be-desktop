@@ -1,7 +1,7 @@
 #include "TemporaryDirectory.h"
 #include <windows.h>
 
-namespace je2be::gui {
+namespace je2be::desktop {
 
 void TemporaryDirectory::QueueDeletingDirectory(juce::File directory) {
   juce::Thread::launch([directory]() {
@@ -15,4 +15,4 @@ void TemporaryDirectory::QueueDeletingDirectory(juce::File directory) {
   });
 }
 
-} // namespace je2be::gui
+} // namespace je2be::desktop

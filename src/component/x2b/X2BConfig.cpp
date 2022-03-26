@@ -5,7 +5,7 @@
 
 using namespace juce;
 
-namespace je2be::gui::component::x2b {
+namespace je2be::desktop::component::x2b {
 
 X2BConfig::X2BConfig(ChooseInputState const &chooseInputState) : fState(chooseInputState) {
   auto width = kWindowWidth;
@@ -42,11 +42,11 @@ void X2BConfig::timerCallback() {
 void X2BConfig::paint(juce::Graphics &g) {}
 
 void X2BConfig::onStartButtonClicked() {
-  JUCEApplication::getInstance()->invoke(gui::toXbox360ToBedrockConvert, true);
+  JUCEApplication::getInstance()->invoke(commands::toXbox360ToBedrockConvert, true);
 }
 
 void X2BConfig::onBackButtonClicked() {
-  JUCEApplication::getInstance()->invoke(gui::toChooseXbox360InputToBedrock, true);
+  JUCEApplication::getInstance()->invoke(commands::toChooseXbox360InputToBedrock, true);
 }
 
-} // namespace je2be::gui::component::x2b
+} // namespace je2be::desktop::component::x2b

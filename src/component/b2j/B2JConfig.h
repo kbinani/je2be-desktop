@@ -3,11 +3,11 @@
 #include "AccountScanThread.h"
 #include "ComponentState.h"
 
-namespace je2be::gui::component {
+namespace je2be::desktop::component {
 class TextButton;
 }
 
-namespace je2be::gui::component::b2j {
+namespace je2be::desktop::component::b2j {
 
 class B2JConfig : public juce::Component,
                   public ChooseInputStateProvider,
@@ -53,4 +53,4 @@ private:
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(B2JConfig)
 };
 
-} // namespace je2be::gui::component::b2j
+} // namespace je2be::desktop::component::b2j

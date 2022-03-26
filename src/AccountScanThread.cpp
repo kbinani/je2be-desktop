@@ -5,7 +5,7 @@
 
 using namespace juce;
 
-namespace je2be::gui {
+namespace je2be::desktop {
 
 class AccountScanThread::Impl {
 public:
@@ -93,7 +93,7 @@ public:
   std::vector<Account> fAccounts;
 };
 
-AccountScanThread::AccountScanThread(AsyncUpdater *parent) : Thread("je2be::gui::AccountScanThread"), fImpl(new Impl(parent)) {}
+AccountScanThread::AccountScanThread(AsyncUpdater *parent) : Thread("je2be::desktop::AccountScanThread"), fImpl(new Impl(parent)) {}
 
 AccountScanThread::~AccountScanThread() {}
 
@@ -105,4 +105,4 @@ void AccountScanThread::copyAccounts(std::vector<Account> &buffer) {
   fImpl->fAccounts.swap(buffer);
 }
 
-} // namespace je2be::gui
+} // namespace je2be::desktop

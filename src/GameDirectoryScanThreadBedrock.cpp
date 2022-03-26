@@ -5,9 +5,9 @@
 
 using namespace juce;
 
-namespace je2be::gui {
+namespace je2be::desktop {
 
-GameDirectoryScanThreadBedrock::GameDirectoryScanThreadBedrock(AsyncUpdater *owner) : Thread("je2be::gui::GameDirectoryScanThreadBedrock"), fOwner(owner) {}
+GameDirectoryScanThreadBedrock::GameDirectoryScanThreadBedrock(AsyncUpdater *owner) : Thread("je2be::desktop::GameDirectoryScanThreadBedrock"), fOwner(owner) {}
 
 void GameDirectoryScanThreadBedrock::run() {
   try {
@@ -93,4 +93,4 @@ void GameDirectoryScanThreadBedrock::unsafeRun() {
   });
 }
 
-} // namespace je2be::gui
+} // namespace je2be::desktop

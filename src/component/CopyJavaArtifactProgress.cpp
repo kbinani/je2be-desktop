@@ -7,12 +7,12 @@
 
 using namespace juce;
 
-namespace je2be::gui::component {
+namespace je2be::desktop::component {
 
-class B2JCopyThread : public CopyJavaArtifactProgress::Worker {
+class CopyJavaArtifactThread : public CopyJavaArtifactProgress::Worker {
 public:
-  B2JCopyThread(AsyncUpdater *updater, File from, File to, double *progress)
-      : CopyJavaArtifactProgress::Worker("j2b::gui::B2JCopyThread"),
+  CopyJavaArtifactThread(AsyncUpdater *updater, File from, File to, double *progress)
+      : CopyJavaArtifactProgress::Worker("je2be::desktop::component::CopyJavaArtifactThread"),
         fUpdater(updater), fFrom(from), fTo(to), fProgress(progress) {}
 
   void run() override {
@@ -79,7 +79,7 @@ CopyJavaArtifactProgress::CopyJavaArtifactProgress(JavaOutputChoosenState const 
 
   fTaskbarProgress.reset(new TaskbarProgress());
 
-  fCopyThread.reset(new B2JCopyThread(this, state.fConvertedState.fOutputDirectory, *state.fCopyDestination, &fProgress));
+  fCopyThread.reset(new CopyJavaArtifactThread(this, state.fConvertedState.fOutputDirectory, *state.fCopyDestination, &fProgress));
   fCopyThread->startThread();
   fTaskbarProgress->setState(TaskbarProgress::State::Normal);
   startTimerHz(12);
@@ -94,13 +94,13 @@ void CopyJavaArtifactProgress::paint(juce::Graphics &g) {}
 void CopyJavaArtifactProgress::handleAsyncUpdate() {
   struct InvokeToChooseOutput : public ModalComponentManager::Callback {
     void modalStateFinished(int returnValue) override {
-      JUCEApplication::getInstance()->invoke(gui::toChooseJavaOutput, true);
+      JUCEApplication::getInstance()->invoke(commands::toChooseJavaOutput, true);
     }
   };
 
   struct InvokeToModeSelect : public ModalComponentManager::Callback {
     void modalStateFinished(int returnValue) override {
-      JUCEApplication::getInstance()->invoke(gui::toModeSelect, true);
+      JUCEApplication::getInstance()->invoke(commands::toModeSelect, true);
     }
   };
 
@@ -113,7 +113,7 @@ void CopyJavaArtifactProgress::handleAsyncUpdate() {
   } else if (*result == CopyJavaArtifactProgress::Worker::Result::Cancelled) {
     fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
     NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::InfoIcon, TRANS("Cancelled"), TRANS("Saving cancelled."), nullptr, new InvokeToChooseOutput);
-    JUCEApplication::getInstance()->invoke(gui::toChooseJavaOutput, true);
+    JUCEApplication::getInstance()->invoke(commands::toChooseJavaOutput, true);
   } else {
     fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
     NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::InfoIcon, TRANS("Completed"), TRANS("Saving completed.") + "\n" + fState.fCopyDestination->getFullPathName(), nullptr, new InvokeToModeSelect);
@@ -128,4 +128,4 @@ void CopyJavaArtifactProgress::timerCallback() {
   fTaskbarProgress->update(progress);
 }
 
-} // namespace je2be::gui::component
+} // namespace je2be::desktop::component

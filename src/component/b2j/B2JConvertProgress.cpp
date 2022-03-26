@@ -10,7 +10,7 @@
 
 using namespace juce;
 
-namespace je2be::gui::component::b2j {
+namespace je2be::desktop::component::b2j {
 
 class B2JConvertProgress::Updater : public AsyncUpdater {
   struct Entry {
@@ -63,7 +63,7 @@ class B2JWorkerThread : public Thread, public je2be::toje::Progress {
 public:
   B2JWorkerThread(File input, File output, je2be::toje::Options opt,
                   std::shared_ptr<B2JConvertProgress::Updater> updater)
-      : Thread("je2be::gui::B2JConvert"), fInput(input), fOutput(output), fOptions(opt), fUpdater(updater) {}
+      : Thread("je2be::desktop::component::b2j::B2JWorkerThread"), fInput(input), fOutput(output), fOptions(opt), fUpdater(updater) {}
 
   void run() override {
     try {
@@ -285,10 +285,10 @@ void B2JConvertProgress::paint(juce::Graphics &g) {}
 
 void B2JConvertProgress::onCancelButtonClicked() {
   if (fFailed) {
-    JUCEApplication::getInstance()->invoke(gui::toChooseBedrockInput, true);
+    JUCEApplication::getInstance()->invoke(commands::toChooseBedrockInput, true);
   } else {
     fCancelButton->setEnabled(false);
-    fCommandWhenFinished = gui::toB2JConfig;
+    fCommandWhenFinished = commands::toB2JConfig;
     fThread->signalThreadShouldExit();
     fConversionProgress = -1;
     fCancelRequested = true;
@@ -322,7 +322,7 @@ void B2JConvertProgress::onProgressUpdate(Phase phase, double done, double total
     fTaskbarProgress->update(weightUnzip + progress * weightConversion);
   } else if (phase == Phase::Done) {
     fState = JavaConvertedState(fConfigState.fInputState.fWorldName, fOutputDirectory);
-    if (fCommandWhenFinished != gui::toChooseJavaOutput && fOutputDirectory.exists()) {
+    if (fCommandWhenFinished != commands::toChooseJavaOutput && fOutputDirectory.exists()) {
       TemporaryDirectory::QueueDeletingDirectory(fOutputDirectory);
     }
     bool ok = fUpdater->fOk;
@@ -349,4 +349,4 @@ void B2JConvertProgress::onProgressUpdate(Phase phase, double done, double total
   }
 }
 
-} // namespace je2be::gui::component::b2j
+} // namespace je2be::desktop::component::b2j

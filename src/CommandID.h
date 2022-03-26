@@ -1,6 +1,6 @@
 #pragma once
 
-namespace je2be::gui {
+namespace je2be::desktop::commands {
 
 enum {
   toModeSelect = 1,

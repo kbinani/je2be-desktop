@@ -2,7 +2,7 @@
 
 #include <juce_gui_extra/juce_gui_extra.h>
 
-namespace je2be::gui {
+namespace je2be::desktop {
 
 class LookAndFeel : public juce::LookAndFeel_V4 {
 public:
@@ -144,4 +144,4 @@ public:
   }
 };
 
-} // namespace je2be::gui
+} // namespace je2be::desktop

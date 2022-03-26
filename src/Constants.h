@@ -2,7 +2,7 @@
 
 #include <juce_gui_extra/juce_gui_extra.h>
 
-namespace je2be::gui {
+namespace je2be::desktop {
 
 namespace {
 int const kButtonBaseHeight = 32;
@@ -16,4 +16,4 @@ int const kWorldListRowHeight = 70;
 juce::Colour const kErrorTextColor(255, 0, 0);
 } // namespace
 
-} // namespace je2be::gui
+} // namespace je2be::desktop

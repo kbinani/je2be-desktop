@@ -8,7 +8,7 @@
 
 using namespace juce;
 
-namespace je2be::gui::component::x2j {
+namespace je2be::desktop::component::x2j {
 
 X2JConfig::X2JConfig(ChooseInputState const &chooseInputState) : fState(chooseInputState) {
   auto width = kWindowWidth;
@@ -98,11 +98,11 @@ void X2JConfig::onStartButtonClicked() {
       fState.fLocalPlayer = a.fUuid;
     }
   }
-  JUCEApplication::getInstance()->invoke(gui::toXbox360ToJavaConvert, true);
+  JUCEApplication::getInstance()->invoke(commands::toXbox360ToJavaConvert, true);
 }
 
 void X2JConfig::onBackButtonClicked() {
-  JUCEApplication::getInstance()->invoke(gui::toChooseXbox360InputToJava, true);
+  JUCEApplication::getInstance()->invoke(commands::toChooseXbox360InputToJava, true);
 }
 
 void X2JConfig::onClickImportAccountFromLauncherButton() {
@@ -144,4 +144,4 @@ void X2JConfig::handleAsyncUpdate() {
   fBackButton->setEnabled(true);
 }
 
-} // namespace je2be::gui::component::x2j
+} // namespace je2be::desktop::component::x2j

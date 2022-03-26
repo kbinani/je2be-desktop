@@ -2,7 +2,7 @@
 
 #include <juce_gui_extra/juce_gui_extra.h>
 
-namespace je2be::gui {
+namespace je2be::desktop {
 
 struct GameDirectory {
   juce::File fDirectory;
@@ -116,4 +116,4 @@ struct GameDirectory {
   }
 };
 
-} // namespace je2be::gui
+} // namespace je2be::desktop

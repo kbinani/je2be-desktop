@@ -5,7 +5,7 @@
 
 using namespace juce;
 
-namespace je2be::gui::component::j2b {
+namespace je2be::desktop::component::j2b {
 
 static std::optional<J2BConfigState::DirectoryStructure> SniffDirectoryStructure(File input) {
   File vanillaLevelDat = input.getChildFile("level.dat");
@@ -74,11 +74,11 @@ void J2BConfig::timerCallback() {
 void J2BConfig::paint(juce::Graphics &g) {}
 
 void J2BConfig::onStartButtonClicked() {
-  JUCEApplication::getInstance()->invoke(gui::toJ2BConvert, true);
+  JUCEApplication::getInstance()->invoke(commands::toJ2BConvert, true);
 }
 
 void J2BConfig::onBackButtonClicked() {
-  JUCEApplication::getInstance()->invoke(gui::toChooseJavaInput, true);
+  JUCEApplication::getInstance()->invoke(commands::toChooseJavaInput, true);
 }
 
-} // namespace je2be::gui::component::j2b
+} // namespace je2be::desktop::component::j2b

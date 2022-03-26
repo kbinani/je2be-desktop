@@ -5,7 +5,7 @@
 
 using namespace juce;
 
-namespace je2be::gui {
+namespace je2be::desktop {
 
 static bool StringContainsOnlyAlnum(juce::String const &s) {
   if (s.isEmpty()) {
@@ -80,7 +80,7 @@ static void LookupRoot(File root, std::vector<GameDirectory> &buffer) {
   LookupContent(content, buffer);
 }
 
-GameDirectoryScanThreadXbox360::GameDirectoryScanThreadXbox360(AsyncUpdater *owner) : Thread("je2be::gui::GameDirectoryScanThreadXbox360"), fOwner(owner) {}
+GameDirectoryScanThreadXbox360::GameDirectoryScanThreadXbox360(AsyncUpdater *owner) : Thread("je2be::desktop::GameDirectoryScanThreadXbox360"), fOwner(owner) {}
 
 void GameDirectoryScanThreadXbox360::run() {
   try {
@@ -98,4 +98,4 @@ void GameDirectoryScanThreadXbox360::unsafeRun() {
   }
 }
 
-} // namespace je2be::gui
+} // namespace je2be::desktop

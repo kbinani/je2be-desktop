@@ -10,7 +10,7 @@
 
 using namespace juce;
 
-namespace je2be::gui::component {
+namespace je2be::desktop::component {
 
 File ChooseXbox360Input::sLastDirectory;
 
@@ -152,7 +152,7 @@ void ChooseXbox360Input::listBoxItemDoubleClicked(int row, const MouseEvent &) {
 }
 
 void ChooseXbox360Input::onBackButtonClicked() {
-  JUCEApplication::getInstance()->invoke(gui::toModeSelect, true);
+  JUCEApplication::getInstance()->invoke(commands::toModeSelect, true);
 }
 
 int ChooseXbox360Input::getNumRows() {
@@ -182,4 +182,4 @@ void ChooseXbox360Input::handleAsyncUpdate() {
   }
 }
 
-} // namespace je2be::gui::component
+} // namespace je2be::desktop::component
