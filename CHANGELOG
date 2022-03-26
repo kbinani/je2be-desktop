@@ -1,7 +1,10 @@
-Version 3.4.0 (TBD)
+Version 4.0.0 (TBD)
+- Added the ability to convert Xbox360 maps.
 - The parrots on the player's shoulders are now converted correctly. [j2b, b2j]
 - Fixed an issue in which the upper and lower halves of the contents of a large chest were sometimes swapped. [j2b, b2j]
 - Fixed a problem in which the player's game mode was not converted correctly. [b2j]
+- Fixed an issue where the old mushroom_field biome was not converted correctly. [j2b]
+- Improved convert accuracy of blocks prior to Java version 1.12. [j2b]
 
 Version 3.3.0 (1 Mar 2022)
 - The target selector part of the command stored in command blocks is now converted. [j2b, b2j]
