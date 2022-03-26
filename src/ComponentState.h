@@ -9,7 +9,6 @@ namespace je2be::gui {
 enum class InputType {
   Java,
   Bedrock,
-  Xbox360,
 };
 
 class ChooseInputState {
