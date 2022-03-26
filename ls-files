@@ -3,8 +3,8 @@
 (
   cd "$(dirname "$0")"
 
-  file_start=$(cat CMakeLists.txt | grep -n '#begin je2be-gui' | cut -f1 -d:)
-  file_end=$(cat CMakeLists.txt | grep -n '#end je2be-gui' | cut -f1 -d:)
+  file_start=$(cat CMakeLists.txt | grep -n '#begin je2be-desktop' | cut -f1 -d:)
+  file_end=$(cat CMakeLists.txt | grep -n '#end je2be-desktop' | cut -f1 -d:)
 
   tmp=$(mktemp)
 

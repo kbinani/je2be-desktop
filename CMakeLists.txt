@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(je2be-gui VERSION 4.0.0)
+project(je2be-desktop VERSION 4.0.0)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -22,13 +22,13 @@ add_compile_options(
 add_subdirectory(ext/je2be)
 add_subdirectory(ext/JUCE)
 
-juce_add_gui_app(je2be-gui
+juce_add_gui_app(je2be-desktop
   ICON_BIG "Resource/icon-large.png"
   ICON_SMALL "Resource/icon-small.png"
   PRODUCT_NAME "je2be")
 
-set(je2be_gui_files
-  #begin je2be-gui
+set(je2be_desktop_files
+  #begin je2be-desktop
   src/Application.cpp
   src/CommandID.h
   src/ComponentState.h
@@ -74,26 +74,26 @@ set(je2be_gui_files
   src/component/j2b/J2BConfig.h
   src/component/j2b/J2BConvertProgress.cpp
   src/component/j2b/J2BConvertProgress.h
-  #end je2be-gui
+  #end je2be-desktop
 )
 
-target_sources(je2be-gui
+target_sources(je2be-desktop
   PRIVATE
-  ${je2be_gui_files}
+  ${je2be_desktop_files}
 )
 
-target_compile_definitions(je2be-gui
+target_compile_definitions(je2be-desktop
   PRIVATE
     JUCE_WEB_BROWSER=0
     JUCE_USE_CURL=0
-    JUCE_APPLICATION_NAME_STRING="$<TARGET_PROPERTY:je2be-gui,JUCE_PRODUCT_NAME>"
-    JUCE_APPLICATION_VERSION_STRING="$<TARGET_PROPERTY:je2be-gui,JUCE_VERSION>"
+    JUCE_APPLICATION_NAME_STRING="$<TARGET_PROPERTY:je2be-desktop,JUCE_PRODUCT_NAME>"
+    JUCE_APPLICATION_VERSION_STRING="$<TARGET_PROPERTY:je2be-desktop,JUCE_VERSION>"
     JUCE_DISPLAY_SPLASH_SCREEN=0
     NOMINMAX
     WIN32_LEAN_AND_MEAN)
 
-target_compile_options(je2be-gui PRIVATE $<$<CONFIG:Release>:/Zi>)
-target_link_options(je2be-gui PRIVATE $<$<CONFIG:Release>:/DEBUG>)
+target_compile_options(je2be-desktop PRIVATE $<$<CONFIG:Release>:/Zi>)
+target_link_options(je2be-desktop PRIVATE $<$<CONFIG:Release>:/DEBUG>)
 target_compile_options(leveldb PRIVATE $<$<CONFIG:Release>:/Zi>)
 target_link_options(leveldb PRIVATE $<$<CONFIG:Release>:/DEBUG>)
 target_compile_options(zlib PRIVATE $<$<CONFIG:Release>:/Zi>)
@@ -104,7 +104,7 @@ juce_add_binary_data(app-data
     resource/icon-large.png
     resource/japanese.lang)
 
-target_link_libraries(je2be-gui
+target_link_libraries(je2be-desktop
   PRIVATE
     je2be
     app-data
@@ -114,7 +114,7 @@ target_link_libraries(je2be-gui
     juce::juce_recommended_lto_flags
     juce::juce_recommended_warning_flags)
 
-target_include_directories(je2be-gui PRIVATE src)
+target_include_directories(je2be-desktop PRIVATE src)
 
 include_external_msproject(Package Package/Package.wapproj
   TYPE C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5
@@ -122,4 +122,4 @@ include_external_msproject(Package Package/Package.wapproj
 
 configure_file(Builds/Package/Package.appxmanifest.in Package/Package.appxmanifest)
 
-setup_source_groups("${je2be_gui_files}" "${CMAKE_CURRENT_SOURCE_DIR}")
+setup_source_groups("${je2be_desktop_files}" "${CMAKE_CURRENT_SOURCE_DIR}")
