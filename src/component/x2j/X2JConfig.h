@@ -7,16 +7,16 @@ namespace je2be::gui::component {
 class TextButton;
 }
 
-namespace je2be::gui::component::b2j {
+namespace je2be::gui::component::x2j {
 
-class B2JConfig : public juce::Component,
+class X2JConfig : public juce::Component,
                   public ChooseInputStateProvider,
-                  public B2JConfigStateProvider,
+                  public X2JConfigStateProvider,
                   public juce::Timer,
                   public juce::AsyncUpdater {
 public:
-  explicit B2JConfig(ChooseInputState const &inputState);
-  ~B2JConfig() override;
+  explicit X2JConfig(ChooseInputState const &inputState);
+  ~X2JConfig() override;
 
   void paint(juce::Graphics &) override;
 
@@ -24,7 +24,7 @@ public:
     return fState.fInputState;
   }
 
-  B2JConfigState getConfigState() const override {
+  X2JConfigState getConfigState() const override {
     return fState;
   }
 
@@ -39,7 +39,7 @@ private:
 private:
   std::unique_ptr<TextButton> fBackButton;
   std::unique_ptr<TextButton> fStartButton;
-  B2JConfigState fState;
+  X2JConfigState fState;
   std::unique_ptr<juce::Label> fFileOrDirectory;
   bool fOk = false;
   std::unique_ptr<juce::Label> fMessage;
@@ -50,7 +50,7 @@ private:
   std::unique_ptr<AccountScanThread> fAccountScanThread;
 
 private:
-  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(B2JConfig)
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(X2JConfig)
 };
 
-} // namespace je2be::gui::component::b2j
+} // namespace je2be::gui::component::x2j

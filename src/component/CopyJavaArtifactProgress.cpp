@@ -63,7 +63,7 @@ private:
   double *const fProgress;
 };
 
-CopyJavaArtifactProgress::CopyJavaArtifactProgress(B2JChooseOutputState const &state) : fState(state) {
+CopyJavaArtifactProgress::CopyJavaArtifactProgress(JavaOutputChoosenState const &state) : fState(state) {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
   setSize(width, height);
@@ -79,7 +79,7 @@ CopyJavaArtifactProgress::CopyJavaArtifactProgress(B2JChooseOutputState const &s
 
   fTaskbarProgress.reset(new TaskbarProgress());
 
-  fCopyThread.reset(new B2JCopyThread(this, state.fConvertState.fOutputDirectory, *state.fCopyDestination, &fProgress));
+  fCopyThread.reset(new B2JCopyThread(this, state.fConvertedState.fOutputDirectory, *state.fCopyDestination, &fProgress));
   fCopyThread->startThread();
   fTaskbarProgress->setState(TaskbarProgress::State::Normal);
   startTimerHz(12);
@@ -117,8 +117,8 @@ void CopyJavaArtifactProgress::handleAsyncUpdate() {
   } else {
     fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
     NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::InfoIcon, TRANS("Completed"), TRANS("Saving completed.") + "\n" + fState.fCopyDestination->getFullPathName(), nullptr, new InvokeToModeSelect);
-    if (fState.fConvertState.fOutputDirectory.exists()) {
-      TemporaryDirectory::QueueDeletingDirectory(fState.fConvertState.fOutputDirectory);
+    if (fState.fConvertedState.fOutputDirectory.exists()) {
+      TemporaryDirectory::QueueDeletingDirectory(fState.fConvertedState.fOutputDirectory);
     }
   }
 }

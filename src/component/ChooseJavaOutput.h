@@ -7,20 +7,15 @@ namespace je2be::gui::component {
 class TextButton;
 
 class ChooseJavaOutput : public juce::Component,
-                         public B2JChooseOutputStateProvider,
-                         public ChooseInputStateProvider {
+                         public JavaOutputChoosenStateProvider {
 public:
-  explicit ChooseJavaOutput(B2JConvertState const &convertState);
+  explicit ChooseJavaOutput(JavaConvertedState const &convertedState);
   ~ChooseJavaOutput() override;
 
   void paint(juce::Graphics &) override;
 
-  B2JChooseOutputState getChooseOutputState() const override {
+  JavaOutputChoosenState getJavaOutputChoosenState() const override {
     return fState;
-  }
-
-  std::optional<ChooseInputState> getChooseInputState() const override {
-    return fState.fConvertState.fConfigState.fInputState;
   }
 
   void onBackButtonClicked();
@@ -34,7 +29,7 @@ private:
   static juce::File sLastCustomDirectory;
   static juce::File sLastZipFile;
 
-  B2JChooseOutputState fState;
+  JavaOutputChoosenState fState;
   std::unique_ptr<juce::Label> fMessage;
   std::unique_ptr<TextButton> fBackButton;
   std::unique_ptr<TextButton> fSaveToDefaultDirectory;

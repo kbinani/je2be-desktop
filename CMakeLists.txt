@@ -29,6 +29,8 @@ juce_add_gui_app(je2be-desktop
 
 set(je2be_desktop_files
   #begin je2be-desktop
+  src/AccountScanThread.cpp
+  src/AccountScanThread.h
   src/Application.cpp
   src/CommandID.h
   src/ComponentState.h
@@ -78,6 +80,10 @@ set(je2be_desktop_files
   src/component/j2b/J2BConfig.h
   src/component/j2b/J2BConvertProgress.cpp
   src/component/j2b/J2BConvertProgress.h
+  src/component/x2j/X2JConfig.cpp
+  src/component/x2j/X2JConfig.h
+  src/component/x2j/X2JConvertProgress.cpp
+  src/component/x2j/X2JConvertProgress.h
   #end je2be-desktop
 )
 

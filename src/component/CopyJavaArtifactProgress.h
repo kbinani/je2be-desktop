@@ -10,18 +10,18 @@ namespace je2be::gui::component {
 
 class CopyJavaArtifactProgress : public juce::Component,
                                  public juce::AsyncUpdater,
-                                 public B2JConvertStateProvider,
+                                 public JavaConvertedStateProvider,
                                  public juce::Timer {
 public:
-  explicit CopyJavaArtifactProgress(B2JChooseOutputState const &chooseOutputState);
+  explicit CopyJavaArtifactProgress(JavaOutputChoosenState const &chooseOutputState);
   ~CopyJavaArtifactProgress() override;
 
   void paint(juce::Graphics &) override;
 
   void handleAsyncUpdate() override;
 
-  B2JConvertState getConvertState() const override {
-    return fState.fConvertState;
+  std::optional<JavaConvertedState> getConvertedState() const override {
+    return fState.fConvertedState;
   }
 
   void timerCallback() override;
@@ -41,7 +41,7 @@ public:
   };
 
 private:
-  B2JChooseOutputState fState;
+  JavaOutputChoosenState fState;
   std::unique_ptr<Worker> fCopyThread;
   std::unique_ptr<juce::Label> fLabel;
   std::unique_ptr<juce::ProgressBar> fProgressBar;

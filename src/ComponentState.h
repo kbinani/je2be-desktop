@@ -104,32 +104,46 @@ public:
   virtual B2JConfigState getConfigState() const = 0;
 };
 
-class B2JConvertState {
+class JavaConvertedState {
 public:
-  explicit B2JConvertState(B2JConfigState const &configState) : fConfigState(configState) {}
-  B2JConfigState const fConfigState;
+  JavaConvertedState(juce::String const &worldName, juce::File const &outputDirectory) : fWorldName(worldName), fOutputDirectory(outputDirectory) {}
+  juce::String fWorldName;
   juce::File fOutputDirectory;
 };
 
-class B2JConvertStateProvider {
+class JavaConvertedStateProvider {
 public:
-  virtual ~B2JConvertStateProvider() {}
-  virtual B2JConvertState getConvertState() const = 0;
+  virtual ~JavaConvertedStateProvider() {}
+  virtual std::optional<JavaConvertedState> getConvertedState() const = 0;
 };
 
-class B2JChooseOutputState {
+class JavaOutputChoosenState {
 public:
-  explicit B2JChooseOutputState(B2JConvertState const &convertState)
-      : fConvertState(convertState) {}
+  explicit JavaOutputChoosenState(JavaConvertedState const &convertedState)
+      : fConvertedState(convertedState) {}
 
-  B2JConvertState const fConvertState;
+  JavaConvertedState const fConvertedState;
   std::optional<juce::File> fCopyDestination;
 };
 
-class B2JChooseOutputStateProvider {
+class JavaOutputChoosenStateProvider {
 public:
-  virtual ~B2JChooseOutputStateProvider() {}
-  virtual B2JChooseOutputState getChooseOutputState() const = 0;
+  virtual ~JavaOutputChoosenStateProvider() {}
+  virtual JavaOutputChoosenState getJavaOutputChoosenState() const = 0;
+};
+
+class X2JConfigState {
+public:
+  explicit X2JConfigState(ChooseInputState const &inputState)
+      : fInputState(inputState) {}
+  ChooseInputState const fInputState;
+  std::optional<juce::Uuid> fLocalPlayer;
+};
+
+class X2JConfigStateProvider {
+public:
+  virtual ~X2JConfigStateProvider() {}
+  virtual X2JConfigState getConfigState() const = 0;
 };
 
 } // namespace je2be::gui

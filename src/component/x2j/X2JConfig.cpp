@@ -4,13 +4,13 @@
 #include "Constants.h"
 #include "GameDirectory.h"
 #include "component/TextButton.h"
-#include "component/b2j/B2JConfig.h"
+#include "component/x2j/X2JConfig.h"
 
 using namespace juce;
 
-namespace je2be::gui::component::b2j {
+namespace je2be::gui::component::x2j {
 
-B2JConfig::B2JConfig(ChooseInputState const &chooseInputState) : fState(chooseInputState) {
+X2JConfig::X2JConfig(ChooseInputState const &chooseInputState) : fState(chooseInputState) {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
   setSize(width, height);
@@ -80,16 +80,16 @@ B2JConfig::B2JConfig(ChooseInputState const &chooseInputState) : fState(chooseIn
   startTimer(1000);
 }
 
-B2JConfig::~B2JConfig() {}
+X2JConfig::~X2JConfig() {}
 
-void B2JConfig::timerCallback() {
+void X2JConfig::timerCallback() {
   stopTimer();
   fStartButton->setEnabled(fOk);
 }
 
-void B2JConfig::paint(juce::Graphics &g) {}
+void X2JConfig::paint(juce::Graphics &g) {}
 
-void B2JConfig::onStartButtonClicked() {
+void X2JConfig::onStartButtonClicked() {
   if (fImportAccountFromLauncher->getToggleState()) {
     int selected = fAccountList->getSelectedId();
     int index = selected - 1;
@@ -98,14 +98,14 @@ void B2JConfig::onStartButtonClicked() {
       fState.fLocalPlayer = a.fUuid;
     }
   }
-  JUCEApplication::getInstance()->invoke(gui::toB2JConvert, true);
+  JUCEApplication::getInstance()->invoke(gui::toXbox360ToJavaConvert, true);
 }
 
-void B2JConfig::onBackButtonClicked() {
+void X2JConfig::onBackButtonClicked() {
   JUCEApplication::getInstance()->invoke(gui::toChooseBedrockInput, true);
 }
 
-void B2JConfig::onClickImportAccountFromLauncherButton() {
+void X2JConfig::onClickImportAccountFromLauncherButton() {
   if (fAccountScanThread) {
     return;
   }
@@ -125,7 +125,7 @@ void B2JConfig::onClickImportAccountFromLauncherButton() {
   }
 }
 
-void B2JConfig::handleAsyncUpdate() {
+void X2JConfig::handleAsyncUpdate() {
   if (fAccountScanThread) {
     fAccountScanThread->copyAccounts(fAccounts);
   }
@@ -144,4 +144,4 @@ void B2JConfig::handleAsyncUpdate() {
   fBackButton->setEnabled(true);
 }
 
-} // namespace je2be::gui::component::b2j
+} // namespace je2be::gui::component::x2j

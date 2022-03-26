@@ -190,7 +190,7 @@ private:
   std::shared_ptr<B2JConvertProgress::Updater> fUpdater;
 };
 
-B2JConvertProgress::B2JConvertProgress(B2JConfigState const &configState) : fState(configState) {
+B2JConvertProgress::B2JConvertProgress(B2JConfigState const &configState) : fConfigState(configState) {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
   setSize(width, height);
@@ -258,21 +258,21 @@ B2JConvertProgress::B2JConvertProgress(B2JConfigState const &configState) : fSta
   juce::Uuid u;
   File outputDir = temp.getChildFile(u.toDashedString());
   outputDir.createDirectory();
-  fState.fOutputDirectory = outputDir;
+  fOutputDirectory = outputDir;
 
   fUpdater = std::make_shared<Updater>();
   fUpdater->fTarget.store(this);
 
   je2be::toje::Options opt;
   opt.fTempDirectory = PathFromFile(temp);
-  if (fState.fConfigState.fLocalPlayer) {
-    juce::Uuid juceUuid = *fState.fConfigState.fLocalPlayer;
+  if (fConfigState.fLocalPlayer) {
+    juce::Uuid juceUuid = *fConfigState.fLocalPlayer;
     uint8_t data[16];
     std::copy_n(juceUuid.getRawData(), 16, data);
     auto uuid = je2be::Uuid::FromData(data);
     opt.fLocalPlayer = uuid;
   }
-  fThread.reset(new B2JWorkerThread(configState.fInputState.fInput, fState.fOutputDirectory, opt, fUpdater));
+  fThread.reset(new B2JWorkerThread(configState.fInputState.fInput, outputDir, opt, fUpdater));
   fThread->startThread();
 }
 
@@ -321,8 +321,9 @@ void B2JConvertProgress::onProgressUpdate(Phase phase, double done, double total
     fTaskbarProgress->setState(TaskbarProgress::State::Normal);
     fTaskbarProgress->update(weightUnzip + progress * weightConversion);
   } else if (phase == Phase::Done) {
-    if (fCommandWhenFinished != gui::toChooseJavaOutput && fState.fOutputDirectory.exists()) {
-      TemporaryDirectory::QueueDeletingDirectory(fState.fOutputDirectory);
+    fState = JavaConvertedState(fConfigState.fInputState.fWorldName, fOutputDirectory);
+    if (fCommandWhenFinished != gui::toChooseJavaOutput && fOutputDirectory.exists()) {
+      TemporaryDirectory::QueueDeletingDirectory(fOutputDirectory);
     }
     bool ok = fUpdater->fOk;
     if (ok) {

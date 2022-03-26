@@ -15,6 +15,8 @@
 #include "component/b2j/B2JConvertProgress.h"
 #include "component/j2b/J2BConfig.h"
 #include "component/j2b/J2BConvertProgress.h"
+#include "component/x2j/X2JConfig.h"
+#include "component/x2j/X2JConvertProgress.h"
 
 using namespace juce;
 
@@ -69,7 +71,11 @@ public:
                        gui::toChooseJavaOutput,
                        gui::toCopyJavaArtifact,
                        gui::toChooseXbox360InputToBedrock,
-                       gui::toChooseXbox360InputToJava});
+                       gui::toChooseXbox360InputToJava,
+                       gui::toXbox360ToJavaConfig,
+                       gui::toXbox360ToJavaConvert,
+                       gui::toXbox360ToBedrockConfig,
+                       gui::toXbox360ToBedrockConvert});
   }
 
   void getCommandInfo(CommandID commandID, ApplicationCommandInfo &result) override {
@@ -176,20 +182,24 @@ public:
       return true;
     }
     case gui::toChooseJavaOutput: {
-      auto provider = dynamic_cast<B2JConvertStateProvider *>(current);
+      auto provider = dynamic_cast<JavaConvertedStateProvider *>(current);
       if (!provider) {
         return false;
       }
-      auto chooseOutput = new component::ChooseJavaOutput(provider->getConvertState());
+      auto state = provider->getConvertedState();
+      if (!state) {
+        return false;
+      }
+      auto chooseOutput = new component::ChooseJavaOutput(*state);
       fMainWindow->setContentOwned(chooseOutput, true);
       return true;
     }
     case gui::toCopyJavaArtifact: {
-      auto provider = dynamic_cast<B2JChooseOutputStateProvider *>(current);
+      auto provider = dynamic_cast<JavaOutputChoosenStateProvider *>(current);
       if (!provider) {
         return false;
       }
-      auto copy = new component::CopyJavaArtifactProgress(provider->getChooseOutputState());
+      auto copy = new component::CopyJavaArtifactProgress(provider->getJavaOutputChoosenState());
       fMainWindow->setContentOwned(copy, true);
       return true;
     }
@@ -212,6 +222,31 @@ public:
       auto chooseInput = new component::ChooseXbox360Input(destination, state);
       fMainWindow->setContentOwned(chooseInput, true);
       fMainWindow->setName(getApplicationName() + " : " + title);
+      return true;
+    }
+    case gui::toXbox360ToJavaConfig: {
+      auto provider = dynamic_cast<ChooseInputStateProvider *>(current);
+      if (!provider) {
+        return false;
+      }
+      auto state = provider->getChooseInputState();
+      if (!state) {
+        return false;
+      }
+      if (state->fType != InputType::Xbox360) {
+        return false;
+      }
+      auto config = new component::x2j::X2JConfig(*state);
+      fMainWindow->setContentOwned(config, true);
+      return true;
+    }
+    case gui::toXbox360ToJavaConvert: {
+      auto provider = dynamic_cast<X2JConfigStateProvider *>(current);
+      if (!provider) {
+        return false;
+      }
+      auto convert = new component::x2j::X2JConvertProgress(provider->getConfigState());
+      fMainWindow->setContentOwned(convert, true);
       return true;
     }
     default:

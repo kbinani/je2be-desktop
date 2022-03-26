@@ -9,8 +9,8 @@ using namespace juce;
 
 namespace je2be::gui::component {
 
-static File DecideDefaultOutputDirectory(B2JConvertState const &s, File directory) {
-  String name = s.fConfigState.fInputState.fWorldName;
+static File DecideDefaultOutputDirectory(JavaConvertedState const &s, File directory) {
+  String name = s.fWorldName;
   File candidate = directory.getChildFile(name);
   int count = 0;
   while (candidate.exists()) {
@@ -23,7 +23,7 @@ static File DecideDefaultOutputDirectory(B2JConvertState const &s, File director
 File ChooseJavaOutput::sLastCustomDirectory;
 File ChooseJavaOutput::sLastZipFile;
 
-ChooseJavaOutput::ChooseJavaOutput(B2JConvertState const &convertState) : fState(convertState) {
+ChooseJavaOutput::ChooseJavaOutput(JavaConvertedState const &convertState) : fState(convertState) {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
   setSize(width, height);
@@ -76,7 +76,7 @@ void ChooseJavaOutput::onSaveToCustomButtonClicked() {
   }
 
   File directory = sLastCustomDirectory;
-  if (auto defaultDirectory = DecideDefaultOutputDirectory(fState.fConvertState, sLastCustomDirectory); defaultDirectory != File()) {
+  if (auto defaultDirectory = DecideDefaultOutputDirectory(fState.fConvertedState, sLastCustomDirectory); defaultDirectory != File()) {
     directory = defaultDirectory;
   }
 
