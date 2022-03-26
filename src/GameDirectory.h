@@ -8,7 +8,7 @@ struct GameDirectory {
   juce::File fDirectory;
   juce::String fLevelName;
   juce::Image fIcon;
-  juce::Time fLastUpdate;
+  std::optional<juce::Time> fLastUpdate;
 
   enum GameMode : int32_t {
     SURVIVAL = 0,
@@ -16,10 +16,10 @@ struct GameDirectory {
     ADVENTURE = 2,
     SPECTATOR = 3,
   };
-  GameMode fGameMode = SURVIVAL;
+  std::optional<GameMode> fGameMode;
 
-  juce::String fVersion;
-  bool fCommandsEnabled;
+  std::optional<juce::String> fVersion;
+  std::optional<bool> fCommandsEnabled;
 
   void paint(juce::Graphics &g, int width, int height, bool selected, juce::Component &component) const {
     using namespace juce;
@@ -56,16 +56,24 @@ struct GameDirectory {
 
     y += lineHeight;
     g.setColour(textColour.darker(0.8));
-    juce::String secondLine = fDirectory.getFileName() + " (" + StringFromTime(fLastUpdate) + ")";
+    juce::String secondLine = fDirectory.getFileName();
+    if (fLastUpdate) {
+      secondLine += " (" + StringFromTime(*fLastUpdate) + ")";
+    }
     g.drawFittedText(secondLine, x, y, lineWidth, lineHeight, Justification::centredLeft, 1);
 
     y += lineHeight;
-    juce::String thirdLine = StringFromGameMode(fGameMode) + ", ";
-    if (fCommandsEnabled) {
-      thirdLine += TRANS("Cheats") + ", ";
+    if (fGameMode && fCommandsEnabled && fVersion) {
+      juce::String thirdLine = StringFromGameMode(*fGameMode) + ", ";
+      if (*fCommandsEnabled) {
+        thirdLine += TRANS("Cheats") + ", ";
+      }
+      thirdLine += TRANS("Version") + ": " + *fVersion;
+      g.drawFittedText(thirdLine, x, y, lineWidth, lineHeight, Justification::centredLeft, 1);
+    } else {
+      juce::String thirdLine = fDirectory.getParentDirectory().getFullPathName();
+      g.drawFittedText(thirdLine, x, y, lineWidth, lineHeight, Justification::centredLeft, 1);
     }
-    thirdLine += TRANS("Version") + ": " + fVersion;
-    g.drawFittedText(thirdLine, x, y, lineWidth, lineHeight, Justification::centredLeft, 1);
   }
 
   static juce::File BedrockSaveDirectory() {
