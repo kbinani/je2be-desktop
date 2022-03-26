@@ -15,6 +15,8 @@
 #include "component/b2j/B2JConvertProgress.h"
 #include "component/j2b/J2BConfig.h"
 #include "component/j2b/J2BConvertProgress.h"
+#include "component/x2b/X2BConfig.h"
+#include "component/x2b/X2BConvertProgress.h"
 #include "component/x2j/X2JConfig.h"
 #include "component/x2j/X2JConvertProgress.h"
 
@@ -250,6 +252,31 @@ public:
         return false;
       }
       auto convert = new component::x2j::X2JConvertProgress(provider->getConfigState());
+      fMainWindow->setContentOwned(convert, true);
+      return true;
+    }
+    case gui::toXbox360ToBedrockConfig: {
+      auto provider = dynamic_cast<ChooseInputStateProvider *>(current);
+      if (!provider) {
+        return false;
+      }
+      auto state = provider->getChooseInputState();
+      if (!state) {
+        return false;
+      }
+      if (state->fType != InputType::Xbox360) {
+        return false;
+      }
+      auto config = new component::x2b::X2BConfig(*state);
+      fMainWindow->setContentOwned(config, true);
+      return true;
+    }
+    case gui::toXbox360ToBedrockConvert: {
+      auto provider = dynamic_cast<X2BConfigStateProvider *>(current);
+      if (!provider) {
+        return false;
+      }
+      auto convert = new component::x2b::X2BConvertProgress(provider->getConfigState());
       fMainWindow->setContentOwned(convert, true);
       return true;
     }

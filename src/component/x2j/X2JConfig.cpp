@@ -102,7 +102,7 @@ void X2JConfig::onStartButtonClicked() {
 }
 
 void X2JConfig::onBackButtonClicked() {
-  JUCEApplication::getInstance()->invoke(gui::toChooseBedrockInput, true);
+  JUCEApplication::getInstance()->invoke(gui::toChooseXbox360InputToJava, true);
 }
 
 void X2JConfig::onClickImportAccountFromLauncherButton() {

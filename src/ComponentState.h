@@ -146,4 +146,17 @@ public:
   virtual X2JConfigState getConfigState() const = 0;
 };
 
+class X2BConfigState {
+public:
+  explicit X2BConfigState(ChooseInputState const &inputState)
+      : fInputState(inputState) {}
+  ChooseInputState const fInputState;
+};
+
+class X2BConfigStateProvider {
+public:
+  virtual ~X2BConfigStateProvider() {}
+  virtual X2BConfigState getConfigState() const = 0;
+};
+
 } // namespace je2be::gui

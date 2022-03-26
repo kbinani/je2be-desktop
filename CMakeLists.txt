@@ -80,6 +80,10 @@ set(je2be_desktop_files
   src/component/j2b/J2BConfig.h
   src/component/j2b/J2BConvertProgress.cpp
   src/component/j2b/J2BConvertProgress.h
+  src/component/x2b/X2BConfig.cpp
+  src/component/x2b/X2BConfig.h
+  src/component/x2b/X2BConvertProgress.cpp
+  src/component/x2b/X2BConvertProgress.h
   src/component/x2j/X2JConfig.cpp
   src/component/x2j/X2JConfig.h
   src/component/x2j/X2JConvertProgress.cpp

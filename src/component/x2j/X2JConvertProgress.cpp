@@ -177,10 +177,11 @@ void X2JConvertProgress::onCancelButtonClicked() {
     JUCEApplication::getInstance()->invoke(gui::toChooseXbox360InputToJava, true);
   } else {
     fCancelButton->setEnabled(false);
-    fCommandWhenFinished = gui::toB2JConfig;
+    fCommandWhenFinished = gui::toXbox360ToJavaConfig;
     fThread->signalThreadShouldExit();
     fConversionProgress = -1;
     fCancelRequested = true;
+    fConversionProgressBar->setTextToDisplay({});
     fLabel->setText(TRANS("Waiting for the worker thread to finish"), dontSendNotification);
   }
 }
@@ -197,7 +198,7 @@ void X2JConvertProgress::onProgressUpdate(Phase phase, double done, double total
     }
     fTaskbarProgress->setState(TaskbarProgress::State::Normal);
     fTaskbarProgress->update(weightUnzip + progress * weightConversion);
-  } else if (phase == Phase::Done) {
+  } else if (phase == Phase::Done && !fCancelRequested) {
     fState = JavaConvertedState(fConfigState.fInputState.fWorldName, fOutputDirectory);
     if (fCommandWhenFinished != gui::toChooseJavaOutput && fOutputDirectory.exists()) {
       TemporaryDirectory::QueueDeletingDirectory(fOutputDirectory);
