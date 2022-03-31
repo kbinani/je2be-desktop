@@ -22,12 +22,10 @@ static bool StringContainsOnlyAlnum(juce::String const &s) {
 
 static void LookupContentChild(File child, std::vector<GameDirectory> &buffer) {
   auto maybeGameTitleIds = child.findChildFiles(File::findDirectories, false, "*", File::FollowSymlinks::no);
+  static juce::String const sMaybeMinecraftGameTitleId("584111F7");
   for (auto const &maybeGameTitleId : maybeGameTitleIds) {
     auto name = maybeGameTitleId.getFileName();
-    if (name.length() != 8) {
-      continue;
-    }
-    if (!StringContainsOnlyAlnum(name)) {
+    if (name.compareIgnoreCase(sMaybeMinecraftGameTitleId) != 0) {
       continue;
     }
     auto children = maybeGameTitleId.findChildFiles(File::findDirectories, false, "*", File::FollowSymlinks::no);
