@@ -85,8 +85,8 @@ public:
     {
       je2be::box360::Options o;
       o.fTempDirectory = PathFromFile(fTempRoot);
-      bool ok = je2be::box360::Converter::Run(PathFromFile(fInput), PathFromFile(javaIntermediateDirectory), std::thread::hardware_concurrency(), o, this);
-      if (!ok) {
+      auto status = je2be::box360::Converter::Run(PathFromFile(fInput), PathFromFile(javaIntermediateDirectory), std::thread::hardware_concurrency(), o, this);
+      if (!status.ok()) {
         fUpdater->trigger(Phase::Error, 1, 1);
         return;
       }
@@ -134,17 +134,6 @@ private:
   File const fTempRoot;
   std::shared_ptr<X2BConvertProgress::Updater> fUpdater;
 };
-
-static JavaConvertStatistics Import(je2be::tobe::Statistics stat) {
-  JavaConvertStatistics ret;
-  for (auto const &it : stat.fChunkDataVersions) {
-    ret.fChunkDataVersions[it.first] = it.second;
-  }
-  ret.fNumChunks = stat.fNumChunks;
-  ret.fNumBlockEntities = stat.fNumBlockEntities;
-  ret.fNumEntities = stat.fNumEntities;
-  return ret;
-}
 
 static juce::String DimensionToString(mcfile::Dimension dim) {
   switch (dim) {
@@ -247,7 +236,7 @@ void X2BConvertProgress::onProgressUpdate(Phase phase, double done, double total
     auto stat = fUpdater->fStat;
     if (stat) {
       if (stat->fErrors.empty()) {
-        fState = BedrockConvertedState(fConfigState.fInputState.fWorldName, fOutputDirectory, Import(*stat));
+        fState = BedrockConvertedState(fConfigState.fInputState.fWorldName, fOutputDirectory);
         JUCEApplication::getInstance()->invoke(fCommandWhenFinished, true);
       } else {
         fFailed = true;

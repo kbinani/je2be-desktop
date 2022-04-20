@@ -101,8 +101,8 @@ public:
     }
     {
       je2be::toje::Converter c(PathFromFile(input), PathFromFile(fOutput), fOptions);
-      bool ok = c.run(std::thread::hardware_concurrency(), this);
-      fUpdater->complete(ok);
+      auto st = c.run(std::thread::hardware_concurrency(), this);
+      fUpdater->complete(st.ok());
     }
     fUpdater->trigger(B2JConvertProgress::Phase::Done, 1, 1);
   }

@@ -100,17 +100,6 @@ private:
   std::shared_ptr<J2BConvertProgress::Updater> fUpdater;
 };
 
-static JavaConvertStatistics Import(je2be::tobe::Statistics stat) {
-  JavaConvertStatistics ret;
-  for (auto const &it : stat.fChunkDataVersions) {
-    ret.fChunkDataVersions[it.first] = it.second;
-  }
-  ret.fNumChunks = stat.fNumChunks;
-  ret.fNumBlockEntities = stat.fNumBlockEntities;
-  ret.fNumEntities = stat.fNumEntities;
-  return ret;
-}
-
 static juce::String DimensionToString(mcfile::Dimension dim) {
   switch (dim) {
   case mcfile::Dimension::Overworld:
@@ -208,7 +197,7 @@ void J2BConvertProgress::onProgressUpdate(int phase, double done, double total) 
     auto stat = fUpdater->fStat;
     if (stat) {
       if (stat->fErrors.empty()) {
-        fState = BedrockConvertedState(fConfigState.fInputState.fWorldName, fOutputDirectory, Import(*stat));
+        fState = BedrockConvertedState(fConfigState.fInputState.fWorldName, fOutputDirectory);
         JUCEApplication::getInstance()->invoke(fCommandWhenFinished, true);
       } else {
         fFailed = true;

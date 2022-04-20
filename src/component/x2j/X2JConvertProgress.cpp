@@ -84,8 +84,8 @@ public:
       TemporaryDirectory::QueueDeletingDirectory(temp);
     };
     {
-      bool ok = je2be::box360::Converter::Run(PathFromFile(fInput), PathFromFile(fOutput), std::thread::hardware_concurrency(), fOptions, this);
-      fUpdater->complete(ok);
+      auto status = je2be::box360::Converter::Run(PathFromFile(fInput), PathFromFile(fOutput), std::thread::hardware_concurrency(), fOptions, this);
+      fUpdater->complete(status.ok());
     }
     fUpdater->trigger(X2JConvertProgress::Phase::Done, 1, 1);
   }
