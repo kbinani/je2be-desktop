@@ -1,3 +1,6 @@
+Version 4.1.0 (TBD)
+- Fixed a problem that caused certain blocks to disappear when converting Bedrock Edition 1.18.30 maps. [b2j]
+
 Version 4.0.0 (29 Mar 2022)
 - Added the ability to convert Xbox360 maps.
 - The parrots on the player's shoulders are now converted correctly. [j2b, b2j]
