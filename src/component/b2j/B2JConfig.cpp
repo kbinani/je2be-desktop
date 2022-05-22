@@ -77,6 +77,12 @@ B2JConfig::B2JConfig(ChooseInputState const &chooseInputState) : fState(chooseIn
   fMessage->setBounds(kMargin, messageComponentY, width - 2 * kMargin, kButtonBaseHeight);
   addAndMakeVisible(*fMessage);
 
+  fImportAccountFromLauncher->setEnabled(false);
+  fStartButton->setEnabled(false);
+  fBackButton->setEnabled(false);
+  fAccountScanThread.reset(new AccountScanThread(this));
+  fAccountScanThread->startThread();
+
   startTimer(1000);
 }
 
@@ -84,7 +90,15 @@ B2JConfig::~B2JConfig() {}
 
 void B2JConfig::timerCallback() {
   stopTimer();
-  fStartButton->setEnabled(fOk);
+  updateStartButton();
+}
+
+void B2JConfig::updateStartButton() {
+  if (fAccountScanThread == nullptr && !isTimerRunning()) {
+    fStartButton->setEnabled(fOk);
+  } else {
+    fStartButton->setEnabled(false);
+  }
 }
 
 void B2JConfig::paint(juce::Graphics &g) {}
@@ -109,20 +123,7 @@ void B2JConfig::onClickImportAccountFromLauncherButton() {
   if (fAccountScanThread) {
     return;
   }
-  if (fImportAccountFromLauncher->getToggleState()) {
-    if (fAccounts.empty()) {
-      fImportAccountFromLauncher->setEnabled(false);
-      stopTimer();
-      fStartButton->setEnabled(false);
-      fBackButton->setEnabled(false);
-      fAccountScanThread.reset(new AccountScanThread(this));
-      fAccountScanThread->startThread();
-    } else {
-      fAccountList->setEnabled(true);
-    }
-  } else {
-    fAccountList->setEnabled(false);
-  }
+  fAccountList->setEnabled(fImportAccountFromLauncher->getToggleState());
 }
 
 void B2JConfig::handleAsyncUpdate() {
@@ -135,12 +136,13 @@ void B2JConfig::handleAsyncUpdate() {
     Account account = fAccounts[i];
     fAccountList->addItem(account.toString(), i + 1);
   }
-  if (fAccounts.size() >= 1) {
+  if (fAccounts.size() > 0) {
     fAccountList->setSelectedId(1);
   }
   fAccountList->setEnabled(true);
   fImportAccountFromLauncher->setEnabled(true);
-  fStartButton->setEnabled(true);
+  fImportAccountFromLauncher->setToggleState(fAccounts.size() > 0, dontSendNotification);
+  updateStartButton();
   fBackButton->setEnabled(true);
 }
 

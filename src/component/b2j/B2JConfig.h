@@ -32,6 +32,8 @@ public:
   void handleAsyncUpdate() override;
 
 private:
+  void updateStartButton();
+
   void onBackButtonClicked();
   void onStartButtonClicked();
   void onClickImportAccountFromLauncherButton();
