@@ -3,6 +3,7 @@ Version 4.3.0 (TBD)
 - Improved conversion accuracy for pistons in operation. [j2b, b2j]
 - Improved conversion accuracy of Wither's HP values. [j2b, b2j]
 - Player now converted as an operator when converting cheat-enabled world. [j2b]
+- Fixed an issue where existing nether portals could not be recognized. [b2j]
 
 Version 4.2.0 (24 May 2022)
 - Fixed a problem that could cause entities to disappear when converting. [b2j]
