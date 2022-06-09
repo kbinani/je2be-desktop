@@ -1,4 +1,7 @@
-Version 4.3.0 (TBD)
+Version 4.3.1 (TBD)
+- Fixed a problem with incorrect files output to the poi directory. [x2j]
+
+Version 4.3.0 (9 June 2022)
 - Added support for Minecraft version 1.19. [j2b, b2j]
 - Improved conversion accuracy for pistons in operation. [j2b, b2j]
 - Improved conversion accuracy of Wither's HP values. [j2b, b2j]
