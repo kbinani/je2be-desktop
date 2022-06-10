@@ -112,7 +112,7 @@ void ChooseXbox360Input::onNextButtonClicked() {
 
 void ChooseXbox360Input::onChooseCustomButtonClicked() {
   int flags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles;
-  MainWindow::sFileChooser.reset(new FileChooser(TRANS("Select *.bin file to convert"), sLastDirectory, {}, true));
+  MainWindow::sFileChooser.reset(new FileChooser(TRANS("Select *.bin file to convert"), sLastDirectory, "*.bin", true));
   MainWindow::sFileChooser->launchAsync(flags, [this](FileChooser const &chooser) { onCustomDirectorySelected(chooser); });
 }
 
