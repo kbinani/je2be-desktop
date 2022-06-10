@@ -38,6 +38,7 @@ language: Japanese
 "Xbox360 to Java" = "Xbox360版 から Java版に";
 "Select *.mcworld file" = "*.mcworld ファイルを選ぶ";
 "Select *.mcworld file to convert" = "変換する *.mcworld ファイルを選んでください";
+"Select world directory" = "ディレクトリを選ぶ"
 "Save into Minecraft Java edition save folder" = "Minecraft Java 版のセーブフォルダに保存";
 "Unzipping..." = "解凍中...";
 "Copying..." = "コピー中...";

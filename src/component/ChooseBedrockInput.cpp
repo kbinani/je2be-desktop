@@ -56,20 +56,36 @@ ChooseBedrockInput::ChooseBedrockInput(std::optional<ChooseInputState> state) {
     y += fMessage->getHeight();
 
     y += kMargin;
-    fOrMessage.reset(new Label("", TRANS("or")));
-    fOrMessage->setBounds(kMargin + kMargin, y, fMessage->getWidth() - kMargin, lineHeight + borderSize.getTopAndBottom());
-    fOrMessage->setJustificationType(Justification::topLeft);
-    addAndMakeVisible(*fOrMessage);
-    y += fOrMessage->getHeight();
+    fOrMessage1.reset(new Label("", TRANS("or")));
+    fOrMessage1->setBounds(kMargin + kMargin, y, fMessage->getWidth() - kMargin, lineHeight + borderSize.getTopAndBottom());
+    fOrMessage1->setJustificationType(Justification::topLeft);
+    addAndMakeVisible(*fOrMessage1);
+    y += fOrMessage1->getHeight();
 
     y += kMargin;
-    fChooseCustomButton.reset(new TextButton(TRANS("Select *.mcworld file")));
-    fChooseCustomButton->setBounds(kMargin, y, fMessage->getWidth(), kButtonBaseHeight);
-    fChooseCustomButton->changeWidthToFitText();
-    fChooseCustomButton->setSize(jmin(fMessage->getWidth(), fChooseCustomButton->getWidth() + 2 * kMargin), fChooseCustomButton->getHeight());
-    fChooseCustomButton->onClick = [this]() { onChooseCustomButtonClicked(); };
-    addAndMakeVisible(*fChooseCustomButton);
-    y += fChooseCustomButton->getHeight();
+    fChooseMcworldFileButton.reset(new TextButton(TRANS("Select *.mcworld file")));
+    fChooseMcworldFileButton->setBounds(kMargin, y, fMessage->getWidth(), kButtonBaseHeight);
+    fChooseMcworldFileButton->changeWidthToFitText();
+    fChooseMcworldFileButton->setSize(jmin(fMessage->getWidth(), fChooseMcworldFileButton->getWidth() + 2 * kMargin), fChooseMcworldFileButton->getHeight());
+    fChooseMcworldFileButton->onClick = [this]() { onChooseMcworldFileButtonClicked(); };
+    addAndMakeVisible(*fChooseMcworldFileButton);
+    y += fChooseMcworldFileButton->getHeight();
+
+    y += kMargin;
+    fOrMessage2.reset(new Label("", TRANS("or")));
+    fOrMessage2->setBounds(kMargin + kMargin, y, fMessage->getWidth() - kMargin, lineHeight + borderSize.getTopAndBottom());
+    fOrMessage2->setJustificationType(Justification::topLeft);
+    addAndMakeVisible(*fOrMessage2);
+    y += fOrMessage2->getHeight();
+
+    y += kMargin;
+    fChooseDirectoryButton.reset(new TextButton(TRANS("Select world directory")));
+    fChooseDirectoryButton->setBounds(kMargin, y, fMessage->getWidth(), kButtonBaseHeight);
+    fChooseDirectoryButton->changeWidthToFitText();
+    fChooseDirectoryButton->setSize(jmin(fMessage->getWidth(), fChooseDirectoryButton->getWidth() + 2 * kMargin), fChooseDirectoryButton->getHeight());
+    fChooseDirectoryButton->onClick = [this]() { onChooseDirectoryButtonClicked(); };
+    addAndMakeVisible(*fChooseDirectoryButton);
+    y += fChooseDirectoryButton->getHeight();
   }
   {
     fBackButton.reset(new TextButton(TRANS("Back")));
@@ -117,13 +133,19 @@ void ChooseBedrockInput::onNextButtonClicked() {
   JUCEApplication::getInstance()->invoke(commands::toB2JConfig, true);
 }
 
-void ChooseBedrockInput::onChooseCustomButtonClicked() {
+void ChooseBedrockInput::onChooseMcworldFileButtonClicked() {
   int flags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles;
   MainWindow::sFileChooser.reset(new FileChooser(TRANS("Select *.mcworld file to convert"), sLastDirectory, "*.mcfile", true));
-  MainWindow::sFileChooser->launchAsync(flags, [this](FileChooser const &chooser) { onCustomDirectorySelected(chooser); });
+  MainWindow::sFileChooser->launchAsync(flags, [this](FileChooser const &chooser) { onMcworldFileSelected(chooser); });
 }
 
-void ChooseBedrockInput::onCustomDirectorySelected(juce::FileChooser const &chooser) {
+void ChooseBedrockInput::onChooseDirectoryButtonClicked() {
+  int flags = FileBrowserComponent::canSelectDirectories;
+  MainWindow::sFileChooser.reset(new FileChooser(TRANS("Select world directory to convert"), sLastDirectory, {}, true));
+  MainWindow::sFileChooser->launchAsync(flags, [this](FileChooser const &chooser) { onDirectorySelected(chooser); });
+}
+
+void ChooseBedrockInput::onMcworldFileSelected(juce::FileChooser const &chooser) {
   File result = chooser.getResult();
   if (result == File()) {
     return;
@@ -131,6 +153,17 @@ void ChooseBedrockInput::onCustomDirectorySelected(juce::FileChooser const &choo
   String worldName = GetWorldName(result);
   fState = ChooseInputState(InputType::Bedrock, result, worldName);
   sLastDirectory = result.getParentDirectory();
+  JUCEApplication::getInstance()->invoke(commands::toB2JConfig, true);
+}
+
+void ChooseBedrockInput::onDirectorySelected(juce::FileChooser const &chooser) {
+  File result = chooser.getResult();
+  if (result == File()) {
+    return;
+  }
+  String worldName = GetWorldName(result);
+  fState = ChooseInputState(InputType::Bedrock, result, worldName);
+  sLastDirectory = result;
   JUCEApplication::getInstance()->invoke(commands::toB2JConfig, true);
 }
 

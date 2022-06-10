@@ -37,20 +37,24 @@ public:
 
 private:
   void onNextButtonClicked();
-  void onChooseCustomButtonClicked();
+  void onChooseMcworldFileButtonClicked();
+  void onChooseDirectoryButtonClicked();
   void onBackButtonClicked();
 
-  void onCustomDirectorySelected(juce::FileChooser const &chooser);
+  void onMcworldFileSelected(juce::FileChooser const &chooser);
+  void onDirectorySelected(juce::FileChooser const &chooser);
 
 private:
   static juce::File sLastDirectory;
 
   std::unique_ptr<TextButton> fNextButton;
-  std::unique_ptr<TextButton> fChooseCustomButton;
+  std::unique_ptr<TextButton> fChooseMcworldFileButton;
+  std::unique_ptr<TextButton> fChooseDirectoryButton;
   std::unique_ptr<juce::ListBox> fListComponent;
   std::optional<ChooseInputState> fState;
   std::unique_ptr<juce::Label> fMessage;
-  std::unique_ptr<juce::Label> fOrMessage;
+  std::unique_ptr<juce::Label> fOrMessage1;
+  std::unique_ptr<juce::Label> fOrMessage2;
   std::unique_ptr<TextButton> fBackButton;
   juce::File fBedrockGameDirectory;
   std::unique_ptr<GameDirectoryScanThreadBedrock> fThread;
