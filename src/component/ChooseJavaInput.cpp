@@ -21,11 +21,31 @@ ChooseJavaInput::ChooseJavaInput(std::optional<ChooseInputState> state) {
 
   setSize(width, height);
   {
-    fMessage.reset(new Label("", TRANS("Select world to convert")));
-    fMessage->setBounds(kMargin, kMargin, width - kMargin - kWorldListWidth - kMargin - kMargin, height - kMargin - kButtonBaseHeight - kMargin - kMargin);
+    int y = kMargin;
+    fMessage.reset(new Label("", TRANS("Select a world to convert\nfrom the list")));
+    auto borderSize = getLookAndFeel().getLabelBorderSize(*fMessage);
+    auto lineHeight = getLookAndFeel().getLabelFont(*fMessage).getHeight();
+    fMessage->setBounds(kMargin, y, width - kMargin - kWorldListWidth - kMargin - kMargin, lineHeight * 2 + borderSize.getTopAndBottom());
     fMessage->setJustificationType(Justification::topLeft);
     fMessage->setMinimumHorizontalScale(1);
     addAndMakeVisible(*fMessage);
+    y += fMessage->getHeight();
+
+    y += kMargin;
+    fOrMessage.reset(new Label("", TRANS("or")));
+    fOrMessage->setBounds(kMargin + kMargin, y, fMessage->getWidth() - kMargin, lineHeight + borderSize.getTopAndBottom());
+    fOrMessage->setJustificationType(Justification::topLeft);
+    addAndMakeVisible(*fOrMessage);
+    y += fOrMessage->getHeight();
+
+    y += kMargin;
+    fChooseCustomButton.reset(new component::TextButton(TRANS("Select from other directories")));
+    fChooseCustomButton->setBounds(kMargin, y, fMessage->getWidth(), kButtonBaseHeight);
+    fChooseCustomButton->changeWidthToFitText();
+    fChooseCustomButton->setSize(jmin(fMessage->getWidth(), fChooseCustomButton->getWidth() + 2 * kMargin), fChooseCustomButton->getHeight());
+    fChooseCustomButton->onClick = [this]() { onChooseCustomButtonClicked(); };
+    addAndMakeVisible(*fChooseCustomButton);
+    y += fChooseCustomButton->getHeight();
   }
   {
     fBackButton.reset(new component::TextButton(TRANS("Back")));
@@ -39,13 +59,6 @@ ChooseJavaInput::ChooseJavaInput(std::optional<ChooseInputState> state) {
     fNextButton->onClick = [this]() { onNextButtonClicked(); };
     fNextButton->setEnabled(false);
     addAndMakeVisible(*fNextButton);
-  }
-  {
-    auto w = 200;
-    fChooseCustomButton.reset(new component::TextButton(TRANS("Select from other directories")));
-    fChooseCustomButton->setBounds(width - kMargin - fNextButton->getWidth() - kMargin - w, height - kButtonBaseHeight - kMargin, w, kButtonBaseHeight);
-    fChooseCustomButton->onClick = [this]() { onChooseCustomButtonClicked(); };
-    addAndMakeVisible(*fChooseCustomButton);
   }
 
   Rectangle<int> listBoxBounds(width - kMargin - kWorldListWidth, kMargin, kWorldListWidth, height - 3 * kMargin - kButtonBaseHeight);

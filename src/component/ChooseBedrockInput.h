@@ -50,6 +50,7 @@ private:
   std::unique_ptr<juce::ListBox> fListComponent;
   std::optional<ChooseInputState> fState;
   std::unique_ptr<juce::Label> fMessage;
+  std::unique_ptr<juce::Label> fOrMessage;
   std::unique_ptr<TextButton> fBackButton;
   juce::File fBedrockGameDirectory;
   std::unique_ptr<GameDirectoryScanThreadBedrock> fThread;

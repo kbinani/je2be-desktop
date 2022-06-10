@@ -51,6 +51,7 @@ private:
   std::unique_ptr<GameDirectoryScanThreadJava> fThread;
   std::optional<ChooseInputState> fState;
   std::unique_ptr<juce::Label> fMessage;
+  std::unique_ptr<juce::Label> fOrMessage;
   std::unique_ptr<TextButton> fBackButton;
   std::vector<GameDirectory> fGameDirectories;
   std::unique_ptr<juce::Label> fPlaceholder;
