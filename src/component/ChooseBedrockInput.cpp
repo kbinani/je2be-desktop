@@ -66,7 +66,7 @@ ChooseBedrockInput::ChooseBedrockInput(std::optional<ChooseInputState> state) {
   }
   {
     auto w = 160;
-    fChooseCustomButton.reset(new TextButton(TRANS("Select mcworld file")));
+    fChooseCustomButton.reset(new TextButton(TRANS("Select *.mcworld file")));
     fChooseCustomButton->setBounds(width - kMargin - fNextButton->getWidth() - kMargin - w, height - kButtonBaseHeight - kMargin, w, kButtonBaseHeight);
     fChooseCustomButton->onClick = [this]() { onChooseCustomButtonClicked(); };
     addAndMakeVisible(*fChooseCustomButton);
@@ -106,7 +106,7 @@ void ChooseBedrockInput::onNextButtonClicked() {
 
 void ChooseBedrockInput::onChooseCustomButtonClicked() {
   int flags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles;
-  MainWindow::sFileChooser.reset(new FileChooser(TRANS("Select mcworld file to convert"), sLastDirectory, "*.mcfile", true));
+  MainWindow::sFileChooser.reset(new FileChooser(TRANS("Select *.mcworld file to convert"), sLastDirectory, "*.mcfile", true));
   MainWindow::sFileChooser->launchAsync(flags, [this](FileChooser const &chooser) { onCustomDirectorySelected(chooser); });
 }
 
