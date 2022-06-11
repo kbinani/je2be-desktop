@@ -103,9 +103,8 @@ void ChooseJavaOutput::onCustomDestinationDirectorySelected(FileChooser const &c
   if (containsSomething) {
     fSaveToCustomDirectory->setToggleState(false, dontSendNotification);
     fState.fCopyDestination = std::nullopt;
-    NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::WarningIcon, TRANS("Error"),
-                                          TRANS("There are files and folders in the directory.\rPlease select an "
-                                                "empty folder"));
+    AlertWindow::showMessageBoxAsync(AlertWindow::AlertIconType::WarningIcon, TRANS("Error"),
+                                     TRANS("There are files and folders in the directory.\rPlease select an empty folder"));
   } else {
     fState.fCopyDestination = dest;
     JUCEApplication::getInstance()->invoke(commands::toCopyJavaArtifact, true);

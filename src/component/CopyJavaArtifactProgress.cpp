@@ -123,14 +123,29 @@ void CopyJavaArtifactProgress::handleAsyncUpdate() {
         message += juce::String(", what: " + error->fWhat);
       }
     }
-    NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::WarningIcon, TRANS("Failed"), message, nullptr, new InvokeToChooseOutput);
+    AlertWindow::showMessageBoxAsync(AlertWindow::AlertIconType::WarningIcon,
+                                     TRANS("Failed"),
+                                     message,
+                                     "OK",
+                                     nullptr,
+                                     new InvokeToChooseOutput);
   } else if (result->fType == CopyJavaArtifactProgress::Worker::Result::Type::Cancelled) {
     fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
-    NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::InfoIcon, TRANS("Cancelled"), TRANS("Saving cancelled."), nullptr, new InvokeToChooseOutput);
+    AlertWindow::showMessageBoxAsync(AlertWindow::AlertIconType::InfoIcon,
+                                     TRANS("Cancelled"),
+                                     TRANS("Saving cancelled."),
+                                     "OK",
+                                     nullptr,
+                                     new InvokeToChooseOutput);
     JUCEApplication::getInstance()->invoke(commands::toChooseJavaOutput, true);
   } else {
     fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
-    NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::InfoIcon, TRANS("Completed"), TRANS("Saving completed.") + "\n" + fState.fCopyDestination->getFullPathName(), nullptr, new InvokeToModeSelect);
+    AlertWindow::showMessageBoxAsync(AlertWindow::AlertIconType::InfoIcon,
+                                     TRANS("Completed"),
+                                     TRANS("Saving completed.") + "\n" + fState.fCopyDestination->getFullPathName(),
+                                     "OK",
+                                     nullptr,
+                                     new InvokeToModeSelect);
     if (fState.fConvertedState.fOutputDirectory.exists()) {
       TemporaryDirectory::QueueDeletingDirectory(fState.fConvertedState.fOutputDirectory);
     }
