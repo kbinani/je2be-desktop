@@ -87,7 +87,11 @@ public:
     File sessionTempDir = TemporaryDirectory::EnsureExisting();
     juce::Uuid u;
     File temp = sessionTempDir.getChildFile(u.toDashedString());
-    temp.createDirectory();
+    if (auto st = temp.createDirectory(); !st.ok()) {
+      fUpdater->complete(Error(__FILE__, __LINE__, st.getErrorMessage().toStdString()));
+      fUpdater->trigger(B2JConvertProgress::Phase::Error, 1, 1);
+      return;
+    }
     defer {
       TemporaryDirectory::QueueDeletingDirectory(temp);
     };
@@ -123,8 +127,8 @@ public:
     auto env = leveldb::Env::Default();
     File db = fInput.getChildFile("db");
 
-    if (!temp.getChildFile("db").createDirectory()) {
-      return Error(__FILE__, __LINE__);
+    if (auto st = temp.getChildFile("db").createDirectory(); !st.ok()) {
+      return Error(__FILE__, __LINE__, st.getErrorMessage().toStdString());
     }
 
     std::vector<File> exclude;
@@ -133,7 +137,7 @@ public:
     auto lockFilePath = PathFromFile(lockFile);
     FileLock *lock = nullptr;
     if (auto st = env->LockFile(lockFilePath, &lock); !st.ok()) {
-      return Error(__FILE__, __LINE__);
+      return Error(__FILE__, __LINE__, st.ToString());
     }
     exclude.push_back(lockFile);
     defer {
@@ -157,7 +161,7 @@ public:
         }
 
         if (auto st = env->LockFile(PathFromFile(manifestFile), &manifestLock); !st.ok()) {
-          return Error(__FILE__, __LINE__);
+          return Error(__FILE__, __LINE__, st.ToString());
         }
         exclude.push_back(manifestFile);
       }
@@ -168,8 +172,8 @@ public:
       }
     };
 
-    if (!CopyDirectoryRecursive(fInput, temp, exclude)) {
-      return Error(__FILE__, __LINE__);
+    if (auto st = CopyDirectoryRecursive(fInput, temp, exclude); !st.ok()) {
+      return st;
     }
 
     return Status::Ok();
@@ -181,7 +185,7 @@ public:
     for (int i = 0; i < numEntries; ++i) {
       auto result = zip.uncompressEntry(i, temp);
       if (result.failed()) {
-        return Error(__FILE__, __LINE__);
+        return Error(__FILE__, __LINE__, result.getErrorMessage().toStdString());
       }
       fUpdater->trigger(B2JConvertProgress::Phase::Unzip, i + 1, numEntries);
     }
@@ -354,7 +358,7 @@ void B2JConvertProgress::onProgressUpdate(Phase phase, double done, double total
     auto error = st.error();
     if (error) {
       juce::String message = juce::String(JUCE_APPLICATION_NAME_STRING) + " version " + JUCE_APPLICATION_VERSION_STRING;
-      message += juce::String("\nFailed at file ") + error->fWhere.fFile + ":" + std::to_string(error->fWhere.fLine);
+      message += juce::String("\nFailed: where: ") + error->fWhere.fFile + ":" + std::to_string(error->fWhere.fLine);
       if (!error->fWhat.empty()) {
         message += juce::String(", what: " + error->fWhat);
       }

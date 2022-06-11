@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Status.hpp"
 #include <juce_gui_extra/juce_gui_extra.h>
 
 namespace je2be::desktop {
@@ -12,10 +13,12 @@ static inline std::filesystem::path PathFromFile(juce::File file) {
 #endif
 }
 
-static bool CopyDirectoryRecursive(juce::File from, juce::File to, std::vector<juce::File> const &exclude) {
+static Status CopyDirectoryRecursive(juce::File from, juce::File to, std::vector<juce::File> const &exclude) {
   using namespace juce;
-  if (from.isDirectory() && !to.createDirectory()) {
-    return false;
+  if (from.isDirectory()) {
+    if (auto st = to.createDirectory(); !st.ok()) {
+      return Error(__FILE__, __LINE__, st.getErrorMessage().toStdString());
+    }
   }
   for (File &file : from.findChildFiles(File::findFiles, false)) {
     bool excluding = false;
@@ -28,8 +31,9 @@ static bool CopyDirectoryRecursive(juce::File from, juce::File to, std::vector<j
     if (excluding) {
       continue;
     }
-    if (!file.copyFileTo(to.getChildFile(file.getFileName()))) {
-      return false;
+    File copyTo = to.getChildFile(file.getFileName());
+    if (!file.copyFileTo(copyTo)) {
+      return Error(__FILE__, __LINE__, "failed copying file from " + file.getFullPathName().toStdString() + " to " + copyTo.getFullPathName().toStdString());
     }
   }
   for (File &dir : from.findChildFiles(File::findDirectories, false)) {
@@ -43,11 +47,11 @@ static bool CopyDirectoryRecursive(juce::File from, juce::File to, std::vector<j
     if (excluding) {
       continue;
     }
-    if (!CopyDirectoryRecursive(dir, to.getChildFile(dir.getFileName()), exclude)) {
-      return false;
+    if (auto st = CopyDirectoryRecursive(dir, to.getChildFile(dir.getFileName()), exclude); !st.ok()) {
+      return st;
     }
   }
-  return true;
+  return Status::Ok();
 }
 
 } // namespace je2be::desktop
