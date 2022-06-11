@@ -2,6 +2,7 @@
 
 #include "CommandID.h"
 #include "ComponentState.h"
+#include "Status.hpp"
 
 namespace je2be::desktop {
 class TaskbarProgress;
@@ -37,7 +38,7 @@ public:
 
   void onCancelButtonClicked();
 
-  void onProgressUpdate(int phase, double done, double total);
+  void onProgressUpdate(int phase, double done, double total, Status status);
 
   class Updater;
 

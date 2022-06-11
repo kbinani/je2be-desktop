@@ -42,20 +42,20 @@ public:
     if (!target)
       return;
     for (auto const &e : copy) {
-      target->onProgressUpdate(e.fPhase, e.fDone, e.fTotal);
+      target->onProgressUpdate(e.fPhase, e.fDone, e.fTotal, fStatus);
     }
   }
 
-  void complete(je2be::tobe::Statistics stat) {
-    fStat = stat;
+  void complete(Status status) {
+    fStatus = status;
   }
 
   std::atomic<X2BConvertProgress *> fTarget;
-  std::optional<je2be::tobe::Statistics> fStat;
 
 private:
   std::deque<Entry> fQueue;
   std::mutex fMut;
+  Status fStatus;
 };
 
 class X2BWorkerThread : public Thread, public je2be::box360::Progress, public je2be::tobe::Progress {
@@ -69,6 +69,7 @@ public:
     try {
       unsafeRun();
     } catch (...) {
+      fUpdater->complete(Status(Error(__FILE__, __LINE__)));
       fUpdater->trigger(Phase::Error, 1, 1);
     }
   }
@@ -79,6 +80,7 @@ public:
     juce::Uuid u;
     File javaIntermediateDirectory = fTempRoot.getChildFile(u.toDashedString());
     if (auto result = javaIntermediateDirectory.createDirectory(); !result.ok()) {
+      fUpdater->complete(Status(Error(__FILE__, __LINE__)));
       fUpdater->trigger(Phase::Error, 1, 1);
       return;
     }
@@ -87,6 +89,7 @@ public:
       o.fTempDirectory = PathFromFile(fTempRoot);
       auto status = je2be::box360::Converter::Run(PathFromFile(fInput), PathFromFile(javaIntermediateDirectory), std::thread::hardware_concurrency(), o, this);
       if (!status.ok()) {
+        fUpdater->complete(status);
         fUpdater->trigger(Phase::Error, 1, 1);
         return;
       }
@@ -99,10 +102,8 @@ public:
       je2be::tobe::Options o;
       o.fTempDirectory = PathFromFile(fTempRoot);
       je2be::tobe::Converter c(PathFromFile(javaIntermediateDirectory), PathFromFile(fOutput), o);
-      auto stat = c.run(std::thread::hardware_concurrency(), this);
-      if (stat) {
-        fUpdater->complete(*stat);
-      }
+      auto status = c.run(std::thread::hardware_concurrency(), this);
+      fUpdater->complete(status);
     }
     fUpdater->trigger(Phase::Done, 1, 1);
   }
@@ -135,18 +136,6 @@ private:
   std::shared_ptr<X2BConvertProgress::Updater> fUpdater;
 };
 
-static juce::String DimensionToString(mcfile::Dimension dim) {
-  switch (dim) {
-  case mcfile::Dimension::Overworld:
-    return TRANS("Overworld");
-  case mcfile::Dimension::Nether:
-    return TRANS("Nether");
-  case mcfile::Dimension::End:
-    return TRANS("End");
-  }
-  return "Unknown";
-}
-
 X2BConvertProgress::X2BConvertProgress(X2BConfigState const &configState) : fConfigState(configState) {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
@@ -162,8 +151,8 @@ X2BConvertProgress::X2BConvertProgress(X2BConfigState const &configState) : fCon
   fLabel->setBounds(kMargin, y, width - 2 * kMargin, kButtonBaseHeight);
   fLabel->setJustificationType(Justification::topLeft);
   addAndMakeVisible(*fLabel);
+  int errorMessageY = y + fLabel->getHeight();
   y += fLabel->getHeight() + kMargin;
-  int errorMessageY = y;
 
   fXbox360ToJavaConversionProgressBar.reset(new ProgressBar(fXbox360ToJavaConversionProgress));
   fXbox360ToJavaConversionProgressBar->setBounds(kMargin, y, width - 2 * kMargin, kButtonBaseHeight);
@@ -183,9 +172,10 @@ X2BConvertProgress::X2BConvertProgress(X2BConfigState const &configState) : fCon
   addAndMakeVisible(*fJavaToBedrockCompactionProgressBar);
 
   fErrorMessage.reset(new TextEditor());
-  fErrorMessage->setBounds(kMargin, errorMessageY, width - 2 * kMargin, fCancelButton->getY() - y - kMargin);
+  fErrorMessage->setBounds(kMargin, errorMessageY, width - 2 * kMargin, fCancelButton->getY() - kMargin - errorMessageY);
   fErrorMessage->setEnabled(false);
   fErrorMessage->setMultiLine(true);
+  fErrorMessage->setColour(TextEditor::backgroundColourId, findColour(Label::backgroundColourId));
   addChildComponent(*fErrorMessage);
 
   fTaskbarProgress.reset(new TaskbarProgress());
@@ -227,32 +217,17 @@ void X2BConvertProgress::onCancelButtonClicked() {
   }
 }
 
-void X2BConvertProgress::onProgressUpdate(Phase phase, double done, double total) {
+void X2BConvertProgress::onProgressUpdate(Phase phase, double done, double total, Status st) {
   double progress = done / total;
+  fFailed = !st.ok();
+
   if (phase == Phase::Done && !fCancelRequested) {
     if (fCommandWhenFinished != commands::toChooseBedrockOutput && fOutputDirectory.exists()) {
       TemporaryDirectory::QueueDeletingDirectory(fOutputDirectory);
     }
-    auto stat = fUpdater->fStat;
-    if (stat) {
-      if (stat->fErrors.empty()) {
-        fState = BedrockConvertedState(fConfigState.fInputState.fWorldName, fOutputDirectory);
-        JUCEApplication::getInstance()->invoke(fCommandWhenFinished, true);
-      } else {
-        fFailed = true;
-        juce::String msg = "Failed chunks:\n";
-        for (auto const &it : stat->fErrors) {
-          int32_t regionX = it.fChunkX >> 5;
-          int32_t regionZ = it.fChunkZ >> 5;
-          msg += "    " + DimensionToString(it.fDim) + " chunk (" +
-                 juce::String(it.fChunkX) + ", " + juce::String(it.fChunkZ) + ") at r." +
-                 juce::String(regionX) + "." + juce::String(regionZ) + ".mca\n";
-        }
-        fErrorMessage->setText(msg);
-        fErrorMessage->setVisible(true);
-      }
-    } else {
-      fFailed = true;
+    if (st.ok()) {
+      fState = BedrockConvertedState(fConfigState.fInputState.fWorldName, fOutputDirectory);
+      JUCEApplication::getInstance()->invoke(fCommandWhenFinished, true);
     }
     if (fFailed) {
       fTaskbarProgress->setState(TaskbarProgress::State::Error);
@@ -300,6 +275,13 @@ void X2BConvertProgress::onProgressUpdate(Phase phase, double done, double total
   if (fFailed) {
     fLabel->setText(TRANS("The conversion failed."), dontSendNotification);
     fLabel->setColour(Label::textColourId, kErrorTextColor);
+    auto error = st.error();
+    if (error) {
+      juce::String message = juce::String(JUCE_APPLICATION_NAME_STRING) + " version " + JUCE_APPLICATION_VERSION_STRING;
+      message += juce::String("\nFailed at file ") + error->fFile + ":" + std::to_string(error->fLine);
+      fErrorMessage->setText(message);
+      fErrorMessage->setVisible(true);
+    }
     fCancelButton->setButtonText(TRANS("Back"));
     fCancelButton->setEnabled(true);
     fXbox360ToJavaConversionProgressBar->setVisible(false);

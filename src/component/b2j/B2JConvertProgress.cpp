@@ -223,9 +223,9 @@ B2JConvertProgress::B2JConvertProgress(B2JConfigState const &configState) : fCon
     fLabel->setBounds(kMargin, y, width - 2 * kMargin, kButtonBaseHeight);
     fLabel->setJustificationType(Justification::topLeft);
     addAndMakeVisible(*fLabel);
-    y += fLabel->getHeight() + kMargin;
   }
-  int errorMessageY = y;
+  int errorMessageY = y + fLabel->getHeight();
+  y += fLabel->getHeight() + kMargin;
 
   {
     juce::String title;
@@ -345,10 +345,10 @@ void B2JConvertProgress::onProgressUpdate(Phase phase, double done, double total
   if (fFailed) {
     fLabel->setText(TRANS("The conversion failed."), dontSendNotification);
     fLabel->setColour(Label::textColourId, kErrorTextColor);
-    auto reason = st.error();
-    if (reason) {
+    auto error = st.error();
+    if (error) {
       juce::String message = juce::String(JUCE_APPLICATION_NAME_STRING) + " version " + JUCE_APPLICATION_VERSION_STRING;
-      message += juce::String("\nFailed at file ") + reason->fFile + ":" + std::to_string(reason->fLine);
+      message += juce::String("\nFailed at file ") + error->fFile + ":" + std::to_string(error->fLine);
       fErrorMessage->setText(message);
       fErrorMessage->setVisible(true);
     }

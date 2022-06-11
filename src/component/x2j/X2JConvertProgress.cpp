@@ -43,20 +43,20 @@ public:
       return;
     }
     for (auto const &e : copy) {
-      target->onProgressUpdate(e.fPhase, e.fDone, e.fTotal);
+      target->onProgressUpdate(e.fPhase, e.fDone, e.fTotal, fStatus);
     }
   }
 
-  void complete(bool ok) {
-    fOk = ok;
+  void complete(je2be::Status status) {
+    fStatus = status;
   }
 
   std::atomic<X2JConvertProgress *> fTarget;
-  bool fOk = false;
 
 private:
   std::deque<Entry> fQueue;
   std::mutex fMut;
+  je2be::Status fStatus;
 };
 
 class X2JWorkerThread : public Thread, public je2be::box360::Progress {
@@ -69,8 +69,10 @@ public:
     try {
       unsafeRun();
     } catch (std::filesystem::filesystem_error &e) {
+      fUpdater->complete(Status(Error(__FILE__, __LINE__)));
       fUpdater->trigger(X2JConvertProgress::Phase::Error, 1, 1);
     } catch (...) {
+      fUpdater->complete(Status(Error(__FILE__, __LINE__)));
       fUpdater->trigger(X2JConvertProgress::Phase::Error, 1, 1);
     }
   }
@@ -85,7 +87,7 @@ public:
     };
     {
       auto status = je2be::box360::Converter::Run(PathFromFile(fInput), PathFromFile(fOutput), std::thread::hardware_concurrency(), fOptions, this);
-      fUpdater->complete(status.ok());
+      fUpdater->complete(status);
     }
     fUpdater->trigger(X2JConvertProgress::Phase::Done, 1, 1);
   }
@@ -122,9 +124,9 @@ X2JConvertProgress::X2JConvertProgress(X2JConfigState const &configState) : fCon
     fLabel->setBounds(kMargin, y, width - 2 * kMargin, kButtonBaseHeight);
     fLabel->setJustificationType(Justification::topLeft);
     addAndMakeVisible(*fLabel);
-    y += fLabel->getHeight() + kMargin;
   }
-  int errorMessageY = y;
+  int errorMessageY = y + fLabel->getHeight();
+  y += fLabel->getHeight() + kMargin;
 
   {
     fConversionProgressBar.reset(new ProgressBar(fConversionProgress));
@@ -135,9 +137,10 @@ X2JConvertProgress::X2JConvertProgress(X2JConfigState const &configState) : fCon
 
   {
     fErrorMessage.reset(new TextEditor());
-    fErrorMessage->setBounds(kMargin, errorMessageY, width - 2 * kMargin, fCancelButton->getY() - y - kMargin);
+    fErrorMessage->setBounds(kMargin, errorMessageY, width - 2 * kMargin, fCancelButton->getY() - kMargin - errorMessageY);
     fErrorMessage->setEnabled(false);
     fErrorMessage->setMultiLine(true);
+    fErrorMessage->setColour(TextEditor::backgroundColourId, findColour(Label::backgroundColourId));
     addChildComponent(*fErrorMessage);
   }
 
@@ -186,9 +189,10 @@ void X2JConvertProgress::onCancelButtonClicked() {
   }
 }
 
-void X2JConvertProgress::onProgressUpdate(Phase phase, double done, double total) {
+void X2JConvertProgress::onProgressUpdate(Phase phase, double done, double total, Status status) {
   double const weightUnzip = 0.5;
   double const weightConversion = 1 - weightUnzip;
+  fFailed = !status.ok();
 
   if (phase == Phase::Conversion && !fCancelRequested) {
     fLabel->setText(TRANS("Converting..."), dontSendNotification);
@@ -203,11 +207,8 @@ void X2JConvertProgress::onProgressUpdate(Phase phase, double done, double total
     if (fCommandWhenFinished != commands::toChooseJavaOutput && fOutputDirectory.exists()) {
       TemporaryDirectory::QueueDeletingDirectory(fOutputDirectory);
     }
-    bool ok = fUpdater->fOk;
-    if (ok) {
+    if (status.ok()) {
       JUCEApplication::getInstance()->invoke(fCommandWhenFinished, true);
-    } else {
-      fFailed = true;
     }
     if (fFailed) {
       fTaskbarProgress->setState(TaskbarProgress::State::Error);
@@ -220,6 +221,13 @@ void X2JConvertProgress::onProgressUpdate(Phase phase, double done, double total
   if (fFailed) {
     fLabel->setText(TRANS("The conversion failed."), dontSendNotification);
     fLabel->setColour(Label::textColourId, kErrorTextColor);
+    auto error = status.error();
+    if (error) {
+      juce::String message = juce::String(JUCE_APPLICATION_NAME_STRING) + " version " + JUCE_APPLICATION_VERSION_STRING;
+      message += juce::String("\nFailed at file ") + error->fFile + ":" + std::to_string(error->fLine);
+      fErrorMessage->setText(message);
+      fErrorMessage->setVisible(true);
+    }
     fCancelButton->setButtonText(TRANS("Back"));
     fCancelButton->setEnabled(true);
     fConversionProgressBar->setVisible(false);
