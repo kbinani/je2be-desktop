@@ -71,7 +71,13 @@ public:
       fUpdater->complete(status);
       fUpdater->trigger(2, 1, 1);
     } catch (std::filesystem::filesystem_error &e) {
-      fUpdater->complete(Status(Error(__FILE__, __LINE__)));
+      fUpdater->complete(Status(Error(__FILE__, __LINE__, e.what())));
+      fUpdater->trigger(-1, 1, 1);
+    } catch (std::exception &e) {
+      fUpdater->complete(Status(Error(__FILE__, __LINE__, e.what())));
+      fUpdater->trigger(-1, 1, 1);
+    } catch (char const *what) {
+      fUpdater->complete(Status(Error(__FILE__, __LINE__, what)));
       fUpdater->trigger(-1, 1, 1);
     } catch (...) {
       fUpdater->complete(Status(Error(__FILE__, __LINE__)));
@@ -217,7 +223,10 @@ void J2BConvertProgress::onProgressUpdate(int phase, double done, double total, 
     auto error = st.error();
     if (error) {
       juce::String message = juce::String(JUCE_APPLICATION_NAME_STRING) + " version " + JUCE_APPLICATION_VERSION_STRING;
-      message += juce::String("\nFailed at file ") + error->fFile + ":" + std::to_string(error->fLine);
+      message += juce::String("\nFailed at file ") + error->fWhere.fFile + ":" + std::to_string(error->fWhere.fLine);
+      if (!error->fWhat.empty()) {
+        message += juce::String(", what: " + error->fWhat);
+      }
       fErrorMessage->setText(message);
       fErrorMessage->setVisible(true);
     }

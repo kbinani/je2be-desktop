@@ -5,7 +5,7 @@
 
 namespace je2be::desktop {
 
-inline Status Error(char const *file, int line) {
+inline Status Error(char const *file, int line, std::string what = {}) {
   namespace fs = std::filesystem;
 
   Status::Where w(file, line);
@@ -19,7 +19,7 @@ inline Status Error(char const *file, int line) {
   } else {
     w.fFile = p.string();
   }
-  return Status(w);
+  return Status(Status::ErrorData(w, what));
 }
 
 } // namespace je2be::desktop
