@@ -43,20 +43,20 @@ public:
       return;
     }
     for (auto const &e : copy) {
-      target->onProgressUpdate(e.fPhase, e.fDone, e.fTotal);
+      target->onProgressUpdate(e.fPhase, e.fDone, e.fTotal, fStatus);
     }
   }
 
-  void complete(bool ok) {
-    fOk = ok;
+  void complete(je2be::Status status) {
+    fStatus = status;
   }
 
   std::atomic<B2JConvertProgress *> fTarget;
-  bool fOk = false;
 
 private:
   std::deque<Entry> fQueue;
   std::mutex fMut;
+  je2be::Status fStatus;
 };
 
 class B2JWorkerThread : public Thread, public je2be::toje::Progress {
@@ -69,8 +69,10 @@ public:
     try {
       unsafeRun();
     } catch (std::filesystem::filesystem_error &e) {
+      fUpdater->complete(Error(__FILE__, __LINE__));
       fUpdater->trigger(B2JConvertProgress::Phase::Error, 1, 1);
     } catch (...) {
+      fUpdater->complete(Error(__FILE__, __LINE__));
       fUpdater->trigger(B2JConvertProgress::Phase::Error, 1, 1);
     }
   }
@@ -86,14 +88,16 @@ public:
 
     File input;
     if (fInput.isDirectory()) {
-      if (!copyInto(temp)) {
+      if (auto st = copyInto(temp); !st.ok()) {
+        fUpdater->complete(st);
         fUpdater->trigger(B2JConvertProgress::Phase::Error, 1, 1);
         return;
       }
       input = temp;
       fUpdater->trigger(B2JConvertProgress::Phase::Unzip, 1, 1);
     } else {
-      if (!unzipInto(temp)) {
+      if (auto st = unzipInto(temp); !st.ok()) {
+        fUpdater->complete(st);
         fUpdater->trigger(B2JConvertProgress::Phase::Error, 1, 1);
         return;
       }
@@ -102,19 +106,19 @@ public:
     {
       je2be::toje::Converter c(PathFromFile(input), PathFromFile(fOutput), fOptions);
       auto st = c.run(std::thread::hardware_concurrency(), this);
-      fUpdater->complete(st.ok());
+      fUpdater->complete(st);
     }
     fUpdater->trigger(B2JConvertProgress::Phase::Done, 1, 1);
   }
 
-  bool copyInto(File temp) {
+  je2be::Status copyInto(File temp) {
     using namespace leveldb;
 
     auto env = leveldb::Env::Default();
     File db = fInput.getChildFile("db");
 
     if (!temp.getChildFile("db").createDirectory()) {
-      return false;
+      return Error(__FILE__, __LINE__);
     }
 
     std::vector<File> exclude;
@@ -123,7 +127,7 @@ public:
     auto lockFilePath = PathFromFile(lockFile);
     FileLock *lock = nullptr;
     if (auto st = env->LockFile(lockFilePath, &lock); !st.ok()) {
-      return false;
+      return Error(__FILE__, __LINE__);
     }
     exclude.push_back(lockFile);
     defer {
@@ -143,11 +147,11 @@ public:
 
         // This will success even when the game client is opening the db.
         if (!manifestFile.copyFileTo(temp.getChildFile("db").getChildFile(manifestName))) {
-          return false;
+          return Error(__FILE__, __LINE__);
         }
 
         if (auto st = env->LockFile(PathFromFile(manifestFile), &manifestLock); !st.ok()) {
-          return false;
+          return Error(__FILE__, __LINE__);
         }
         exclude.push_back(manifestFile);
       }
@@ -159,23 +163,23 @@ public:
     };
 
     if (!CopyDirectoryRecursive(fInput, temp, exclude)) {
-      return false;
+      return Error(__FILE__, __LINE__);
     }
 
-    return true;
+    return Status::Ok();
   }
 
-  bool unzipInto(File temp) {
+  je2be::Status unzipInto(File temp) {
     juce::ZipFile zip(fInput);
     int numEntries = zip.getNumEntries();
     for (int i = 0; i < numEntries; ++i) {
       auto result = zip.uncompressEntry(i, temp);
       if (result.failed()) {
-        return false;
+        return Error(__FILE__, __LINE__);
       }
       fUpdater->trigger(B2JConvertProgress::Phase::Unzip, i + 1, numEntries);
     }
-    return true;
+    return Status::Ok();
   }
 
   bool report(double done, double total) override {
@@ -246,9 +250,10 @@ B2JConvertProgress::B2JConvertProgress(B2JConfigState const &configState) : fCon
 
   {
     fErrorMessage.reset(new TextEditor());
-    fErrorMessage->setBounds(kMargin, errorMessageY, width - 2 * kMargin, fCancelButton->getY() - y - kMargin);
+    fErrorMessage->setBounds(kMargin, errorMessageY, width - 2 * kMargin, fCancelButton->getY() - kMargin - errorMessageY);
     fErrorMessage->setEnabled(false);
     fErrorMessage->setMultiLine(true);
+    fErrorMessage->setColour(TextEditor::backgroundColourId, findColour(Label::backgroundColourId));
     addChildComponent(*fErrorMessage);
   }
 
@@ -296,9 +301,10 @@ void B2JConvertProgress::onCancelButtonClicked() {
   }
 }
 
-void B2JConvertProgress::onProgressUpdate(Phase phase, double done, double total) {
+void B2JConvertProgress::onProgressUpdate(Phase phase, double done, double total, Status st) {
   double const weightUnzip = 0.5;
   double const weightConversion = 1 - weightUnzip;
+  fFailed = !st.ok();
 
   if (phase == Phase::Unzip && !fCancelRequested) {
     double progress = done / total;
@@ -325,11 +331,8 @@ void B2JConvertProgress::onProgressUpdate(Phase phase, double done, double total
     if (fCommandWhenFinished != commands::toChooseJavaOutput && fOutputDirectory.exists()) {
       TemporaryDirectory::QueueDeletingDirectory(fOutputDirectory);
     }
-    bool ok = fUpdater->fOk;
-    if (ok) {
+    if (st.ok()) {
       JUCEApplication::getInstance()->invoke(fCommandWhenFinished, true);
-    } else {
-      fFailed = true;
     }
     if (fFailed) {
       fTaskbarProgress->setState(TaskbarProgress::State::Error);
@@ -342,6 +345,13 @@ void B2JConvertProgress::onProgressUpdate(Phase phase, double done, double total
   if (fFailed) {
     fLabel->setText(TRANS("The conversion failed."), dontSendNotification);
     fLabel->setColour(Label::textColourId, kErrorTextColor);
+    auto reason = st.error();
+    if (reason) {
+      juce::String message = juce::String(JUCE_APPLICATION_NAME_STRING) + " version " + JUCE_APPLICATION_VERSION_STRING;
+      message += juce::String("\nFailed at file ") + reason->fFile + ":" + std::to_string(reason->fLine);
+      fErrorMessage->setText(message);
+      fErrorMessage->setVisible(true);
+    }
     fCancelButton->setButtonText(TRANS("Back"));
     fCancelButton->setEnabled(true);
     fUnzipOrCopyProgressBar->setVisible(false);

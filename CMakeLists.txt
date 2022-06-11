@@ -46,6 +46,7 @@ set(je2be_desktop_files
   src/LocalizationHelper.cpp
   src/LocalizationHelper.h
   src/LookAndFeel.h
+  src/Status.hpp
   src/TaskbarProgress.cpp
   src/TaskbarProgress.h
   src/TemporaryDirectory.cpp
