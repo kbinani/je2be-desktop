@@ -18,8 +18,14 @@ public:
   void run() override {
     try {
       unsafeRun();
+    } catch (std::filesystem::filesystem_error &e) {
+      fResult = CopyBedrockArtifactProgress::Worker::Result::Failed(Error(__FILE__, __LINE__, e.what()));
+    } catch (std::exception &e) {
+      fResult = CopyBedrockArtifactProgress::Worker::Result::Failed(Error(__FILE__, __LINE__, e.what()));
+    } catch (char const *what) {
+      fResult = CopyBedrockArtifactProgress::Worker::Result::Failed(Error(__FILE__, __LINE__, what));
     } catch (...) {
-      fResult = CopyBedrockArtifactProgress::Worker::Result::Failed;
+      fResult = CopyBedrockArtifactProgress::Worker::Result::Failed(Error(__FILE__, __LINE__));
     }
     fUpdater->triggerAsyncUpdate();
   }
@@ -42,17 +48,17 @@ private:
       if (!dir.exists()) {
         auto result = dir.createDirectory();
         if (!result.wasOk()) {
-          fResult = CopyBedrockArtifactProgress::Worker::Result::Failed;
+          fResult = CopyBedrockArtifactProgress::Worker::Result::Failed(Error(__FILE__, __LINE__, result.getErrorMessage().toStdString()));
           return;
         }
       }
       if (!from.copyFileTo(destination)) {
-        fResult = CopyBedrockArtifactProgress::Worker::Result::Failed;
+        fResult = CopyBedrockArtifactProgress::Worker::Result::Failed(Error(__FILE__, __LINE__, "failed copying file from " + from.getFullPathName().toStdString() + " to " + destination.getFullPathName().toStdString()));
         return;
       }
       *fProgress = (double)item.getEstimatedProgress();
     }
-    fResult = CopyBedrockArtifactProgress::Worker::Result::Success;
+    fResult = CopyBedrockArtifactProgress::Worker::Result::Success();
   }
 
 private:
@@ -72,8 +78,14 @@ public:
   void run() override {
     try {
       unsafeRun();
+    } catch (std::filesystem::filesystem_error &e) {
+      fResult = CopyBedrockArtifactProgress::Worker::Result::Failed(Error(__FILE__, __LINE__, e.what()));
+    } catch (std::exception &e) {
+      fResult = CopyBedrockArtifactProgress::Worker::Result::Failed(Error(__FILE__, __LINE__, e.what()));
+    } catch (char const *what) {
+      fResult = CopyBedrockArtifactProgress::Worker::Result::Failed(Error(__FILE__, __LINE__, what));
     } catch (...) {
-      fResult = CopyBedrockArtifactProgress::Worker::Result::Failed;
+      fResult = CopyBedrockArtifactProgress::Worker::Result::Failed(Error(__FILE__, __LINE__));
     }
     fUpdater->triggerAsyncUpdate();
   }
@@ -99,24 +111,27 @@ private:
     }
 
     if (cancelled || currentThreadShouldExit()) {
-      fResult = CopyBedrockArtifactProgress::Worker::Result::Cancelled;
+      fResult = CopyBedrockArtifactProgress::Worker::Result::Cancelled();
       return;
     }
-    fResult = CopyBedrockArtifactProgress::Worker::Result::Failed;
     auto stream = fTo.createOutputStream();
     if (!stream) {
+      fResult = CopyBedrockArtifactProgress::Worker::Result::Failed(Error(__FILE__, __LINE__));
       return;
     }
     if (!stream->setPosition(0)) {
+      fResult = CopyBedrockArtifactProgress::Worker::Result::Failed(Error(__FILE__, __LINE__));
       return;
     }
     if (auto result = stream->truncate(); !result.ok()) {
+      fResult = CopyBedrockArtifactProgress::Worker::Result::Failed(Error(__FILE__, __LINE__, result.getErrorMessage().toStdString()));
       return;
     }
     if (!builder.writeToStream(*stream, fProgress)) {
+      fResult = CopyBedrockArtifactProgress::Worker::Result::Failed(Error(__FILE__, __LINE__));
       return;
     }
-    fResult = CopyBedrockArtifactProgress::Worker::Result::Success;
+    fResult = CopyBedrockArtifactProgress::Worker::Result::Success();
   }
 
 private:
@@ -175,10 +190,18 @@ void CopyBedrockArtifactProgress::handleAsyncUpdate() {
   stopTimer();
 
   auto result = fCopyThread->result();
-  if (!result || *result == CopyBedrockArtifactProgress::Worker::Result::Failed) {
+  if (!result || result->fType == CopyBedrockArtifactProgress::Worker::Result::Type::Failed) {
     fTaskbarProgress->setState(TaskbarProgress::State::Error);
-    NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::WarningIcon, TRANS("Failed"), TRANS("Saving failed."), nullptr, new InvokeToChooseOutput);
-  } else if (*result == CopyBedrockArtifactProgress::Worker::Result::Cancelled) {
+    juce::String message = TRANS("Saving failed.");
+    if (result && result->fStatus.error()) {
+      auto error = result->fStatus.error();
+      message += juce::String(" where: " + error->fWhere.fFile + ":" + std::to_string(error->fWhere.fLine));
+      if (!error->fWhat.empty()) {
+        message += juce::String(", what: " + error->fWhat);
+      }
+    }
+    NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::WarningIcon, TRANS("Failed"), message, nullptr, new InvokeToChooseOutput);
+  } else if (result->fType == CopyBedrockArtifactProgress::Worker::Result::Type::Cancelled) {
     fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
     NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::InfoIcon, TRANS("Cancelled"), TRANS("Saving cancelled."), nullptr, new InvokeToChooseOutput);
     JUCEApplication::getInstance()->invoke(commands::toChooseBedrockOutput, true);

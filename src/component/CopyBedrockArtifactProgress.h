@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ComponentState.h"
+#include "Status.hpp"
 
 namespace je2be::desktop {
 class TaskbarProgress;
@@ -28,10 +29,29 @@ public:
 
   class Worker : public juce::Thread {
   public:
-    enum class Result {
-      Success,
-      Cancelled,
-      Failed,
+    struct Result {
+      enum class Type {
+        Success,
+        Cancelled,
+        Failed,
+      };
+      Type fType;
+      Status fStatus;
+
+      static Result Success() {
+        return Result(Type::Success, Status::Ok());
+      }
+
+      static Result Cancelled() {
+        return Result(Type::Cancelled, Status::Ok());
+      }
+
+      static Result Failed(Status status) {
+        return Result(Type::Failed, status);
+      }
+
+    private:
+      Result(Type type, Status st) : fType(type), fStatus(st) {}
     };
 
     Worker(juce::String const &name) : Thread(name) {}

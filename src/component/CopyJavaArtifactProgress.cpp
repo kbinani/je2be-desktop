@@ -18,8 +18,14 @@ public:
   void run() override {
     try {
       unsafeRun();
+    } catch (std::filesystem::filesystem_error &e) {
+      fResult = CopyJavaArtifactProgress::Worker::Result::Failed(Error(__FILE__, __LINE__, e.what()));
+    } catch (std::exception &e) {
+      fResult = CopyJavaArtifactProgress::Worker::Result::Failed(Error(__FILE__, __LINE__, e.what()));
+    } catch (char const *what) {
+      fResult = CopyJavaArtifactProgress::Worker::Result::Failed(Error(__FILE__, __LINE__, what));
     } catch (...) {
-      fResult = CopyJavaArtifactProgress::Worker::Result::Failed;
+      fResult = CopyJavaArtifactProgress::Worker::Result::Failed(Error(__FILE__, __LINE__));
     }
     fUpdater->triggerAsyncUpdate();
   }
@@ -42,17 +48,17 @@ private:
       if (!dir.exists()) {
         auto result = dir.createDirectory();
         if (!result.wasOk()) {
-          fResult = CopyJavaArtifactProgress::Worker::Result::Failed;
+          fResult = CopyJavaArtifactProgress::Worker::Result::Failed(Error(__FILE__, __LINE__, result.getErrorMessage().toStdString()));
           return;
         }
       }
       if (!from.copyFileTo(destination)) {
-        fResult = CopyJavaArtifactProgress::Worker::Result::Failed;
+        fResult = CopyJavaArtifactProgress::Worker::Result::Failed(Error(__FILE__, __LINE__, "failed copying file from " + from.getFullPathName().toStdString() + " to " + destination.getFullPathName().toStdString()));
         return;
       }
       *fProgress = (double)item.getEstimatedProgress();
     }
-    fResult = CopyJavaArtifactProgress::Worker::Result::Success;
+    fResult = CopyJavaArtifactProgress::Worker::Result::Success();
   }
 
 private:
@@ -107,10 +113,18 @@ void CopyJavaArtifactProgress::handleAsyncUpdate() {
   stopTimer();
 
   auto result = fCopyThread->result();
-  if (!result || *result == CopyJavaArtifactProgress::Worker::Result::Failed) {
+  if (!result || result->fType == CopyJavaArtifactProgress::Worker::Result::Type::Failed) {
     fTaskbarProgress->setState(TaskbarProgress::State::Error);
-    NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::WarningIcon, TRANS("Failed"), TRANS("Saving failed."), nullptr, new InvokeToChooseOutput);
-  } else if (*result == CopyJavaArtifactProgress::Worker::Result::Cancelled) {
+    juce::String message = TRANS("Saving failed.");
+    if (result && result->fStatus.error()) {
+      auto error = result->fStatus.error();
+      message += juce::String(" where: " + error->fWhere.fFile + ":" + std::to_string(error->fWhere.fLine));
+      if (!error->fWhat.empty()) {
+        message += juce::String(", what: " + error->fWhat);
+      }
+    }
+    NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::WarningIcon, TRANS("Failed"), message, nullptr, new InvokeToChooseOutput);
+  } else if (result->fType == CopyJavaArtifactProgress::Worker::Result::Type::Cancelled) {
     fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
     NativeMessageBox::showMessageBoxAsync(AlertWindow::AlertIconType::InfoIcon, TRANS("Cancelled"), TRANS("Saving cancelled."), nullptr, new InvokeToChooseOutput);
     JUCEApplication::getInstance()->invoke(commands::toChooseJavaOutput, true);
