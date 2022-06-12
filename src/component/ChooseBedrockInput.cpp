@@ -135,7 +135,7 @@ void ChooseBedrockInput::onNextButtonClicked() {
 
 void ChooseBedrockInput::onChooseMcworldFileButtonClicked() {
   int flags = FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles;
-  MainWindow::sFileChooser.reset(new FileChooser(TRANS("Select *.mcworld file to convert"), sLastDirectory, "*.mcfile", true));
+  MainWindow::sFileChooser.reset(new FileChooser(TRANS("Select *.mcworld file to convert"), sLastDirectory, "*.mcworld", true));
   MainWindow::sFileChooser->launchAsync(flags, [this](FileChooser const &chooser) { onMcworldFileSelected(chooser); });
 }
 
