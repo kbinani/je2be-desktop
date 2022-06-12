@@ -256,6 +256,8 @@ void X2BConvertProgress::onProgressUpdate(Phase phase, double done, double total
       if (!error->fWhat.empty()) {
         message += juce::String(", what: " + error->fWhat);
       }
+      fErrorMessage->setText(message);
+      fErrorMessage->setVisible(true);
     }
     fCancelButton->setButtonText(TRANS("Back"));
     fCancelButton->setEnabled(true);
