@@ -3,6 +3,10 @@
 #include "Status.hpp"
 #include <juce_gui_extra/juce_gui_extra.h>
 
+#if defined(CopyFile)
+#undef CopyFile
+#endif
+
 namespace je2be::desktop {
 
 static inline std::filesystem::path PathFromFile(juce::File file) {
@@ -11,6 +15,54 @@ static inline std::filesystem::path PathFromFile(juce::File file) {
 #else
   return std::filesystem::path(file.getFullPathName().toStdString());
 #endif
+}
+
+static std::string PathStringForLogging(juce::File file) {
+#define ADD(__name) \
+  { juce::File::__name, "(" #__name ")" }
+  static std::unordered_map<juce::File::SpecialLocationType, std::string> const sTypes = {
+      ADD(userHomeDirectory),
+      ADD(userDocumentsDirectory),
+      ADD(userDesktopDirectory),
+      ADD(userMusicDirectory),
+      ADD(userMoviesDirectory),
+      ADD(userPicturesDirectory),
+      ADD(userApplicationDataDirectory),
+      ADD(commonApplicationDataDirectory),
+      ADD(commonDocumentsDirectory),
+      ADD(tempDirectory),
+      ADD(currentExecutableFile),
+      ADD(currentApplicationFile),
+      ADD(invokedExecutableFile),
+      ADD(hostApplicationPath),
+      ADD(windowsSystemDirectory),
+      ADD(globalApplicationsDirectory),
+      ADD(globalApplicationsDirectoryX86),
+      ADD(windowsLocalAppData),
+  };
+#undef ADD
+
+  juce::String full = file.getFullPathName();
+  juce::String longestMatch;
+  std::string candidate = full.toStdString();
+  for (auto const &type : sTypes) {
+    auto location = juce::File::getSpecialLocation(type.first);
+    if (file.isAChildOf(location)) {
+      auto locationFull = location.getFullPathName();
+      if (locationFull.length() > longestMatch.length()) {
+        longestMatch = locationFull;
+        candidate = type.second + file.getRelativePathFrom(location).toStdString();
+      }
+    }
+  }
+  return candidate;
+}
+
+static Status CopyFile(juce::File from, juce::File to, char const *sourceFileLocation, int sourceFileLine) {
+  if (from.copyFileTo(to)) {
+    return Status::Ok();
+  }
+  return Error(sourceFileLocation, sourceFileLine, "failed copying file from " + PathStringForLogging(from) + " to " + PathStringForLogging(to));
 }
 
 static Status CopyDirectoryRecursive(juce::File from, juce::File to, std::vector<juce::File> const &exclude) {
@@ -32,8 +84,8 @@ static Status CopyDirectoryRecursive(juce::File from, juce::File to, std::vector
       continue;
     }
     File copyTo = to.getChildFile(file.getFileName());
-    if (!file.copyFileTo(copyTo)) {
-      return Error(__FILE__, __LINE__, "failed copying file from " + file.getFullPathName().toStdString() + " to " + copyTo.getFullPathName().toStdString());
+    if (auto st = CopyFile(file, copyTo, __FILE__, __LINE__); !st.ok()) {
+      return st;
     }
   }
   for (File &dir : from.findChildFiles(File::findDirectories, false)) {

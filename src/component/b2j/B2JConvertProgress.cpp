@@ -101,8 +101,8 @@ public:
       if (manifestFile.existsAsFile()) {
 
         // This will success even when the game client is opening the db.
-        if (!manifestFile.copyFileTo(temp.getChildFile("db").getChildFile(manifestName))) {
-          return Error(__FILE__, __LINE__);
+        if (auto st = CopyFile(manifestFile, temp.getChildFile("db").getChildFile(manifestName), __FILE__, __LINE__); !st.ok()) {
+          return st;
         }
 
         if (auto st = env->LockFile(PathFromFile(manifestFile), &manifestLock); !st.ok()) {

@@ -2,6 +2,7 @@
 #include "CommandID.h"
 #include "ComponentState.h"
 #include "Constants.h"
+#include "File.h"
 #include "TaskbarProgress.h"
 #include "TemporaryDirectory.h"
 
@@ -52,8 +53,8 @@ private:
           return;
         }
       }
-      if (!from.copyFileTo(destination)) {
-        fResult = CopyBedrockArtifactProgress::Worker::Result::Failed(Error(__FILE__, __LINE__, "failed copying file from " + from.getFullPathName().toStdString() + " to " + destination.getFullPathName().toStdString()));
+      if (auto st = CopyFile(from, destination, __FILE__, __LINE__); !st.ok()) {
+        fResult = CopyBedrockArtifactProgress::Worker::Result::Failed(st);
         return;
       }
       *fProgress = (double)item.getEstimatedProgress();
