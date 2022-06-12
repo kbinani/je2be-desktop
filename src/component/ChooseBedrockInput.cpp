@@ -181,7 +181,7 @@ void ChooseBedrockInput::selectedRowsChanged(int lastRowSelected) {
   }
 }
 
-void ChooseBedrockInput::listBoxItemDoubleClicked(int row, const MouseEvent &) {
+void ChooseBedrockInput::listBoxItemDoubleClicked(int row, MouseEvent const &) {
   if (row < 0 || fGameDirectories.size() <= row) {
     return;
   }
@@ -189,6 +189,27 @@ void ChooseBedrockInput::listBoxItemDoubleClicked(int row, const MouseEvent &) {
   String worldName = GetWorldName(gd.fDirectory);
   fState = ChooseInputState(InputType::Bedrock, gd.fDirectory, worldName);
   JUCEApplication::getInstance()->invoke(commands::toB2JConfig, false);
+}
+
+void ChooseBedrockInput::listBoxItemClicked(int row, MouseEvent const &e) {
+  if (e.mods.isRightButtonDown()) {
+    PopupMenu menu;
+    menu.addItem(1, TRANS("Open World Folder"), true, false, nullptr);
+    PopupMenu::Options o;
+    menu.showMenuAsync(o, [this, row](int result) {
+      if (result != 1) {
+        return;
+      }
+      if (row < 0 || fGameDirectories.size() <= row) {
+        return;
+      }
+      GameDirectory gd = fGameDirectories[row];
+      if (!gd.fDirectory.isDirectory()) {
+        return;
+      }
+      Process::openDocument(gd.fDirectory.getFullPathName(), "");
+    });
+  }
 }
 
 void ChooseBedrockInput::onBackButtonClicked() {
