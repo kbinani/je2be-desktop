@@ -1,5 +1,6 @@
 #include <je2be.hpp>
 
+#include "AsyncHandler.h"
 #include "CommandID.h"
 #include "Constants.h"
 #include "File.h"
@@ -12,98 +13,70 @@ using namespace juce;
 
 namespace je2be::desktop::component::j2b {
 
-class J2BConvertProgress::Updater : public AsyncUpdater {
-  struct Entry {
-    int fPhase;
-    double fDone;
-    double fTotal;
-  };
-
-public:
-  void trigger(int phase, double done, double total) {
-    Entry entry;
-    entry.fPhase = phase;
-    entry.fDone = done;
-    entry.fTotal = total;
-    {
-      std::lock_guard<std::mutex> lk(fMut);
-      fQueue.push_back(entry);
-    }
-    triggerAsyncUpdate();
-  }
-
-  void handleAsyncUpdate() override {
-    std::deque<Entry> copy;
-    {
-      std::lock_guard<std::mutex> lk(fMut);
-      copy.swap(fQueue);
-    }
-    auto target = fTarget.load();
-    if (!target)
-      return;
-    for (auto const &e : copy) {
-      target->onProgressUpdate(e.fPhase, e.fDone, e.fTotal, fStatus);
-    }
-  }
-
-  void complete(je2be::Status status) {
-    fStatus = status;
-  }
-
-  std::atomic<J2BConvertProgress *> fTarget;
-
-private:
-  std::deque<Entry> fQueue;
-  std::mutex fMut;
-  Status fStatus;
-};
-
 class J2BWorkerThread : public Thread, public je2be::tobe::Progress {
 public:
   J2BWorkerThread(File input, File output, je2be::tobe::Options opt,
-                  std::shared_ptr<J2BConvertProgress::Updater> updater)
+                  std::shared_ptr<AsyncHandler<J2BConvertProgress::UpdateQueue>> updater)
       : Thread("je2be::desktop::component::j2b::J2BWorkerThread"), fInput(input), fOutput(output), fOptions(opt), fUpdater(updater) {}
 
   void run() override {
+    using UpdateQueue = J2BConvertProgress::UpdateQueue;
+
     je2be::tobe::Converter c(PathFromFile(fInput), PathFromFile(fOutput), fOptions);
     try {
       auto status = c.run(std::thread::hardware_concurrency(), this);
-      fUpdater->complete(status);
-      fUpdater->trigger(2, 1, 1);
+      triggerProgress(J2BConvertProgress::Phase::Done, 1, 1, status);
     } catch (std::filesystem::filesystem_error &e) {
-      fUpdater->complete(Error(__FILE__, __LINE__, e.what()));
-      fUpdater->trigger(-1, 1, 1);
+      triggerError(Error(__FILE__, __LINE__, e.what()));
     } catch (std::exception &e) {
-      fUpdater->complete(Error(__FILE__, __LINE__, e.what()));
-      fUpdater->trigger(-1, 1, 1);
+      triggerError(Error(__FILE__, __LINE__, e.what()));
     } catch (char const *what) {
-      fUpdater->complete(Error(__FILE__, __LINE__, what));
-      fUpdater->trigger(-1, 1, 1);
+      triggerError(Error(__FILE__, __LINE__, what));
     } catch (...) {
-      fUpdater->complete(Error(__FILE__, __LINE__));
-      fUpdater->trigger(-1, 1, 1);
+      triggerError(Error(__FILE__, __LINE__));
     }
   }
 
   bool report(je2be::tobe::Progress::Phase phase, double done, double total) override {
-    int p = 0;
+    J2BConvertProgress::Phase p;
     switch (phase) {
     case je2be::tobe::Progress::Phase::Convert:
-      p = 0;
+      p = J2BConvertProgress::Phase::Convert;
       break;
     case je2be::tobe::Progress::Phase::LevelDbCompaction:
-      p = 1;
+      p = J2BConvertProgress::Phase::LevelDBCompaction;
+      break;
+    default:
+      p = J2BConvertProgress::Phase::Error;
       break;
     }
-    fUpdater->trigger(p, done, total);
+    triggerProgress(p, done, total);
     return !threadShouldExit();
+  }
+
+  void triggerProgress(J2BConvertProgress::Phase phase, double done, double total, Status st = Status::Ok()) {
+    J2BConvertProgress::UpdateQueue q;
+    q.fStatus = st;
+    q.fPhase = phase;
+    q.fTotal = total;
+    q.fDone = done;
+    fUpdater->trigger(q);
+  }
+
+  void triggerError(Status st) {
+    J2BConvertProgress::UpdateQueue q;
+    q.fStatus = st;
+    q.fPhase = J2BConvertProgress::Phase::Error;
+    q.fTotal = 1;
+    q.fDone = 1;
+    fUpdater->trigger(q);
   }
 
 private:
   File const fInput;
   File const fOutput;
   je2be::tobe::Options const fOptions;
-  std::shared_ptr<J2BConvertProgress::Updater> fUpdater;
+  std::shared_ptr<AsyncHandler<J2BConvertProgress::UpdateQueue>> fUpdater;
 };
 
 J2BConvertProgress::J2BConvertProgress(J2BConfigState const &configState) : fConfigState(configState) {
@@ -150,8 +123,9 @@ J2BConvertProgress::J2BConvertProgress(J2BConfigState const &configState) : fCon
   outputDir.createDirectory();
   fOutputDirectory = outputDir;
 
-  fUpdater = std::make_shared<Updater>();
-  fUpdater->fTarget.store(this);
+  fUpdater = std::make_shared<AsyncHandler<UpdateQueue>>([this](UpdateQueue q) {
+    onProgressUpdate(q.fPhase, q.fDone, q.fTotal, q.fStatus);
+  });
 
   je2be::tobe::Options opt;
   opt.fTempDirectory = PathFromFile(temp);
@@ -181,12 +155,12 @@ void J2BConvertProgress::onCancelButtonClicked() {
   }
 }
 
-void J2BConvertProgress::onProgressUpdate(int phase, double done, double total, Status st) {
+void J2BConvertProgress::onProgressUpdate(J2BConvertProgress::Phase phase, double done, double total, Status st) {
   double weightConversion = 0.67;
   double weightCompaction = 1 - weightConversion;
   fFailed = !st.ok();
 
-  if (phase == 2) {
+  if (phase == J2BConvertProgress::Phase::Done) {
     if (fCommandWhenFinished != commands::toChooseBedrockOutput && fOutputDirectory.exists()) {
       TemporaryDirectory::QueueDeletingDirectory(fOutputDirectory);
     }
@@ -199,14 +173,14 @@ void J2BConvertProgress::onProgressUpdate(int phase, double done, double total, 
     } else {
       fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
     }
-  } else if (phase == 1) {
+  } else if (phase == J2BConvertProgress::Phase::LevelDBCompaction) {
     fLabel->setText(TRANS("LevelDB compaction"), dontSendNotification);
     double progress = done / total;
     fConversionProgress = 1;
     fCompactionProgress = progress;
     fTaskbarProgress->setState(TaskbarProgress::State::Normal);
     fTaskbarProgress->update(weightConversion + progress * weightCompaction);
-  } else if (phase == 0) {
+  } else if (phase == J2BConvertProgress::Phase::Convert) {
     if (fConversionProgress >= 0) {
       double progress = done / total;
       fConversionProgress = progress;

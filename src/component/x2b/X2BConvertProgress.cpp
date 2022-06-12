@@ -12,55 +12,9 @@ using namespace juce;
 
 namespace je2be::desktop::component::x2b {
 
-class X2BConvertProgress::Updater : public AsyncUpdater {
-  struct Entry {
-    Phase fPhase;
-    double fDone;
-    double fTotal;
-  };
-
-public:
-  void trigger(Phase phase, double done, double total) {
-    Entry entry;
-    entry.fPhase = phase;
-    entry.fDone = done;
-    entry.fTotal = total;
-    {
-      std::lock_guard<std::mutex> lk(fMut);
-      fQueue.push_back(entry);
-    }
-    triggerAsyncUpdate();
-  }
-
-  void handleAsyncUpdate() override {
-    std::deque<Entry> copy;
-    {
-      std::lock_guard<std::mutex> lk(fMut);
-      copy.swap(fQueue);
-    }
-    auto target = fTarget.load();
-    if (!target)
-      return;
-    for (auto const &e : copy) {
-      target->onProgressUpdate(e.fPhase, e.fDone, e.fTotal, fStatus);
-    }
-  }
-
-  void complete(Status status) {
-    fStatus = status;
-  }
-
-  std::atomic<X2BConvertProgress *> fTarget;
-
-private:
-  std::deque<Entry> fQueue;
-  std::mutex fMut;
-  Status fStatus;
-};
-
 class X2BWorkerThread : public Thread, public je2be::box360::Progress, public je2be::tobe::Progress {
 public:
-  X2BWorkerThread(File input, File output, std::shared_ptr<X2BConvertProgress::Updater> updater, File tempRoot)
+  X2BWorkerThread(File input, File output, std::shared_ptr<AsyncHandler<X2BConvertProgress::UpdateQueue>> updater, File tempRoot)
       : Thread("je2be::desktop::component::x2b::X2BWorkerThread"), fInput(input), fOutput(output), fUpdater(updater), fTempRoot(tempRoot) {}
 
   void run() override {
@@ -69,17 +23,13 @@ public:
     try {
       unsafeRun();
     } catch (std::filesystem::filesystem_error &e) {
-      fUpdater->complete(Error(__FILE__, __LINE__, e.what()));
-      fUpdater->trigger(Phase::Error, 1, 1);
+      triggerError(Error(__FILE__, __LINE__, e.what()));
     } catch (std::exception &e) {
-      fUpdater->complete(Error(__FILE__, __LINE__, e.what()));
-      fUpdater->trigger(Phase::Error, 1, 1);
+      triggerError(Error(__FILE__, __LINE__, e.what()));
     } catch (char const *what) {
-      fUpdater->complete(Error(__FILE__, __LINE__, what));
-      fUpdater->trigger(Phase::Error, 1, 1);
+      triggerError(Error(__FILE__, __LINE__, what));
     } catch (...) {
-      fUpdater->complete(Error(__FILE__, __LINE__));
-      fUpdater->trigger(Phase::Error, 1, 1);
+      triggerError(Error(__FILE__, __LINE__));
     }
   }
 
@@ -89,8 +39,7 @@ public:
     juce::Uuid u;
     File javaIntermediateDirectory = fTempRoot.getChildFile(u.toDashedString());
     if (auto result = javaIntermediateDirectory.createDirectory(); !result.ok()) {
-      fUpdater->complete(Error(__FILE__, __LINE__, result.getErrorMessage().toStdString()));
-      fUpdater->trigger(Phase::Error, 1, 1);
+      triggerError(Error(__FILE__, __LINE__, result.getErrorMessage().toStdString()));
       return;
     }
     {
@@ -98,13 +47,12 @@ public:
       o.fTempDirectory = PathFromFile(fTempRoot);
       auto status = je2be::box360::Converter::Run(PathFromFile(fInput), PathFromFile(javaIntermediateDirectory), std::thread::hardware_concurrency(), o, this);
       if (!status.ok()) {
-        fUpdater->complete(status);
-        fUpdater->trigger(Phase::Error, 1, 1);
+        triggerError(status);
         return;
       }
     }
     if (threadShouldExit()) {
-      fUpdater->trigger(Phase::Error, 1, 1);
+      triggerError(Status::Ok());
       return;
     }
     {
@@ -112,15 +60,13 @@ public:
       o.fTempDirectory = PathFromFile(fTempRoot);
       je2be::tobe::Converter c(PathFromFile(javaIntermediateDirectory), PathFromFile(fOutput), o);
       auto status = c.run(std::thread::hardware_concurrency(), this);
-      fUpdater->complete(status);
+      triggerProgress(Phase::Done, 1, 1, status);
     }
-    fUpdater->trigger(Phase::Done, 1, 1);
   }
 
   bool report(double done, double total) override {
     using Phase = je2be::desktop::component::x2b::X2BConvertProgress::Phase;
-
-    fUpdater->trigger(Phase::XboxToJavaConversion, done, total);
+    triggerProgress(Phase::XboxToJavaConversion, done, total);
     return !threadShouldExit();
   }
 
@@ -129,20 +75,38 @@ public:
 
     switch (phase) {
     case je2be::tobe::Progress::Phase::Convert:
-      fUpdater->trigger(Phase::JavaToBedrockConversion, done, total);
+      triggerProgress(Phase::JavaToBedrockConversion, done, total);
       break;
     case je2be::tobe::Progress::Phase::LevelDbCompaction:
-      fUpdater->trigger(Phase::JavaToBedrockCompaction, done, total);
+      triggerProgress(Phase::JavaToBedrockCompaction, done, total);
       break;
     }
     return !threadShouldExit();
+  }
+
+  void triggerProgress(X2BConvertProgress::Phase phase, double done, double total, Status st = Status::Ok()) {
+    X2BConvertProgress::UpdateQueue q;
+    q.fStatus = st;
+    q.fPhase = phase;
+    q.fTotal = total;
+    q.fDone = done;
+    fUpdater->trigger(q);
+  }
+
+  void triggerError(Status st) {
+    X2BConvertProgress::UpdateQueue q;
+    q.fStatus = st;
+    q.fPhase = X2BConvertProgress::Phase::Error;
+    q.fTotal = 1;
+    q.fDone = 1;
+    fUpdater->trigger(q);
   }
 
 private:
   File const fInput;
   File const fOutput;
   File const fTempRoot;
-  std::shared_ptr<X2BConvertProgress::Updater> fUpdater;
+  std::shared_ptr<AsyncHandler<X2BConvertProgress::UpdateQueue>> fUpdater;
 };
 
 X2BConvertProgress::X2BConvertProgress(X2BConfigState const &configState) : fConfigState(configState) {
@@ -195,8 +159,9 @@ X2BConvertProgress::X2BConvertProgress(X2BConfigState const &configState) : fCon
   outputDir.createDirectory();
   fOutputDirectory = outputDir;
 
-  fUpdater = std::make_shared<Updater>();
-  fUpdater->fTarget.store(this);
+  fUpdater = std::make_shared<AsyncHandler<UpdateQueue>>([this](UpdateQueue q) {
+    onProgressUpdate(q.fPhase, q.fDone, q.fTotal, q.fStatus);
+  });
 
   fThread.reset(new X2BWorkerThread(configState.fInputState.fInput, outputDir, fUpdater, temp));
   fThread->startThread();

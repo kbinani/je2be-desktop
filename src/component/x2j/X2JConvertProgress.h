@@ -1,5 +1,6 @@
 #pragma once
 
+#include "AsyncHandler.h"
 #include "CommandID.h"
 #include "ComponentState.h"
 #include "Status.hpp"
@@ -46,7 +47,12 @@ public:
 
   void onProgressUpdate(Phase phase, double done, double total, Status status);
 
-  class Updater;
+  struct UpdateQueue {
+    Phase fPhase;
+    double fDone;
+    double fTotal;
+    Status fStatus;
+  };
 
 private:
   std::unique_ptr<TextButton> fCancelButton;
@@ -54,7 +60,7 @@ private:
   std::optional<JavaConvertedState> fState;
   juce::File fOutputDirectory;
   std::unique_ptr<juce::Thread> fThread;
-  std::shared_ptr<Updater> fUpdater;
+  std::shared_ptr<AsyncHandler<UpdateQueue>> fUpdater;
   std::unique_ptr<juce::ProgressBar> fConversionProgressBar;
   double fConversionProgress;
   std::unique_ptr<juce::Label> fLabel;

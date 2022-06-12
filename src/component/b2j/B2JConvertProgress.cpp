@@ -12,74 +12,23 @@ using namespace juce;
 
 namespace je2be::desktop::component::b2j {
 
-class B2JConvertProgress::Updater : public AsyncUpdater {
-  struct Entry {
-    Phase fPhase;
-    double fDone;
-    double fTotal;
-  };
-
-public:
-  void trigger(Phase phase, double done, double total) {
-    Entry entry;
-    entry.fPhase = phase;
-    entry.fDone = done;
-    entry.fTotal = total;
-    {
-      std::lock_guard<std::mutex> lk(fMut);
-      fQueue.push_back(entry);
-    }
-    triggerAsyncUpdate();
-  }
-
-  void handleAsyncUpdate() override {
-    std::deque<Entry> copy;
-    {
-      std::lock_guard<std::mutex> lk(fMut);
-      copy.swap(fQueue);
-    }
-    auto target = fTarget.load();
-    if (!target) {
-      return;
-    }
-    for (auto const &e : copy) {
-      target->onProgressUpdate(e.fPhase, e.fDone, e.fTotal, fStatus);
-    }
-  }
-
-  void complete(je2be::Status status) {
-    fStatus = status;
-  }
-
-  std::atomic<B2JConvertProgress *> fTarget;
-
-private:
-  std::deque<Entry> fQueue;
-  std::mutex fMut;
-  je2be::Status fStatus;
-};
-
 class B2JWorkerThread : public Thread, public je2be::toje::Progress {
 public:
   B2JWorkerThread(File input, File output, je2be::toje::Options opt,
-                  std::shared_ptr<B2JConvertProgress::Updater> updater)
+                  std::shared_ptr<AsyncHandler<B2JConvertProgress::UpdateQueue>> updater)
       : Thread("je2be::desktop::component::b2j::B2JWorkerThread"), fInput(input), fOutput(output), fOptions(opt), fUpdater(updater) {}
 
   void run() override {
     try {
       unsafeRun();
     } catch (std::filesystem::filesystem_error &e) {
-      fUpdater->complete(Error(__FILE__, __LINE__, e.what()));
-      fUpdater->trigger(B2JConvertProgress::Phase::Error, 1, 1);
+      triggerError(Error(__FILE__, __LINE__, e.what()));
     } catch (std::exception &e) {
-      fUpdater->complete(Error(__FILE__, __LINE__, e.what()));
-      fUpdater->trigger(B2JConvertProgress::Phase::Error, 1, 1);
+      triggerError(Error(__FILE__, __LINE__, e.what()));
     } catch (char const *what) {
-      fUpdater->complete(Error(__FILE__, __LINE__, what));
-      fUpdater->trigger(B2JConvertProgress::Phase::Error, 1, 1);
+      triggerError(Error(__FILE__, __LINE__, what));
     } catch (...) {
-      fUpdater->complete(Error(__FILE__, __LINE__));
-      fUpdater->trigger(B2JConvertProgress::Phase::Error, 1, 1);
+      triggerError(Error(__FILE__, __LINE__));
     }
   }
 
@@ -88,8 +37,7 @@ public:
     juce::Uuid u;
     File temp = sessionTempDir.getChildFile(u.toDashedString());
     if (auto st = temp.createDirectory(); !st.ok()) {
-      fUpdater->complete(Error(__FILE__, __LINE__, st.getErrorMessage().toStdString()));
-      fUpdater->trigger(B2JConvertProgress::Phase::Error, 1, 1);
+      triggerError(Error(__FILE__, __LINE__, st.getErrorMessage().toStdString()));
       return;
     }
     defer {
@@ -99,16 +47,14 @@ public:
     File input;
     if (fInput.isDirectory()) {
       if (auto st = copyInto(temp); !st.ok()) {
-        fUpdater->complete(st);
-        fUpdater->trigger(B2JConvertProgress::Phase::Error, 1, 1);
+        triggerError(st);
         return;
       }
       input = temp;
-      fUpdater->trigger(B2JConvertProgress::Phase::Unzip, 1, 1);
+      triggerProgress(B2JConvertProgress::Phase::Unzip, 1, 1);
     } else {
       if (auto st = unzipInto(temp); !st.ok()) {
-        fUpdater->complete(st);
-        fUpdater->trigger(B2JConvertProgress::Phase::Error, 1, 1);
+        triggerError(st);
         return;
       }
       input = temp;
@@ -116,9 +62,8 @@ public:
     {
       je2be::toje::Converter c(PathFromFile(input), PathFromFile(fOutput), fOptions);
       auto st = c.run(std::thread::hardware_concurrency(), this);
-      fUpdater->complete(st);
+      triggerProgress(B2JConvertProgress::Phase::Done, 1, 1, st);
     }
-    fUpdater->trigger(B2JConvertProgress::Phase::Done, 1, 1);
   }
 
   je2be::Status copyInto(File temp) {
@@ -187,21 +132,39 @@ public:
       if (result.failed()) {
         return Error(__FILE__, __LINE__, result.getErrorMessage().toStdString());
       }
-      fUpdater->trigger(B2JConvertProgress::Phase::Unzip, i + 1, numEntries);
+      triggerProgress(B2JConvertProgress::Phase::Unzip, i + 1, numEntries);
     }
     return Status::Ok();
   }
 
   bool report(double done, double total) override {
-    fUpdater->trigger(B2JConvertProgress::Phase::Conversion, done / total, 1.0);
+    triggerProgress(B2JConvertProgress::Phase::Conversion, done / total, 1.0);
     return !threadShouldExit();
+  }
+
+  void triggerProgress(B2JConvertProgress::Phase phase, double done, double total, Status st = Status::Ok()) {
+    B2JConvertProgress::UpdateQueue q;
+    q.fStatus = st;
+    q.fPhase = phase;
+    q.fTotal = total;
+    q.fDone = done;
+    fUpdater->trigger(q);
+  }
+
+  void triggerError(Status st) {
+    B2JConvertProgress::UpdateQueue q;
+    q.fStatus = st;
+    q.fPhase = B2JConvertProgress::Phase::Error;
+    q.fTotal = 1;
+    q.fDone = 1;
+    fUpdater->trigger(q);
   }
 
 private:
   File const fInput;
   File const fOutput;
   je2be::toje::Options fOptions;
-  std::shared_ptr<B2JConvertProgress::Updater> fUpdater;
+  std::shared_ptr<AsyncHandler<B2JConvertProgress::UpdateQueue>> fUpdater;
 };
 
 B2JConvertProgress::B2JConvertProgress(B2JConfigState const &configState) : fConfigState(configState) {
@@ -275,8 +238,9 @@ B2JConvertProgress::B2JConvertProgress(B2JConfigState const &configState) : fCon
   outputDir.createDirectory();
   fOutputDirectory = outputDir;
 
-  fUpdater = std::make_shared<Updater>();
-  fUpdater->fTarget.store(this);
+  fUpdater = std::make_shared<AsyncHandler<UpdateQueue>>([this](UpdateQueue q) {
+    onProgressUpdate(q.fPhase, q.fDone, q.fTotal, q.fStatus);
+  });
 
   je2be::toje::Options opt;
   opt.fTempDirectory = PathFromFile(temp);

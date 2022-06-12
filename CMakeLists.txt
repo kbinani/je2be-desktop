@@ -32,6 +32,7 @@ set(je2be_desktop_files
   src/AccountScanThread.cpp
   src/AccountScanThread.h
   src/Application.cpp
+  src/AsyncHandler.h
   src/CommandID.h
   src/ComponentState.h
   src/Constants.h
