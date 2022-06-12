@@ -18,29 +18,29 @@ static inline std::filesystem::path PathFromFile(juce::File file) {
 }
 
 static std::string PathStringForLogging(juce::File file) {
-#define ADD(__name) \
+#define TYPE(__name) \
   { juce::File::__name, "(" #__name ")" }
   static std::unordered_map<juce::File::SpecialLocationType, std::string> const sTypes = {
-      ADD(userHomeDirectory),
-      ADD(userDocumentsDirectory),
-      ADD(userDesktopDirectory),
-      ADD(userMusicDirectory),
-      ADD(userMoviesDirectory),
-      ADD(userPicturesDirectory),
-      ADD(userApplicationDataDirectory),
-      ADD(commonApplicationDataDirectory),
-      ADD(commonDocumentsDirectory),
-      ADD(tempDirectory),
-      ADD(currentExecutableFile),
-      ADD(currentApplicationFile),
-      ADD(invokedExecutableFile),
-      ADD(hostApplicationPath),
-      ADD(windowsSystemDirectory),
-      ADD(globalApplicationsDirectory),
-      ADD(globalApplicationsDirectoryX86),
-      ADD(windowsLocalAppData),
+      TYPE(userHomeDirectory),
+      TYPE(userDocumentsDirectory),
+      TYPE(userDesktopDirectory),
+      TYPE(userMusicDirectory),
+      TYPE(userMoviesDirectory),
+      TYPE(userPicturesDirectory),
+      TYPE(userApplicationDataDirectory),
+      TYPE(commonApplicationDataDirectory),
+      TYPE(commonDocumentsDirectory),
+      TYPE(tempDirectory),
+      TYPE(currentExecutableFile),
+      TYPE(currentApplicationFile),
+      TYPE(invokedExecutableFile),
+      TYPE(hostApplicationPath),
+      TYPE(windowsSystemDirectory),
+      TYPE(globalApplicationsDirectory),
+      TYPE(globalApplicationsDirectoryX86),
+      TYPE(windowsLocalAppData),
   };
-#undef ADD
+#undef TYPE
 
   juce::String full = file.getFullPathName();
   juce::String longestMatch;
