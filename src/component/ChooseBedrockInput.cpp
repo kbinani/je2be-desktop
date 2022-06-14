@@ -1,6 +1,7 @@
 #include "component/ChooseBedrockInput.h"
 #include "CommandID.h"
 #include "Constants.h"
+#include "File.h"
 #include "GameDirectoryScanThreadBedrock.h"
 #include "component/MainWindow.h"
 #include "component/TextButton.h"
@@ -207,7 +208,7 @@ void ChooseBedrockInput::listBoxItemClicked(int row, MouseEvent const &e) {
       if (!gd.fDirectory.isDirectory()) {
         return;
       }
-      Process::openDocument(gd.fDirectory.getFullPathName(), "");
+      gd.fDirectory.revealToUser();
     });
   }
 }
