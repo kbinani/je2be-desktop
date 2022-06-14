@@ -167,7 +167,7 @@ void ChooseXbox360Input::listBoxItemDoubleClicked(int row, const MouseEvent &) {
 void ChooseXbox360Input::listBoxItemClicked(int row, MouseEvent const &e) {
   if (e.mods.isRightButtonDown()) {
     PopupMenu menu;
-    menu.addItem(1, TRANS("Open World File"), true, false, nullptr);
+    menu.addItem(1, TRANS("Show in Explorer"), true, false, nullptr);
     PopupMenu::Options o;
     menu.showMenuAsync(o, [this, row](int result) {
       if (result != 1) {

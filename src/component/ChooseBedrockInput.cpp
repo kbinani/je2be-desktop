@@ -195,7 +195,7 @@ void ChooseBedrockInput::listBoxItemDoubleClicked(int row, MouseEvent const &) {
 void ChooseBedrockInput::listBoxItemClicked(int row, MouseEvent const &e) {
   if (e.mods.isRightButtonDown()) {
     PopupMenu menu;
-    menu.addItem(1, TRANS("Open World Folder"), true, false, nullptr);
+    menu.addItem(1, TRANS("Show in Explorer"), true, false, nullptr);
     PopupMenu::Options o;
     menu.showMenuAsync(o, [this, row](int result) {
       if (result != 1) {
