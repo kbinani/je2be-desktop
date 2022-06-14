@@ -3,6 +3,8 @@
 #include "Status.hpp"
 #include <juce_gui_extra/juce_gui_extra.h>
 
+#include <minecraft-file.hpp>
+
 #if defined(CopyFile)
 #undef CopyFile
 #endif
@@ -62,7 +64,25 @@ static Status CopyFile(juce::File from, juce::File to, char const *sourceFileLoc
   if (from.copyFileTo(to)) {
     return Status::Ok();
   }
-  return Error(sourceFileLocation, sourceFileLine, "failed copying file from " + PathStringForLogging(from) + " to " + PathStringForLogging(to));
+
+  auto size = from.getSize();
+  FILE *in = mcfile::File::Open(PathFromFile(from), mcfile::File::Mode::Read);
+  if (!in) {
+    return Error(sourceFileLocation, sourceFileLine, "failed opening source file: from " + PathStringForLogging(from) + " to " + PathStringForLogging(to));
+  }
+  FILE *out = mcfile::File::Open(PathFromFile(to), mcfile::File::Mode::Write);
+  if (!out) {
+    fclose(in);
+    return Error(sourceFileLocation, sourceFileLine, "failed opening destination file: from " + PathStringForLogging(from) + " to " + PathStringForLogging(to));
+  }
+  bool ok = mcfile::File::Copy(in, out, size);
+  fclose(in);
+  fclose(out);
+  if (ok) {
+    return Status::Ok();
+  } else {
+    return Error(sourceFileLocation, sourceFileLine, "failed copying file from " + PathStringForLogging(from) + " to " + PathStringForLogging(to));
+  }
 }
 
 static Status CopyDirectoryRecursive(juce::File from, juce::File to, std::vector<juce::File> const &exclude) {
