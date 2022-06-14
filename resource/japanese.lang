@@ -58,6 +58,7 @@ language: Japanese
 "Select *.bin file to convert" = "変換する *.bin ファイルを選んでください";
 "Extracting..." = "抽出中...";
 "Open World Folder" = "ワールドフォルダを開く";
+"Open World File" = "ワールドファイルを開く";
 
 "File already exists" = "ファイルが既に存在します";
 "There's already a file called: FLNM" = "FLNM は既に存在します。";

@@ -30,8 +30,9 @@ public:
                         juce::Graphics &g,
                         int width, int height,
                         bool rowIsSelected) override;
-  void selectedRowsChanged(int lastRowSelected);
-  void listBoxItemDoubleClicked(int row, const juce::MouseEvent &);
+  void selectedRowsChanged(int lastRowSelected) override;
+  void listBoxItemDoubleClicked(int row, juce::MouseEvent const &) override;
+  void listBoxItemClicked(int row, juce::MouseEvent const &) override;
 
   void handleAsyncUpdate() override;
 

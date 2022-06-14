@@ -134,6 +134,27 @@ void ChooseJavaInput::listBoxItemDoubleClicked(int row, const MouseEvent &) {
   JUCEApplication::getInstance()->invoke(commands::toJ2BConfig, false);
 }
 
+void ChooseJavaInput::listBoxItemClicked(int row, MouseEvent const &e) {
+  if (e.mods.isRightButtonDown()) {
+    PopupMenu menu;
+    menu.addItem(1, TRANS("Open World Folder"), true, false, nullptr);
+    PopupMenu::Options o;
+    menu.showMenuAsync(o, [this, row](int result) {
+      if (result != 1) {
+        return;
+      }
+      if (row < 0 || fGameDirectories.size() <= row) {
+        return;
+      }
+      GameDirectory gd = fGameDirectories[row];
+      if (!gd.fDirectory.isDirectory()) {
+        return;
+      }
+      gd.fDirectory.revealToUser();
+    });
+  }
+}
+
 void ChooseJavaInput::onBackButtonClicked() {
   JUCEApplication::getInstance()->invoke(commands::toModeSelect, true);
 }
