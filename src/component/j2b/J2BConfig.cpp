@@ -54,8 +54,7 @@ J2BConfig::J2BConfig(ChooseInputState const &chooseInputState) : fState(chooseIn
     }
     fMessage.reset(new Label("", TRANS("Directory structure") + ": " + s));
   } else {
-    fMessage.reset(new Label("", TRANS("There doesn't seem to be any Minecraft save data "
-                                       "in the specified directory.")));
+    fMessage.reset(new Label("", TRANS("There doesn't seem to be any Minecraft save data in the specified folder.")));
     fMessage->setColour(Label::textColourId, kErrorTextColor);
   }
   fMessage->setBounds(kMargin, kMargin + kButtonBaseHeight + kMargin, width - 2 * kMargin, kButtonBaseHeight);

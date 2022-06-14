@@ -70,8 +70,7 @@ B2JConfig::B2JConfig(ChooseInputState const &chooseInputState) : fState(chooseIn
   if (fOk) {
     fMessage.reset(new Label("", ""));
   } else {
-    fMessage.reset(new Label("", TRANS("There doesn't seem to be any Minecraft save data "
-                                       "in the specified directory.")));
+    fMessage.reset(new Label("", TRANS("There doesn't seem to be any Minecraft save data in the specified folder.")));
     fMessage->setColour(Label::textColourId, kErrorTextColor);
   }
   fMessage->setBounds(kMargin, messageComponentY, width - 2 * kMargin, kButtonBaseHeight);

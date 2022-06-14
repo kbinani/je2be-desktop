@@ -18,9 +18,9 @@ language: Japanese
 "Saving completed." = "保存が完了しました"
 "Select save data folder of Minecraft" = "Minecraft のセーブデータのフォルダを選択"
 "Directory structure" = "ディレクトリの形式"
-"There doesn't seem to be any Minecraft save data in the specified directory." = "指定されたディレクトリには Minecraft のセーブデータが存在しないようです"
+"There doesn't seem to be any Minecraft save data in the specified folder." = "指定されたフォルダには Minecraft のセーブデータが存在しないようです"
 "The conversion failed." = "変換に失敗しました"
-"There are files and folders in the directory.\rPlease select an empty folder" = "ディレクトリ内にファイルやフォルダがあります。\r中身が空のフォルダを選択してください"
+"There are files and folders in the selected folder.\rPlease select an empty folder" = "フォルダ内にファイルやフォルダがあります。\r中身が空のフォルダを選択してください"
 "Change the destination" = "保存先を変更"
 "Select an empty folder to save in" = "保存先の空のフォルダを選択してください"
 "Error" = "エラー"
@@ -38,7 +38,8 @@ language: Japanese
 "Xbox360 to Java" = "Xbox360版 から Java版に";
 "Select *.mcworld file" = "*.mcworld ファイルを選ぶ";
 "Select *.mcworld file to convert" = "変換する *.mcworld ファイルを選んでください";
-"Select world directory" = "ディレクトリを選ぶ"
+"Select world folder" = "フォルダを選ぶ"
+"Select world folder to convert" = "変換するワールドのフォルダを選択";
 "Save into Minecraft Java edition save folder" = "Minecraft Java 版のセーブフォルダに保存";
 "Unzipping..." = "解凍中...";
 "Copying..." = "コピー中...";

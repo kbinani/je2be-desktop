@@ -80,7 +80,7 @@ ChooseBedrockInput::ChooseBedrockInput(std::optional<ChooseInputState> state) {
     y += fOrMessage2->getHeight();
 
     y += kMargin;
-    fChooseDirectoryButton.reset(new TextButton(TRANS("Select world directory")));
+    fChooseDirectoryButton.reset(new TextButton(TRANS("Select world folder")));
     fChooseDirectoryButton->setBounds(kMargin, y, fMessage->getWidth(), kButtonBaseHeight);
     fChooseDirectoryButton->changeWidthToFitText();
     fChooseDirectoryButton->setSize(jmin(fMessage->getWidth(), fChooseDirectoryButton->getWidth() + 2 * kMargin), fChooseDirectoryButton->getHeight());
@@ -142,7 +142,7 @@ void ChooseBedrockInput::onChooseMcworldFileButtonClicked() {
 
 void ChooseBedrockInput::onChooseDirectoryButtonClicked() {
   int flags = FileBrowserComponent::canSelectDirectories;
-  MainWindow::sFileChooser.reset(new FileChooser(TRANS("Select world directory to convert"), sLastDirectory, {}, true));
+  MainWindow::sFileChooser.reset(new FileChooser(TRANS("Select world folder to convert"), sLastDirectory, {}, true));
   MainWindow::sFileChooser->launchAsync(flags, [this](FileChooser const &chooser) { onDirectorySelected(chooser); });
 }
 
