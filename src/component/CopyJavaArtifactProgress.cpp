@@ -99,18 +99,6 @@ CopyJavaArtifactProgress::~CopyJavaArtifactProgress() {
 void CopyJavaArtifactProgress::paint(juce::Graphics &g) {}
 
 void CopyJavaArtifactProgress::handleAsyncUpdate() {
-  struct InvokeToChooseOutput : public ModalComponentManager::Callback {
-    void modalStateFinished(int returnValue) override {
-      JUCEApplication::getInstance()->invoke(commands::toChooseJavaOutput, true);
-    }
-  };
-
-  struct InvokeToModeSelect : public ModalComponentManager::Callback {
-    void modalStateFinished(int returnValue) override {
-      JUCEApplication::getInstance()->invoke(commands::toModeSelect, true);
-    }
-  };
-
   stopTimer();
 
   auto result = fCopyThread->result();
@@ -124,29 +112,34 @@ void CopyJavaArtifactProgress::handleAsyncUpdate() {
         message += juce::String(", what: " + error->fWhat);
       }
     }
-    AlertWindow::showMessageBoxAsync(AlertWindow::AlertIconType::WarningIcon,
-                                     TRANS("Failed"),
-                                     message,
-                                     "OK",
-                                     nullptr,
-                                     new InvokeToChooseOutput);
+    auto options = MessageBoxOptions()                                        //
+                       .withIconType(AlertWindow::AlertIconType::WarningIcon) //
+                       .withTitle(TRANS("Failed"))                            //
+                       .withMessage(message)                                  //
+                       .withButton("OK");
+    AlertWindow::showAsync(options, [](int) { JUCEApplication::getInstance()->invoke(commands::toChooseJavaOutput, true); });
   } else if (result->fType == CopyJavaArtifactProgress::Worker::Result::Type::Cancelled) {
-    fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
-    AlertWindow::showMessageBoxAsync(AlertWindow::AlertIconType::InfoIcon,
-                                     TRANS("Cancelled"),
-                                     TRANS("Saving cancelled."),
-                                     "OK",
-                                     nullptr,
-                                     new InvokeToChooseOutput);
-    JUCEApplication::getInstance()->invoke(commands::toChooseJavaOutput, true);
+    auto options = MessageBoxOptions()                                     //
+                       .withIconType(AlertWindow::AlertIconType::InfoIcon) //
+                       .withTitle(TRANS("Cancelled"))                      //
+                       .withMessage(TRANS("Saving cancelled."))            //
+                       .withButton("OK");
+    AlertWindow::showAsync(options, [](int) { JUCEApplication::getInstance()->invoke(commands::toChooseJavaOutput, true); });
   } else {
     fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
-    AlertWindow::showMessageBoxAsync(AlertWindow::AlertIconType::InfoIcon,
-                                     TRANS("Completed"),
-                                     TRANS("Saving completed.") + "\n" + fState.fCopyDestination->getFullPathName(),
-                                     "OK",
-                                     nullptr,
-                                     new InvokeToModeSelect);
+    auto options = MessageBoxOptions()                                                                              //
+                       .withIconType(AlertWindow::AlertIconType::InfoIcon)                                          //
+                       .withTitle(TRANS("Completed"))                                                               //
+                       .withMessage(TRANS("Saving completed.") + "\n" + fState.fCopyDestination->getFullPathName()) //
+                       .withButton("OK")                                                                            //
+                       .withButton(TRANS("Show in Explorer"));
+    File copyDestination = *fState.fCopyDestination;
+    AlertWindow::showAsync(options, [copyDestination](int returnValue) {
+      if (returnValue == 0) {
+        copyDestination.revealToUser();
+      }
+      JUCEApplication::getInstance()->invoke(commands::toModeSelect, true);
+    });
     if (fState.fConvertedState.fOutputDirectory.exists()) {
       TemporaryDirectory::QueueDeletingDirectory(fState.fConvertedState.fOutputDirectory);
     }
