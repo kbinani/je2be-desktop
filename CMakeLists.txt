@@ -14,10 +14,16 @@ add_definitions(
   /wd4100 # Suppress "unreferenced formal parameter" warnings
 )
 add_compile_options(
-  $<$<CONFIG:Debug>:/MTd>
-  $<$<CONFIG:Release>:/MT>
-  $<$<CONFIG:RelWithDebInfo>:/MT>
-  $<$<CONFIG:MinSizeRel>:/MT>)
+  /Ot # Favor Fast Code
+  /Oi # Generate Intrinsic Functions
+  /Zi # Debug Information Format: PDB file that contains all the symbolic debugging information
+  $<IF:$<CONFIG:Debug>,,/GL> # Enable: Whole program optimization
+  $<IF:$<CONFIG:Debug>,/MTd,/MT>
+)
+add_link_options(
+  /DEBUG
+  $<IF:$<CONFIG:Debug>,,/LTCG> # Enable: Link-time code generation
+)
 
 add_subdirectory(ext/je2be)
 add_subdirectory(ext/JUCE)
@@ -107,13 +113,6 @@ target_compile_definitions(je2be-desktop
     JUCE_DISPLAY_SPLASH_SCREEN=0
     NOMINMAX
     WIN32_LEAN_AND_MEAN)
-
-target_compile_options(je2be-desktop PRIVATE $<$<CONFIG:Release>:/Zi>)
-target_link_options(je2be-desktop PRIVATE $<$<CONFIG:Release>:/DEBUG>)
-target_compile_options(leveldb PRIVATE $<$<CONFIG:Release>:/Zi>)
-target_link_options(leveldb PRIVATE $<$<CONFIG:Release>:/DEBUG>)
-target_compile_options(zlib PRIVATE $<$<CONFIG:Release>:/Zi>)
-target_link_options(zlib PRIVATE $<$<CONFIG:Release>:/DEBUG>)
 
 juce_add_binary_data(app-data
   SOURCES
