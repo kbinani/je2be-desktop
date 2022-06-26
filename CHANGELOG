@@ -1,4 +1,7 @@
-Version 4.5.0 (TBD)
+Version 4.6.0 (TBD)
+- Fixed an issue where the player's save position was not converted correctly. [x2j, x2b]
+
+Version 4.5.0 (15 Jun 2022)
 - Improved the accuracy of player game mode conversion. [b2j, x2b]
 - Fixed a case where the size of files output to the poi directory was too large. [b2j, x2j]
 
