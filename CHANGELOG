@@ -1,4 +1,8 @@
-Version 4.6.0 (TBD)
+Version 4.7.0 (TBD)
+- Horses' jump strength properties are now converted.
+- Fixed the problem that when two or more leads were connected to one place, the other leads were disconnected except for one lead after conversion. [b2j]
+
+Version 4.6.0 (28 Jun 2022)
 - Fixed an issue where the player's save position was not converted correctly. [x2j, x2b]
 
 Version 4.5.0 (15 Jun 2022)
