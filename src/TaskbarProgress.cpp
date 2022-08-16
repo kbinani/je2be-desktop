@@ -1,5 +1,6 @@
 #include "TaskbarProgress.h"
 #include <shobjidl_core.h>
+#include <optional>
 
 using namespace juce;
 
