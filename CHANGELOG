@@ -1,5 +1,6 @@
 Version 4.8.1 (TBD)
 - Fixed an issue where player-placed leaves could decay over time as if natural leaves. [j2b, x2b]
+- Fixed an issue that caused NBT data for sign items to disappear. [j2b, b2j]
 
 Version 4.8.0 (18 Aug 2022)
 - Fixed an issue where player-placed leaves could decay over time as if natural leaves. [j2b, x2b]
