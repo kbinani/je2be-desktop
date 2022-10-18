@@ -62,8 +62,8 @@ About::About() {
       "https://github.com/nlohmann/json",
       "",
 
-      "zlib-ng",
-      "https://github.com/zlib-ng/zlib-ng",
+      "zlib",
+      "https://github.com/madler/zlib",
       "",
 
       "minizip-ng",
