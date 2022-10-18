@@ -1,4 +1,7 @@
-Version 4.9.0 (TBD)
+Version 4.9.1 (TBD)
+- Fixed a possible crash when converting MOBs. [j2b, x2b]
+
+Version 4.9.0 (22 Aug 2022)
 - Fixed an issue where player-placed leaves could decay over time as if natural leaves. [j2b, x2b]
 - The distance property of leaves block is now converted correctly. [b2j]
 - Fixed an issue that caused NBT data for sign items to disappear. [j2b, b2j]
