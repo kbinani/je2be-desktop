@@ -1,4 +1,9 @@
-Version 4.11.0 (TBD)
+Version 4.12.0 (TBD)
+- Added support for Minecraft version 1.19.3.
+- Added support for 1.20 experimental features. [j2b, b2j]
+- Fixed a problem in which the account information of the java version was not being read properly. [b2j]
+
+Version 4.11.0 (14 Nov 2022)
 - Improved conversion accuracy of loot tables. [j2b, b2j, x2b]
 
 Version 4.10.0 (9 Nov 2022)
