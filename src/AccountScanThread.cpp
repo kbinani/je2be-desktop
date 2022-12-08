@@ -22,30 +22,49 @@ public:
   void unsafeRun() {
     using namespace std;
     File saves = GameDirectory::JavaSaveDirectory();
-    File jsonFile = saves.getParentDirectory().getChildFile("launcher_accounts.json");
-    if (!jsonFile.existsAsFile()) {
-      return;
-    }
-    juce::String jsonString = jsonFile.loadFileAsString();
-    string jsonStdString(jsonString.toUTF8(), jsonString.getNumBytesAsUTF8());
-    auto json = nlohmann::json::parse(jsonStdString);
-    auto accounts = json["accounts"];
+    Array<File> jsonFiles;
+
+    jsonFiles.add(saves.getParentDirectory().getChildFile("launcher_accounts.json"));
+    jsonFiles.add(saves.getParentDirectory().getChildFile("launcher_accounts_microsoft_store.json"));
+
+    jsonFiles.removeIf([](File file) {
+      return !file.existsAsFile();
+    });
+    struct FileLastModificationTimeComparator {
+      static int compareElements(File first, File second) {
+        return second.getLastModificationTime().toMilliseconds() - first.getLastModificationTime().toMilliseconds();
+      }
+    } comparator;
+    jsonFiles.sort(comparator);
+
     unordered_map<string, Account> collected;
-    for (auto const &it : accounts) {
+    string activeAccountLocalId;
+
+    for (File jsonFile : jsonFiles) {
+      juce::String jsonString = jsonFile.loadFileAsString();
+      string jsonStdString(jsonString.toUTF8(), jsonString.getNumBytesAsUTF8());
+      auto json = nlohmann::json::parse(jsonStdString);
+      auto accounts = json["accounts"];
+      for (auto const &it : accounts) {
+        try {
+          auto profile = it["minecraftProfile"];
+          auto id = profile["id"].get<string>();
+          auto name = profile["name"].get<string>();
+          auto localId = it["localId"].get<string>();
+          auto type = it["type"].get<string>();
+          auto username = it["username"].get<string>();
+          juce::Uuid uuid(id);
+          Account account;
+          account.fName = name;
+          account.fUuid = uuid;
+          account.fType = type;
+          account.fUsername = username;
+          collected[localId] = account;
+        } catch (...) {
+        }
+      }
       try {
-        auto profile = it["minecraftProfile"];
-        auto id = profile["id"].get<string>();
-        auto name = profile["name"].get<string>();
-        auto localId = it["localId"].get<string>();
-        auto type = it["type"].get<string>();
-        auto username = it["username"].get<string>();
-        juce::Uuid uuid(id);
-        Account account;
-        account.fName = name;
-        account.fUuid = uuid;
-        account.fType = type;
-        account.fUsername = username;
-        collected[localId] = account;
+        activeAccountLocalId = json["activeAccountLocalId"].get<string>();
       } catch (...) {
       }
     }
@@ -55,11 +74,6 @@ public:
     if (collected.size() == 1) {
       fAccounts.push_back(collected.begin()->second);
       return;
-    }
-    string activeAccountLocalId;
-    try {
-      activeAccountLocalId = json["activeAccountLocalId"].get<string>();
-    } catch (...) {
     }
     auto first = collected.find(activeAccountLocalId);
     std::optional<Account> preferred;
