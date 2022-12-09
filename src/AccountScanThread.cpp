@@ -22,20 +22,19 @@ public:
   void unsafeRun() {
     using namespace std;
     File saves = GameDirectory::JavaSaveDirectory();
-    Array<File> jsonFiles;
 
-    jsonFiles.add(saves.getParentDirectory().getChildFile("launcher_accounts.json"));
-    jsonFiles.add(saves.getParentDirectory().getChildFile("launcher_accounts_microsoft_store.json"));
+    vector<File> jsonFiles;
+    jsonFiles.push_back(saves.getParentDirectory().getChildFile("launcher_accounts.json"));
+    jsonFiles.push_back(saves.getParentDirectory().getChildFile("launcher_accounts_microsoft_store.json"));
 
-    jsonFiles.removeIf([](File file) {
-      return !file.existsAsFile();
+    jsonFiles.erase(remove_if(jsonFiles.begin(), jsonFiles.end(), [](File const &file) {
+                      return !file.existsAsFile();
+                    }),
+                    jsonFiles.end());
+
+    sort(jsonFiles.begin(), jsonFiles.end(), [](File const &a, File const &b) {
+      return a.getLastModificationTime().toMilliseconds() < b.getLastModificationTime().toMilliseconds();
     });
-    struct FileLastModificationTimeComparator {
-      static int compareElements(File first, File second) {
-        return second.getLastModificationTime().toMilliseconds() - first.getLastModificationTime().toMilliseconds();
-      }
-    } comparator;
-    jsonFiles.sort(comparator);
 
     unordered_map<string, Account> collected;
     string activeAccountLocalId;
