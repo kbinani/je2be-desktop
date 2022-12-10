@@ -95,7 +95,7 @@
     <TargetPlatformMinVersion>10.0.14393.0</TargetPlatformMinVersion>
     <DefaultLanguage>ja-JP</DefaultLanguage>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
-    <PackageCertificateThumbprint>A9C2F50C65877729AE19491F672645A557615008</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>4EB42C447A72A999F2DA996F47F15BBFA2684064</PackageCertificateThumbprint>
     <EntryPointProjectUniqueName>..\je2be-desktop.vcxproj</EntryPointProjectUniqueName>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
