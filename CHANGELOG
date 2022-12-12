@@ -1,4 +1,8 @@
-Version 4.12.0 (TBD)
+Version 4.13.0 (TBD)
+- Fixed an issue where y < 0 in chunks older than Minecraft 1.18 would be converted as void. [b2j]
+- Fixed an issue that the natural spawn of guardians was unexpectedly disabled. [j2b, b2j]
+
+Version 4.12.0 (12 Dec 2022)
 - Added support for Minecraft version 1.19.3.
 - Added support for 1.20 experimental features. [j2b, b2j]
 - Fixed a problem in which the account information of the java version was not being read properly. [b2j]
