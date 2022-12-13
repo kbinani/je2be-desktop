@@ -79,6 +79,8 @@ set(je2be_desktop_files
   src/component/MainWindow.h
   src/component/ModeSelect.cpp
   src/component/ModeSelect.h
+  src/component/SearchLabel.cpp
+  src/component/SearchLabel.h
   src/component/TextButton.h
   src/component/b2j/B2JConfig.cpp
   src/component/b2j/B2JConfig.h

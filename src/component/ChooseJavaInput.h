@@ -2,6 +2,7 @@
 
 #include "ComponentState.h"
 #include "GameDirectory.h"
+#include "SearchLabel.h"
 
 namespace je2be::desktop {
 class GameDirectoryScanThreadJava;
@@ -43,6 +44,8 @@ private:
 
   void onCustomDirectorySelected(juce::FileChooser const &chooser);
 
+  void updateGameDirectoriesVisible();
+
 private:
   static juce::File sLastDirectory;
 
@@ -54,8 +57,11 @@ private:
   std::unique_ptr<juce::Label> fMessage;
   std::unique_ptr<juce::Label> fOrMessage;
   std::unique_ptr<TextButton> fBackButton;
-  std::vector<GameDirectory> fGameDirectories;
+  std::vector<GameDirectory> fGameDirectoriesVisible;
+  std::vector<GameDirectory> fGameDirectoriesAll;
   std::unique_ptr<juce::Label> fPlaceholder;
+  std::unique_ptr<SearchLabel> fSearch;
+  std::unique_ptr<juce::Label> fSearchPlaceholder;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChooseJavaInput)
 };

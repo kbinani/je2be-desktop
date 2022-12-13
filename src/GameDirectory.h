@@ -21,7 +21,7 @@ struct GameDirectory {
   std::optional<juce::String> fVersion;
   std::optional<bool> fCommandsEnabled;
 
-  void paint(juce::Graphics &g, int width, int height, bool selected, juce::Component &component) const {
+  void paint(juce::Graphics &g, int width, int height, bool selected, juce::Component &component, juce::String const &search) const {
     using namespace juce;
 
     Colour hilightColour = component.findColour(DirectoryContentsDisplayComponent::highlightColourId);
@@ -74,6 +74,16 @@ struct GameDirectory {
       juce::String thirdLine = fDirectory.getParentDirectory().getFullPathName();
       g.drawFittedText(thirdLine, x, y, lineWidth, lineHeight, Justification::centredLeft, 1);
     }
+  }
+
+  bool match(juce::String const &search) const {
+    if (search.isEmpty()) {
+      return true;
+    }
+    if (fLevelName.indexOfIgnoreCase(search) >= 0) {
+      return true;
+    }
+    return fDirectory.getFileName().indexOfIgnoreCase(search) >= 0;
   }
 
   static juce::File BedrockSaveDirectory() {

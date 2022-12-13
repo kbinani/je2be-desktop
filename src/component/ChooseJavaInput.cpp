@@ -61,7 +61,8 @@ ChooseJavaInput::ChooseJavaInput(std::optional<ChooseInputState> state) {
     addAndMakeVisible(*fNextButton);
   }
 
-  Rectangle<int> listBoxBounds(width - kMargin - kWorldListWidth, kMargin, kWorldListWidth, height - 3 * kMargin - kButtonBaseHeight);
+  int space = 5;
+  Rectangle<int> listBoxBounds(width - kMargin - kWorldListWidth, kMargin + kButtonBaseHeight + space, kWorldListWidth, height - 3 * kMargin - 2 * kButtonBaseHeight - space);
   {
     fListComponent.reset(new ListBox("", this));
     fListComponent->setBounds(listBoxBounds);
@@ -76,6 +77,31 @@ ChooseJavaInput::ChooseJavaInput(std::optional<ChooseInputState> state) {
     fPlaceholder->setJustificationType(Justification::centred);
     addAndMakeVisible(*fPlaceholder);
   }
+
+  Rectangle<int> searchBounds(width - kMargin - kWorldListWidth, kMargin, kWorldListWidth, kButtonBaseHeight);
+  {
+    fSearch.reset(new SearchLabel());
+    fSearch->setBounds(searchBounds);
+    fSearch->setEnabled(true);
+    fSearch->setEditable(true);
+    fSearch->setColour(Label::ColourIds::backgroundColourId, fListComponent->findColour(ListBox::ColourIds::backgroundColourId));
+    fSearch->onTextUpdate = [this]() {
+      String search = fSearch->getCurrentText();
+      updateGameDirectoriesVisible();
+      fSearchPlaceholder->setVisible(search.isEmpty());
+    };
+    fSearch->setWantsKeyboardFocus(false);
+    addAndMakeVisible(*fSearch);
+  }
+  {
+    fSearchPlaceholder.reset(new Label({}, TRANS("Search")));
+    fSearchPlaceholder->setBounds(searchBounds);
+    fSearchPlaceholder->setColour(Label::ColourIds::backgroundColourId, Colours::transparentWhite);
+    fSearchPlaceholder->setEnabled(false);
+    fSearchPlaceholder->setInterceptsMouseClicks(false, false);
+    addAndMakeVisible(*fSearchPlaceholder);
+  }
+
   {
     fThread.reset(new GameDirectoryScanThreadJava(this));
     fThread->startThread();
@@ -114,8 +140,8 @@ void ChooseJavaInput::onCustomDirectorySelected(juce::FileChooser const &chooser
 
 void ChooseJavaInput::selectedRowsChanged(int lastRowSelected) {
   int num = fListComponent->getNumSelectedRows();
-  if (num == 1 && 0 <= lastRowSelected && lastRowSelected < fGameDirectories.size()) {
-    GameDirectory gd = fGameDirectories[lastRowSelected];
+  if (num == 1 && 0 <= lastRowSelected && lastRowSelected < fGameDirectoriesVisible.size()) {
+    GameDirectory gd = fGameDirectoriesVisible[lastRowSelected];
     fState = ChooseInputState(InputType::Java, gd.fDirectory, gd.fDirectory.getFileName());
   } else {
     fState = std::nullopt;
@@ -126,10 +152,10 @@ void ChooseJavaInput::selectedRowsChanged(int lastRowSelected) {
 }
 
 void ChooseJavaInput::listBoxItemDoubleClicked(int row, const MouseEvent &) {
-  if (row < 0 || fGameDirectories.size() <= row) {
+  if (row < 0 || fGameDirectoriesVisible.size() <= row) {
     return;
   }
-  GameDirectory gd = fGameDirectories[row];
+  GameDirectory gd = fGameDirectoriesVisible[row];
   fState = ChooseInputState(InputType::Java, gd.fDirectory, gd.fDirectory.getFileName());
   JUCEApplication::getInstance()->invoke(commands::toJ2BConfig, false);
 }
@@ -143,10 +169,10 @@ void ChooseJavaInput::listBoxItemClicked(int row, MouseEvent const &e) {
       if (result != 1) {
         return;
       }
-      if (row < 0 || fGameDirectories.size() <= row) {
+      if (row < 0 || fGameDirectoriesVisible.size() <= row) {
         return;
       }
-      GameDirectory gd = fGameDirectories[row];
+      GameDirectory gd = fGameDirectoriesVisible[row];
       if (!gd.fDirectory.isDirectory()) {
         return;
       }
@@ -160,29 +186,41 @@ void ChooseJavaInput::onBackButtonClicked() {
 }
 
 int ChooseJavaInput::getNumRows() {
-  return fGameDirectories.size();
+  return fGameDirectoriesVisible.size();
 }
 
 void ChooseJavaInput::paintListBoxItem(int rowNumber,
                                        juce::Graphics &g,
                                        int width, int height,
                                        bool rowIsSelected) {
-  if (rowNumber < 0 || fGameDirectories.size() <= rowNumber) {
+  if (rowNumber < 0 || fGameDirectoriesVisible.size() <= rowNumber) {
     return;
   }
-  GameDirectory gd = fGameDirectories[rowNumber];
-  gd.paint(g, width, height, rowIsSelected, *this);
+  GameDirectory gd = fGameDirectoriesVisible[rowNumber];
+  gd.paint(g, width, height, rowIsSelected, *this, fSearch->getCurrentText());
 }
 
 void ChooseJavaInput::handleAsyncUpdate() {
-  fGameDirectories.swap(fThread->fGameDirectories);
-  if (fGameDirectories.empty()) {
+  fGameDirectoriesAll.swap(fThread->fGameDirectories);
+  if (fGameDirectoriesAll.empty()) {
     fPlaceholder->setText(TRANS("Nothing found in the save folder"), dontSendNotification);
   } else {
-    fListComponent->updateContent();
+    updateGameDirectoriesVisible();
     fListComponent->setEnabled(true);
     fListComponent->setVisible(true);
     fPlaceholder->setVisible(false);
+  }
+}
+
+void ChooseJavaInput::updateGameDirectoriesVisible() {
+  String search = fSearch->getCurrentText();
+  fGameDirectoriesVisible.clear();
+  std::copy_if(fGameDirectoriesAll.begin(), fGameDirectoriesAll.end(), std::back_inserter(fGameDirectoriesVisible), [search](GameDirectory const &gd) {
+    return gd.match(search);
+  });
+  fListComponent->updateContent();
+  for (int i = 0; i < fGameDirectoriesVisible.size(); i++) {
+    fListComponent->repaintRow(i);
   }
 }
 

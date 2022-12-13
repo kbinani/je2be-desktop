@@ -229,7 +229,7 @@ void ChooseBedrockInput::paintListBoxItem(int rowNumber,
     return;
   }
   GameDirectory gd = fGameDirectories[rowNumber];
-  gd.paint(g, width, height, rowIsSelected, *this);
+  gd.paint(g, width, height, rowIsSelected, *this, "");
 }
 
 void ChooseBedrockInput::handleAsyncUpdate() {

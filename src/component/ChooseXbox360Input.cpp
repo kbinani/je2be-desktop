@@ -201,7 +201,7 @@ void ChooseXbox360Input::paintListBoxItem(int rowNumber,
     return;
   }
   GameDirectory gd = fGameDirectories[rowNumber];
-  gd.paint(g, width, height, rowIsSelected, *this);
+  gd.paint(g, width, height, rowIsSelected, *this, "");
 }
 
 void ChooseXbox360Input::handleAsyncUpdate() {
