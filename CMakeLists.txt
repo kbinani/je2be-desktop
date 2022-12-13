@@ -139,4 +139,15 @@ include_external_msproject(Package Package/Package.wapproj
 
 configure_file(Builds/Package/Package.appxmanifest.in Package/Package.appxmanifest)
 
+juce_add_console_app(compose-font)
+target_sources(compose-font PRIVATE tool/ComposeFont.cpp)
+target_link_libraries(compose-font
+  PRIVATE
+    juce::juce_gui_extra
+  PUBLIC
+    juce::juce_recommended_config_flags
+    juce::juce_recommended_lto_flags
+    juce::juce_recommended_warning_flags)
+
 source_group(TREE ${CMAKE_CURRENT_LIST_DIR} FILES ${je2be_desktop_files})
+
