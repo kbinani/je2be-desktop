@@ -52,7 +52,9 @@ set(je2be_desktop_files
   src/GameDirectoryScanThreadXbox360.h
   src/LocalizationHelper.cpp
   src/LocalizationHelper.h
+  src/LookAndFeel.cpp
   src/LookAndFeel.h
+  src/ScaledTypeface.h
   src/Status.hpp
   src/TaskbarProgress.cpp
   src/TaskbarProgress.h
@@ -119,7 +121,8 @@ target_compile_definitions(je2be-desktop
 juce_add_binary_data(app-data
   SOURCES
     resource/icon-large.png
-    resource/japanese.lang)
+    resource/japanese.lang
+    resource/font.bin)
 
 target_link_libraries(je2be-desktop
   PRIVATE

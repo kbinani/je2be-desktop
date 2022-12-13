@@ -6,10 +6,9 @@ namespace je2be::desktop {
 
 class LookAndFeel : public juce::LookAndFeel_V4 {
 public:
-  LookAndFeel() {
-    juce::String typeFaceName = "Meiryo UI";
-    setDefaultSansSerifTypefaceName(typeFaceName);
-  }
+  LookAndFeel();
+
+  juce::Typeface::Ptr getTypefaceForFont(juce::Font const &font) override;
 
   void drawProgressBar(juce::Graphics &g, juce::ProgressBar &progressBar, int width, int height, double progress, const juce::String &textToShow) override {
     using namespace juce;
@@ -142,6 +141,9 @@ public:
       g.drawText(progressText, barBounds, Justification::centred, false);
     }
   }
+
+private:
+  juce::Typeface::Ptr fTypeface;
 };
 
 } // namespace je2be::desktop

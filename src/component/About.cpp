@@ -94,6 +94,10 @@ About::About() {
       "libminecraft-file",
       "https://github.com/kbinani/libminecraft-file",
       "",
+
+      "Noto Sans JP",
+      "https://fonts.google.com/noto/specimen/Noto+Sans+JP",
+      "",
   };
 
   int width = 400;
