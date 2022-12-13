@@ -3,6 +3,7 @@
 #include "Constants.h"
 #include "GameDirectoryScanThreadJava.h"
 #include "component/MainWindow.h"
+#include "component/SearchLabel.h"
 #include "component/TextButton.h"
 
 using namespace juce;

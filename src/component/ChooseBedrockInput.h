@@ -10,6 +10,7 @@ class GameDirectoryScanThreadBedrock;
 namespace je2be::desktop::component {
 
 class TextButton;
+class SearchLabel;
 
 class ChooseBedrockInput : public juce::Component,
                            public ChooseInputStateProvider,
@@ -45,6 +46,8 @@ private:
   void onMcworldFileSelected(juce::FileChooser const &chooser);
   void onDirectorySelected(juce::FileChooser const &chooser);
 
+  void updateGameDirectoriesVisible();
+
 private:
   static juce::File sLastDirectory;
 
@@ -60,8 +63,11 @@ private:
   juce::File fBedrockGameDirectory;
   std::unique_ptr<GameDirectoryScanThreadBedrock> fThread;
   std::unique_ptr<juce::Label> fPlaceholder;
+  std::unique_ptr<SearchLabel> fSearch;
+  std::unique_ptr<juce::Label> fSearchPlaceholder;
 
-  std::vector<GameDirectory> fGameDirectories;
+  std::vector<GameDirectory> fGameDirectoriesVisible;
+  std::vector<GameDirectory> fGameDirectoriesAll;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChooseBedrockInput)
 };

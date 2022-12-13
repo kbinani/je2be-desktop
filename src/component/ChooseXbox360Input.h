@@ -12,6 +12,7 @@ class GameDirectoryScanThreadXbox360;
 namespace je2be::desktop::component {
 
 class TextButton;
+class SearchLabel;
 
 class ChooseXbox360Input : public juce::Component,
                            public ChooseInputStateProvider,
@@ -44,6 +45,7 @@ private:
   void onBackButtonClicked();
 
   void onCustomDirectorySelected(juce::FileChooser const &chooser);
+  void updateGameDirectoriesVisible();
 
 private:
   static juce::File sLastDirectory;
@@ -58,8 +60,11 @@ private:
   juce::File fBedrockGameDirectory;
   std::unique_ptr<GameDirectoryScanThreadXbox360> fThread;
   std::unique_ptr<juce::Label> fPlaceholder;
-  std::vector<GameDirectory> fGameDirectories;
+  std::vector<GameDirectory> fGameDirectoriesVisible;
+  std::vector<GameDirectory> fGameDirectoriesAll;
   juce::CommandID const fDestinationAfterChoose;
+  std::unique_ptr<SearchLabel> fSearch;
+  std::unique_ptr<juce::Label> fSearchPlaceholder;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChooseXbox360Input)
 };

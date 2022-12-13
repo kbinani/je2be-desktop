@@ -2,7 +2,6 @@
 
 #include "ComponentState.h"
 #include "GameDirectory.h"
-#include "SearchLabel.h"
 
 namespace je2be::desktop {
 class GameDirectoryScanThreadJava;
@@ -11,6 +10,7 @@ class GameDirectoryScanThreadJava;
 namespace je2be::desktop::component {
 
 class TextButton;
+class SearchLabel;
 
 class ChooseJavaInput : public juce::Component,
                         public ChooseInputStateProvider,

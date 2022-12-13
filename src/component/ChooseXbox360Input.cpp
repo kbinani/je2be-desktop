@@ -6,6 +6,7 @@
 #include "GameDirectoryScanThreadXbox360.h"
 #include "component/ChooseXbox360Input.h"
 #include "component/MainWindow.h"
+#include "component/SearchLabel.h"
 #include "component/TextButton.h"
 
 using namespace juce;
@@ -91,7 +92,8 @@ ChooseXbox360Input::ChooseXbox360Input(juce::CommandID destinationAfterChoose, s
     addAndMakeVisible(*fNextButton);
   }
 
-  juce::Rectangle<int> listBoxBounds(width - kMargin - kWorldListWidth, kMargin, kWorldListWidth, height - 3 * kMargin - kButtonBaseHeight);
+  int space = 5;
+  juce::Rectangle<int> listBoxBounds(width - kMargin - kWorldListWidth, kMargin + kButtonBaseHeight + space, kWorldListWidth, height - 3 * kMargin - 2 * kButtonBaseHeight - space);
   {
     fListComponent.reset(new ListBox("", this));
     fListComponent->setBounds(listBoxBounds);
@@ -106,6 +108,31 @@ ChooseXbox360Input::ChooseXbox360Input(juce::CommandID destinationAfterChoose, s
     fPlaceholder->setJustificationType(Justification::centred);
     addAndMakeVisible(*fPlaceholder);
   }
+
+  juce::Rectangle<int> searchBounds(width - kMargin - kWorldListWidth, kMargin, kWorldListWidth, kButtonBaseHeight);
+  {
+    fSearch.reset(new SearchLabel());
+    fSearch->setBounds(searchBounds);
+    fSearch->setEnabled(true);
+    fSearch->setEditable(true);
+    fSearch->setColour(Label::ColourIds::backgroundColourId, fListComponent->findColour(ListBox::ColourIds::backgroundColourId));
+    fSearch->onTextUpdate = [this]() {
+      juce::String search = fSearch->getCurrentText();
+      updateGameDirectoriesVisible();
+      fSearchPlaceholder->setVisible(search.isEmpty());
+    };
+    fSearch->setWantsKeyboardFocus(false);
+    addAndMakeVisible(*fSearch);
+  }
+  {
+    fSearchPlaceholder.reset(new Label({}, TRANS("Search")));
+    fSearchPlaceholder->setBounds(searchBounds);
+    fSearchPlaceholder->setColour(Label::ColourIds::backgroundColourId, Colours::transparentWhite);
+    fSearchPlaceholder->setEnabled(false);
+    fSearchPlaceholder->setInterceptsMouseClicks(false, false);
+    addAndMakeVisible(*fSearchPlaceholder);
+  }
+
   {
     fThread.reset(new GameDirectoryScanThreadXbox360(this));
     fThread->startThread();
@@ -134,7 +161,7 @@ void ChooseXbox360Input::onCustomDirectorySelected(juce::FileChooser const &choo
   if (result == File()) {
     return;
   }
-  juce::String worldName = GetWorldName(result, fGameDirectories);
+  juce::String worldName = GetWorldName(result, fGameDirectoriesAll);
   fState = ChooseInputState(InputType::Xbox360, result, worldName);
   sLastDirectory = result.getParentDirectory();
   JUCEApplication::getInstance()->invoke(fDestinationAfterChoose, true);
@@ -142,8 +169,8 @@ void ChooseXbox360Input::onCustomDirectorySelected(juce::FileChooser const &choo
 
 void ChooseXbox360Input::selectedRowsChanged(int lastRowSelected) {
   int num = fListComponent->getNumSelectedRows();
-  if (num == 1 && 0 <= lastRowSelected && lastRowSelected < fGameDirectories.size()) {
-    GameDirectory gd = fGameDirectories[lastRowSelected];
+  if (num == 1 && 0 <= lastRowSelected && lastRowSelected < fGameDirectoriesVisible.size()) {
+    GameDirectory gd = fGameDirectoriesVisible[lastRowSelected];
     juce::String worldName = gd.fLevelName;
     fState = ChooseInputState(InputType::Xbox360, gd.fDirectory, worldName);
   } else {
@@ -155,10 +182,10 @@ void ChooseXbox360Input::selectedRowsChanged(int lastRowSelected) {
 }
 
 void ChooseXbox360Input::listBoxItemDoubleClicked(int row, const MouseEvent &) {
-  if (row < 0 || fGameDirectories.size() <= row) {
+  if (row < 0 || fGameDirectoriesVisible.size() <= row) {
     return;
   }
-  GameDirectory gd = fGameDirectories[row];
+  GameDirectory gd = fGameDirectoriesVisible[row];
   juce::String worldName = gd.fLevelName;
   fState = ChooseInputState(InputType::Xbox360, gd.fDirectory, worldName);
   JUCEApplication::getInstance()->invoke(fDestinationAfterChoose, false);
@@ -173,10 +200,10 @@ void ChooseXbox360Input::listBoxItemClicked(int row, MouseEvent const &e) {
       if (result != 1) {
         return;
       }
-      if (row < 0 || fGameDirectories.size() <= row) {
+      if (row < 0 || fGameDirectoriesVisible.size() <= row) {
         return;
       }
-      GameDirectory gd = fGameDirectories[row];
+      GameDirectory gd = fGameDirectoriesVisible[row];
       if (!gd.fDirectory.existsAsFile()) {
         return;
       }
@@ -190,29 +217,41 @@ void ChooseXbox360Input::onBackButtonClicked() {
 }
 
 int ChooseXbox360Input::getNumRows() {
-  return fGameDirectories.size();
+  return fGameDirectoriesVisible.size();
 }
 
 void ChooseXbox360Input::paintListBoxItem(int rowNumber,
                                           juce::Graphics &g,
                                           int width, int height,
                                           bool rowIsSelected) {
-  if (rowNumber < 0 || fGameDirectories.size() <= rowNumber) {
+  if (rowNumber < 0 || fGameDirectoriesVisible.size() <= rowNumber) {
     return;
   }
-  GameDirectory gd = fGameDirectories[rowNumber];
-  gd.paint(g, width, height, rowIsSelected, *this, "");
+  GameDirectory gd = fGameDirectoriesVisible[rowNumber];
+  gd.paint(g, width, height, rowIsSelected, *this, fSearch->getCurrentText());
 }
 
 void ChooseXbox360Input::handleAsyncUpdate() {
-  fGameDirectories.swap(fThread->fGameDirectories);
-  if (fGameDirectories.empty()) {
+  fGameDirectoriesAll.swap(fThread->fGameDirectories);
+  if (fGameDirectoriesAll.empty()) {
     fPlaceholder->setText(TRANS("Nothing found in the save folder"), dontSendNotification);
   } else {
-    fListComponent->updateContent();
+    updateGameDirectoriesVisible();
     fListComponent->setEnabled(true);
     fListComponent->setVisible(true);
     fPlaceholder->setVisible(false);
+  }
+}
+
+void ChooseXbox360Input::updateGameDirectoriesVisible() {
+  juce::String search = fSearch->getCurrentText();
+  fGameDirectoriesVisible.clear();
+  std::copy_if(fGameDirectoriesAll.begin(), fGameDirectoriesAll.end(), std::back_inserter(fGameDirectoriesVisible), [search](GameDirectory const &gd) {
+    return gd.match(search);
+  });
+  fListComponent->updateContent();
+  for (int i = 0; i < fGameDirectoriesVisible.size(); i++) {
+    fListComponent->repaintRow(i);
   }
 }
 
