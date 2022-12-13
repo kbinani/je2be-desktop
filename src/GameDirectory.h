@@ -40,6 +40,8 @@ struct GameDirectory {
     g.setColour(hilightColour);
     g.drawRect(iconBounds);
 
+    Font font = g.getCurrentFont().withHeight(15);
+
     int const x = iconBounds.getRight() + margin;
     Colour textColour;
     if (selected) {
@@ -47,22 +49,49 @@ struct GameDirectory {
     } else {
       textColour = component.findColour(DirectoryContentsDisplayComponent::textColourId);
     }
-    g.setColour(textColour);
-    g.setFont(15);
+    juce::AttributedString levelName = DecorateMatches(fLevelName, search, textColour, Colours::red);
+    levelName.setFont(font);
+    levelName.setJustification(Justification::centredLeft);
+    levelName.setWordWrap(juce::AttributedString::none);
     int lineHeight = (height - 2 * margin) / 3;
     int lineWidth = width - x - margin;
     int y = margin;
-    g.drawFittedText(fLevelName, x, y, lineWidth, lineHeight, Justification::centredLeft, 1);
+    float stringWidth = MeasureStringWidth(font, fLevelName);
+    if (stringWidth > lineWidth) {
+      g.saveState();
+      float scale = lineWidth / stringWidth;
+      g.addTransform(juce::AffineTransform::translation(x, y));
+      g.addTransform(juce::AffineTransform::scale(scale, 1));
+      levelName.draw(g, juce::Rectangle<float>(0, 0, 1e8, lineHeight));
+      g.restoreState();
+    } else {
+      levelName.draw(g, juce::Rectangle<float>(x, y, 1e8, lineHeight));
+    }
 
     y += lineHeight;
-    g.setColour(textColour.darker(0.8));
     juce::String secondLine = fDirectory.getFileName();
     if (fLastUpdate) {
       secondLine += " (" + StringFromTime(*fLastUpdate) + ")";
     }
-    g.drawFittedText(secondLine, x, y, lineWidth, lineHeight, Justification::centredLeft, 1);
+    AttributedString directoryName = DecorateMatches(secondLine, search, textColour.darker(0.8), Colours::yellow);
+    directoryName.setFont(font);
+    directoryName.setWordWrap(juce::AttributedString::none);
+    directoryName.setJustification(Justification::centredLeft);
+    stringWidth = MeasureStringWidth(font, secondLine);
+    if (stringWidth > lineWidth) {
+      g.saveState();
+      float scale = lineWidth / stringWidth;
+      g.addTransform(juce::AffineTransform::translation(x, y));
+      g.addTransform(juce::AffineTransform::scale(scale, 1));
+      directoryName.draw(g, juce::Rectangle<float>(0, 0, 1e8, lineHeight));
+      g.restoreState();
+    } else {
+      directoryName.draw(g, juce::Rectangle<float>(x, y, 1e8, lineHeight));
+    }
 
     y += lineHeight;
+    g.setColour(textColour.darker(0.8));
+    g.setFont(15);
     if (fGameMode && fCommandsEnabled && fVersion) {
       juce::String thirdLine = StringFromGameMode(*fGameMode) + ", ";
       if (*fCommandsEnabled) {
@@ -74,6 +103,34 @@ struct GameDirectory {
       juce::String thirdLine = fDirectory.getParentDirectory().getFullPathName();
       g.drawFittedText(thirdLine, x, y, lineWidth, lineHeight, Justification::centredLeft, 1);
     }
+  }
+
+  static float MeasureStringWidth(juce::Font font, juce::String const &s) {
+    return font.getStringWidthFloat(s);
+  }
+
+  static juce::AttributedString DecorateMatches(juce::String s, juce::String const &search, juce::Colour base, juce::Colour highlight) {
+    juce::AttributedString ret;
+    int idx = s.indexOfIgnoreCase(search);
+    while (idx >= 0 && search.isNotEmpty()) {
+      auto sub = s.substring(0, idx);
+      juce::AttributedString part1;
+      part1.setText(sub);
+      part1.setColour(base);
+      ret.append(part1);
+      auto match = s.substring(idx, idx + search.length());
+      juce::AttributedString part2;
+      part2.setText(match);
+      part2.setColour(highlight);
+      ret.append(part2);
+      s = s.substring(idx + search.length());
+      idx = s.indexOfIgnoreCase(search);
+    }
+    juce::AttributedString last;
+    last.setText(s);
+    last.setColour(base);
+    ret.append(last);
+    return ret;
   }
 
   bool match(juce::String const &search) const {
