@@ -1,5 +1,6 @@
 #pragma once
 
+#include "LocalizationHelper.h"
 #include <juce_gui_extra/juce_gui_extra.h>
 
 namespace je2be::desktop {
@@ -18,9 +19,39 @@ class ScaledTypeface : public juce::CustomTypeface {
 public:
   explicit ScaledTypeface(float scale) : fScale(scale) {
     fOrder[0] = Neutral;
-    fOrder[1] = Japanese;
-    fOrder[2] = TraditionalChinese;
-    fOrder[3] = SimplifiedChinese;
+
+    std::vector<Region> remaining = {Japanese, SimplifiedChinese, TraditionalChinese};
+
+    auto languages = LocalizationHelper::PreferredLanguages();
+    int idx = 1;
+    for (int i = 0; i < languages.size() && idx < kMaxRegion; i++) {
+      juce::String lang = languages[i];
+      if (lang == "ja-JP") {
+        if (auto found = std::find(remaining.begin(), remaining.end(), Japanese); found != remaining.end()) {
+          fOrder[idx] = Japanese;
+          remaining.erase(found);
+          idx++;
+        }
+      } else if (lang.startsWith("zh-Hans")) {
+        if (auto found = std::find(remaining.begin(), remaining.end(), SimplifiedChinese); found != remaining.end()) {
+          fOrder[idx] = SimplifiedChinese;
+          remaining.erase(found);
+          idx++;
+        }
+      } else if (lang.startsWith("zh-Hant")) {
+        if (auto found = std::find(remaining.begin(), remaining.end(), TraditionalChinese); found != remaining.end()) {
+          fOrder[idx] = TraditionalChinese;
+          remaining.erase(found);
+          idx++;
+        }
+      }
+    }
+    while (!remaining.empty()) {
+      fOrder[idx] = remaining[0];
+      idx++;
+      remaining.erase(remaining.begin());
+    }
+    jassert(idx == 4);
     fOrder[4] = Emoji;
     for (int i = 0; i < kMaxRegion; i++) {
       fFaces[i] = nullptr;

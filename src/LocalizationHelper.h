@@ -7,6 +7,7 @@ namespace je2be::desktop {
 class LocalizationHelper {
 public:
   static juce::LocalisedStrings *CurrentLocalisedStrings();
+  static std::vector<juce::String> PreferredLanguages();
 
 private:
   static juce::LocalisedStrings *LoadLocalisedStrings(char const *data, int size) {
