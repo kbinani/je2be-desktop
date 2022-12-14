@@ -95,8 +95,16 @@ About::About() {
       "https://github.com/kbinani/libminecraft-file",
       "",
 
+      "Noto Sans",
+      "https://fonts.google.com/noto/specimen/Noto+Sans",
+      "",
+
       "Noto Sans JP",
       "https://fonts.google.com/noto/specimen/Noto+Sans+JP",
+      "",
+
+      "Noto Color Emoji",
+      "https://fonts.google.com/noto/specimen/Noto+Color+Emoji",
       "",
   };
 

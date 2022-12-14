@@ -122,7 +122,9 @@ juce_add_binary_data(app-data
   SOURCES
     resource/icon-large.png
     resource/japanese.lang
-    resource/font.bin)
+    resource/NotoSans-Regular.ttf
+    resource/NotoSansJP-Regular.otf
+    resource/NotoColorEmoji-Regular.ttf)
 
 target_link_libraries(je2be-desktop
   PRIVATE

@@ -8,7 +8,7 @@ class LookAndFeel : public juce::LookAndFeel_V4 {
 public:
   LookAndFeel();
 
-  juce::Typeface::Ptr getTypefaceForFont(juce::Font const &font) override;
+  //juce::Typeface::Ptr getTypefaceForFont(juce::Font const &font) override;
 
   void drawProgressBar(juce::Graphics &g, juce::ProgressBar &progressBar, int width, int height, double progress, const juce::String &textToShow) override {
     using namespace juce;
