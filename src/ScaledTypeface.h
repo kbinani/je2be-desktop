@@ -8,6 +8,8 @@ class ScaledTypeface : public juce::CustomTypeface {
   enum Region : int {
     Neutral,
     Japanese,
+    TraditionalChinese,
+    SimplifiedChinese,
     Emoji,
 
     kMaxRegion,
@@ -17,7 +19,9 @@ public:
   explicit ScaledTypeface(float scale) : fScale(scale) {
     fOrder[0] = Neutral;
     fOrder[1] = Japanese;
-    fOrder[2] = Emoji;
+    fOrder[2] = TraditionalChinese;
+    fOrder[3] = SimplifiedChinese;
+    fOrder[4] = Emoji;
     for (int i = 0; i < kMaxRegion; i++) {
       fFaces[i] = nullptr;
     }
@@ -92,12 +96,17 @@ private:
       case Neutral:
         fFaces[region] = Typeface::createSystemTypefaceFor(BinaryData::NotoSansRegular_ttf, BinaryData::NotoSansRegular_ttfSize);
         break;
-      case Japanese: {
+      case Japanese:
         fFaces[region] = Typeface::createSystemTypefaceFor(BinaryData::NotoSansJPRegular_otf, BinaryData::NotoSansJPRegular_otfSize);
         break;
-      }
       case Emoji:
         fFaces[region] = Typeface::createSystemTypefaceFor(BinaryData::NotoColorEmojiRegular_ttf, BinaryData::NotoColorEmojiRegular_ttfSize);
+        break;
+      case TraditionalChinese:
+        fFaces[region] = Typeface::createSystemTypefaceFor(BinaryData::NotoSansTCRegular_otf, BinaryData::NotoSansTCRegular_otfSize);
+        break;
+      case SimplifiedChinese:
+        fFaces[region] = Typeface::createSystemTypefaceFor(BinaryData::NotoSansSCRegular_otf, BinaryData::NotoSansSCRegular_otfSize);
         break;
       }
     }
