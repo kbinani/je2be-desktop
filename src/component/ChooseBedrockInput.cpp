@@ -127,12 +127,8 @@ ChooseBedrockInput::ChooseBedrockInput(std::optional<ChooseInputState> state) {
     fSearch->setEnabled(true);
     fSearch->setEditable(true);
     fSearch->setColour(Label::ColourIds::backgroundColourId, fListComponent->findColour(ListBox::ColourIds::backgroundColourId));
-    fSearch->onTextUpdate = [this]() {
-      onSearchTextChanged();
-    };
-    fSearch->onEditorHide = [this]() {
-      onSearchTextChanged();
-    };
+    fSearch->onTextUpdate = [this]() { onSearchTextChanged(); };
+    fSearch->onEditorHide = [this]() { onSearchTextChanged(); };
     addAndMakeVisible(*fSearch);
   }
   {
@@ -265,20 +261,18 @@ void ChooseBedrockInput::handleAsyncUpdate() {
   if (fGameDirectoriesAll.empty()) {
     fPlaceholder->setText(TRANS("Nothing found in the save folder"), dontSendNotification);
   } else {
-    updateGameDirectoriesVisible();
+    onSearchTextChanged();
     fListComponent->setEnabled(true);
     fListComponent->setVisible(true);
-    fPlaceholder->setVisible(false);
+    fPlaceholder->setText(TRANS("No matches found for search term"), dontSendNotification);
   }
 }
 
 void ChooseBedrockInput::onSearchTextChanged() {
-  String search = fSearch->getCurrentText();
-  updateGameDirectoriesVisible();
-  fSearchPlaceholder->setVisible(search.isEmpty());
-}
+  if (fGameDirectoriesAll.empty()) {
+    return;
+  }
 
-void ChooseBedrockInput::updateGameDirectoriesVisible() {
   String search = fSearch->getCurrentText();
   fGameDirectoriesVisible.clear();
   std::copy_if(fGameDirectoriesAll.begin(), fGameDirectoriesAll.end(), std::back_inserter(fGameDirectoriesVisible), [search](GameDirectory const &gd) {
@@ -288,6 +282,8 @@ void ChooseBedrockInput::updateGameDirectoriesVisible() {
   for (int i = 0; i < fGameDirectoriesVisible.size(); i++) {
     fListComponent->repaintRow(i);
   }
+  fSearchPlaceholder->setVisible(search.isEmpty());
+  fPlaceholder->setVisible(fGameDirectoriesVisible.empty());
 }
 
 } // namespace je2be::desktop::component

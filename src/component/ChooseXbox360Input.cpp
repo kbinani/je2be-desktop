@@ -116,12 +116,8 @@ ChooseXbox360Input::ChooseXbox360Input(juce::CommandID destinationAfterChoose, s
     fSearch->setEnabled(true);
     fSearch->setEditable(true);
     fSearch->setColour(Label::ColourIds::backgroundColourId, fListComponent->findColour(ListBox::ColourIds::backgroundColourId));
-    fSearch->onTextUpdate = [this]() {
-      onSearchTextChanged();
-    };
-    fSearch->onEditorHide = [this]() {
-      onSearchTextChanged();
-    };
+    fSearch->onTextUpdate = [this]() { onSearchTextChanged(); };
+    fSearch->onEditorHide = [this]() { onSearchTextChanged(); };
     addAndMakeVisible(*fSearch);
   }
   {
@@ -237,20 +233,18 @@ void ChooseXbox360Input::handleAsyncUpdate() {
   if (fGameDirectoriesAll.empty()) {
     fPlaceholder->setText(TRANS("Nothing found in the save folder"), dontSendNotification);
   } else {
-    updateGameDirectoriesVisible();
+    onSearchTextChanged();
     fListComponent->setEnabled(true);
     fListComponent->setVisible(true);
-    fPlaceholder->setVisible(false);
+    fPlaceholder->setText(TRANS("No matches found for search term"), dontSendNotification);
   }
 }
 
 void ChooseXbox360Input::onSearchTextChanged() {
-  juce::String search = fSearch->getCurrentText();
-  updateGameDirectoriesVisible();
-  fSearchPlaceholder->setVisible(search.isEmpty());
-}
+  if (fGameDirectoriesAll.empty()) {
+    return;
+  }
 
-void ChooseXbox360Input::updateGameDirectoriesVisible() {
   juce::String search = fSearch->getCurrentText();
   fGameDirectoriesVisible.clear();
   std::copy_if(fGameDirectoriesAll.begin(), fGameDirectoriesAll.end(), std::back_inserter(fGameDirectoriesVisible), [search](GameDirectory const &gd) {
@@ -260,6 +254,8 @@ void ChooseXbox360Input::updateGameDirectoriesVisible() {
   for (int i = 0; i < fGameDirectoriesVisible.size(); i++) {
     fListComponent->repaintRow(i);
   }
+  fSearchPlaceholder->setVisible(search.isEmpty());
+  fPlaceholder->setVisible(fGameDirectoriesVisible.empty());
 }
 
 } // namespace je2be::desktop::component

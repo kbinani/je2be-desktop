@@ -69,3 +69,4 @@ language: Japanese
 "Open" = "開く";
 "Choose" = "フォルダーの選択";
 "Search" = "検索";
+"No matches found for search term" = "検索語に一致するものはありません";

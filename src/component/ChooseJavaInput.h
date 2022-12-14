@@ -45,7 +45,6 @@ private:
   void onCustomDirectorySelected(juce::FileChooser const &chooser);
 
   void onSearchTextChanged();
-  void updateGameDirectoriesVisible();
 
 private:
   static juce::File sLastDirectory;
