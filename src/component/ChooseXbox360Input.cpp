@@ -117,11 +117,11 @@ ChooseXbox360Input::ChooseXbox360Input(juce::CommandID destinationAfterChoose, s
     fSearch->setEditable(true);
     fSearch->setColour(Label::ColourIds::backgroundColourId, fListComponent->findColour(ListBox::ColourIds::backgroundColourId));
     fSearch->onTextUpdate = [this]() {
-      juce::String search = fSearch->getCurrentText();
-      updateGameDirectoriesVisible();
-      fSearchPlaceholder->setVisible(search.isEmpty());
+      onSearchTextChanged();
     };
-    fSearch->setWantsKeyboardFocus(false);
+    fSearch->onEditorHide = [this]() {
+      onSearchTextChanged();
+    };
     addAndMakeVisible(*fSearch);
   }
   {
@@ -242,6 +242,12 @@ void ChooseXbox360Input::handleAsyncUpdate() {
     fListComponent->setVisible(true);
     fPlaceholder->setVisible(false);
   }
+}
+
+void ChooseXbox360Input::onSearchTextChanged() {
+  juce::String search = fSearch->getCurrentText();
+  updateGameDirectoriesVisible();
+  fSearchPlaceholder->setVisible(search.isEmpty());
 }
 
 void ChooseXbox360Input::updateGameDirectoriesVisible() {

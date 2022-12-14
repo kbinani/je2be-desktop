@@ -87,11 +87,11 @@ ChooseJavaInput::ChooseJavaInput(std::optional<ChooseInputState> state) {
     fSearch->setEditable(true);
     fSearch->setColour(Label::ColourIds::backgroundColourId, fListComponent->findColour(ListBox::ColourIds::backgroundColourId));
     fSearch->onTextUpdate = [this]() {
-      String search = fSearch->getCurrentText();
-      updateGameDirectoriesVisible();
-      fSearchPlaceholder->setVisible(search.isEmpty());
+      onSearchTextChanged();
     };
-    fSearch->setWantsKeyboardFocus(false);
+    fSearch->onEditorHide = [this]() {
+      onSearchTextChanged();
+    };
     addAndMakeVisible(*fSearch);
   }
   {
@@ -213,6 +213,12 @@ void ChooseJavaInput::handleAsyncUpdate() {
     fListComponent->setVisible(true);
     fPlaceholder->setVisible(false);
   }
+}
+
+void ChooseJavaInput::onSearchTextChanged() {
+  String search = fSearch->getCurrentText();
+  updateGameDirectoriesVisible();
+  fSearchPlaceholder->setVisible(search.isEmpty());
 }
 
 void ChooseJavaInput::updateGameDirectoriesVisible() {

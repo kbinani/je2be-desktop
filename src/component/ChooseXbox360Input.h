@@ -45,6 +45,8 @@ private:
   void onBackButtonClicked();
 
   void onCustomDirectorySelected(juce::FileChooser const &chooser);
+
+  void onSearchTextChanged();
   void updateGameDirectoriesVisible();
 
 private:

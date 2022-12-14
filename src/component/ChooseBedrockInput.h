@@ -46,6 +46,7 @@ private:
   void onMcworldFileSelected(juce::FileChooser const &chooser);
   void onDirectorySelected(juce::FileChooser const &chooser);
 
+  void onSearchTextChanged();
   void updateGameDirectoriesVisible();
 
 private:
