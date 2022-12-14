@@ -111,6 +111,8 @@ ChooseJavaInput::ChooseJavaInput(std::optional<ChooseInputState> state) {
 
 ChooseJavaInput::~ChooseJavaInput() {
   fListComponent.reset();
+  fThread->signalThreadShouldExit();
+  fThread->waitForThreadToExit(-1);
 }
 
 void ChooseJavaInput::paint(juce::Graphics &g) {}

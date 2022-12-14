@@ -152,7 +152,8 @@ ChooseBedrockInput::ChooseBedrockInput(std::optional<ChooseInputState> state) {
 
 ChooseBedrockInput::~ChooseBedrockInput() {
   fListComponent.reset();
-  fThread->stopThread(-1);
+  fThread->signalThreadShouldExit();
+  fThread->waitForThreadToExit(-1);
 }
 
 void ChooseBedrockInput::paint(juce::Graphics &g) {}

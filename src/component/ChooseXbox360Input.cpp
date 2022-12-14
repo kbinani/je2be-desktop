@@ -141,7 +141,8 @@ ChooseXbox360Input::ChooseXbox360Input(juce::CommandID destinationAfterChoose, s
 
 ChooseXbox360Input::~ChooseXbox360Input() {
   fListComponent.reset();
-  fThread->stopThread(-1);
+  fThread->signalThreadShouldExit();
+  fThread->waitForThreadToExit(-1);
 }
 
 void ChooseXbox360Input::paint(juce::Graphics &g) {}
