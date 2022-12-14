@@ -103,6 +103,14 @@ About::About() {
       "https://fonts.google.com/noto/specimen/Noto+Sans+JP",
       "",
 
+      "Noto Sans TC",
+      "https://fonts.google.com/noto/specimen/Noto+Sans+TC",
+      "",
+
+      "Noto Sans SC",
+      "https://fonts.google.com/noto/specimen/Noto+Sans+SC",
+      "",
+
       "Noto Color Emoji",
       "https://fonts.google.com/noto/specimen/Noto+Color+Emoji",
       "",
