@@ -110,10 +110,6 @@ About::About() {
       "Noto Sans SC",
       "https://fonts.google.com/noto/specimen/Noto+Sans+SC",
       "",
-
-      "Noto Color Emoji",
-      "https://fonts.google.com/noto/specimen/Noto+Color+Emoji",
-      "",
   };
 
   int width = 400;

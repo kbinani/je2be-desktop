@@ -124,7 +124,6 @@ juce_add_binary_data(app-data
     resource/japanese.lang
     resource/NotoSans-Regular.ttf
     resource/NotoSansJP-Regular.otf
-    resource/NotoColorEmoji-Regular.ttf
     resource/NotoSansSC-Regular.otf
     resource/NotoSansTC-Regular.otf)
 

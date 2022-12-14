@@ -11,7 +11,6 @@ class ScaledTypeface : public juce::CustomTypeface {
     Japanese,
     TraditionalChinese,
     SimplifiedChinese,
-    Emoji,
 
     kNumFontFamilies,
   };
@@ -21,7 +20,7 @@ public:
     fOrder[0] = Neutral;
 
     std::vector<FontFamily> remaining = {Japanese, SimplifiedChinese, TraditionalChinese};
-    jassert(remaining.size() == kNumFontFamilies - 2);
+    jassert(remaining.size() == kNumFontFamilies - 1);
 
     auto languages = LocalizationHelper::PreferredLanguages();
     int idx = 1;
@@ -52,8 +51,7 @@ public:
       idx++;
       remaining.erase(remaining.begin());
     }
-    jassert(idx == kNumFontFamilies - 1);
-    fOrder[idx] = Emoji;
+    jassert(idx == kNumFontFamilies);
     for (int i = 0; i < kNumFontFamilies; i++) {
       fFontFamilies[i] = nullptr;
     }
@@ -130,9 +128,6 @@ private:
         break;
       case Japanese:
         fFontFamilies[fontFamily] = Typeface::createSystemTypefaceFor(BinaryData::NotoSansJPRegular_otf, BinaryData::NotoSansJPRegular_otfSize);
-        break;
-      case Emoji:
-        fFontFamilies[fontFamily] = Typeface::createSystemTypefaceFor(BinaryData::NotoColorEmojiRegular_ttf, BinaryData::NotoColorEmojiRegular_ttfSize);
         break;
       case TraditionalChinese:
         fFontFamilies[fontFamily] = Typeface::createSystemTypefaceFor(BinaryData::NotoSansTCRegular_otf, BinaryData::NotoSansTCRegular_otfSize);
