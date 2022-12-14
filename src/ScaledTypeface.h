@@ -6,25 +6,26 @@
 namespace je2be::desktop {
 
 class ScaledTypeface : public juce::CustomTypeface {
-  enum Region : int {
+  enum FontFamily : int {
     Neutral,
     Japanese,
     TraditionalChinese,
     SimplifiedChinese,
     Emoji,
 
-    kMaxRegion,
+    kNumFontFamilies,
   };
 
 public:
   explicit ScaledTypeface(float scale) : fScale(scale) {
     fOrder[0] = Neutral;
 
-    std::vector<Region> remaining = {Japanese, SimplifiedChinese, TraditionalChinese};
+    std::vector<FontFamily> remaining = {Japanese, SimplifiedChinese, TraditionalChinese};
+    jassert(remaining.size() == kNumFontFamilies - 2);
 
     auto languages = LocalizationHelper::PreferredLanguages();
     int idx = 1;
-    for (int i = 0; i < languages.size() && idx < kMaxRegion; i++) {
+    for (int i = 0; i < languages.size() && idx < kNumFontFamilies; i++) {
       juce::String lang = languages[i];
       if (lang == "ja-JP") {
         if (auto found = std::find(remaining.begin(), remaining.end(), Japanese); found != remaining.end()) {
@@ -51,17 +52,17 @@ public:
       idx++;
       remaining.erase(remaining.begin());
     }
-    jassert(idx == 4);
-    fOrder[4] = Emoji;
-    for (int i = 0; i < kMaxRegion; i++) {
-      fFaces[i] = nullptr;
+    jassert(idx == kNumFontFamilies - 1);
+    fOrder[idx] = Emoji;
+    for (int i = 0; i < kNumFontFamilies; i++) {
+      fFontFamilies[i] = nullptr;
     }
     setCharacteristics("scaledtypeface", "Regular", 0.801104963f, L' ');
   }
 
   bool loadGlyphIfPossible(juce::juce_wchar c) override {
     using namespace juce;
-    for (int i = 0; i < kMaxRegion; i++) {
+    for (int i = 0; i < kNumFontFamilies; i++) {
       Typeface *typeface = ensureTypeface(fOrder[i]);
       if (!typeface) {
         continue;
@@ -120,34 +121,34 @@ public:
   }
 
 private:
-  juce::Typeface *ensureTypeface(Region region) {
+  juce::Typeface *ensureTypeface(FontFamily fontFamily) {
     using namespace juce;
-    if (!fFaces[region]) {
-      switch (region) {
+    if (!fFontFamilies[fontFamily]) {
+      switch (fontFamily) {
       case Neutral:
-        fFaces[region] = Typeface::createSystemTypefaceFor(BinaryData::NotoSansRegular_ttf, BinaryData::NotoSansRegular_ttfSize);
+        fFontFamilies[fontFamily] = Typeface::createSystemTypefaceFor(BinaryData::NotoSansRegular_ttf, BinaryData::NotoSansRegular_ttfSize);
         break;
       case Japanese:
-        fFaces[region] = Typeface::createSystemTypefaceFor(BinaryData::NotoSansJPRegular_otf, BinaryData::NotoSansJPRegular_otfSize);
+        fFontFamilies[fontFamily] = Typeface::createSystemTypefaceFor(BinaryData::NotoSansJPRegular_otf, BinaryData::NotoSansJPRegular_otfSize);
         break;
       case Emoji:
-        fFaces[region] = Typeface::createSystemTypefaceFor(BinaryData::NotoColorEmojiRegular_ttf, BinaryData::NotoColorEmojiRegular_ttfSize);
+        fFontFamilies[fontFamily] = Typeface::createSystemTypefaceFor(BinaryData::NotoColorEmojiRegular_ttf, BinaryData::NotoColorEmojiRegular_ttfSize);
         break;
       case TraditionalChinese:
-        fFaces[region] = Typeface::createSystemTypefaceFor(BinaryData::NotoSansTCRegular_otf, BinaryData::NotoSansTCRegular_otfSize);
+        fFontFamilies[fontFamily] = Typeface::createSystemTypefaceFor(BinaryData::NotoSansTCRegular_otf, BinaryData::NotoSansTCRegular_otfSize);
         break;
       case SimplifiedChinese:
-        fFaces[region] = Typeface::createSystemTypefaceFor(BinaryData::NotoSansSCRegular_otf, BinaryData::NotoSansSCRegular_otfSize);
+        fFontFamilies[fontFamily] = Typeface::createSystemTypefaceFor(BinaryData::NotoSansSCRegular_otf, BinaryData::NotoSansSCRegular_otfSize);
         break;
       }
     }
-    return fFaces[region].get();
+    return fFontFamilies[fontFamily].get();
   }
 
 private:
   float const fScale;
-  juce::Typeface::Ptr fFaces[kMaxRegion];
-  Region fOrder[kMaxRegion];
+  juce::Typeface::Ptr fFontFamilies[kNumFontFamilies];
+  FontFamily fOrder[kNumFontFamilies];
 };
 
 } // namespace je2be::desktop
