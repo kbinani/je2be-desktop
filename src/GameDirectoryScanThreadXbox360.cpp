@@ -20,16 +20,68 @@ static bool StringContainsOnlyAlnum(juce::String const &s) {
   return true;
 }
 
-static void LookupContentChild(File child, std::vector<GameDirectory> &buffer) {
+GameDirectoryScanThreadXbox360::GameDirectoryScanThreadXbox360(AsyncUpdater *owner) : Thread("je2be::desktop::GameDirectoryScanThreadXbox360"), fOwner(owner) {}
+
+void GameDirectoryScanThreadXbox360::run() {
+  try {
+    unsafeRun();
+  } catch (...) {
+  }
+  fOwner->triggerAsyncUpdate();
+}
+
+void GameDirectoryScanThreadXbox360::unsafeRun() {
+  Array<File> roots;
+  File::findFileSystemRoots(roots);
+  for (File root : roots) {
+    if (threadShouldExit()) {
+      break;
+    }
+    lookupRoot(root, fGameDirectories);
+  }
+}
+
+void GameDirectoryScanThreadXbox360::lookupRoot(File root, std::vector<GameDirectory> &buffer) {
+  auto content = root.getChildFile("Content");
+  if (!content.isDirectory()) {
+    return;
+  }
+  lookupContent(content, buffer);
+}
+
+void GameDirectoryScanThreadXbox360::lookupContent(File content, std::vector<GameDirectory> &buffer) {
+  auto maybeUserProfileIds = content.findChildFiles(File::findDirectories, false, "*", File::FollowSymlinks::no);
+  for (auto const &maybeUserProfileId : maybeUserProfileIds) {
+    if (threadShouldExit()) {
+      break;
+    }
+    auto name = maybeUserProfileId.getFileName();
+    if (name.length() != 16) {
+      continue;
+    }
+    if (!StringContainsOnlyAlnum(name)) {
+      continue;
+    }
+    lookupContentChild(maybeUserProfileId, buffer);
+  }
+}
+
+void GameDirectoryScanThreadXbox360::lookupContentChild(File child, std::vector<GameDirectory> &buffer) {
   auto maybeGameTitleIds = child.findChildFiles(File::findDirectories, false, "*", File::FollowSymlinks::no);
   static juce::String const sMaybeMinecraftGameTitleId("584111F7");
   for (auto const &maybeGameTitleId : maybeGameTitleIds) {
+    if (threadShouldExit()) {
+      break;
+    }
     auto name = maybeGameTitleId.getFileName();
     if (name.compareIgnoreCase(sMaybeMinecraftGameTitleId) != 0) {
       continue;
     }
     auto children = maybeGameTitleId.findChildFiles(File::findDirectories, false, "*", File::FollowSymlinks::no);
     for (auto const &child : children) {
+      if (threadShouldExit()) {
+        break;
+      }
       auto childName = child.getFileName();
       if (childName.length() != 8) {
         continue;
@@ -53,46 +105,6 @@ static void LookupContentChild(File child, std::vector<GameDirectory> &buffer) {
         buffer.push_back(gd);
       }
     }
-  }
-}
-
-static void LookupContent(File content, std::vector<GameDirectory> &buffer) {
-  auto maybeUserProfileIds = content.findChildFiles(File::findDirectories, false, "*", File::FollowSymlinks::no);
-  for (auto const &maybeUserProfileId : maybeUserProfileIds) {
-    auto name = maybeUserProfileId.getFileName();
-    if (name.length() != 16) {
-      continue;
-    }
-    if (!StringContainsOnlyAlnum(name)) {
-      continue;
-    }
-    LookupContentChild(maybeUserProfileId, buffer);
-  }
-}
-
-static void LookupRoot(File root, std::vector<GameDirectory> &buffer) {
-  auto content = root.getChildFile("Content");
-  if (!content.isDirectory()) {
-    return;
-  }
-  LookupContent(content, buffer);
-}
-
-GameDirectoryScanThreadXbox360::GameDirectoryScanThreadXbox360(AsyncUpdater *owner) : Thread("je2be::desktop::GameDirectoryScanThreadXbox360"), fOwner(owner) {}
-
-void GameDirectoryScanThreadXbox360::run() {
-  try {
-    unsafeRun();
-  } catch (...) {
-  }
-  fOwner->triggerAsyncUpdate();
-}
-
-void GameDirectoryScanThreadXbox360::unsafeRun() {
-  Array<File> roots;
-  File::findFileSystemRoots(roots);
-  for (File root : roots) {
-    LookupRoot(root, fGameDirectories);
   }
 }
 

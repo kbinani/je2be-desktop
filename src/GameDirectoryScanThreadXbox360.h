@@ -15,8 +15,12 @@ public:
   explicit GameDirectoryScanThreadXbox360(juce::AsyncUpdater *owner);
 
   void run() override;
-
   void unsafeRun();
+
+private:
+  void lookupRoot(juce::File root, std::vector<GameDirectory> &buffer);
+  void lookupContent(juce::File content, std::vector<GameDirectory> &buffer);
+  void lookupContentChild(juce::File child, std::vector<GameDirectory> &buffer);
 };
 
 } // namespace je2be::desktop
