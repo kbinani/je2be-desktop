@@ -99,12 +99,16 @@ private:
   void unsafeRun() {
     ZipFile::Builder builder;
     RangedDirectoryIterator it(fFrom, true);
-    int const kCompressionLevel = 9;
     bool cancelled = false;
     for (auto const &item : it) {
       File file = item.getFile();
       String relativePath = file.getRelativePathFrom(fFrom);
-      builder.addFile(file, kCompressionLevel, relativePath);
+      int compressionLevel = 9;
+      if (relativePath.startsWith("db" + File::getSeparatorString()) && relativePath.endsWith(".ldb")) {
+        // Already compressed so just store it
+        compressionLevel = 0;
+      }
+      builder.addFile(file, compressionLevel, relativePath);
       if (currentThreadShouldExit()) {
         cancelled = true;
         break;
