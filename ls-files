@@ -13,4 +13,7 @@
   cat CMakeLists.txt | tail -n +${file_end} >> "$tmp"
 
   mv -f "$tmp" CMakeLists.txt
+
+  (cd ext/je2be && ./ls-files)
+  (cd ext/je2be/deps/libminecraft-file && ./ls-files)
 )
