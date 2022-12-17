@@ -70,6 +70,10 @@ About::About() {
       "https://github.com/zlib-ng/minizip-ng",
       "",
 
+      "libdeflate"
+      "https://github.com/ebiggers/libdeflate",
+      "",
+
       "hwm.task",
       "https://github.com/hotwatermorning/hwm.task",
       "",
