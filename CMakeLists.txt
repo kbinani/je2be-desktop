@@ -5,6 +5,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+option(JE2BE_DESKTOP_INTEL_COMPILER "Build with Intel Compiler" ON)
+
 set(BUILD_SHARED_LIBS OFF)
 add_definitions(
   /DUNICODE
@@ -19,14 +21,13 @@ add_compile_options(
   /Zi # Debug Information Format: PDB file that contains all the symbolic debugging information
   $<IF:$<CONFIG:Debug>,,/GL> # Enable: Whole program optimization
   $<IF:$<CONFIG:Debug>,/MTd,/MT>
-  /arch:SSE3
 )
 add_link_options(
   /DEBUG
   $<IF:$<CONFIG:Debug>,,/LTCG> # Enable: Link-time code generation
-  /LIBPATH:$(IPP1ALibDir)
-  /LIBPATH:$(IPP1ACPPLibDir)
-  /LIBPATH:$(ICXLibDir)
+  $<IF:$<BOOL:JE2BE_DESKTOP_INTEL_COMPILER>,/LIBPATH:$(IPP1ALibDir),>
+  $<IF:$<BOOL:JE2BE_DESKTOP_INTEL_COMPILER>,/LIBPATH:$(IPP1ACPPLibDir),>
+  $<IF:$<BOOL:JE2BE_DESKTOP_INTEL_COMPILER>,/LIBPATH:$(ICXLibDir),>
 )
 
 add_subdirectory(ext/je2be)
@@ -146,6 +147,18 @@ target_include_directories(je2be-desktop PRIVATE src)
 include_external_msproject(Package Package/Package.wapproj
   TYPE C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5
   GUID 713653CB-7989-4C22-8171-0F1951271B8D)
+
+if (JE2BE_DESKTOP_INTEL_COMPILER)
+  set_target_properties(je2be PROPERTIES VS_PLATFORM_TOOLSET "Intel C++ Compiler 2023")
+  set_target_properties(leveldb PROPERTIES VS_PLATFORM_TOOLSET "Intel C++ Compiler 2023")
+  set_target_properties(libdeflate_static PROPERTIES VS_PLATFORM_TOOLSET "Intel C++ Compiler 2023")
+  set_target_properties(zlibstatic PROPERTIES VS_PLATFORM_TOOLSET "Intel C++ Compiler 2023")
+
+  target_compile_options(je2be PRIVATE /arch:SSE3)
+  target_compile_options(leveldb PRIVATE /arch:SSE3)
+  target_compile_options(libdeflate_static PRIVATE /arch:SSE3)
+  target_compile_options(zlibstatic PRIVATE /arch:SSE3)
+endif()
 
 configure_file(Builds/Package/Package.appxmanifest.in Package/Package.appxmanifest)
 
