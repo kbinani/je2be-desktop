@@ -74,10 +74,6 @@ About::About() {
       "https://github.com/ebiggers/libdeflate",
       "",
 
-      "hwm.task",
-      "https://github.com/hotwatermorning/hwm.task",
-      "",
-
       "Velocity",
       "https://github.com/hetelek/Velocity",
       "https://github.com/Gualdimar/Velocity",
@@ -113,6 +109,10 @@ About::About() {
 
       "Noto Sans SC",
       "https://fonts.google.com/noto/specimen/Noto+Sans+SC",
+      "",
+
+      "thread-pool",
+      "https://github.com/bshoshany/thread-pool",
       "",
   };
 
