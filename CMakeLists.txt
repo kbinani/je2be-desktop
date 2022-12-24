@@ -19,10 +19,14 @@ add_compile_options(
   /Zi # Debug Information Format: PDB file that contains all the symbolic debugging information
   $<IF:$<CONFIG:Debug>,,/GL> # Enable: Whole program optimization
   $<IF:$<CONFIG:Debug>,/MTd,/MT>
+  /arch:SSE3
 )
 add_link_options(
   /DEBUG
   $<IF:$<CONFIG:Debug>,,/LTCG> # Enable: Link-time code generation
+  /LIBPATH:$(IPP1ALibDir)
+  /LIBPATH:$(IPP1ACPPLibDir)
+  /LIBPATH:$(ICXLibDir)
 )
 
 add_subdirectory(ext/je2be)
