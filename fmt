@@ -1,5 +1,5 @@
 #!/bin/bash
 
 find src -name '*.cpp' -o -name '*.h' | xargs -n 1 -P `nproc` clang-format -i
-(cd ext/je2be && ./fmt)
+(cd ext/je2be && make format)
 (cd ext/je2be/deps/libminecraft-file && ./fmt)

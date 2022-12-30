@@ -58,8 +58,7 @@ public:
     {
       je2be::tobe::Options o;
       o.fTempDirectory = PathFromFile(fTempRoot);
-      je2be::tobe::Converter c(PathFromFile(javaIntermediateDirectory), PathFromFile(fOutput), o);
-      auto status = c.run(std::thread::hardware_concurrency(), this);
+      auto status = je2be::tobe::Converter::Run(PathFromFile(javaIntermediateDirectory), PathFromFile(fOutput), o, std::thread::hardware_concurrency(), this);
       triggerProgress(Phase::Done, 1, 1, status);
     }
   }

@@ -22,9 +22,8 @@ public:
   void run() override {
     using UpdateQueue = J2BConvertProgress::UpdateQueue;
 
-    je2be::tobe::Converter c(PathFromFile(fInput), PathFromFile(fOutput), fOptions);
     try {
-      auto status = c.run(std::thread::hardware_concurrency(), this);
+      auto status = je2be::tobe::Converter::Run(PathFromFile(fInput), PathFromFile(fOutput), fOptions, std::thread::hardware_concurrency(), this);
       triggerProgress(J2BConvertProgress::Phase::Done, 1, 1, status);
     } catch (std::filesystem::filesystem_error &e) {
       triggerError(Error(__FILE__, __LINE__, e.what()));

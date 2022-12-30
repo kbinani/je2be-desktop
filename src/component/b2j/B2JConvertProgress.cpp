@@ -1,5 +1,7 @@
 #include <je2be.hpp>
 
+#include <leveldb/env.h>
+
 #include "CommandID.h"
 #include "Constants.h"
 #include "File.h"
@@ -60,8 +62,7 @@ public:
       input = temp;
     }
     {
-      je2be::toje::Converter c(PathFromFile(input), PathFromFile(fOutput), fOptions);
-      auto st = c.run(std::thread::hardware_concurrency(), this);
+      auto st = je2be::toje::Converter::Run(PathFromFile(input), PathFromFile(fOutput), fOptions, std::thread::hardware_concurrency(), this);
       triggerProgress(B2JConvertProgress::Phase::Done, 1, 1, st);
     }
   }
@@ -249,7 +250,7 @@ B2JConvertProgress::B2JConvertProgress(B2JConfigState const &configState) : fCon
     uint8_t data[16];
     std::copy_n(juceUuid.getRawData(), 16, data);
     auto uuid = je2be::Uuid::FromData(data);
-    opt.fLocalPlayer = uuid;
+    opt.fLocalPlayer = std::make_shared<Uuid>(uuid);
   }
   fThread.reset(new B2JWorkerThread(configState.fInputState.fInput, outputDir, opt, fUpdater));
   fThread->startThread();

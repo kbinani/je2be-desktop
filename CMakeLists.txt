@@ -21,6 +21,7 @@ add_compile_options(
   /Zi # Debug Information Format: PDB file that contains all the symbolic debugging information
   $<IF:$<CONFIG:Debug>,,/GL> # Enable: Whole program optimization
   $<IF:$<CONFIG:Debug>,/MTd,/MT>
+  /MP
 )
 add_link_options(
   /DEBUG
@@ -149,15 +150,10 @@ include_external_msproject(Package Package/Package.wapproj
   GUID 713653CB-7989-4C22-8171-0F1951271B8D)
 
 if (JE2BE_DESKTOP_INTEL_COMPILER)
-  set_target_properties(je2be PROPERTIES VS_PLATFORM_TOOLSET "Intel C++ Compiler 2023")
-  set_target_properties(leveldb PROPERTIES VS_PLATFORM_TOOLSET "Intel C++ Compiler 2023")
-  set_target_properties(libdeflate_static PROPERTIES VS_PLATFORM_TOOLSET "Intel C++ Compiler 2023")
-  set_target_properties(zlibstatic PROPERTIES VS_PLATFORM_TOOLSET "Intel C++ Compiler 2023")
-
-  target_compile_options(je2be PRIVATE /arch:SSE3)
-  target_compile_options(leveldb PRIVATE /arch:SSE3)
-  target_compile_options(libdeflate_static PRIVATE /arch:SSE3)
-  target_compile_options(zlibstatic PRIVATE /arch:SSE3)
+  foreach(target IN ITEMS je2be leveldb libdeflate_static zlibstatic mimalloc-static)
+    set_target_properties(${target} PROPERTIES VS_PLATFORM_TOOLSET "Intel C++ Compiler 2023")
+    target_compile_options(${target} PRIVATE /arch:SSE3)
+  endforeach()
 endif()
 
 configure_file(Builds/Package/Package.appxmanifest.in Package/Package.appxmanifest)
