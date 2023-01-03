@@ -26,7 +26,7 @@ namespace je2be::desktop::component {
 About::About() {
   std::vector<juce::String> lines = {
       "",
-      "Copyright (C) 2020-2022 kbinani",
+      "Copyright (C) 2020-2023 kbinani",
       "",
       "This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.",
       "",
@@ -113,6 +113,10 @@ About::About() {
 
       "thread-pool",
       "https://github.com/bshoshany/thread-pool",
+      "",
+
+      "mimalloc",
+      "https://github.com/microsoft/mimalloc",
       "",
   };
 
