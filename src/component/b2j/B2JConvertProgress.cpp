@@ -48,6 +48,7 @@ public:
 
     File input;
     if (fInput.isDirectory()) {
+      triggerProgress(B2JConvertProgress::Phase::Unzip, -1, 0);
       if (auto st = copyInto(temp); !st.ok()) {
         triggerError(st);
         return;
@@ -127,7 +128,7 @@ public:
 
   je2be::Status unzipInto(File temp) {
     juce::ZipFile zip(fInput);
-    int numEntries = zip.getNumEntries();
+    double numEntries = zip.getNumEntries();
     for (int i = 0; i < numEntries; ++i) {
       auto result = zip.uncompressEntry(i, temp);
       if (result.failed()) {
