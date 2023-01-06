@@ -49,12 +49,12 @@ public:
 
   struct UpdateQueue {
     Phase fPhase;
-    double fDone;
-    double fTotal;
+    double fProgress;
+    uint64_t fNumConvertedChunks;
     Status fStatus;
   };
 
-  void onProgressUpdate(Phase phase, double done, double total, Status status);
+  void onProgressUpdate(Phase phase, double progress, uint64_t numConvertedChunks, Status status);
 
 private:
   std::unique_ptr<TextButton> fCancelButton;

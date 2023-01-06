@@ -69,26 +69,22 @@ public:
     return !threadShouldExit();
   }
 
-  bool report(je2be::tobe::Progress::Phase phase, double done, double total) override {
-    using Phase = je2be::desktop::component::x2b::X2BConvertProgress::Phase;
-
-    switch (phase) {
-    case je2be::tobe::Progress::Phase::Convert:
-      triggerProgress(Phase::JavaToBedrockConversion, done, total);
-      break;
-    case je2be::tobe::Progress::Phase::LevelDbCompaction:
-      triggerProgress(Phase::JavaToBedrockCompaction, done, total);
-      break;
-    }
+  bool reportConvert(double progress, uint64_t numConvertedChunks) override {
+    triggerProgress(X2BConvertProgress::Phase::JavaToBedrockConversion, progress, numConvertedChunks);
     return !threadShouldExit();
   }
 
-  void triggerProgress(X2BConvertProgress::Phase phase, double done, double total, Status st = Status::Ok()) {
+  bool reportCompaction(double progress) override {
+    triggerProgress(X2BConvertProgress::Phase::JavaToBedrockCompaction, progress, 0);
+    return !threadShouldExit();
+  }
+
+  void triggerProgress(X2BConvertProgress::Phase phase, double progress, uint64_t numConvertedChunks, Status st = Status::Ok()) {
     X2BConvertProgress::UpdateQueue q;
     q.fStatus = st;
     q.fPhase = phase;
-    q.fTotal = total;
-    q.fDone = done;
+    q.fProgress = progress;
+    q.fNumConvertedChunks = numConvertedChunks;
     fUpdater->trigger(q);
   }
 
@@ -96,8 +92,8 @@ public:
     X2BConvertProgress::UpdateQueue q;
     q.fStatus = st;
     q.fPhase = X2BConvertProgress::Phase::Error;
-    q.fTotal = 1;
-    q.fDone = 1;
+    q.fProgress = 1;
+    q.fNumConvertedChunks = 0;
     fUpdater->trigger(q);
   }
 
@@ -159,7 +155,7 @@ X2BConvertProgress::X2BConvertProgress(X2BConfigState const &configState) : fCon
   fOutputDirectory = outputDir;
 
   fUpdater = std::make_shared<AsyncHandler<UpdateQueue>>([this](UpdateQueue q) {
-    onProgressUpdate(q.fPhase, q.fDone, q.fTotal, q.fStatus);
+    onProgressUpdate(q.fPhase, q.fProgress, q.fNumConvertedChunks, q.fStatus);
   });
 
   fThread.reset(new X2BWorkerThread(configState.fInputState.fInput, outputDir, fUpdater, temp));
@@ -190,8 +186,7 @@ void X2BConvertProgress::onCancelButtonClicked() {
   }
 }
 
-void X2BConvertProgress::onProgressUpdate(Phase phase, double done, double total, Status st) {
-  double progress = done / total;
+void X2BConvertProgress::onProgressUpdate(Phase phase, double progress, uint64_t numConvertedChunks, Status st) {
   fFailed = !st.ok();
 
   if (phase == Phase::Done && !fCancelRequested) {
@@ -230,6 +225,7 @@ void X2BConvertProgress::onProgressUpdate(Phase phase, double done, double total
       fTaskbarProgress->update(1.0 / 3.0);
     }
     fTaskbarProgress->setState(TaskbarProgress::State::Normal);
+    fJavaToBedrockConversionProgressBar->setTextToDisplay("Converted " + juce::String(numConvertedChunks) + " Chunks: ");
     fJavaToBedrockCompactionProgress = 0;
   } else if (phase == Phase::XboxToJavaConversion && !fCancelRequested) {
     if (progress > 0) {

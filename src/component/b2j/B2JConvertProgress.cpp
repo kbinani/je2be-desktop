@@ -53,7 +53,7 @@ public:
         return;
       }
       input = temp;
-      triggerProgress(B2JConvertProgress::Phase::Unzip, 1, 1);
+      triggerProgress(B2JConvertProgress::Phase::Unzip, 1, 0);
     } else {
       if (auto st = unzipInto(temp); !st.ok()) {
         triggerError(st);
@@ -63,7 +63,7 @@ public:
     }
     {
       auto st = je2be::toje::Converter::Run(PathFromFile(input), PathFromFile(fOutput), fOptions, std::thread::hardware_concurrency(), this);
-      triggerProgress(B2JConvertProgress::Phase::Done, 1, 1, st);
+      triggerProgress(B2JConvertProgress::Phase::Done, 1, 0, st);
     }
   }
 
@@ -133,22 +133,22 @@ public:
       if (result.failed()) {
         return Error(__FILE__, __LINE__, result.getErrorMessage().toStdString());
       }
-      triggerProgress(B2JConvertProgress::Phase::Unzip, i + 1, numEntries);
+      triggerProgress(B2JConvertProgress::Phase::Unzip, (i + 1) / numEntries, 0);
     }
     return Status::Ok();
   }
 
-  bool report(double done, double total) override {
-    triggerProgress(B2JConvertProgress::Phase::Conversion, done / total, 1.0);
+  bool report(double progress, uint64_t numConvertedChunks) override {
+    triggerProgress(B2JConvertProgress::Phase::Conversion, progress, numConvertedChunks);
     return !threadShouldExit();
   }
 
-  void triggerProgress(B2JConvertProgress::Phase phase, double done, double total, Status st = Status::Ok()) {
+  void triggerProgress(B2JConvertProgress::Phase phase, double progress, uint64_t numConvertedChunks, Status st = Status::Ok()) {
     B2JConvertProgress::UpdateQueue q;
     q.fStatus = st;
     q.fPhase = phase;
-    q.fTotal = total;
-    q.fDone = done;
+    q.fProgress = progress;
+    q.fNumConvertedChunks = numConvertedChunks;
     fUpdater->trigger(q);
   }
 
@@ -156,8 +156,8 @@ public:
     B2JConvertProgress::UpdateQueue q;
     q.fStatus = st;
     q.fPhase = B2JConvertProgress::Phase::Error;
-    q.fTotal = 1;
-    q.fDone = 1;
+    q.fProgress = 1;
+    q.fNumConvertedChunks = 0;
     fUpdater->trigger(q);
   }
 
@@ -240,7 +240,7 @@ B2JConvertProgress::B2JConvertProgress(B2JConfigState const &configState) : fCon
   fOutputDirectory = outputDir;
 
   fUpdater = std::make_shared<AsyncHandler<UpdateQueue>>([this](UpdateQueue q) {
-    onProgressUpdate(q.fPhase, q.fDone, q.fTotal, q.fStatus);
+    onProgressUpdate(q.fPhase, q.fProgress, q.fNumConvertedChunks, q.fStatus);
   });
 
   je2be::toje::Options opt;
@@ -276,13 +276,12 @@ void B2JConvertProgress::onCancelButtonClicked() {
   }
 }
 
-void B2JConvertProgress::onProgressUpdate(Phase phase, double done, double total, Status st) {
+void B2JConvertProgress::onProgressUpdate(Phase phase, double progress, uint64_t numConvertedChunks, Status st) {
   double const weightUnzip = 0.5;
   double const weightConversion = 1 - weightUnzip;
   fFailed = !st.ok();
 
   if (phase == Phase::Unzip && !fCancelRequested) {
-    double progress = done / total;
     fUnzipOrCopyProgress = progress;
     if (progress >= 1) {
       fLabel->setText(TRANS("Converting..."), dontSendNotification);
@@ -294,13 +293,13 @@ void B2JConvertProgress::onProgressUpdate(Phase phase, double done, double total
     fTaskbarProgress->update(progress * weightUnzip);
   } else if (phase == Phase::Conversion && !fCancelRequested) {
     fLabel->setText(TRANS("Converting..."), dontSendNotification);
-    double progress = done / total;
     if (progress > 0) {
       fConversionProgress = progress;
     }
     fUnzipOrCopyProgress = 1;
     fTaskbarProgress->setState(TaskbarProgress::State::Normal);
     fTaskbarProgress->update(weightUnzip + progress * weightConversion);
+    fConversionProgressBar->setTextToDisplay("Converted " + juce::String(numConvertedChunks) + " Chunks: ");
   } else if (phase == Phase::Done) {
     fState = JavaConvertedState(fConfigState.fInputState.fWorldName, fOutputDirectory);
     if (fCommandWhenFinished != commands::toChooseJavaOutput && fOutputDirectory.exists()) {

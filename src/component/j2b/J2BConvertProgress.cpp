@@ -24,7 +24,7 @@ public:
 
     try {
       auto status = je2be::tobe::Converter::Run(PathFromFile(fInput), PathFromFile(fOutput), fOptions, std::thread::hardware_concurrency(), this);
-      triggerProgress(J2BConvertProgress::Phase::Done, 1, 1, status);
+      triggerProgress(J2BConvertProgress::Phase::Done, 1, 0, status);
     } catch (std::filesystem::filesystem_error &e) {
       triggerError(Error(__FILE__, __LINE__, e.what()));
     } catch (std::exception &e) {
@@ -36,29 +36,22 @@ public:
     }
   }
 
-  bool report(je2be::tobe::Progress::Phase phase, double done, double total) override {
-    J2BConvertProgress::Phase p;
-    switch (phase) {
-    case je2be::tobe::Progress::Phase::Convert:
-      p = J2BConvertProgress::Phase::Convert;
-      break;
-    case je2be::tobe::Progress::Phase::LevelDbCompaction:
-      p = J2BConvertProgress::Phase::LevelDBCompaction;
-      break;
-    default:
-      p = J2BConvertProgress::Phase::Error;
-      break;
-    }
-    triggerProgress(p, done, total);
+  bool reportConvert(double progress, uint64_t numConvertedChunks) override {
+    triggerProgress(J2BConvertProgress::Phase::Convert, progress, numConvertedChunks);
     return !threadShouldExit();
   }
 
-  void triggerProgress(J2BConvertProgress::Phase phase, double done, double total, Status st = Status::Ok()) {
+  bool reportCompaction(double progress) override {
+    triggerProgress(J2BConvertProgress::Phase::LevelDBCompaction, progress, 0);
+    return !threadShouldExit();
+  }
+
+  void triggerProgress(J2BConvertProgress::Phase phase, double progress, uint64_t numConvertedChunks, Status st = Status::Ok()) {
     J2BConvertProgress::UpdateQueue q;
     q.fStatus = st;
     q.fPhase = phase;
-    q.fTotal = total;
-    q.fDone = done;
+    q.fProgress = progress;
+    q.fNumConvertedChunks = numConvertedChunks;
     fUpdater->trigger(q);
   }
 
@@ -66,8 +59,8 @@ public:
     J2BConvertProgress::UpdateQueue q;
     q.fStatus = st;
     q.fPhase = J2BConvertProgress::Phase::Error;
-    q.fTotal = 1;
-    q.fDone = 1;
+    q.fProgress = 0;
+    q.fNumConvertedChunks = 0;
     fUpdater->trigger(q);
   }
 
@@ -123,7 +116,7 @@ J2BConvertProgress::J2BConvertProgress(J2BConfigState const &configState) : fCon
   fOutputDirectory = outputDir;
 
   fUpdater = std::make_shared<AsyncHandler<UpdateQueue>>([this](UpdateQueue q) {
-    onProgressUpdate(q.fPhase, q.fDone, q.fTotal, q.fStatus);
+    onProgressUpdate(q.fPhase, q.fProgress, q.fNumConvertedChunks, q.fStatus);
   });
 
   je2be::tobe::Options opt;
@@ -154,7 +147,7 @@ void J2BConvertProgress::onCancelButtonClicked() {
   }
 }
 
-void J2BConvertProgress::onProgressUpdate(J2BConvertProgress::Phase phase, double done, double total, Status st) {
+void J2BConvertProgress::onProgressUpdate(J2BConvertProgress::Phase phase, double progress, uint64_t numConvertedChunks, Status st) {
   double weightConversion = 0.67;
   double weightCompaction = 1 - weightConversion;
   fFailed = !st.ok();
@@ -174,18 +167,17 @@ void J2BConvertProgress::onProgressUpdate(J2BConvertProgress::Phase phase, doubl
     }
   } else if (phase == J2BConvertProgress::Phase::LevelDBCompaction) {
     fLabel->setText(TRANS("LevelDB compaction"), dontSendNotification);
-    double progress = done / total;
     fConversionProgress = 1;
     fCompactionProgress = progress;
     fTaskbarProgress->setState(TaskbarProgress::State::Normal);
     fTaskbarProgress->update(weightConversion + progress * weightCompaction);
   } else if (phase == J2BConvertProgress::Phase::Convert) {
     if (fConversionProgress >= 0) {
-      double progress = done / total;
       fConversionProgress = progress;
       fCompactionProgress = 0;
       fTaskbarProgress->setState(TaskbarProgress::State::Normal);
       fTaskbarProgress->update(progress * weightConversion);
+      fConversionProgressBar->setTextToDisplay("Converted " + juce::String(numConvertedChunks) + " Chunks: ");
     }
   } else {
     fFailed = true;
