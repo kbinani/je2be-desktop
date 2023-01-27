@@ -1,4 +1,9 @@
-Version 4.16.0 (TBD)
+Version 4.17.0 (TBD)
+- Block light and Sky light are now recalculated. [b2j]
+- The conversion accuracy of muddy_mangrove_roots, bamboo_trapdoor, bamboo_stairs, and bamboo_mosaic_stairs has been improved. [j2b]
+- Fixed a problem in which the second and subsequent conversions could fail if conversions were performed consecutively. [j2b]
+
+Version 4.16.0 (7 Jan 2023)
 - Conversion processing speed has been improved.
 
 Version 4.15.0 (29 Dec 2022)

@@ -1,4 +1,9 @@
-バージョン 4.16.0 (TBD)
+バージョン 4.17.0 (TBD)
+- 変換先が Java 版の場合に block light と sky light を出力するようになりました。[b2j]
+- muddy_mangrove_roots, bamboo_trapdoor, bamboo_stairs, bamboo_mosaic_stairs の変換精度を改善しました。[j2b]
+- 変換処理を 2 つ以上連続して変換した場合, 2 回目以降の変換が失敗する場合があったのを修正しました。[j2b]
+
+バージョン 4.16.0 (2023/1/7)
 - 変換処理速度を改善しました。
 
 バージョン 4.15.0 (2022/12/29)
