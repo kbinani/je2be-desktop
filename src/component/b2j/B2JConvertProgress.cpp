@@ -139,8 +139,13 @@ public:
     return Status::Ok();
   }
 
-  bool report(double progress, uint64_t numConvertedChunks) override {
+  bool reportConvert(double progress, uint64_t numConvertedChunks) override {
     triggerProgress(B2JConvertProgress::Phase::Conversion, progress, numConvertedChunks);
+    return !threadShouldExit();
+  }
+
+  bool reportTerraform(double progress, uint64_t numProcessedChunks) override {
+    triggerProgress(B2JConvertProgress::Phase::PostProcess, progress, numProcessedChunks);
     return !threadShouldExit();
   }
 
@@ -221,6 +226,14 @@ B2JConvertProgress::B2JConvertProgress(B2JConfigState const &configState) : fCon
     fConversionProgressBar->setBounds(kMargin, y, width - 2 * kMargin, kButtonBaseHeight);
     fConversionProgressBar->setTextToDisplay("Conversion: ");
     addAndMakeVisible(*fConversionProgressBar);
+    y += fConversionProgressBar->getHeight() + kMargin;
+  }
+
+  {
+    fPostProcessProgressBar.reset(new ProgressBar(fPostProcessProgress));
+    fPostProcessProgressBar->setBounds(kMargin, y, width - 2 * kMargin, kButtonBaseHeight);
+    fPostProcessProgressBar->setTextToDisplay("Post process: ");
+    addAndMakeVisible(*fPostProcessProgressBar);
   }
 
   {
@@ -278,8 +291,9 @@ void B2JConvertProgress::onCancelButtonClicked() {
 }
 
 void B2JConvertProgress::onProgressUpdate(Phase phase, double progress, uint64_t numConvertedChunks, Status st) {
-  double const weightUnzip = 0.5;
-  double const weightConversion = 1 - weightUnzip;
+  double const weightUnzip = 0.01;                                     // 0:02.46
+  double const weightConversion = 0.31;                                // 2:13.28
+  double const weightPostProcess = 1 - weightUnzip - weightConversion; // 4:56.09
   fFailed = !st.ok();
 
   if (phase == Phase::Unzip && !fCancelRequested) {
@@ -301,6 +315,15 @@ void B2JConvertProgress::onProgressUpdate(Phase phase, double progress, uint64_t
     fTaskbarProgress->setState(TaskbarProgress::State::Normal);
     fTaskbarProgress->update(weightUnzip + progress * weightConversion);
     fConversionProgressBar->setTextToDisplay("Converted " + juce::String(numConvertedChunks) + " Chunks: ");
+  } else if (phase == Phase::PostProcess && !fCancelRequested) {
+    fLabel->setText(TRANS("Post processing..."), dontSendNotification);
+    if (progress > 0) {
+      fPostProcessProgress = progress;
+    }
+    fConversionProgress = 1;
+    fTaskbarProgress->setState(TaskbarProgress::State::Normal);
+    fTaskbarProgress->update(weightUnzip + weightConversion + progress * weightPostProcess);
+    fPostProcessProgressBar->setTextToDisplay("Post processed " + juce::String(numConvertedChunks) + " Chunks: ");
   } else if (phase == Phase::Done) {
     fState = JavaConvertedState(fConfigState.fInputState.fWorldName, fOutputDirectory);
     if (fCommandWhenFinished != commands::toChooseJavaOutput && fOutputDirectory.exists()) {

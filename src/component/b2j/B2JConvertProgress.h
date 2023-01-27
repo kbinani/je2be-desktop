@@ -42,7 +42,8 @@ public:
   enum class Phase {
     Unzip = 1,
     Conversion = 2,
-    Done = 3,
+    PostProcess = 3,
+    Done = 4,
     Error = -1,
   };
 
@@ -64,8 +65,10 @@ private:
   std::shared_ptr<AsyncHandler<UpdateQueue>> fUpdater;
   std::unique_ptr<juce::ProgressBar> fUnzipOrCopyProgressBar;
   std::unique_ptr<juce::ProgressBar> fConversionProgressBar;
+  std::unique_ptr<juce::ProgressBar> fPostProcessProgressBar;
   double fUnzipOrCopyProgress;
   double fConversionProgress;
+  double fPostProcessProgress;
   std::unique_ptr<juce::Label> fLabel;
   juce::CommandID fCommandWhenFinished = commands::toChooseJavaOutput;
   bool fFailed = false;
