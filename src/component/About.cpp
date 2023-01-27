@@ -111,10 +111,6 @@ About::About() {
       "https://fonts.google.com/noto/specimen/Noto+Sans+SC",
       "",
 
-      "thread-pool",
-      "https://github.com/bshoshany/thread-pool",
-      "",
-
       "mimalloc",
       "https://github.com/microsoft/mimalloc",
       "",
