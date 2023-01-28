@@ -63,9 +63,9 @@ public:
     }
   }
 
-  bool report(double done, double total) override {
+  bool report(double progress) override {
     using Phase = je2be::desktop::component::x2b::X2BConvertProgress::Phase;
-    triggerProgress(Phase::XboxToJavaConversion, done, total);
+    triggerProgress(Phase::XboxToJavaConversion, progress, 0);
     return !threadShouldExit();
   }
 

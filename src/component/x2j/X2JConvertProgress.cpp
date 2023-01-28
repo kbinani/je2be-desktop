@@ -45,21 +45,20 @@ public:
     };
     {
       auto status = je2be::box360::Converter::Run(PathFromFile(fInput), PathFromFile(fOutput), std::thread::hardware_concurrency(), fOptions, this);
-      triggerProgress(X2JConvertProgress::Phase::Done, 1, 1, status);
+      triggerProgress(X2JConvertProgress::Phase::Done, 1, status);
     }
   }
 
-  bool report(double done, double total) override {
-    triggerProgress(X2JConvertProgress::Phase::Conversion, done / total, 1.0);
+  bool report(double progress) override {
+    triggerProgress(X2JConvertProgress::Phase::Conversion, progress);
     return !threadShouldExit();
   }
 
-  void triggerProgress(X2JConvertProgress::Phase phase, double done, double total, Status st = Status::Ok()) {
+  void triggerProgress(X2JConvertProgress::Phase phase, double progress, Status st = Status::Ok()) {
     X2JConvertProgress::UpdateQueue q;
     q.fStatus = st;
     q.fPhase = phase;
-    q.fTotal = total;
-    q.fDone = done;
+    q.fProgress = progress;
     fUpdater->trigger(q);
   }
 
@@ -67,8 +66,7 @@ public:
     X2JConvertProgress::UpdateQueue q;
     q.fStatus = st;
     q.fPhase = X2JConvertProgress::Phase::Error;
-    q.fTotal = 1;
-    q.fDone = 1;
+    q.fProgress = 1;
     fUpdater->trigger(q);
   }
 
@@ -128,7 +126,7 @@ X2JConvertProgress::X2JConvertProgress(X2JConfigState const &configState) : fCon
   fOutputDirectory = outputDir;
 
   fUpdater = std::make_shared<AsyncHandler<UpdateQueue>>([this](UpdateQueue q) {
-    onProgressUpdate(q.fPhase, q.fDone, q.fTotal, q.fStatus);
+    onProgressUpdate(q.fPhase, q.fProgress, q.fStatus);
   });
 
   je2be::box360::Options opt;
@@ -165,14 +163,13 @@ void X2JConvertProgress::onCancelButtonClicked() {
   }
 }
 
-void X2JConvertProgress::onProgressUpdate(Phase phase, double done, double total, Status status) {
+void X2JConvertProgress::onProgressUpdate(Phase phase, double progress, Status status) {
   double const weightUnzip = 0.5;
   double const weightConversion = 1 - weightUnzip;
   fFailed = !status.ok();
 
   if (phase == Phase::Conversion && !fCancelRequested) {
     fLabel->setText(TRANS("Converting..."), dontSendNotification);
-    double progress = done / total;
     if (progress > 0) {
       fConversionProgress = progress;
     }

@@ -45,12 +45,11 @@ public:
     Error = -1,
   };
 
-  void onProgressUpdate(Phase phase, double done, double total, Status status);
+  void onProgressUpdate(Phase phase, double progress, Status status);
 
   struct UpdateQueue {
     Phase fPhase;
-    double fDone;
-    double fTotal;
+    double fProgress;
     Status fStatus;
   };
 
