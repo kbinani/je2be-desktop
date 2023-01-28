@@ -357,6 +357,7 @@ void B2JConvertProgress::onProgressUpdate(Phase phase, double progress, uint64_t
     fCancelButton->setEnabled(true);
     fUnzipOrCopyProgressBar->setVisible(false);
     fConversionProgressBar->setVisible(false);
+    fPostProcessProgressBar->setVisible(false);
   }
 }
 
