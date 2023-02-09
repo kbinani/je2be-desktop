@@ -1,4 +1,7 @@
-Version 4.17.0 (TBD)
+Version 4.18.0 (TBD)
+- Improved the ability to convert data from older formats of the Xbox 360 edition. [x2j, x2b]
+
+Version 4.17.0 (29 Jan 2023)
 - Block light and Sky light are now recalculated. [b2j]
 - The conversion accuracy of muddy_mangrove_roots, bamboo_trapdoor, bamboo_stairs, and bamboo_mosaic_stairs has been improved. [j2b]
 - Fixed a problem in which the second and subsequent conversions could fail if conversions were performed consecutively. [j2b]
