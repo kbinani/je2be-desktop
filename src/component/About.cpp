@@ -87,8 +87,8 @@ About::About() {
       "https://sourceforge.net/projects/xboxtopcminecraftconverter",
       "",
 
-      "je2be (core library)",
-      "https://github.com/kbinani/je2be",
+      "je2be-core",
+      "https://github.com/kbinani/je2be-core",
       "",
 
       "libminecraft-file",
