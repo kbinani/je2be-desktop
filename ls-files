@@ -14,6 +14,6 @@
 
   mv -f "$tmp" CMakeLists.txt
 
-  (cd ext/je2be && make update-cmakelists)
-  (cd ext/je2be/deps/libminecraft-file && ./ls-files)
+  (cd ext/je2be-core && make update-cmakelists)
+  (cd ext/je2be-core/deps/libminecraft-file && ./ls-files)
 )

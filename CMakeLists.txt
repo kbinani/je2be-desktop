@@ -31,7 +31,7 @@ add_link_options(
   $<IF:$<BOOL:JE2BE_DESKTOP_INTEL_COMPILER>,/LIBPATH:$(ICXLibDir),>
 )
 
-add_subdirectory(ext/je2be)
+add_subdirectory(ext/je2be-core)
 add_subdirectory(ext/JUCE)
 
 juce_add_gui_app(je2be-desktop
