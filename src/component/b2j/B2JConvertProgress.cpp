@@ -127,16 +127,10 @@ public:
   }
 
   je2be::Status unzipInto(File temp) {
-    juce::ZipFile zip(fInput);
-    double numEntries = zip.getNumEntries();
-    for (int i = 0; i < numEntries; ++i) {
-      auto result = zip.uncompressEntry(i, temp);
-      if (result.failed()) {
-        return Error(__FILE__, __LINE__, result.getErrorMessage().toStdString());
-      }
-      triggerProgress(B2JConvertProgress::Phase::Unzip, (i + 1) / numEntries, 0);
-    }
-    return Status::Ok();
+    return je2be::ZipFile::Unzip(PathFromFile(fInput), PathFromFile(temp), [this](u64 done, u64 total) {
+      triggerProgress(B2JConvertProgress::Phase::Unzip, done / (double)total, 0);
+      return !currentThreadShouldExit();
+    });
   }
 
   bool reportConvert(double progress, uint64_t numConvertedChunks) override {

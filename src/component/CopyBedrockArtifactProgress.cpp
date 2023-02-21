@@ -1,4 +1,7 @@
 #include "component/CopyBedrockArtifactProgress.h"
+
+#include <je2be.hpp>
+
 #include "CommandID.h"
 #include "ComponentState.h"
 #include "Constants.h"
@@ -97,43 +100,53 @@ public:
 
 private:
   void unsafeRun() {
-    ZipFile::Builder builder;
-    RangedDirectoryIterator it(fFrom, true);
+    u64 totalBytes = 0;
+    for (auto const &item : RangedDirectoryIterator(fFrom, true)) {
+      if (item.isDirectory()) {
+        continue;
+      }
+      totalBytes += item.getFileSize();
+    }
+
+    je2be::ZipFile zip(PathFromFile(fTo));
+    u64 writtenBytes = 0;
+
     bool cancelled = false;
-    for (auto const &item : it) {
+    for (auto const &item : RangedDirectoryIterator(fFrom, true)) {
+      if (item.isDirectory()) {
+        continue;
+      }
+      i64 size = item.getFileSize();
       File file = item.getFile();
-      String relativePath = file.getRelativePathFrom(fFrom);
+      juce::String relativePath = file.getRelativePathFrom(fFrom);
       int compressionLevel = 9;
       if (relativePath.startsWith("db" + File::getSeparatorString()) && relativePath.endsWith(".ldb")) {
         // Already compressed so just store it
         compressionLevel = 0;
       }
-      builder.addFile(file, compressionLevel, relativePath);
+      auto in = std::make_shared<mcfile::stream::FileInputStream>(PathFromFile(file));
+      if (!in->valid()) {
+        fResult = CopyBedrockArtifactProgress::Worker::Result::Failed(Error(__FILE__, __LINE__));
+        return;
+      }
+      if (auto st = zip.store(*in, std::string(relativePath.toUTF8()), compressionLevel); !st.ok()) {
+        fResult = CopyBedrockArtifactProgress::Worker::Result::Failed(st);
+        return;
+      }
       if (currentThreadShouldExit()) {
         cancelled = true;
         break;
       }
+      writtenBytes += size;
+      *fProgress = writtenBytes / (double)totalBytes;
     }
 
     if (cancelled || currentThreadShouldExit()) {
       fResult = CopyBedrockArtifactProgress::Worker::Result::Cancelled();
       return;
     }
-    auto stream = fTo.createOutputStream();
-    if (!stream) {
-      fResult = CopyBedrockArtifactProgress::Worker::Result::Failed(Error(__FILE__, __LINE__));
-      return;
-    }
-    if (!stream->setPosition(0)) {
-      fResult = CopyBedrockArtifactProgress::Worker::Result::Failed(Error(__FILE__, __LINE__));
-      return;
-    }
-    if (auto result = stream->truncate(); !result.ok()) {
-      fResult = CopyBedrockArtifactProgress::Worker::Result::Failed(Error(__FILE__, __LINE__, result.getErrorMessage().toStdString()));
-      return;
-    }
-    if (!builder.writeToStream(*stream, fProgress)) {
-      fResult = CopyBedrockArtifactProgress::Worker::Result::Failed(Error(__FILE__, __LINE__));
+    if (auto st = zip.close(); !st.ok()) {
+      fResult = CopyBedrockArtifactProgress::Worker::Result::Failed(st);
       return;
     }
     fResult = CopyBedrockArtifactProgress::Worker::Result::Success();
