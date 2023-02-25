@@ -145,8 +145,13 @@ private:
       fResult = CopyBedrockArtifactProgress::Worker::Result::Cancelled();
       return;
     }
-    if (auto st = zip.close(); !st.ok()) {
-      fResult = CopyBedrockArtifactProgress::Worker::Result::Failed(st);
+    auto result = zip.close();
+    if (result.fZip64Used) {
+      fResult = CopyBedrockArtifactProgress::Worker::Result::TooLargeOutput();
+      return;
+    }
+    if (!result.fStatus.ok()) {
+      fResult = CopyBedrockArtifactProgress::Worker::Result::Failed(result.fStatus);
       return;
     }
     fResult = CopyBedrockArtifactProgress::Worker::Result::Success();
@@ -219,6 +224,16 @@ void CopyBedrockArtifactProgress::handleAsyncUpdate() {
                        .withTitle(TRANS("Cancelled"))                      //
                        .withMessage(TRANS("Saving cancelled."))            //
                        .withButton("OK");
+    AlertWindow::showAsync(options, [](int) { JUCEApplication::getInstance()->invoke(commands::toChooseBedrockOutput, true); });
+  } else if (result->fType == CopyBedrockArtifactProgress::Worker::Result::Type::TooLargeOutput) {
+    juce::String message = TRANS("The size of the mcworld file has exceeded 4 GB.\rSuch mcworld files will result in loading errors,\rso please choose another export method.");
+    auto options = MessageBoxOptions()                                        //
+                       .withIconType(AlertWindow::AlertIconType::WarningIcon) //
+                       .withTitle(TRANS("Failed"))                            //
+                       .withMessage(message)                                  //
+                       .withButton("OK");
+    fState.fConvertedState.fDisableMCWorldExport = true;
+    fState.fFormat = BedrockOutputFormat::Directory;
     AlertWindow::showAsync(options, [](int) { JUCEApplication::getInstance()->invoke(commands::toChooseBedrockOutput, true); });
   } else {
     fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);

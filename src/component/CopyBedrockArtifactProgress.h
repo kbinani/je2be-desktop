@@ -33,6 +33,7 @@ public:
       enum class Type {
         Success,
         Cancelled,
+        TooLargeOutput,
         Failed,
       };
       Type fType;
@@ -48,6 +49,10 @@ public:
 
       static Result Failed(Status status) {
         return Result(Type::Failed, status);
+      }
+
+      static Result TooLargeOutput() {
+        return Result(Type::TooLargeOutput, Status::Ok());
       }
 
     private:

@@ -50,6 +50,7 @@ public:
   BedrockConvertedState(juce::String const &worldName, juce::File const &outputDirectory) : fWorldName(worldName), fOutputDirectory(outputDirectory) {}
   juce::String fWorldName;
   juce::File fOutputDirectory;
+  bool fDisableMCWorldExport = false;
 };
 
 class BedrockConvertedStateProvider {
@@ -68,7 +69,7 @@ public:
   explicit BedrockOutputChoosenState(BedrockConvertedState const &convertedState)
       : fConvertedState(convertedState), fFormat(BedrockOutputFormat::Directory) {}
 
-  BedrockConvertedState const fConvertedState;
+  BedrockConvertedState fConvertedState;
   BedrockOutputFormat fFormat;
   std::optional<juce::File> fCopyDestination;
 };

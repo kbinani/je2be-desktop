@@ -56,6 +56,7 @@ ChooseBedrockOutput::ChooseBedrockOutput(BedrockConvertedState const &convertSta
   fSaveAsZipFile.reset(new component::TextButton(TRANS("Export as mcworld file")));
   fSaveAsZipFile->setBounds(2 * kMargin, y, width - 4 * kMargin, kButtonBaseHeight);
   fSaveAsZipFile->onClick = [this]() { onSaveAsZipButtonClicked(); };
+  fSaveAsZipFile->setEnabled(!fState.fConvertedState.fDisableMCWorldExport);
   addAndMakeVisible(*fSaveAsZipFile);
   y += fSaveAsZipFile->getHeight();
 
