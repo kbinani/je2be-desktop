@@ -129,8 +129,13 @@ private:
         fResult = CopyBedrockArtifactProgress::Worker::Result::Failed(Error(__FILE__, __LINE__));
         return;
       }
-      if (auto st = zip.store(*in, std::string(relativePath.toUTF8()), compressionLevel); !st.ok()) {
-        fResult = CopyBedrockArtifactProgress::Worker::Result::Failed(st);
+      auto st = zip.store(*in, std::string(relativePath.toUTF8()), compressionLevel);
+      if (!st.fStatus.ok()) {
+        fResult = CopyBedrockArtifactProgress::Worker::Result::Failed(st.fStatus);
+        return;
+      }
+      if (st.fZip64Used) {
+        fResult = CopyBedrockArtifactProgress::Worker::Result::TooLargeOutput();
         return;
       }
       if (currentThreadShouldExit()) {
