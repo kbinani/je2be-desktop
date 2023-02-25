@@ -2,4 +2,4 @@
 
 find src -name '*.cpp' -o -name '*.h' | xargs -n 1 -P `nproc` clang-format -i
 (cd ext/je2be-core && make format)
-(cd ext/je2be-core/deps/libminecraft-file && ./fmt)
+(cd Builds/_deps/libminecraft-file-src && ./fmt)
