@@ -20,6 +20,8 @@
 #include "component/x2j/X2JConfig.h"
 #include "component/x2j/X2JConvertProgress.h"
 
+#include <mimalloc.h>
+
 using namespace juce;
 
 namespace je2be::desktop {
@@ -41,6 +43,7 @@ public:
   }
 
   void initialise(const juce::String &commandLine) override {
+    (void)mi_version();
     fLaf.reset(new je2be::desktop::LookAndFeel);
     LookAndFeel::setDefaultLookAndFeel(fLaf.get());
 

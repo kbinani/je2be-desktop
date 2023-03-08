@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.16)
-project(je2be-desktop VERSION 4.19.0)
+project(je2be-desktop VERSION 4.19.9000)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-option(JE2BE_DESKTOP_INTEL_COMPILER "Build with Intel Compiler" ON)
+option(JE2BE_DESKTOP_INTEL_COMPILER "Build with Intel Compiler" OFF)
 
 set(BUILD_SHARED_LIBS OFF)
 add_definitions(
@@ -20,7 +20,7 @@ add_compile_options(
   /Oi # Generate Intrinsic Functions
   /Zi # Debug Information Format: PDB file that contains all the symbolic debugging information
   $<IF:$<CONFIG:Debug>,,/GL> # Enable: Whole program optimization
-  $<IF:$<CONFIG:Debug>,/MTd,/MT>
+  $<IF:$<CONFIG:Debug>,/MDd,/MD>
   /MP
 )
 add_link_options(
@@ -30,6 +30,18 @@ add_link_options(
   $<IF:$<BOOL:JE2BE_DESKTOP_INTEL_COMPILER>,/LIBPATH:$(IPP1ACPPLibDir),>
   $<IF:$<BOOL:JE2BE_DESKTOP_INTEL_COMPILER>,/LIBPATH:$(ICXLibDir),>
 )
+
+include(cmake/CPM.cmake)
+
+CPMAddPackage(
+  NAME mimalloc
+  GITHUB_REPOSITORY microsoft/mimalloc
+  VERSION 2.0.9
+  OPTIONS "MI_OVERRIDE ON"
+          "MI_BUILD_TESTS OFF"
+          "MI_BUILD_OBJECT OFF"
+          "MI_BUILD_STATIC OFF"
+          "MI_WIN_REDIRECT ON")
 
 add_subdirectory(ext/je2be-core)
 add_subdirectory(ext/JUCE)
@@ -136,6 +148,7 @@ juce_add_binary_data(app-data
 target_link_libraries(je2be-desktop
   PRIVATE
     je2be
+    mimalloc
     app-data
     juce::juce_gui_extra
   PUBLIC
