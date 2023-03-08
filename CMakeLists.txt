@@ -171,4 +171,9 @@ endif()
 
 configure_file(Builds/Package/Package.appxmanifest.in Package/Package.appxmanifest)
 
+add_custom_command(TARGET je2be-desktop POST_BUILD
+  COMMAND "$<$<CONFIG:Release>:${CMAKE_COMMAND}>" "$<$<CONFIG:Release>:-E>" "$<$<CONFIG:Release>:copy>" "$<$<CONFIG:Release>:${CMAKE_BINARY_DIR}/_deps/mimalloc-build/\$(Configuration)/mimalloc.dll>" "$<$<CONFIG:Release>:${CMAKE_BINARY_DIR}/Package/je2be-desktop/>"
+  COMMAND "$<$<CONFIG:Release>:${CMAKE_COMMAND}>" "$<$<CONFIG:Release>:-E>" "$<$<CONFIG:Release>:copy>" "$<$<CONFIG:Release>:${CMAKE_BINARY_DIR}/_deps/mimalloc-build/\$(Configuration)/mimalloc-redirect.dll>" "$<$<CONFIG:Release>:${CMAKE_BINARY_DIR}/Package/je2be-desktop/>"
+  COMMENT "Copy mimalloc dlls to output directory")
+
 source_group(TREE ${CMAKE_CURRENT_LIST_DIR} FILES ${je2be_desktop_files})
