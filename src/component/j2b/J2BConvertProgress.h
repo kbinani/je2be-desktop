@@ -23,8 +23,9 @@ public:
   enum class Phase : int {
     Error = -1,
     Convert = 0,
-    LevelDBCompaction = 1,
-    Done = 2,
+    PostProcess = 1,
+    LevelDBCompaction = 2,
+    Done = 3,
   };
 
   struct UpdateQueue {
@@ -63,8 +64,10 @@ private:
   std::unique_ptr<juce::Thread> fThread;
   std::shared_ptr<AsyncHandler<UpdateQueue>> fUpdater;
   std::unique_ptr<juce::ProgressBar> fConversionProgressBar;
+  std::unique_ptr<juce::ProgressBar> fPostProcessProgressBar;
   std::unique_ptr<juce::ProgressBar> fCompactionProgressBar;
   double fConversionProgress = 0;
+  double fPostProcessProgress = 0;
   double fCompactionProgress = 0;
   std::unique_ptr<juce::Label> fLabel;
   juce::CommandID fCommandWhenFinished = commands::toChooseBedrockOutput;

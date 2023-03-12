@@ -22,6 +22,7 @@ add_compile_options(
   $<IF:$<CONFIG:Debug>,,/GL> # Enable: Whole program optimization
   $<IF:$<CONFIG:Debug>,/MDd,/MD>
   /MP
+  /Zc:__cplusplus # Enable updated __cplusplus macro
 )
 add_link_options(
   /DEBUG
@@ -43,7 +44,9 @@ CPMAddPackage(
           "MI_BUILD_STATIC OFF"
           "MI_WIN_REDIRECT ON")
 
+set(JE2BE_CORE_USE_INTEL_COMPILER ${JE2BE_DESKTOP_INTEL_COMPILER})
 add_subdirectory(ext/je2be-core)
+
 add_subdirectory(ext/JUCE)
 
 juce_add_gui_app(je2be-desktop
@@ -174,6 +177,11 @@ configure_file(Builds/Package/Package.appxmanifest.in Package/Package.appxmanife
 add_custom_command(TARGET je2be-desktop POST_BUILD
   COMMAND "$<$<CONFIG:Release>:${CMAKE_COMMAND}>" "$<$<CONFIG:Release>:-E>" "$<$<CONFIG:Release>:copy>" "$<$<CONFIG:Release>:${CMAKE_BINARY_DIR}/_deps/mimalloc-build/\$(Configuration)/mimalloc.dll>" "$<$<CONFIG:Release>:${CMAKE_BINARY_DIR}/Package/je2be-desktop/>"
   COMMAND "$<$<CONFIG:Release>:${CMAKE_COMMAND}>" "$<$<CONFIG:Release>:-E>" "$<$<CONFIG:Release>:copy>" "$<$<CONFIG:Release>:${CMAKE_BINARY_DIR}/_deps/mimalloc-build/\$(Configuration)/mimalloc-redirect.dll>" "$<$<CONFIG:Release>:${CMAKE_BINARY_DIR}/Package/je2be-desktop/>"
-  COMMENT "Copy mimalloc dlls to output directory")
+  COMMENT "Copy mimalloc dlls to package output directory")
+
+add_custom_command(TARGET je2be-desktop POST_BUILD
+  COMMAND "${CMAKE_COMMAND}" -E copy "${mimalloc_BINARY_DIR}/\$(Configuration)/mimalloc.dll" "$<TARGET_FILE_DIR:je2be-desktop>/"
+  COMMAND "${CMAKE_COMMAND}" -E copy "${mimalloc_BINARY_DIR}/\$(Configuration)/mimalloc-redirect.dll" "$<TARGET_FILE_DIR:je2be-desktop>/"
+  COMMENT "Copy mimalloc dlls to exe output directory")
 
 source_group(TREE ${CMAKE_CURRENT_LIST_DIR} FILES ${je2be_desktop_files})

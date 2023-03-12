@@ -42,6 +42,7 @@ public:
   enum class Phase {
     XboxToJavaConversion,
     JavaToBedrockConversion,
+    JavaToBedrockPostProcess,
     JavaToBedrockCompaction,
     Done,
     Error,
@@ -65,9 +66,11 @@ private:
   std::shared_ptr<AsyncHandler<UpdateQueue>> fUpdater;
   std::unique_ptr<juce::ProgressBar> fXbox360ToJavaConversionProgressBar;
   std::unique_ptr<juce::ProgressBar> fJavaToBedrockConversionProgressBar;
+  std::unique_ptr<juce::ProgressBar> fJavaToBedrockPostProcessProgressBar;
   std::unique_ptr<juce::ProgressBar> fJavaToBedrockCompactionProgressBar;
   double fXbox360ToJavaConversionProgress = 0;
   double fJavaToBedrockConversionProgress = 0;
+  double fJavaToBedrockPostProcessProgress = 0;
   double fJavaToBedrockCompactionProgress = 0;
   std::unique_ptr<juce::Label> fLabel;
   juce::CommandID fCommandWhenFinished = commands::toChooseBedrockOutput;

@@ -41,6 +41,11 @@ public:
     return !threadShouldExit();
   }
 
+  bool reportEntityPostProcess(double progress) override {
+    triggerProgress(J2BConvertProgress::Phase::PostProcess, progress, 0);
+    return !threadShouldExit();
+  }
+
   bool reportCompaction(double progress) override {
     triggerProgress(J2BConvertProgress::Phase::LevelDBCompaction, progress, 0);
     return !threadShouldExit();
@@ -95,6 +100,12 @@ J2BConvertProgress::J2BConvertProgress(J2BConfigState const &configState) : fCon
   addAndMakeVisible(*fConversionProgressBar);
   y += fConversionProgressBar->getHeight() + kMargin;
 
+  fPostProcessProgressBar.reset(new ProgressBar(fPostProcessProgress));
+  fPostProcessProgressBar->setBounds(kMargin, y, width - 2 * kMargin, kButtonBaseHeight);
+  fPostProcessProgressBar->setTextToDisplay("PostProcess: ");
+  addAndMakeVisible(*fPostProcessProgressBar);
+  y += fPostProcessProgressBar->getHeight() + kMargin;
+
   fCompactionProgressBar.reset(new ProgressBar(fCompactionProgress));
   fCompactionProgressBar->setBounds(kMargin, y, width - 2 * kMargin, kButtonBaseHeight);
   fCompactionProgressBar->setTextToDisplay("LevelDB Compaction: ");
@@ -148,8 +159,9 @@ void J2BConvertProgress::onCancelButtonClicked() {
 }
 
 void J2BConvertProgress::onProgressUpdate(J2BConvertProgress::Phase phase, double progress, uint64_t numConvertedChunks, Status st) {
-  double weightConversion = 0.67;
-  double weightCompaction = 1 - weightConversion;
+  double weightConversion = 0.4;
+  double weightPostProcess = 0.4;
+  double weightCompaction = 1 - weightConversion - weightPostProcess;
   fFailed = !st.ok();
 
   if (phase == J2BConvertProgress::Phase::Done) {
@@ -168,9 +180,15 @@ void J2BConvertProgress::onProgressUpdate(J2BConvertProgress::Phase phase, doubl
   } else if (phase == J2BConvertProgress::Phase::LevelDBCompaction) {
     fLabel->setText(TRANS("LevelDB compaction"), dontSendNotification);
     fConversionProgress = 1;
+    fPostProcessProgress = 1;
     fCompactionProgress = progress;
     fTaskbarProgress->setState(TaskbarProgress::State::Normal);
-    fTaskbarProgress->update(weightConversion + progress * weightCompaction);
+    fTaskbarProgress->update(weightConversion + weightPostProcess + progress * weightCompaction);
+  } else if (phase == J2BConvertProgress::Phase::PostProcess) {
+    fConversionProgress = 1;
+    fPostProcessProgress = progress;
+    fTaskbarProgress->setState(TaskbarProgress::State::Normal);
+    fTaskbarProgress->update(weightConversion + progress * weightPostProcess);
   } else if (phase == J2BConvertProgress::Phase::Convert) {
     if (fConversionProgress >= 0) {
       fConversionProgress = progress;
@@ -196,7 +214,9 @@ void J2BConvertProgress::onProgressUpdate(J2BConvertProgress::Phase phase, doubl
       fErrorMessage->setVisible(true);
     }
     fCancelButton->setButtonText(TRANS("Back"));
+    fCancelButton->setEnabled(true);
     fConversionProgressBar->setVisible(false);
+    fPostProcessProgressBar->setVisible(false);
     fCompactionProgressBar->setVisible(false);
   }
 }

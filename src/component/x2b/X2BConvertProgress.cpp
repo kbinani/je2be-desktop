@@ -74,6 +74,11 @@ public:
     return !threadShouldExit();
   }
 
+  bool reportEntityPostProcess(double progress) override {
+    triggerProgress(X2BConvertProgress::Phase::JavaToBedrockPostProcess, progress, 0);
+    return !threadShouldExit();
+  }
+
   bool reportCompaction(double progress) override {
     triggerProgress(X2BConvertProgress::Phase::JavaToBedrockCompaction, progress, 0);
     return !threadShouldExit();
@@ -134,6 +139,12 @@ X2BConvertProgress::X2BConvertProgress(X2BConfigState const &configState) : fCon
   addAndMakeVisible(*fJavaToBedrockConversionProgressBar);
   y += fJavaToBedrockConversionProgressBar->getHeight() + kMargin;
 
+  fJavaToBedrockPostProcessProgressBar.reset(new ProgressBar(fJavaToBedrockPostProcessProgress));
+  fJavaToBedrockPostProcessProgressBar->setBounds(kMargin, y, width - 2 * kMargin, kButtonBaseHeight);
+  fJavaToBedrockPostProcessProgressBar->setTextToDisplay("PostProcess: ");
+  addAndMakeVisible(*fJavaToBedrockPostProcessProgressBar);
+  y += fJavaToBedrockPostProcessProgressBar->getHeight() + kMargin;
+
   fJavaToBedrockCompactionProgressBar.reset(new ProgressBar(fJavaToBedrockCompactionProgress));
   fJavaToBedrockCompactionProgressBar->setBounds(kMargin, y, width - 2 * kMargin, kButtonBaseHeight);
   fJavaToBedrockCompactionProgressBar->setTextToDisplay("LevelDB Compaction: ");
@@ -181,6 +192,7 @@ void X2BConvertProgress::onCancelButtonClicked() {
     fXbox360ToJavaConversionProgressBar->setVisible(true);
     fXbox360ToJavaConversionProgressBar->setTextToDisplay({});
     fJavaToBedrockConversionProgressBar->setVisible(false);
+    fJavaToBedrockPostProcessProgressBar->setVisible(false);
     fJavaToBedrockCompactionProgressBar->setVisible(false);
     fLabel->setText(TRANS("Waiting for the worker thread to finish"), dontSendNotification);
   }
@@ -188,6 +200,11 @@ void X2BConvertProgress::onCancelButtonClicked() {
 
 void X2BConvertProgress::onProgressUpdate(Phase phase, double progress, uint64_t numConvertedChunks, Status st) {
   fFailed = !st.ok();
+
+  double const weightX2J = 0.333;
+  double const weightJ2BConvert = 0.3;
+  double const weightJ2BPostProcess = 0.2;
+  double const weightJ2BCompaction = 1 - weightX2J - weightJ2BConvert - weightJ2BPostProcess;
 
   if (phase == Phase::Done && !fCancelRequested) {
     if (fCommandWhenFinished != commands::toChooseBedrockOutput && fOutputDirectory.exists()) {
@@ -206,12 +223,25 @@ void X2BConvertProgress::onProgressUpdate(Phase phase, double progress, uint64_t
     fLabel->setText(TRANS("LevelDB compaction"), dontSendNotification);
     fXbox360ToJavaConversionProgress = 1;
     fJavaToBedrockConversionProgress = 1;
+    fJavaToBedrockPostProcessProgress = 1;
     if (progress > 0) {
       fJavaToBedrockCompactionProgress = progress;
-      fTaskbarProgress->update(2.0 / 3.0 + progress / 3.0);
+      fTaskbarProgress->update(weightX2J + weightJ2BConvert + weightJ2BPostProcess + progress * weightJ2BCompaction);
     } else {
       fJavaToBedrockCompactionProgress = -1;
-      fTaskbarProgress->update(2.0 / 3.0);
+      fTaskbarProgress->update(weightX2J + weightJ2BConvert + weightJ2BPostProcess);
+    }
+    fTaskbarProgress->setState(TaskbarProgress::State::Normal);
+  } else if (phase == Phase::JavaToBedrockPostProcess && !fCancelRequested) {
+    fLabel->setText(TRANS("PostProcess"), dontSendNotification);
+    fXbox360ToJavaConversionProgress = 1;
+    fJavaToBedrockConversionProgress = 1;
+    if (progress > 0) {
+      fJavaToBedrockPostProcessProgress = progress;
+      fTaskbarProgress->update(weightX2J + weightJ2BConvert + progress * weightJ2BPostProcess);
+    } else {
+      fJavaToBedrockCompactionProgress = -1;
+      fTaskbarProgress->update(weightX2J + weightJ2BConvert);
     }
     fTaskbarProgress->setState(TaskbarProgress::State::Normal);
   } else if (phase == Phase::JavaToBedrockConversion && !fCancelRequested) {
@@ -219,10 +249,10 @@ void X2BConvertProgress::onProgressUpdate(Phase phase, double progress, uint64_t
     fXbox360ToJavaConversionProgress = 1;
     if (progress > 0) {
       fJavaToBedrockConversionProgress = progress;
-      fTaskbarProgress->update(1.0 / 3.0 + progress / 3.0);
+      fTaskbarProgress->update(weightX2J + progress * weightJ2BConvert);
     } else {
       fJavaToBedrockConversionProgress = -1;
-      fTaskbarProgress->update(1.0 / 3.0);
+      fTaskbarProgress->update(weightX2J);
     }
     fTaskbarProgress->setState(TaskbarProgress::State::Normal);
     fJavaToBedrockConversionProgressBar->setTextToDisplay("Converted " + juce::String(numConvertedChunks) + " Chunks: ");
@@ -231,7 +261,7 @@ void X2BConvertProgress::onProgressUpdate(Phase phase, double progress, uint64_t
     if (progress > 0) {
       fXbox360ToJavaConversionProgress = progress;
       fTaskbarProgress->setState(TaskbarProgress::State::Normal);
-      fTaskbarProgress->update(progress / 3.0);
+      fTaskbarProgress->update(progress * weightX2J);
     } else {
       fXbox360ToJavaConversionProgress = -1;
       fTaskbarProgress->setState(TaskbarProgress::State::Indeterminate);
@@ -258,6 +288,7 @@ void X2BConvertProgress::onProgressUpdate(Phase phase, double progress, uint64_t
     fCancelButton->setEnabled(true);
     fXbox360ToJavaConversionProgressBar->setVisible(false);
     fJavaToBedrockConversionProgressBar->setVisible(false);
+    fJavaToBedrockPostProcessProgressBar->setVisible(false);
     fJavaToBedrockCompactionProgressBar->setVisible(false);
   }
 }
