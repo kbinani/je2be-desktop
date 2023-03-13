@@ -23,6 +23,7 @@ add_compile_options(
   $<IF:$<CONFIG:Debug>,/MDd,/MD>
   /MP
   /Zc:__cplusplus # Enable updated __cplusplus macro
+  /Zc:preprocessor # Enable preprocessor conformance mode
 )
 add_link_options(
   /DEBUG
