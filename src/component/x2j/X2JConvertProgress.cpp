@@ -49,8 +49,8 @@ public:
     }
   }
 
-  bool report(double progress) override {
-    triggerProgress(X2JConvertProgress::Phase::Conversion, progress);
+  bool report(Rational<u64> const &progress) override {
+    triggerProgress(X2JConvertProgress::Phase::Conversion, progress.toD());
     return !threadShouldExit();
   }
 

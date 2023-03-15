@@ -63,24 +63,24 @@ public:
     }
   }
 
-  bool report(double progress) override {
+  bool report(Rational<u64> const &progress) override {
     using Phase = je2be::desktop::component::x2b::X2BConvertProgress::Phase;
-    triggerProgress(Phase::XboxToJavaConversion, progress, 0);
+    triggerProgress(Phase::XboxToJavaConversion, progress.toD(), 0);
     return !threadShouldExit();
   }
 
-  bool reportConvert(double progress, uint64_t numConvertedChunks) override {
-    triggerProgress(X2BConvertProgress::Phase::JavaToBedrockConversion, progress, numConvertedChunks);
+  bool reportConvert(Rational<u64> const &progress, uint64_t numConvertedChunks) override {
+    triggerProgress(X2BConvertProgress::Phase::JavaToBedrockConversion, progress.toD(), numConvertedChunks);
     return !threadShouldExit();
   }
 
-  bool reportEntityPostProcess(double progress) override {
-    triggerProgress(X2BConvertProgress::Phase::JavaToBedrockPostProcess, progress, 0);
+  bool reportEntityPostProcess(Rational<u64> const &progress) override {
+    triggerProgress(X2BConvertProgress::Phase::JavaToBedrockPostProcess, progress.toD(), 0);
     return !threadShouldExit();
   }
 
-  bool reportCompaction(double progress) override {
-    triggerProgress(X2BConvertProgress::Phase::JavaToBedrockCompaction, progress, 0);
+  bool reportCompaction(Rational<u64> const &progress) override {
+    triggerProgress(X2BConvertProgress::Phase::JavaToBedrockCompaction, progress.toD(), 0);
     return !threadShouldExit();
   }
 

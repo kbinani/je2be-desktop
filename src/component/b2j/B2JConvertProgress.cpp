@@ -133,13 +133,13 @@ public:
     });
   }
 
-  bool reportConvert(double progress, uint64_t numConvertedChunks) override {
-    triggerProgress(B2JConvertProgress::Phase::Conversion, progress, numConvertedChunks);
+  bool reportConvert(Rational<u64> const &progress, uint64_t numConvertedChunks) override {
+    triggerProgress(B2JConvertProgress::Phase::Conversion, progress.toD(), numConvertedChunks);
     return !threadShouldExit();
   }
 
-  bool reportTerraform(double progress, uint64_t numProcessedChunks) override {
-    triggerProgress(B2JConvertProgress::Phase::PostProcess, progress, numProcessedChunks);
+  bool reportTerraform(Rational<u64> const &progress, uint64_t numProcessedChunks) override {
+    triggerProgress(B2JConvertProgress::Phase::PostProcess, progress.toD(), numProcessedChunks);
     return !threadShouldExit();
   }
 

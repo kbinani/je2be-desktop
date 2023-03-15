@@ -36,18 +36,18 @@ public:
     }
   }
 
-  bool reportConvert(double progress, uint64_t numConvertedChunks) override {
-    triggerProgress(J2BConvertProgress::Phase::Convert, progress, numConvertedChunks);
+  bool reportConvert(Rational<u64> const &progress, uint64_t numConvertedChunks) override {
+    triggerProgress(J2BConvertProgress::Phase::Convert, progress.toD(), numConvertedChunks);
     return !threadShouldExit();
   }
 
-  bool reportEntityPostProcess(double progress) override {
-    triggerProgress(J2BConvertProgress::Phase::PostProcess, progress, 0);
+  bool reportEntityPostProcess(Rational<u64> const &progress) override {
+    triggerProgress(J2BConvertProgress::Phase::PostProcess, progress.toD(), 0);
     return !threadShouldExit();
   }
 
-  bool reportCompaction(double progress) override {
-    triggerProgress(J2BConvertProgress::Phase::LevelDBCompaction, progress, 0);
+  bool reportCompaction(Rational<u64> const &progress) override {
+    triggerProgress(J2BConvertProgress::Phase::LevelDBCompaction, progress.toD(), 0);
     return !threadShouldExit();
   }
 
