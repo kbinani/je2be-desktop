@@ -167,7 +167,7 @@ include_external_msproject(Package Package/Package.wapproj
   GUID 713653CB-7989-4C22-8171-0F1951271B8D)
 
 if (JE2BE_DESKTOP_INTEL_COMPILER)
-  foreach(target IN ITEMS je2be leveldb libdeflate_static zlibstatic mimalloc-static)
+  foreach(target IN ITEMS je2be leveldb libdeflate_static zlibstatic mimalloc)
     set_target_properties(${target} PROPERTIES VS_PLATFORM_TOOLSET "Intel C++ Compiler 2023")
     target_compile_options(${target} PRIVATE /arch:SSE3)
   endforeach()
