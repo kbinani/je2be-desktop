@@ -211,10 +211,15 @@ void CopyBedrockArtifactProgress::handleAsyncUpdate() {
     juce::String message = TRANS("Saving failed.");
     if (result && result->fStatus.error()) {
       auto error = result->fStatus.error();
-      message += juce::String(" where: " + error->fWhere.fFile + ":" + std::to_string(error->fWhere.fLine));
       if (!error->fWhat.empty()) {
-        message += juce::String(", what: " + error->fWhat);
+        message += juce::String("  what: " + error->fWhat + "\n");
       }
+      message += juce::String("  trace: \n");
+      for (int i = error->fTrace.size() - 1; i >= 0; i--) {
+        auto const &trace = error->fTrace[i];
+        message += juce::String("    " + trace.fFile + ":" + std::to_string(trace.fLine) + "\n");
+      }
+      message = message.trimEnd();
     }
     auto options = MessageBoxOptions()                                        //
                        .withIconType(AlertWindow::AlertIconType::WarningIcon) //

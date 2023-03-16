@@ -206,11 +206,16 @@ void J2BConvertProgress::onProgressUpdate(J2BConvertProgress::Phase phase, doubl
     auto error = st.error();
     if (error) {
       juce::String message = juce::String(JUCE_APPLICATION_NAME_STRING) + " version " + JUCE_APPLICATION_VERSION_STRING;
-      message += juce::String("\nFailed: where: ") + error->fWhere.fFile + ":" + std::to_string(error->fWhere.fLine);
+      message += juce::String("\nFailed:\n");
       if (!error->fWhat.empty()) {
-        message += juce::String(", what: " + error->fWhat);
+        message += juce::String("  what: " + error->fWhat + "\n");
       }
-      fErrorMessage->setText(message);
+      message += juce::String("  trace: \n");
+      for (int i = error->fTrace.size() - 1; i >= 0; i--) {
+        auto const &trace = error->fTrace[i];
+        message += juce::String("    " + trace.fFile + ":" + std::to_string(trace.fLine) + "\n");
+      }
+      fErrorMessage->setText(message.trimEnd());
       fErrorMessage->setVisible(true);
     }
     fCancelButton->setButtonText(TRANS("Back"));
