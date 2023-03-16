@@ -1,7 +1,6 @@
 Version 4.19.0 (TBD)
-- Supported Java version 1.19.4. [j2b, b2j]
-- Now outputs the data of the Bedrock version 1.19.70. [j2b, x2b]
-- The conversion accuracy of data in the legacy Java version has been improved. [j2b]
+- Supported Java Edition 1.19.4 and Bedrock Edition 1.19.70. [j2b, b2j]
+- The conversion accuracy of data in the legacy Java Edition has been improved. [j2b]
 - Changed behavior to abort export if the resulting mcworld file exceeds 4GB. [j2b]
 - Fixed an issue where items "nether brick" and "nether bricks block" were being converted inversely each other. [j2b, x2b]
 
