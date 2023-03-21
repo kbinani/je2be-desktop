@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(je2be-desktop VERSION 4.19.0)
+project(je2be-desktop VERSION 4.19.1)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -30,8 +30,7 @@ add_link_options(
   $<IF:$<CONFIG:Debug>,,/LTCG> # Enable: Link-time code generation
   $<IF:$<BOOL:JE2BE_DESKTOP_INTEL_COMPILER>,/LIBPATH:$(IPP1ALibDir),>
   $<IF:$<BOOL:JE2BE_DESKTOP_INTEL_COMPILER>,/LIBPATH:$(IPP1ACPPLibDir),>
-  $<IF:$<BOOL:JE2BE_DESKTOP_INTEL_COMPILER>,/LIBPATH:$(ICXLibDir),>
-)
+  $<IF:$<BOOL:JE2BE_DESKTOP_INTEL_COMPILER>,/LIBPATH:$(ICXLibDir),>)
 
 include(cmake/CPM.cmake)
 
@@ -127,8 +126,7 @@ set(je2be_desktop_files
 
 target_sources(je2be-desktop
   PRIVATE
-  ${je2be_desktop_files}
-)
+  ${je2be_desktop_files})
 
 target_compile_definitions(je2be-desktop
   PRIVATE
@@ -190,13 +188,33 @@ endif()
 configure_file(Builds/Package/Package.appxmanifest.in Package/Package.appxmanifest)
 
 add_custom_command(TARGET je2be-desktop POST_BUILD
-  COMMAND "$<$<CONFIG:Release>:${CMAKE_COMMAND}>" "$<$<CONFIG:Release>:-E>" "$<$<CONFIG:Release>:copy>" "$<$<CONFIG:Release>:${CMAKE_BINARY_DIR}/_deps/mimalloc-build/\$(Configuration)/mimalloc.dll>" "$<$<CONFIG:Release>:${CMAKE_BINARY_DIR}/Package/je2be-desktop/>"
-  COMMAND "$<$<CONFIG:Release>:${CMAKE_COMMAND}>" "$<$<CONFIG:Release>:-E>" "$<$<CONFIG:Release>:copy>" "$<$<CONFIG:Release>:${CMAKE_BINARY_DIR}/_deps/mimalloc-build/\$(Configuration)/mimalloc-redirect.dll>" "$<$<CONFIG:Release>:${CMAKE_BINARY_DIR}/Package/je2be-desktop/>"
+  COMMAND
+    "$<$<CONFIG:Release>:${CMAKE_COMMAND}>"
+    "$<$<CONFIG:Release>:-E>"
+    "$<$<CONFIG:Release>:copy>"
+    "$<$<CONFIG:Release>:${CMAKE_BINARY_DIR}/_deps/mimalloc-build/\$(Configuration)/mimalloc.dll>"
+    "$<$<CONFIG:Release>:${CMAKE_BINARY_DIR}/Package/je2be-desktop/>"
+  COMMAND
+    "$<$<CONFIG:Release>:${CMAKE_COMMAND}>"
+    "$<$<CONFIG:Release>:-E>"
+    "$<$<CONFIG:Release>:copy>"
+    "$<$<CONFIG:Release>:${CMAKE_BINARY_DIR}/_deps/mimalloc-build/\$(Configuration)/mimalloc-redirect.dll>"
+    "$<$<CONFIG:Release>:${CMAKE_BINARY_DIR}/Package/je2be-desktop/>"
   COMMENT "Copy mimalloc dlls to package output directory")
 
 add_custom_command(TARGET je2be-desktop POST_BUILD
-  COMMAND "${CMAKE_COMMAND}" -E copy "${mimalloc_BINARY_DIR}/\$(Configuration)/mimalloc.dll" "$<TARGET_FILE_DIR:je2be-desktop>/"
-  COMMAND "${CMAKE_COMMAND}" -E copy "${mimalloc_BINARY_DIR}/\$(Configuration)/mimalloc-redirect.dll" "$<TARGET_FILE_DIR:je2be-desktop>/"
+  COMMAND
+    "${CMAKE_COMMAND}"
+    -E
+    copy
+    "${mimalloc_BINARY_DIR}/\$(Configuration)/mimalloc.dll"
+    "$<TARGET_FILE_DIR:je2be-desktop>/"
+  COMMAND
+    "${CMAKE_COMMAND}"
+    -E
+    copy
+    "${mimalloc_BINARY_DIR}/\$(Configuration)/mimalloc-redirect.dll"
+    "$<TARGET_FILE_DIR:je2be-desktop>/"
   COMMENT "Copy mimalloc dlls to exe output directory")
 
 source_group(TREE ${CMAKE_CURRENT_LIST_DIR} FILES ${je2be_desktop_files})
