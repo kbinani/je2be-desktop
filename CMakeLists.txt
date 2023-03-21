@@ -171,6 +171,20 @@ if (JE2BE_DESKTOP_INTEL_COMPILER)
     set_target_properties(${target} PROPERTIES VS_PLATFORM_TOOLSET "Intel C++ Compiler 2023")
     target_compile_options(${target} PRIVATE /arch:SSE3)
   endforeach()
+  add_custom_command(TARGET je2be-desktop POST_BUILD
+    COMMAND
+      "$<$<CONFIG:Release>:${CMAKE_COMMAND}>"
+      "$<$<CONFIG:Release>:-E>"
+      "$<$<CONFIG:Release>:copy>"
+      "$<$<CONFIG:Release>:\"\$(ONEAPI_ROOT)/compiler/latest/windows/redist/intel64_win/compiler/svml_dispmd.dll\">"
+      "$<$<CONFIG:Release>:${CMAKE_BINARY_DIR}/Package/je2be-desktop/>"
+    COMMAND
+      "$<$<CONFIG:Release>:${CMAKE_COMMAND}>"
+      "$<$<CONFIG:Release>:-E>"
+      "$<$<CONFIG:Release>:copy>"
+      "$<$<CONFIG:Release>:\"\$(ONEAPI_ROOT)/compiler/latest/windows/redist/intel64_win/compiler/libmmd.dll\">"
+      "$<$<CONFIG:Release>:${CMAKE_BINARY_DIR}/Package/je2be-desktop/>"
+    COMMENT "Copy oneAPI redistributable dlls to package output directory")
 endif()
 
 configure_file(Builds/Package/Package.appxmanifest.in Package/Package.appxmanifest)
