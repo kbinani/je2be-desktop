@@ -114,6 +114,12 @@ About::About() {
       "mimalloc",
       "https://github.com/microsoft/mimalloc",
       "",
+
+      "svml_dispmd.dll and libmmd.dll",
+      "(Intel (R) Compiler Redistributable dlls)",
+      "https://www.intel.com/content/www/us/en/developer/articles",
+      "                      /license/end-user-license-agreement.html",
+      "",
   };
 
   int width = 400;
