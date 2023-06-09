@@ -104,7 +104,7 @@ ChooseBedrockInput::ChooseBedrockInput(std::optional<ChooseInputState> state) {
   }
 
   int space = 5;
-  Rectangle<int> listBoxBounds(width - kMargin - kWorldListWidth, kMargin + kButtonBaseHeight + space, kWorldListWidth, height - 3 * kMargin - 2 * kButtonBaseHeight - space);
+  juce::Rectangle<int> listBoxBounds(width - kMargin - kWorldListWidth, kMargin + kButtonBaseHeight + space, kWorldListWidth, height - 3 * kMargin - 2 * kButtonBaseHeight - space);
   {
     fListComponent.reset(new ListBox("", this));
     fListComponent->setBounds(listBoxBounds);
@@ -120,7 +120,7 @@ ChooseBedrockInput::ChooseBedrockInput(std::optional<ChooseInputState> state) {
     addAndMakeVisible(*fPlaceholder);
   }
 
-  Rectangle<int> searchBounds(width - kMargin - kWorldListWidth, kMargin, kWorldListWidth, kButtonBaseHeight);
+  juce::Rectangle<int> searchBounds(width - kMargin - kWorldListWidth, kMargin, kWorldListWidth, kButtonBaseHeight);
   {
     fSearch.reset(new SearchLabel());
     fSearch->setBounds(searchBounds);

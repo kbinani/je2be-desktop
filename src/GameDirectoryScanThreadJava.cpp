@@ -36,21 +36,21 @@ void GameDirectoryScanThreadJava::unsafeRun() {
     bool commandsEnabled = false;
     auto s = std::make_shared<mcfile::stream::GzFileInputStream>(PathFromFile(level));
     if (auto tag = CompoundTag::Read(s, mcfile::Endian::Big); tag) {
-      if (auto data = tag->compoundTag("Data"); data) {
-        if (auto lastPlayed = data->int64("LastPlayed"); lastPlayed) {
+      if (auto data = tag->compoundTag(u8"Data"); data) {
+        if (auto lastPlayed = data->int64(u8"LastPlayed"); lastPlayed) {
           lastUpdate = Time(*lastPlayed);
         }
-        if (auto gameType = data->int32("GameType"); gameType) {
+        if (auto gameType = data->int32(u8"GameType"); gameType) {
           mode = static_cast<GameDirectory::GameMode>(*gameType);
         }
-        if (auto versionTag = data->compoundTag("Version"); versionTag) {
-          if (auto versionName = versionTag->string("Name"); versionName) {
-            version = *versionName;
+        if (auto versionTag = data->compoundTag(u8"Version"); versionTag) {
+          if (auto versionName = versionTag->string(u8"Name"); versionName) {
+            version = juce::String::fromUTF8((char const *)versionName->c_str(), versionName->size());
           }
         }
-        commandsEnabled = data->boolean("allowCommands", false);
-        if (auto levelNameTag = data->string("LevelName"); levelNameTag) {
-          levelName = *levelNameTag;
+        commandsEnabled = data->boolean(u8"allowCommands", false);
+        if (auto levelNameTag = data->string(u8"LevelName"); levelNameTag) {
+          levelName = juce::String::fromUTF8((char const *)levelNameTag->c_str(), levelNameTag->size());
         }
       }
     }

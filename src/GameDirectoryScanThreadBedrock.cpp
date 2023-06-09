@@ -40,13 +40,13 @@ void GameDirectoryScanThreadBedrock::unsafeRun() {
     auto s = std::make_shared<mcfile::stream::GzFileInputStream>(PathFromFile(level));
     if (s->valid() && s->seek(8)) {
       if (auto tag = CompoundTag::Read(s, mcfile::Endian::Little); tag) {
-        if (auto lastPlayed = tag->int64("LastPlayed"); lastPlayed) {
+        if (auto lastPlayed = tag->int64(u8"LastPlayed"); lastPlayed) {
           lastUpdate = Time(*lastPlayed * 1000);
         }
-        if (auto gameType = tag->int32("GameType"); gameType) {
+        if (auto gameType = tag->int32(u8"GameType"); gameType) {
           mode = static_cast<GameDirectory::GameMode>(*gameType);
         }
-        if (auto lastOpened = tag->listTag("lastOpenedWithVersion"); lastOpened) {
+        if (auto lastOpened = tag->listTag(u8"lastOpenedWithVersion"); lastOpened) {
           for (auto const &it : *lastOpened) {
             if (auto c = it->asInt(); c) {
               if (version.isEmpty()) {
@@ -57,7 +57,7 @@ void GameDirectoryScanThreadBedrock::unsafeRun() {
             }
           }
         }
-        commandsEnabled = tag->boolean("commandsEnabled", false);
+        commandsEnabled = tag->boolean(u8"commandsEnabled", false);
       }
     }
 
