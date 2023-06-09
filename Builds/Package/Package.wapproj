@@ -95,7 +95,7 @@
     <TargetPlatformMinVersion>10.0.14393.0</TargetPlatformMinVersion>
     <DefaultLanguage>ja-JP</DefaultLanguage>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
-    <PackageCertificateThumbprint>4EB42C447A72A999F2DA996F47F15BBFA2684064</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>D2084A06991A07EF913AADED50A2725ABED858D6</PackageCertificateThumbprint>
     <EntryPointProjectUniqueName>..\je2be-desktop.vcxproj</EntryPointProjectUniqueName>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
@@ -174,7 +174,7 @@
     <Content Include="je2be-desktop\mimalloc-redirect.dll" />
     <Content Include="je2be-desktop\mimalloc.dll" />
     <Content Include="je2be-desktop\svml_dispmd.dll" />
-    <None Include="A9C2F50C65877729AE19491F672645A557615008.pfx" />
+    <None Include="D2084A06991A07EF913AADED50A2725ABED858D6.pfx" />
     <Content Include="Images\SplashScreen.scale-200.png" />
     <Content Include="Images\LockScreenLogo.scale-200.png" />
     <Content Include="Images\Square150x150Logo.scale-200.png" />
