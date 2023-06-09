@@ -1,4 +1,7 @@
-Version 4.19.1 (TBD)
+Version 4.20.0 (TBD)
+- Added support for Minecraft version 1.20.
+
+Version 4.19.1 (22 Mar 2023)
 - Fixed a problem with an error message about svml_dispmd.dll that prevented it from starting.
 
 Version 4.19.0 (21 Mar 2023)
