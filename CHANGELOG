@@ -1,6 +1,6 @@
 Version 4.21.0 (TBD)
 - Fixed an issue where some loot table conversions were incorrect. [j2b]
-- Fixed an issue where converted piglins behaved differently than the original.
+- Fixed an issue where converted piglins behaved differently than the original. [j2b]
 
 Version 4.20.1 (24 Jun 2023)
 - Fixed an issue where potted_torchflower and potted_cherry_sapling were not converting properly. [j2b]
