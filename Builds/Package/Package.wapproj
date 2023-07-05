@@ -170,10 +170,8 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="je2be-desktop\libmmd.dll" />
     <Content Include="je2be-desktop\mimalloc-redirect.dll" />
     <Content Include="je2be-desktop\mimalloc.dll" />
-    <Content Include="je2be-desktop\svml_dispmd.dll" />
     <None Include="D2084A06991A07EF913AADED50A2725ABED858D6.pfx" />
     <Content Include="Images\SplashScreen.scale-200.png" />
     <Content Include="Images\LockScreenLogo.scale-200.png" />
