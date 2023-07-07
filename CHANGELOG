@@ -1,4 +1,8 @@
-Version 4.21.0 (TBD)
+Version 4.21.1 (TBD)
+- Fixed game crash due to conversion errors of suspicious_sand, suspicious_gravel. [j2b]
+- Fixed an issue where converted piglin brute behaved differently than it should. [j2b]
+
+Version 4.21.0 (5 Jul 2023)
 - Fixed an issue where some loot table conversions were incorrect. [j2b]
 - Fixed an issue where converted piglins behaved differently than the original. [j2b]
 
