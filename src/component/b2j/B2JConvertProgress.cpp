@@ -35,27 +35,25 @@ public:
   }
 
   void unsafeRun() {
-    File sessionTempDir = TemporaryDirectory::EnsureExisting();
-    juce::Uuid u;
-    File temp = sessionTempDir.getChildFile(u.toDashedString());
-    if (auto st = temp.createDirectory(); !st.ok()) {
-      triggerError(Error(__FILE__, __LINE__, st.getErrorMessage().toStdString()));
-      return;
-    }
+    File temp;
     defer {
-      TemporaryDirectory::QueueDeletingDirectory(temp);
+      if (temp != File()) {
+        TemporaryDirectory::QueueDeletingDirectory(temp);
+      }
     };
 
     File input;
     if (fInput.isDirectory()) {
-      triggerProgress(B2JConvertProgress::Phase::Unzip, -1, 0);
-      if (auto st = copyInto(temp); !st.ok()) {
-        triggerError(st);
-        return;
-      }
-      input = temp;
+      input = fInput;
       triggerProgress(B2JConvertProgress::Phase::Unzip, 1, 0);
     } else {
+      File sessionTempDir = TemporaryDirectory::EnsureExisting();
+      juce::Uuid u;
+      temp = sessionTempDir.getChildFile(u.toDashedString());
+      if (auto st = temp.createDirectory(); !st.ok()) {
+        triggerError(Error(__FILE__, __LINE__, st.getErrorMessage().toStdString()));
+        return;
+      }
       if (auto st = unzipInto(temp); !st.ok()) {
         triggerError(st);
         return;
@@ -66,64 +64,6 @@ public:
       auto st = je2be::toje::Converter::Run(PathFromFile(input), PathFromFile(fOutput), fOptions, std::thread::hardware_concurrency(), this);
       triggerProgress(B2JConvertProgress::Phase::Done, 1, 0, st);
     }
-  }
-
-  je2be::Status copyInto(File temp) {
-    using namespace leveldb;
-
-    auto env = leveldb::Env::Default();
-    File db = fInput.getChildFile("db");
-
-    if (auto st = temp.getChildFile("db").createDirectory(); !st.ok()) {
-      return Error(__FILE__, __LINE__, st.getErrorMessage().toStdString());
-    }
-
-    std::vector<File> exclude;
-
-    File lockFile = db.getChildFile("LOCK");
-    auto lockFilePath = PathFromFile(lockFile);
-    FileLock *lock = nullptr;
-    if (auto st = env->LockFile(lockFilePath, &lock); !st.ok()) {
-      return Error(__FILE__, __LINE__, st.ToString());
-    }
-    exclude.push_back(lockFile);
-    defer {
-      env->UnlockFile(lock);
-    };
-
-    // Bedrock game client doesn't create or lock the "LOCK" file.
-    // The locking process above is for other app reading the db in regular manner.
-    // For bedrock game client, additionally lock the manifest file.
-    FileLock *manifestLock = nullptr;
-    File currentFile = db.getChildFile("CURRENT");
-    if (currentFile.existsAsFile()) {
-      juce::String content = currentFile.loadFileAsString();
-      juce::String manifestName = content.trimEnd();
-      File manifestFile = db.getChildFile(manifestName);
-      if (manifestFile.existsAsFile()) {
-
-        // This will success even when the game client is opening the db.
-        if (auto st = CopyFile(manifestFile, temp.getChildFile("db").getChildFile(manifestName), __FILE__, __LINE__); !st.ok()) {
-          return st;
-        }
-
-        if (auto st = env->LockFile(PathFromFile(manifestFile), &manifestLock); !st.ok()) {
-          return Error(__FILE__, __LINE__, st.ToString());
-        }
-        exclude.push_back(manifestFile);
-      }
-    }
-    defer {
-      if (manifestLock) {
-        env->UnlockFile(manifestLock);
-      }
-    };
-
-    if (auto st = CopyDirectoryRecursive(fInput, temp, exclude); !st.ok()) {
-      return st;
-    }
-
-    return Status::Ok();
   }
 
   je2be::Status unzipInto(File temp) {
@@ -201,16 +141,10 @@ B2JConvertProgress::B2JConvertProgress(B2JConfigState const &configState) : fCon
   int errorMessageY = y + fLabel->getHeight();
   y += fLabel->getHeight() + kMargin;
 
-  {
-    juce::String title;
-    if (needsUnzip) {
-      title = "Unzip: ";
-    } else {
-      title = "Copy: ";
-    }
-    fUnzipOrCopyProgressBar.reset(new ProgressBar(fUnzipOrCopyProgress));
+  fUnzipOrCopyProgressBar.reset(new ProgressBar(fUnzipOrCopyProgress));
+  if (needsUnzip) {
     fUnzipOrCopyProgressBar->setBounds(kMargin, y, width - 2 * kMargin, kButtonBaseHeight);
-    fUnzipOrCopyProgressBar->setTextToDisplay(title);
+    fUnzipOrCopyProgressBar->setTextToDisplay("Unzip: ");
     addAndMakeVisible(*fUnzipOrCopyProgressBar);
     y += fUnzipOrCopyProgressBar->getHeight() + kMargin;
   }
