@@ -153,7 +153,19 @@ void J2BConvertProgress::onCancelButtonClicked() {
     fCancelButton->setEnabled(false);
     fCommandWhenFinished = commands::toJ2BConfig;
     fThread->signalThreadShouldExit();
-    fConversionProgress = -1;
+    if (0 < fConversionProgress && fConversionProgress < 1) {
+      fConversionProgress = -1;
+      fPostProcessProgress = 0;
+      fCompactionProgress = 0;
+    } else if (0 < fPostProcessProgress && fPostProcessProgress < 1) {
+      fConversionProgress = 1;
+      fPostProcessProgress = -1;
+      fCompactionProgress = 0;
+    } else if (0 < fCompactionProgress && fCompactionProgress < 1) {
+      fConversionProgress = 1;
+      fPostProcessProgress = 1;
+      fCompactionProgress = -1;
+    }
     fLabel->setText(TRANS("Waiting for the worker thread to finish"), dontSendNotification);
   }
 }
@@ -165,6 +177,9 @@ void J2BConvertProgress::onProgressUpdate(J2BConvertProgress::Phase phase, doubl
   fFailed = !st.ok();
 
   if (phase == J2BConvertProgress::Phase::Done) {
+    fConversionProgress = 1;
+    fPostProcessProgress = 1;
+    fCompactionProgress = 1;
     if (fCommandWhenFinished != commands::toChooseBedrockOutput && fOutputDirectory.exists()) {
       TemporaryDirectory::QueueDeletingDirectory(fOutputDirectory);
     }
@@ -181,22 +196,39 @@ void J2BConvertProgress::onProgressUpdate(J2BConvertProgress::Phase phase, doubl
     fLabel->setText(TRANS("LevelDB compaction"), dontSendNotification);
     fConversionProgress = 1;
     fPostProcessProgress = 1;
-    fCompactionProgress = progress;
+    if (progress >= 1) {
+      fCompactionProgress = 1;
+    } else if (progress > 0) {
+      fCompactionProgress = progress;
+    }
     fTaskbarProgress->setState(TaskbarProgress::State::Normal);
     fTaskbarProgress->update(weightConversion + weightPostProcess + progress * weightCompaction);
   } else if (phase == J2BConvertProgress::Phase::PostProcess) {
     fConversionProgress = 1;
-    fPostProcessProgress = progress;
+    if (progress >= 1) {
+      fPostProcessProgress = 1;
+      fCompactionProgress = -1;
+      fLabel->setText(TRANS("LevelDB compaction"), dontSendNotification);
+    } else if (progress > 0) {
+      fPostProcessProgress = progress;
+      fCompactionProgress = 0;
+      fLabel->setText(TRANS("Post processing..."), dontSendNotification);
+    }
     fTaskbarProgress->setState(TaskbarProgress::State::Normal);
     fTaskbarProgress->update(weightConversion + progress * weightPostProcess);
   } else if (phase == J2BConvertProgress::Phase::Convert) {
-    if (fConversionProgress >= 0) {
+    if (progress >= 1) {
+      fConversionProgress = 1;
+      fPostProcessProgress = -1;
+      fLabel->setText(TRANS("Post processing..."), dontSendNotification);
+    } else if (progress > 0) {
       fConversionProgress = progress;
-      fCompactionProgress = 0;
-      fTaskbarProgress->setState(TaskbarProgress::State::Normal);
-      fTaskbarProgress->update(progress * weightConversion);
-      fConversionProgressBar->setTextToDisplay("Converted " + juce::String(numConvertedChunks) + " Chunks: ");
+      fPostProcessProgress = 0;
     }
+    fCompactionProgress = 0;
+    fTaskbarProgress->setState(TaskbarProgress::State::Normal);
+    fTaskbarProgress->update(progress * weightConversion);
+    fConversionProgressBar->setTextToDisplay("Converted " + juce::String(numConvertedChunks) + " Chunks: ");
   } else {
     fFailed = true;
   }

@@ -176,6 +176,7 @@ void X2JConvertProgress::onProgressUpdate(Phase phase, double progress, Status s
     fTaskbarProgress->setState(TaskbarProgress::State::Normal);
     fTaskbarProgress->update(weightUnzip + progress * weightConversion);
   } else if (phase == Phase::Done && !fCancelRequested) {
+    fConversionProgress = 1;
     fState = JavaConvertedState(fConfigState.fInputState.fWorldName, fOutputDirectory);
     if (fCommandWhenFinished != commands::toChooseJavaOutput && fOutputDirectory.exists()) {
       TemporaryDirectory::QueueDeletingDirectory(fOutputDirectory);

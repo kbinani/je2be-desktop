@@ -188,7 +188,27 @@ void X2BConvertProgress::onCancelButtonClicked() {
     fCancelButton->setEnabled(false);
     fCommandWhenFinished = commands::toXbox360ToBedrockConfig;
     fThread->signalThreadShouldExit();
-    fXbox360ToJavaConversionProgress = -1;
+    if (0 < fXbox360ToJavaConversionProgress && fXbox360ToJavaConversionProgress < 1) {
+      fXbox360ToJavaConversionProgress = -1;
+      fJavaToBedrockConversionProgress = 0;
+      fJavaToBedrockPostProcessProgress = 0;
+      fJavaToBedrockCompactionProgress = 0;
+    } else if (0 < fJavaToBedrockConversionProgress && fJavaToBedrockConversionProgress < 1) {
+      fXbox360ToJavaConversionProgress = 1;
+      fJavaToBedrockConversionProgress = -1;
+      fJavaToBedrockPostProcessProgress = 0;
+      fJavaToBedrockCompactionProgress = 0;
+    } else if (0 < fJavaToBedrockPostProcessProgress && fJavaToBedrockPostProcessProgress < 1) {
+      fXbox360ToJavaConversionProgress = 1;
+      fJavaToBedrockConversionProgress = 1;
+      fJavaToBedrockPostProcessProgress = -1;
+      fJavaToBedrockCompactionProgress = 0;
+    } else if (0 < fJavaToBedrockCompactionProgress && fJavaToBedrockCompactionProgress < 1) {
+      fXbox360ToJavaConversionProgress = 1;
+      fJavaToBedrockConversionProgress = 1;
+      fJavaToBedrockPostProcessProgress = 1;
+      fJavaToBedrockCompactionProgress = -1;
+    }
     fXbox360ToJavaConversionProgressBar->setVisible(true);
     fXbox360ToJavaConversionProgressBar->setTextToDisplay({});
     fJavaToBedrockConversionProgressBar->setVisible(false);
@@ -207,6 +227,10 @@ void X2BConvertProgress::onProgressUpdate(Phase phase, double progress, uint64_t
   double const weightJ2BCompaction = 1 - weightX2J - weightJ2BConvert - weightJ2BPostProcess;
 
   if (phase == Phase::Done && !fCancelRequested) {
+    fXbox360ToJavaConversionProgress = 1;
+    fJavaToBedrockConversionProgress = 1;
+    fJavaToBedrockPostProcessProgress = 1;
+    fJavaToBedrockCompactionProgress = 1;
     if (fCommandWhenFinished != commands::toChooseBedrockOutput && fOutputDirectory.exists()) {
       TemporaryDirectory::QueueDeletingDirectory(fOutputDirectory);
     }

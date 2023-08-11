@@ -218,7 +218,19 @@ void B2JConvertProgress::onCancelButtonClicked() {
     fCancelButton->setEnabled(false);
     fCommandWhenFinished = commands::toB2JConfig;
     fThread->signalThreadShouldExit();
-    fConversionProgress = -1;
+    if (0 < fUnzipOrCopyProgress && fUnzipOrCopyProgress < 1) {
+      fUnzipOrCopyProgress = -1;
+      fConversionProgress = 0;
+      fPostProcessProgress = 0;
+    } else if (0 < fConversionProgress && fConversionProgress < 1) {
+      fUnzipOrCopyProgress = 1;
+      fConversionProgress = -1;
+      fPostProcessProgress = 0;
+    } else if (0 < fPostProcessProgress && fPostProcessProgress < 1) {
+      fUnzipOrCopyProgress = 1;
+      fConversionProgress = 1;
+      fPostProcessProgress = -1;
+    }
     fCancelRequested = true;
     fLabel->setText(TRANS("Waiting for the worker thread to finish"), dontSendNotification);
   }
@@ -231,34 +243,47 @@ void B2JConvertProgress::onProgressUpdate(Phase phase, double progress, uint64_t
   fFailed = !st.ok();
 
   if (phase == Phase::Unzip && !fCancelRequested) {
-    fUnzipOrCopyProgress = progress;
     if (progress >= 1) {
-      fLabel->setText(TRANS("Converting..."), dontSendNotification);
+      fUnzipOrCopyProgress = 1;
       fConversionProgress = -1;
-    } else {
+      fLabel->setText(TRANS("Converting..."), dontSendNotification);
+    } else if (progress > 0) {
+      fUnzipOrCopyProgress = progress;
       fConversionProgress = 0;
     }
+    fPostProcessProgress = 0;
     fTaskbarProgress->setState(TaskbarProgress::State::Normal);
     fTaskbarProgress->update(progress * weightUnzip);
   } else if (phase == Phase::Conversion && !fCancelRequested) {
     fLabel->setText(TRANS("Converting..."), dontSendNotification);
-    if (progress > 0) {
-      fConversionProgress = progress;
-    }
     fUnzipOrCopyProgress = 1;
+    if (progress >= 1) {
+      fConversionProgress = progress;
+      fPostProcessProgress = -1;
+      fLabel->setText(TRANS("Post processing..."), dontSendNotification);
+    } else if (progress > 0) {
+      fConversionProgress = progress;
+      fPostProcessProgress = 0;
+    }
     fTaskbarProgress->setState(TaskbarProgress::State::Normal);
     fTaskbarProgress->update(weightUnzip + progress * weightConversion);
     fConversionProgressBar->setTextToDisplay("Converted " + juce::String(numConvertedChunks) + " Chunks: ");
   } else if (phase == Phase::PostProcess && !fCancelRequested) {
     fLabel->setText(TRANS("Post processing..."), dontSendNotification);
-    if (progress > 0) {
+    fUnzipOrCopyProgress = 1;
+    fConversionProgress = 1;
+    if (progress >= 1) {
+      fPostProcessProgress = 1;
+    } else if (progress > 0) {
       fPostProcessProgress = progress;
     }
-    fConversionProgress = 1;
     fTaskbarProgress->setState(TaskbarProgress::State::Normal);
     fTaskbarProgress->update(weightUnzip + weightConversion + progress * weightPostProcess);
     fPostProcessProgressBar->setTextToDisplay("Post processed " + juce::String(numConvertedChunks) + " Chunks: ");
   } else if (phase == Phase::Done) {
+    fUnzipOrCopyProgress = 1;
+    fConversionProgress = 1;
+    fPostProcessProgress = 1;
     fState = JavaConvertedState(fConfigState.fInputState.fWorldName, fOutputDirectory);
     if (fCommandWhenFinished != commands::toChooseJavaOutput && fOutputDirectory.exists()) {
       TemporaryDirectory::QueueDeletingDirectory(fOutputDirectory);
