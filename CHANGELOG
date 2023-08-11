@@ -1,216 +1,216 @@
 Version 4.22.0 (TBD)
-- Improved conversion accuracy of various properties of entities.
-- Improved world loading speed for Java versions 1.12 and earlier. [j2b]
-- Fixed an issue that could cause biomes to be converted as plains in the nether. [j2b, x2b]
-- Fixed an issue that could cause Xbox 360 worlds to fail to load. [x2j, x2b]
+・Improved conversion accuracy of various properties of entities.
+・Improved world loading speed for Java versions 1.12 and earlier. [j2b]
+・Fixed an issue that could cause biomes to be converted as plains in the nether. [j2b, x2b]
+・Fixed an issue that could cause Xbox 360 worlds to fail to load. [x2j, x2b]
 
 Version 4.21.2 (11 Jul 2023)
-- Fixed a possible app crash when converting block entities. [j2b]
+・Fixed a possible app crash when converting block entities. [j2b]
 
 Version 4.21.1 (7 Jul 2023)
-- Fixed game crash due to conversion errors of suspicious_sand, suspicious_gravel. [j2b]
-- Fixed an issue where converted piglin brute behaved differently than it should. [j2b]
+・Fixed game crash due to conversion errors of suspicious_sand, suspicious_gravel. [j2b]
+・Fixed an issue where converted piglin brute behaved differently than it should. [j2b]
 
 Version 4.21.0 (5 Jul 2023)
-- Fixed an issue where some loot table conversions were incorrect. [j2b]
-- Fixed an issue where converted piglins behaved differently than the original. [j2b]
+・Fixed an issue where some loot table conversions were incorrect. [j2b]
+・Fixed an issue where converted piglins behaved differently than the original. [j2b]
 
 Version 4.20.1 (24 Jun 2023)
-- Fixed an issue where potted_torchflower and potted_cherry_sapling were not converting properly. [j2b]
+・Fixed an issue where potted_torchflower and potted_cherry_sapling were not converting properly. [j2b]
 
 Version 4.20.0 (10 Jun 2023)
-- Added support for Minecraft version 1.20.
+・Added support for Minecraft version 1.20.
 
 Version 4.19.1 (22 Mar 2023)
-- Fixed a problem with an error message about svml_dispmd.dll that prevented it from starting.
+・Fixed a problem with an error message about svml_dispmd.dll that prevented it from starting.
 
 Version 4.19.0 (21 Mar 2023)
-- Supported Java Edition 1.19.4 and Bedrock Edition 1.19.70. [j2b, b2j]
-- The conversion accuracy of data in the legacy Java Edition has been improved. [j2b]
-- Changed behavior to abort export if the resulting mcworld file exceeds 4GB. [j2b]
-- Fixed an issue where items "nether brick" and "nether bricks block" were being converted inversely each other. [j2b, x2b]
+・Supported Java Edition 1.19.4 and Bedrock Edition 1.19.70. [j2b, b2j]
+・The conversion accuracy of data in the legacy Java Edition has been improved. [j2b]
+・Changed behavior to abort export if the resulting mcworld file exceeds 4GB. [j2b]
+・Fixed an issue where items "nether brick" and "nether bricks block" were being converted inversely each other. [j2b, x2b]
 
 Version 4.18.0 (11 Feb 2023)
-- Improved the ability to convert data from older formats of the Xbox 360 edition. [x2j, x2b]
+・Improved the ability to convert data from older formats of the Xbox 360 edition. [x2j, x2b]
 
 Version 4.17.0 (29 Jan 2023)
-- Block light and Sky light are now recalculated. [b2j]
-- The conversion accuracy of muddy_mangrove_roots, bamboo_trapdoor, bamboo_stairs, and bamboo_mosaic_stairs has been improved. [j2b]
-- Fixed a problem in which the second and subsequent conversions could fail if conversions were performed consecutively. [j2b]
+・Block light and Sky light are now recalculated. [b2j]
+・The conversion accuracy of muddy_mangrove_roots, bamboo_trapdoor, bamboo_stairs, and bamboo_mosaic_stairs has been improved. [j2b]
+・Fixed a problem in which the second and subsequent conversions could fail if conversions were performed consecutively. [j2b]
 
 Version 4.16.0 (7 Jan 2023)
-- Conversion processing speed has been improved.
+・Conversion processing speed has been improved.
 
 Version 4.15.0 (29 Dec 2022)
-- Fixed an issue where player equipments were not being converted. [b2j]
+・Fixed an issue where player equipments were not being converted. [b2j]
 
 Version 4.14.0 (26 Dec 2022)
-- Fixed a problem where flowering azalea leaves blocks unexpectedly decay. [b2j]
-- Conversion processing speed has been improved.
+・Fixed a problem where flowering azalea leaves blocks unexpectedly decay. [b2j]
+・Conversion processing speed has been improved.
 
 Version 4.13.0 (15 Dec 2022)
-- Fixed an issue where y < 0 in chunks older than Minecraft 1.18 would be converted as void. [b2j]
-- Fixed an issue that the natural spawn of guardians was unexpectedly disabled. [j2b, b2j]
+・Fixed an issue where y < 0 in chunks older than Minecraft 1.18 would be converted as void. [b2j]
+・Fixed an issue that the natural spawn of guardians was unexpectedly disabled. [j2b, b2j]
 
 Version 4.12.0 (12 Dec 2022)
-- Added support for Minecraft version 1.19.3.
-- Added support for 1.20 experimental features. [j2b, b2j]
-- Fixed a problem in which the account information of the java version was not being read properly. [b2j]
-- Fixed problem with end biome not converting correctly. [b2j]
-- Fixed an issue where the redstone torch was not converting correctly. [b2j]
-- Fixed an issue where bees in beehives and bee nest were not converting. [b2j]
+・Added support for Minecraft version 1.19.3.
+・Added support for 1.20 experimental features. [j2b, b2j]
+・Fixed a problem in which the account information of the java version was not being read properly. [b2j]
+・Fixed problem with end biome not converting correctly. [b2j]
+・Fixed an issue where the redstone torch was not converting correctly. [b2j]
+・Fixed an issue where bees in beehives and bee nest were not converting. [b2j]
 
 Version 4.11.0 (14 Nov 2022)
-- Improved conversion accuracy of loot tables. [j2b, b2j, x2b]
+・Improved conversion accuracy of loot tables. [j2b, b2j, x2b]
 
 Version 4.10.0 (9 Nov 2022)
-- Fixed a possible hang-up when converting command block. [j2b, b2j, x2j, x2b]
+・Fixed a possible hang-up when converting command block. [j2b, b2j, x2j, x2b]
 
 Version 4.9.1 (19 Oct 2022)
-- Fixed a possible crash when converting MOBs. [j2b, x2b]
+・Fixed a possible crash when converting MOBs. [j2b, x2b]
 
 Version 4.9.0 (22 Aug 2022)
-- Fixed an issue where player-placed leaves could decay over time as if natural leaves. [j2b, x2b]
-- The distance property of leaves block is now converted correctly. [b2j]
-- Fixed an issue that caused NBT data for sign items to disappear. [j2b, b2j]
+・Fixed an issue where player-placed leaves could decay over time as if natural leaves. [j2b, x2b]
+・The distance property of leaves block is now converted correctly. [b2j]
+・Fixed an issue that caused NBT data for sign items to disappear. [j2b, b2j]
 
 Version 4.8.0 (18 Aug 2022)
-- Fixed an issue where player-placed leaves could decay over time as if natural leaves. [j2b, x2b]
+・Fixed an issue where player-placed leaves could decay over time as if natural leaves. [j2b, x2b]
 
 Version 4.7.0 (17 Aug 2022)
-- Horses' jump strength and movement speed property, and horse armor are now converted.
-- Fixed the problem that when two or more leads were connected to one place, the other leads were disconnected except for one lead after conversion. [b2j]
-- Improved the conversion accuracy of poi files. [b2j, x2j]
+・Horses' jump strength and movement speed property, and horse armor are now converted.
+・Fixed the problem that when two or more leads were connected to one place, the other leads were disconnected except for one lead after conversion. [b2j]
+・Improved the conversion accuracy of poi files. [b2j, x2j]
 
 Version 4.6.0 (28 Jun 2022)
-- Fixed an issue where the player's save position was not converted correctly. [x2j, x2b]
+・Fixed an issue where the player's save position was not converted correctly. [x2j, x2b]
 
 Version 4.5.0 (15 Jun 2022)
-- Improved the accuracy of player game mode conversion. [b2j, x2b]
-- Fixed a case where the size of files output to the poi directory was too large. [b2j, x2j]
+・Improved the accuracy of player game mode conversion. [b2j, x2b]
+・Fixed a case where the size of files output to the poi directory was too large. [b2j, x2j]
 
 Version 4.4.0 (13 Jun 2022)
-- Improved display of more detailed error messages when conversion fails.
+・Improved display of more detailed error messages when conversion fails.
 
 Version 4.3.1 (9 Jun 2022)
-- Fixed a problem with incorrect files output to the poi directory. [x2j]
+・Fixed a problem with incorrect files output to the poi directory. [x2j]
 
 Version 4.3.0 (9 Jun 2022)
-- Added support for Minecraft version 1.19. [j2b, b2j]
-- Improved conversion accuracy for pistons in operation. [j2b, b2j]
-- Improved conversion accuracy of Wither's HP values. [j2b, b2j]
-- Player now converted as an operator when converting cheat-enabled world. [j2b]
-- Fixed an issue where existing nether portals could not be recognized. [b2j]
+・Added support for Minecraft version 1.19. [j2b, b2j]
+・Improved conversion accuracy for pistons in operation. [j2b, b2j]
+・Improved conversion accuracy of Wither's HP values. [j2b, b2j]
+・Player now converted as an operator when converting cheat-enabled world. [j2b]
+・Fixed an issue where existing nether portals could not be recognized. [b2j]
 
 Version 4.2.0 (24 May 2022)
-- Fixed a problem that could cause entities to disappear when converting. [b2j]
-- Improved conversion accuracy of glow lichen. [j2b, b2j]
+・Fixed a problem that could cause entities to disappear when converting. [b2j]
+・Improved conversion accuracy of glow lichen. [j2b, b2j]
 
 Version 4.1.0 (22 Apr 2022)
-- Fixed a problem that caused certain blocks to disappear when converting Bedrock Edition 1.18.30 maps. [b2j]
+・Fixed a problem that caused certain blocks to disappear when converting Bedrock Edition 1.18.30 maps. [b2j]
 
 Version 4.0.0 (29 Mar 2022)
-- Added the ability to convert Xbox360 maps.
-- The parrots on the player's shoulders are now converted correctly. [j2b, b2j]
-- Fixed an issue in which the upper and lower halves of the contents of a large chest were sometimes swapped. [j2b, b2j]
-- Fixed a problem in which the player's game mode was not converted correctly. [b2j]
-- Fixed an issue where the old mushroom_field_shore biome was not converted correctly. [j2b]
-- Improved convert accuracy of blocks prior to Java version 1.12. [j2b]
+・Added the ability to convert Xbox360 maps.
+・The parrots on the player's shoulders are now converted correctly. [j2b, b2j]
+・Fixed an issue in which the upper and lower halves of the contents of a large chest were sometimes swapped. [j2b, b2j]
+・Fixed a problem in which the player's game mode was not converted correctly. [b2j]
+・Fixed an issue where the old mushroom_field_shore biome was not converted correctly. [j2b]
+・Improved convert accuracy of blocks prior to Java version 1.12. [j2b]
 
 Version 3.3.0 (1 Mar 2022)
-- The target selector part of the command stored in command blocks is now converted. [j2b, b2j]
-- Superflat world configurations will be exported correctly. [b2j]
-- Fixed an issue where the stony_peaks biome was not converted correctly. [b2j]
+・The target selector part of the command stored in command blocks is now converted. [j2b, b2j]
+・Superflat world configurations will be exported correctly. [b2j]
+・Fixed an issue where the stony_peaks biome was not converted correctly. [b2j]
 
 Version 3.2.0 (26 Feb 2022)
-- Added the ability to read account information from Minecraft Launcher and set it in level.dat. [b2j]
-- The time setting for wandering trader to despawn is now correctly converted. [j2b, b2j]
-- NBT tags of items are now converted. [j2b, b2j]
-- Fixed an issue where the vehicle disappears when converting data with the player in the vehicle such as a boat. [j2b, b2j]
-- Fixed possible crash while converting chests. [j2b]
+・Added the ability to read account information from Minecraft Launcher and set it in level.dat. [b2j]
+・The time setting for wandering trader to despawn is now correctly converted. [j2b, b2j]
+・NBT tags of items are now converted. [j2b, b2j]
+・Fixed an issue where the vehicle disappears when converting data with the player in the vehicle such as a boat. [j2b, b2j]
+・Fixed possible crash while converting chests. [j2b]
 
 Version 3.1.0 (21 Feb 2022)
-- Improved accuracy of metadata about ocean monument. [j2b, b2j]
-- Fixed possible crash while reading empty (means air only) chunks. [b2j]
-- Fixed an issue where the owner ID of animal entities were set to invalid values. [b2j]
+・Improved accuracy of metadata about ocean monument. [j2b, b2j]
+・Fixed possible crash while reading empty (means air only) chunks. [b2j]
+・Fixed an issue where the owner ID of animal entities were set to invalid values. [b2j]
 
 Version 3.0.0 (19 Feb 2022)
-- Added support converting Bedrock to Java.
-- Improved conversion accuracy of entities when Java to Bedrock conversion.
+・Added support converting Bedrock to Java.
+・Improved conversion accuracy of entities when Java to Bedrock conversion.
 
 Version 2.10.2 (15 Jan 2022)
-- Fixed possible crash while reading chunk.
+・Fixed possible crash while reading chunk.
 
 Version 2.10.1 (14 Jan 2022)
-- Fixed possible crash while reading chunk.
-- Improved conversion accuracy of written book, tall seagrass, and kelp.
+・Fixed possible crash while reading chunk.
+・Improved conversion accuracy of written book, tall seagrass, and kelp.
 
 Version 2.10.0 (5 Jan 2022)
-- Respawn location is now converted as expected, including when respawn anchor was used.
-- Superflat world configurations will be exported correctly to BE.
-- Fixed the problem that pre-1.13 chunks were not converted correctly.
-- session.lock file will be locked before starting conversion, to prevent trying converting game data is during in use.
+・Respawn location is now converted as expected, including when respawn anchor was used.
+・Superflat world configurations will be exported correctly to BE.
+・Fixed the problem that pre-1.13 chunks were not converted correctly.
+・session.lock file will be locked before starting conversion, to prevent trying converting game data is during in use.
 
 Version 2.9.0 (23 Dec 2021)
-- mcfunction files stored in the datapacks directory are now converted as behavior packs
+・mcfunction files stored in the datapacks directory are now converted as behavior packs
 
 Version 2.8.0 (19 Dec 2021)
-- Enabled chunk migration below Y = 0 for legacy chunks generated with Minecraft 1.17 or lower
-- Improved conversion accuracy (mob spawner and end gateway)
+・Enabled chunk migration below Y = 0 for legacy chunks generated with Minecraft 1.17 or lower
+・Improved conversion accuracy (mob spawner and end gateway)
 
 Version 2.7.2 (16 Dec 2021)
-- Fixed the problem of failing to convert old format map data.
+・Fixed the problem of failing to convert old format map data.
 
 Version 2.7.0 (05 Dec 2021), 2.7.1 (10 Dec 2021)
-- Added support for Minecraft version 1.18.
+・Added support for Minecraft version 1.18.
 
 Version 2.6.0 (11 Sep 2021), 2.6.1 (20 Sep 2021)
-- Faster conversion process.
-- Reduced the amount of memory used during the conversion process.
+・Faster conversion process.
+・Reduced the amount of memory used during the conversion process.
 
 Version 2.5.0 (04 Sep 2021)
-- Flowing water and lava are now converted correctly.
-- Fixed a problem where the conversion result was saved uncompressed.
+・Flowing water and lava are now converted correctly.
+・Fixed a problem where the conversion result was saved uncompressed.
 
 Version 2.4.0 (29 Aug 2021)
-- Villager's trade details can now be converted.
+・Villager's trade details can now be converted.
 
 Version 2.3.0 (21 Aug 2021)
-- Bucket of Axolotl is now converted correctly.
-- Memory usage during the conversion process has been reduced.
-- Fixed an issue where equipment worn by entities was not being converted correctly.
+・Bucket of Axolotl is now converted correctly.
+・Memory usage during the conversion process has been reduced.
+・Fixed an issue where equipment worn by entities was not being converted correctly.
 
 Version 2.2.0 (18 Aug 2021)
-- Blocks that are being pushed by the piston are now converted correctly.
-- Blocks that are falling are now converted correctly.
-- Improved conversion accuracy. (deepslate, candle cake, exposed cut copper stairs, dripleaf, azalea leaves, etc.)
+・Blocks that are being pushed by the piston are now converted correctly.
+・Blocks that are falling are now converted correctly.
+・Improved conversion accuracy. (deepslate, candle cake, exposed cut copper stairs, dripleaf, azalea leaves, etc.)
 
 Version 2.1.2 (20 Jul 2021)
-- Fixed an issue where the conversion process was inaccurate in some blocks: color of sign, chain, and cave vines.
+・Fixed an issue where the conversion process was inaccurate in some blocks: color of sign, chain, and cave vines.
 
 Version 2.1.1 (20 Jul 2021)
-- Fixed an issue where signs with glowing text were not converted correctly.
-- Fixed a case where the app would crash when converting block entities.
+・Fixed an issue where signs with glowing text were not converted correctly.
+・Fixed a case where the app would crash when converting block entities.
 
 Version 2.1.0 (15 Jul 2021)
-- Added support for Bedrock 1.17.10.
-- Improved the conversion accuracy. (Potted azalea, Candles, Light block, Powder snow cauldron, etc.)
+・Added support for Bedrock 1.17.10.
+・Improved the conversion accuracy. (Potted azalea, Candles, Light block, Powder snow cauldron, etc.)
 
 Version 2.0.0 (21 Jul 2021)
-- Data from Minecraft Java 1.17 can now be converted.
-- Fixed an issue where some entities were not being converted.
+・Data from Minecraft Java 1.17 can now be converted.
+・Fixed an issue where some entities were not being converted.
   - chicken jockey, drownd, experience orbs, and written book
 
 Version 1.3.0 (16 Dec 2020)
-- Data from Minecraft 1.12 or earlier can now be converted.
-- Improved the conversion accuracy. (Bees in beehive or bee nest, direction of purpur pillar, location of armor stand, etc.)
+・Data from Minecraft 1.12 or earlier can now be converted.
+・Improved the conversion accuracy. (Bees in beehive or bee nest, direction of purpur pillar, location of armor stand, etc.)
 
 Version 1.2.0 (23 Nov 2020)
-- Improve the accuracy / speed of the conversion
+・Improve the accuracy / speed of the conversion
 
 Version 1.1.0 (21 Nov 2020)
-- Support BE 1.16.100
-- Show the chunks that caused the conversion to fail
+・Support BE 1.16.100
+・Show the chunks that caused the conversion to fail
 
 Version 1.0.0 (17 Nov 2020)
-- First release
+・First release
