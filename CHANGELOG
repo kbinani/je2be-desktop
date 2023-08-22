@@ -1,4 +1,7 @@
-Version 4.22.0 (TBD)
+Version 4.23.0
+・It is now possible to convert old data of the Bedrock version less than 1.4. [b2j]
+
+Version 4.22.0
 ・Improved conversion accuracy of various properties of entities.
 ・Improved world loading speed for Java versions 1.12 and earlier. [j2b]
 ・Fixed an issue that could cause biomes to be converted as plains in the nether. [j2b, x2b]
