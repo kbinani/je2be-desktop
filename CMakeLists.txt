@@ -133,7 +133,7 @@ target_compile_definitions(je2be-desktop
     NOMINMAX
     WIN32_LEAN_AND_MEAN)
 
-juce_add_binary_data(app-data
+juce_add_binary_data(je2be-desktop-data
   SOURCES
     resource/icon-large.png
     resource/japanese.lang
@@ -146,7 +146,7 @@ target_link_libraries(je2be-desktop
   PRIVATE
     je2be
     mimalloc
-    app-data
+    je2be-desktop-data
     juce::juce_gui_extra
   PUBLIC
     juce::juce_recommended_config_flags
