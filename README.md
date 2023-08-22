@@ -18,7 +18,7 @@ git clone https://github.com/kbinani/je2be-desktop.git
 cd je2be-desktop
 git submodule update --init --recursive
 cd Builds
-cmake .. -DJE2BE_DESKTOP_INTEL_COMPILER=OFF
+cmake ..
 ```
 
 then build with cmake to get the exe `Builds/je2be-desktop_artifacts/Release/je2be.exe` by

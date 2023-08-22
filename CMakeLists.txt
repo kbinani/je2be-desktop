@@ -5,8 +5,6 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-option(JE2BE_DESKTOP_INTEL_COMPILER "Build with Intel Compiler" OFF)
-
 set(BUILD_SHARED_LIBS OFF)
 add_definitions(
   /DUNICODE
@@ -28,9 +26,7 @@ add_compile_options(
 add_link_options(
   /DEBUG
   $<IF:$<CONFIG:Debug>,,/LTCG> # Enable: Link-time code generation
-  $<IF:$<BOOL:JE2BE_DESKTOP_INTEL_COMPILER>,/LIBPATH:$(IPP1ALibDir),>
-  $<IF:$<BOOL:JE2BE_DESKTOP_INTEL_COMPILER>,/LIBPATH:$(IPP1ACPPLibDir),>
-  $<IF:$<BOOL:JE2BE_DESKTOP_INTEL_COMPILER>,/LIBPATH:$(ICXLibDir),>)
+)
 
 include(cmake/CPM.cmake)
 
@@ -44,7 +40,6 @@ CPMAddPackage(
           "MI_BUILD_STATIC OFF"
           "MI_WIN_REDIRECT ON")
 
-set(JE2BE_CORE_USE_INTEL_COMPILER ${JE2BE_DESKTOP_INTEL_COMPILER})
 add_subdirectory(ext/je2be-core)
 
 add_subdirectory(ext/JUCE)
@@ -163,27 +158,6 @@ target_include_directories(je2be-desktop PRIVATE src)
 include_external_msproject(Package Package/Package.wapproj
   TYPE C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5
   GUID 713653CB-7989-4C22-8171-0F1951271B8D)
-
-if (JE2BE_DESKTOP_INTEL_COMPILER)
-  foreach(target IN ITEMS je2be leveldb libdeflate_static zlibstatic mimalloc)
-    set_target_properties(${target} PROPERTIES VS_PLATFORM_TOOLSET "Intel C++ Compiler 2023")
-    target_compile_options(${target} PRIVATE /arch:SSE3)
-  endforeach()
-  add_custom_command(TARGET je2be-desktop POST_BUILD
-    COMMAND
-      "$<$<CONFIG:Release>:${CMAKE_COMMAND}>"
-      "$<$<CONFIG:Release>:-E>"
-      "$<$<CONFIG:Release>:copy>"
-      "$<$<CONFIG:Release>:\"\$(ONEAPI_ROOT)/compiler/latest/windows/redist/intel64_win/compiler/svml_dispmd.dll\">"
-      "$<$<CONFIG:Release>:${CMAKE_BINARY_DIR}/Package/je2be-desktop/>"
-    COMMAND
-      "$<$<CONFIG:Release>:${CMAKE_COMMAND}>"
-      "$<$<CONFIG:Release>:-E>"
-      "$<$<CONFIG:Release>:copy>"
-      "$<$<CONFIG:Release>:\"\$(ONEAPI_ROOT)/compiler/latest/windows/redist/intel64_win/compiler/libmmd.dll\">"
-      "$<$<CONFIG:Release>:${CMAKE_BINARY_DIR}/Package/je2be-desktop/>"
-    COMMENT "Copy oneAPI redistributable dlls to package output directory")
-endif()
 
 configure_file(Builds/Package/Package.appxmanifest.in Package/Package.appxmanifest)
 
