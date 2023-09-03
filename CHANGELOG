@@ -1,3 +1,6 @@
+Version 4.24.0
+・Improved the conversion accuracy of blocks and block entities when converting to the Bedrock version. [j2b, x2b]
+
 Version 4.23.0
 ・It is now possible to convert old data of the Bedrock version less than 1.4. [b2j]
 
