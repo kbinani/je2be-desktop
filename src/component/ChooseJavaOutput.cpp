@@ -95,19 +95,14 @@ void ChooseJavaOutput::onCustomDestinationDirectorySelected(FileChooser const &c
   }
   sLastCustomDirectory = dest;
   RangedDirectoryIterator it(dest, false);
-  bool containsSomething = false;
-  for (auto const &e : it) {
-    containsSomething = true;
-    break;
-  }
-  if (containsSomething) {
+  if (it == juce::end(it)) {
+    fState.fCopyDestination = dest;
+    JUCEApplication::getInstance()->invoke(commands::toCopyJavaArtifact, true);
+  } else {
     fSaveToCustomDirectory->setToggleState(false, dontSendNotification);
     fState.fCopyDestination = std::nullopt;
     AlertWindow::showMessageBoxAsync(AlertWindow::AlertIconType::WarningIcon, TRANS("Error"),
                                      TRANS("There are files and folders in the selected folder.\rPlease select an empty folder"));
-  } else {
-    fState.fCopyDestination = dest;
-    JUCEApplication::getInstance()->invoke(commands::toCopyJavaArtifact, true);
   }
 }
 

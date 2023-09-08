@@ -52,6 +52,7 @@ public:
     TemporaryDirectory::CleanupAsync();
 
     fMainWindow.reset(new component::MainWindow(getApplicationName()));
+    fMainWindow->setVisible(true);
   }
 
   void shutdown() override {
