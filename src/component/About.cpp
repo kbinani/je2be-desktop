@@ -43,6 +43,11 @@ About::About() {
       "",
       "",
       "",
+      "Reinforced by PVS-Studio - static analyzer for C, C++, C#, and Java code.",
+      "https://pvs-studio.com/en/pvs-studio",
+      "",
+      "",
+      "",
       "Acknowledgement",
       "",
 
