@@ -1,3 +1,8 @@
+Version 4.25.0
+・Added support for Minecraft version 1.20.2.
+・Improved the accuracy of item conversion when converting to Bedrock. [j2b, x2b]
+・Fixed an issue where some map items could not be converted and would disappear when converting from Bedrock to Java. [b2j]
+
 Version 4.24.0
 ・Improved the conversion accuracy of blocks and block entities when converting to the Bedrock version. [j2b, x2b]
 
