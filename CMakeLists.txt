@@ -16,7 +16,7 @@ add_definitions(
 add_compile_options(
   /Ot # Favor Fast Code
   /Oi # Generate Intrinsic Functions
-  /Zi # Debug Information Format: PDB file that contains all the symbolic debugging information
+  $<IF:$<CONFIG:Debug>,/ZI,/Zi>
   $<IF:$<CONFIG:Debug>,,/GL> # Enable: Whole program optimization
   $<IF:$<CONFIG:Debug>,/MDd,/MD>
   /MP
