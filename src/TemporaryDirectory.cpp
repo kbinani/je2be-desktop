@@ -1,17 +1,12 @@
 #include "TemporaryDirectory.h"
-#include <windows.h>
 
 namespace je2be::desktop {
 
 void TemporaryDirectory::QueueDeletingDirectory(juce::File directory) {
   juce::Thread::launch([directory]() {
-    OutputDebugStringA("Deleting \"");
-    OutputDebugStringW(directory.getFullPathName().toWideCharPointer());
-    OutputDebugStringA("\" ...\n");
+    juce::Logger::outputDebugString(juce::String("Deleting \"") + directory.getFullPathName() + juce::String("\" ...\n"));
     directory.deleteRecursively();
-    OutputDebugStringA("Done: \"");
-    OutputDebugStringW(directory.getFullPathName().toWideCharPointer());
-    OutputDebugStringA("\" deleted\n");
+    juce::Logger::outputDebugString(juce::String("Done: \"") + directory.getFullPathName() + juce::String("\" deleted\n"));
   });
 }
 

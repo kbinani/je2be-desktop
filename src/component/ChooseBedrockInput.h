@@ -1,10 +1,11 @@
 #pragma once
 
+#include "AsyncUpdaterWith.h"
 #include "ComponentState.h"
 #include "GameDirectory.h"
 
 namespace je2be::desktop {
-class GameDirectoryScanThreadBedrock;
+class GameDirectoryScanWorkerBedrock;
 }
 
 namespace je2be::desktop::component {
@@ -15,7 +16,8 @@ class SearchLabel;
 class ChooseBedrockInput : public juce::Component,
                            public ChooseInputStateProvider,
                            public juce::ListBoxModel,
-                           public juce::AsyncUpdater {
+                           public AsyncUpdaterWith<std ::vector<GameDirectory>>,
+                           public std ::enable_shared_from_this<ChooseBedrockInput> {
 public:
   explicit ChooseBedrockInput(std::optional<ChooseInputState> state);
   ~ChooseBedrockInput() override;
@@ -34,8 +36,9 @@ public:
   void selectedRowsChanged(int lastRowSelected) override;
   void listBoxItemDoubleClicked(int row, juce::MouseEvent const &) override;
   void listBoxItemClicked(int row, juce::MouseEvent const &) override;
+  void parentHierarchyChanged() override;
 
-  void handleAsyncUpdate() override;
+  void handleAsyncUpdateWith(std::vector<GameDirectory>) override;
 
 private:
   void onNextButtonClicked();
@@ -61,7 +64,8 @@ private:
   std::unique_ptr<juce::Label> fOrMessage2;
   std::unique_ptr<TextButton> fBackButton;
   juce::File fBedrockGameDirectory;
-  std::unique_ptr<GameDirectoryScanThreadBedrock> fThread;
+  std::weak_ptr<GameDirectoryScanWorkerBedrock> fWorker;
+  bool fWorkerStarted = false;
   std::unique_ptr<juce::Label> fPlaceholder;
   std::unique_ptr<SearchLabel> fSearch;
   std::unique_ptr<juce::Label> fSearchPlaceholder;

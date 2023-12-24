@@ -2,7 +2,7 @@
 #include "CommandID.h"
 #include "Constants.h"
 #include "File.h"
-#include "GameDirectoryScanThreadBedrock.h"
+#include "GameDirectoryScanWorkerBedrock.h"
 #include "component/MainWindow.h"
 #include "component/SearchLabel.h"
 #include "component/TextButton.h"
@@ -139,17 +139,25 @@ ChooseBedrockInput::ChooseBedrockInput(std::optional<ChooseInputState> state) {
     fSearchPlaceholder->setInterceptsMouseClicks(false, false);
     addAndMakeVisible(*fSearchPlaceholder);
   }
-
-  {
-    fThread.reset(new GameDirectoryScanThreadBedrock(this));
-    fThread->startThread();
-  }
 }
 
 ChooseBedrockInput::~ChooseBedrockInput() {
   fListComponent.reset();
-  fThread->signalThreadShouldExit();
-  fThread->waitForThreadToExit(-1);
+  if (auto worker = fWorker.lock(); worker) {
+    worker->signalThreadShouldExit();
+  }
+}
+
+void ChooseBedrockInput::parentHierarchyChanged() {
+  if (fWorkerStarted) {
+    return;
+  }
+  fWorkerStarted = true;
+  auto worker = std::make_shared<GameDirectoryScanWorkerBedrock>(weak_from_this());
+  fWorker = worker;
+  juce::Thread::launch([worker]() {
+    worker->run();
+  });
 }
 
 void ChooseBedrockInput::paint(juce::Graphics &g) {}
@@ -256,8 +264,8 @@ void ChooseBedrockInput::paintListBoxItem(int rowNumber,
   gd.paint(g, width, height, rowIsSelected, *this, fSearch->getCurrentText());
 }
 
-void ChooseBedrockInput::handleAsyncUpdate() {
-  fGameDirectoriesAll.swap(fThread->fGameDirectories);
+void ChooseBedrockInput::handleAsyncUpdateWith(std::vector<GameDirectory> gameDirectories) {
+  fGameDirectoriesAll = gameDirectories;
   if (fGameDirectoriesAll.empty()) {
     fPlaceholder->setText(TRANS("Nothing found in the save folder"), dontSendNotification);
   } else {

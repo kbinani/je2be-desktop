@@ -1,23 +1,27 @@
 #include <je2be.hpp>
 
 #include "File.h"
-#include "GameDirectoryScanThreadBedrock.h"
+#include "GameDirectoryScanWorkerBedrock.h"
 
 using namespace juce;
 
 namespace je2be::desktop {
 
-GameDirectoryScanThreadBedrock::GameDirectoryScanThreadBedrock(AsyncUpdater *owner) : Thread("je2be::desktop::GameDirectoryScanThreadBedrock"), fOwner(owner) {}
+GameDirectoryScanWorkerBedrock::GameDirectoryScanWorkerBedrock(std::weak_ptr<AsyncUpdaterWith<std::vector<GameDirectory>>> owner) : fOwner(owner), fAbort(false) {}
 
-void GameDirectoryScanThreadBedrock::run() {
+void GameDirectoryScanWorkerBedrock::run() {
   try {
     unsafeRun();
   } catch (...) {
   }
-  fOwner->triggerAsyncUpdate();
+  if (!fAbort.load()) {
+    if (auto worker = fOwner.lock(); worker) {
+      worker->triggerAsyncUpdateWith(fGameDirectories);
+    }
+  }
 }
 
-void GameDirectoryScanThreadBedrock::unsafeRun() {
+void GameDirectoryScanWorkerBedrock::unsafeRun() {
   File dir = GameDirectory::BedrockSaveDirectory();
   auto directories = dir.findChildFiles(File::findDirectories, false);
   for (File const &directory : directories) {
@@ -91,6 +95,14 @@ void GameDirectoryScanThreadBedrock::unsafeRun() {
   std::stable_sort(fGameDirectories.begin(), fGameDirectories.end(), [](GameDirectory const &lhs, GameDirectory const &rhs) {
     return lhs.fLastUpdate > rhs.fLastUpdate;
   });
+}
+
+void GameDirectoryScanWorkerBedrock::signalThreadShouldExit() {
+  fAbort = true;
+}
+
+bool GameDirectoryScanWorkerBedrock::threadShouldExit() const {
+  return fAbort.load();
 }
 
 } // namespace je2be::desktop

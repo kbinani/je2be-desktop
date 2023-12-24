@@ -1,7 +1,7 @@
 #include <je2be.hpp>
 
 #include "File.h"
-#include "GameDirectoryScanThreadXbox360.h"
+#include "GameDirectoryScanWorkerXbox360.h"
 
 using namespace juce;
 
@@ -20,17 +20,21 @@ static bool StringContainsOnlyAlnum(juce::String const &s) {
   return true;
 }
 
-GameDirectoryScanThreadXbox360::GameDirectoryScanThreadXbox360(AsyncUpdater *owner) : Thread("je2be::desktop::GameDirectoryScanThreadXbox360"), fOwner(owner) {}
+GameDirectoryScanWorkerXbox360::GameDirectoryScanWorkerXbox360(std::weak_ptr<AsyncUpdaterWith<std::vector<GameDirectory>>> owner) : fOwner(owner), fAbort(false) {}
 
-void GameDirectoryScanThreadXbox360::run() {
+void GameDirectoryScanWorkerXbox360::run() {
   try {
     unsafeRun();
   } catch (...) {
   }
-  fOwner->triggerAsyncUpdate();
+  if (!fAbort.load()) {
+    if (auto owner = fOwner.lock(); owner) {
+      owner->triggerAsyncUpdateWith(fGameDirectories);
+    }
+  }
 }
 
-void GameDirectoryScanThreadXbox360::unsafeRun() {
+void GameDirectoryScanWorkerXbox360::unsafeRun() {
   Array<File> roots;
   File::findFileSystemRoots(roots);
   for (File root : roots) {
@@ -41,7 +45,7 @@ void GameDirectoryScanThreadXbox360::unsafeRun() {
   }
 }
 
-void GameDirectoryScanThreadXbox360::lookupRoot(File root, std::vector<GameDirectory> &buffer) {
+void GameDirectoryScanWorkerXbox360::lookupRoot(File root, std::vector<GameDirectory> &buffer) {
   auto content = root.getChildFile("Content");
   if (!content.isDirectory()) {
     return;
@@ -49,7 +53,7 @@ void GameDirectoryScanThreadXbox360::lookupRoot(File root, std::vector<GameDirec
   lookupContent(content, buffer);
 }
 
-void GameDirectoryScanThreadXbox360::lookupContent(File content, std::vector<GameDirectory> &buffer) {
+void GameDirectoryScanWorkerXbox360::lookupContent(File content, std::vector<GameDirectory> &buffer) {
   auto maybeUserProfileIds = content.findChildFiles(File::findDirectories, false, "*", File::FollowSymlinks::no);
   for (auto const &maybeUserProfileId : maybeUserProfileIds) {
     if (threadShouldExit()) {
@@ -66,7 +70,7 @@ void GameDirectoryScanThreadXbox360::lookupContent(File content, std::vector<Gam
   }
 }
 
-void GameDirectoryScanThreadXbox360::lookupContentChild(File child, std::vector<GameDirectory> &buffer) {
+void GameDirectoryScanWorkerXbox360::lookupContentChild(File child, std::vector<GameDirectory> &buffer) {
   auto maybeGameTitleIds = child.findChildFiles(File::findDirectories, false, "*", File::FollowSymlinks::no);
   static juce::String const sMaybeMinecraftGameTitleId("584111F7");
   for (auto const &maybeGameTitleId : maybeGameTitleIds) {
@@ -97,6 +101,9 @@ void GameDirectoryScanThreadXbox360::lookupContentChild(File child, std::vector<
         continue;
       }
       for (auto const &bin : bins) {
+        if (threadShouldExit()) {
+          break;
+        }
         GameDirectory gd;
         gd.fDirectory = child.getChildFile(bin.fFileName);
         std::u16string const &title = bin.fTitle;
@@ -106,6 +113,14 @@ void GameDirectoryScanThreadXbox360::lookupContentChild(File child, std::vector<
       }
     }
   }
+}
+
+void GameDirectoryScanWorkerXbox360::signalThreadShouldExit() {
+  fAbort = true;
+}
+
+bool GameDirectoryScanWorkerXbox360::threadShouldExit() const {
+  return fAbort.load();
 }
 
 } // namespace je2be::desktop

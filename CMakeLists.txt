@@ -55,17 +55,18 @@ set(je2be_desktop_files
   src/AccountScanThread.h
   src/Application.cpp
   src/AsyncHandler.h
+  src/AsyncUpdaterWith.h
   src/CommandID.h
   src/ComponentState.h
   src/Constants.h
   src/File.h
   src/GameDirectory.h
-  src/GameDirectoryScanThreadBedrock.cpp
-  src/GameDirectoryScanThreadBedrock.h
-  src/GameDirectoryScanThreadJava.cpp
-  src/GameDirectoryScanThreadJava.h
-  src/GameDirectoryScanThreadXbox360.cpp
-  src/GameDirectoryScanThreadXbox360.h
+  src/GameDirectoryScanWorkerBedrock.cpp
+  src/GameDirectoryScanWorkerBedrock.h
+  src/GameDirectoryScanWorkerJava.cpp
+  src/GameDirectoryScanWorkerJava.h
+  src/GameDirectoryScanWorkerXbox360.cpp
+  src/GameDirectoryScanWorkerXbox360.h
   src/LocalizationHelper.cpp
   src/LocalizationHelper.h
   src/LookAndFeel.cpp

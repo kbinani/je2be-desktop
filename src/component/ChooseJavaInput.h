@@ -1,10 +1,11 @@
 #pragma once
 
+#include "AsyncUpdaterWith.h"
 #include "ComponentState.h"
 #include "GameDirectory.h"
 
 namespace je2be::desktop {
-class GameDirectoryScanThreadJava;
+class GameDirectoryScanWorkerJava;
 }
 
 namespace je2be::desktop::component {
@@ -14,8 +15,9 @@ class SearchLabel;
 
 class ChooseJavaInput : public juce::Component,
                         public ChooseInputStateProvider,
-                        public juce::AsyncUpdater,
-                        public juce::ListBoxModel {
+                        public AsyncUpdaterWith<std ::vector<GameDirectory>>,
+                        public juce::ListBoxModel,
+                        public std::enable_shared_from_this<ChooseJavaInput> {
 public:
   explicit ChooseJavaInput(std::optional<ChooseInputState> state);
   ~ChooseJavaInput() override;
@@ -34,8 +36,9 @@ public:
   void selectedRowsChanged(int lastRowSelected) override;
   void listBoxItemDoubleClicked(int row, juce::MouseEvent const &) override;
   void listBoxItemClicked(int row, juce::MouseEvent const &) override;
+  void parentHierarchyChanged() override;
 
-  void handleAsyncUpdate() override;
+  void handleAsyncUpdateWith(std::vector<GameDirectory>) override;
 
 private:
   void onNextButtonClicked();
@@ -52,7 +55,8 @@ private:
   std::unique_ptr<TextButton> fNextButton;
   std::unique_ptr<TextButton> fChooseCustomButton;
   std::unique_ptr<juce::ListBox> fListComponent;
-  std::unique_ptr<GameDirectoryScanThreadJava> fThread;
+  std::weak_ptr<GameDirectoryScanWorkerJava> fWorker;
+  bool fWorkerStarted = false;
   std::optional<ChooseInputState> fState;
   std::unique_ptr<juce::Label> fMessage;
   std::unique_ptr<juce::Label> fOrMessage;

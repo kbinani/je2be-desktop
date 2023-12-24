@@ -1,23 +1,27 @@
 #include <je2be.hpp>
 
 #include "File.h"
-#include "GameDirectoryScanThreadJava.h"
+#include "GameDirectoryScanWorkerJava.h"
 
 using namespace juce;
 
 namespace je2be::desktop {
 
-GameDirectoryScanThreadJava::GameDirectoryScanThreadJava(AsyncUpdater *owner) : Thread("je2be::desktop::GameDirectoryScanThreadJava"), fOwner(owner) {}
+GameDirectoryScanWorkerJava::GameDirectoryScanWorkerJava(std::weak_ptr<AsyncUpdaterWith<std::vector<GameDirectory>>> owner) : fOwner(owner), fAbort(false) {}
 
-void GameDirectoryScanThreadJava::run() {
+void GameDirectoryScanWorkerJava::run() {
   try {
     unsafeRun();
   } catch (...) {
   }
-  fOwner->triggerAsyncUpdate();
+  if (!fAbort.load()) {
+    if (auto owner = fOwner.lock(); owner) {
+      owner->triggerAsyncUpdateWith(fGameDirectories);
+    }
+  }
 }
 
-void GameDirectoryScanThreadJava::unsafeRun() {
+void GameDirectoryScanWorkerJava::unsafeRun() {
   File dir = GameDirectory::JavaSaveDirectory();
   auto directories = dir.findChildFiles(File::findDirectories, false);
   for (File const &directory : directories) {
@@ -75,6 +79,14 @@ void GameDirectoryScanThreadJava::unsafeRun() {
   std::stable_sort(fGameDirectories.begin(), fGameDirectories.end(), [](GameDirectory const &lhs, GameDirectory const &rhs) {
     return lhs.fLastUpdate > rhs.fLastUpdate;
   });
+}
+
+void GameDirectoryScanWorkerJava::signalThreadShouldExit() {
+  fAbort = true;
+}
+
+bool GameDirectoryScanWorkerJava::threadShouldExit() const {
+  return fAbort.load();
 }
 
 } // namespace je2be::desktop

@@ -3,7 +3,7 @@
 #include "CommandID.h"
 #include "Constants.h"
 #include "File.h"
-#include "GameDirectoryScanThreadXbox360.h"
+#include "GameDirectoryScanWorkerXbox360.h"
 #include "component/ChooseXbox360Input.h"
 #include "component/MainWindow.h"
 #include "component/SearchLabel.h"
@@ -128,17 +128,25 @@ ChooseXbox360Input::ChooseXbox360Input(juce::CommandID destinationAfterChoose, s
     fSearchPlaceholder->setInterceptsMouseClicks(false, false);
     addAndMakeVisible(*fSearchPlaceholder);
   }
+}
 
-  {
-    fThread.reset(new GameDirectoryScanThreadXbox360(this));
-    fThread->startThread();
+void ChooseXbox360Input::parentHierarchyChanged() {
+  if (fWorkerStarted) {
+    return;
   }
+  fWorkerStarted = true;
+  auto worker = std::make_shared<GameDirectoryScanWorkerXbox360>(weak_from_this());
+  fWorker = worker;
+  juce::Thread::launch([worker]() {
+    worker->run();
+  });
 }
 
 ChooseXbox360Input::~ChooseXbox360Input() {
   fListComponent.reset();
-  fThread->signalThreadShouldExit();
-  fThread->waitForThreadToExit(-1);
+  if (auto worker = fWorker.lock(); worker) {
+    worker->signalThreadShouldExit();
+  }
 }
 
 void ChooseXbox360Input::paint(juce::Graphics &g) {}
@@ -228,8 +236,8 @@ void ChooseXbox360Input::paintListBoxItem(int rowNumber,
   gd.paint(g, width, height, rowIsSelected, *this, fSearch->getCurrentText());
 }
 
-void ChooseXbox360Input::handleAsyncUpdate() {
-  fGameDirectoriesAll.swap(fThread->fGameDirectories);
+void ChooseXbox360Input::handleAsyncUpdateWith(std::vector<GameDirectory> gameDirectories) {
+  fGameDirectoriesAll = gameDirectories;
   if (fGameDirectoriesAll.empty()) {
     fPlaceholder->setText(TRANS("Nothing found in the save folder"), dontSendNotification);
   } else {

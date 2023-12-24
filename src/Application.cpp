@@ -89,10 +89,10 @@ public:
   }
 
   bool perform(InvocationInfo const &info) override {
-    Component *current = fMainWindow->getContentComponent();
+    auto current = fMainWindowContent;
     switch (info.commandID) {
     case commands::toJ2BConfig: {
-      auto provider = dynamic_cast<ChooseInputStateProvider *>(current);
+      auto provider = dynamic_cast<ChooseInputStateProvider *>(current.get());
       if (!provider) {
         return false;
       }
@@ -103,32 +103,35 @@ public:
       if (state->fType != InputType::Java) {
         return false;
       }
-      auto config = new component::j2b::J2BConfig(*state);
-      fMainWindow->setContentOwned(config, true);
+      auto config = std::make_shared<component::j2b::J2BConfig>(*state);
+      fMainWindow->setContentNonOwned(config.get(), true);
+      fMainWindowContent = config;
       return true;
     }
     case commands::toChooseJavaInput: {
       std::optional<ChooseInputState> state;
-      auto provider = dynamic_cast<ChooseInputStateProvider *>(current);
+      auto provider = dynamic_cast<ChooseInputStateProvider *>(current.get());
       if (provider) {
         state = provider->getChooseInputState();
       }
-      auto chooseInput = new component::ChooseJavaInput(state);
-      fMainWindow->setContentOwned(chooseInput, true);
+      auto chooseInput = std::make_shared<component::ChooseJavaInput>(state);
+      fMainWindow->setContentNonOwned(chooseInput.get(), true);
+      fMainWindowContent = chooseInput;
       fMainWindow->setName(getApplicationName() + " : " + TRANS("Java to Bedrock"));
       return true;
     }
     case commands::toJ2BConvert: {
-      auto provider = dynamic_cast<J2BConfigStateProvider *>(current);
+      auto provider = dynamic_cast<J2BConfigStateProvider *>(current.get());
       if (!provider) {
         return false;
       }
-      auto convert = new component::j2b::J2BConvertProgress(provider->getConfigState());
-      fMainWindow->setContentOwned(convert, true);
+      auto convert = std::make_shared<component::j2b::J2BConvertProgress>(provider->getConfigState());
+      fMainWindow->setContentNonOwned(convert.get(), true);
+      fMainWindowContent = convert;
       return true;
     }
     case commands::toChooseBedrockOutput: {
-      auto provider = dynamic_cast<BedrockConvertedStateProvider *>(current);
+      auto provider = dynamic_cast<BedrockConvertedStateProvider *>(current.get());
       if (!provider) {
         return false;
       }
@@ -136,38 +139,42 @@ public:
       if (!state) {
         return false;
       }
-      auto chooseOutput = new component::ChooseBedrockOutput(*state);
-      fMainWindow->setContentOwned(chooseOutput, true);
+      auto chooseOutput = std::make_shared<component::ChooseBedrockOutput>(*state);
+      fMainWindow->setContentNonOwned(chooseOutput.get(), true);
+      fMainWindowContent = chooseOutput;
       return true;
     }
     case commands::toCopyBedrockArtifact: {
-      auto provider = dynamic_cast<BedrockOutputChoosenStateProvider *>(current);
+      auto provider = dynamic_cast<BedrockOutputChoosenStateProvider *>(current.get());
       if (!provider) {
         return false;
       }
-      auto copy = new component::CopyBedrockArtifactProgress(provider->getBedrockOutputChoosenState());
-      fMainWindow->setContentOwned(copy, true);
+      auto copy = std::make_shared<component::CopyBedrockArtifactProgress>(provider->getBedrockOutputChoosenState());
+      fMainWindow->setContentNonOwned(copy.get(), true);
+      fMainWindowContent = copy;
       return true;
     }
     case commands::toModeSelect: {
-      auto modeSelect = new component::ModeSelect;
-      fMainWindow->setContentOwned(modeSelect, true);
+      auto modeSelect = std::make_shared<component::ModeSelect>();
+      fMainWindow->setContentNonOwned(modeSelect.get(), true);
+      fMainWindowContent = modeSelect;
       fMainWindow->setName(Application::getApplicationName());
       return true;
     }
     case commands::toChooseBedrockInput: {
       std::optional<ChooseInputState> state;
-      auto provider = dynamic_cast<ChooseInputStateProvider *>(current);
+      auto provider = dynamic_cast<ChooseInputStateProvider *>(current.get());
       if (provider) {
         state = provider->getChooseInputState();
       }
-      auto chooseInput = new component::ChooseBedrockInput(state);
-      fMainWindow->setContentOwned(chooseInput, true);
+      auto chooseInput = std::make_shared<component::ChooseBedrockInput>(state);
+      fMainWindow->setContentNonOwned(chooseInput.get(), true);
+      fMainWindowContent = chooseInput;
       fMainWindow->setName(getApplicationName() + " : " + TRANS("Bedrock to Java"));
       return true;
     }
     case commands::toB2JConfig: {
-      auto provider = dynamic_cast<ChooseInputStateProvider *>(current);
+      auto provider = dynamic_cast<ChooseInputStateProvider *>(current.get());
       if (!provider) {
         return false;
       }
@@ -178,21 +185,23 @@ public:
       if (state->fType != InputType::Bedrock) {
         return false;
       }
-      auto config = new component::b2j::B2JConfig(*state);
-      fMainWindow->setContentOwned(config, true);
+      auto config = std::make_shared<component::b2j::B2JConfig>(*state);
+      fMainWindow->setContentNonOwned(config.get(), true);
+      fMainWindowContent = config;
       return true;
     }
     case commands::toB2JConvert: {
-      auto provider = dynamic_cast<B2JConfigStateProvider *>(current);
+      auto provider = dynamic_cast<B2JConfigStateProvider *>(current.get());
       if (!provider) {
         return false;
       }
-      auto convert = new component::b2j::B2JConvertProgress(provider->getConfigState());
-      fMainWindow->setContentOwned(convert, true);
+      auto convert = std::make_shared<component::b2j::B2JConvertProgress>(provider->getConfigState());
+      fMainWindow->setContentNonOwned(convert.get(), true);
+      fMainWindowContent = convert;
       return true;
     }
     case commands::toChooseJavaOutput: {
-      auto provider = dynamic_cast<JavaConvertedStateProvider *>(current);
+      auto provider = dynamic_cast<JavaConvertedStateProvider *>(current.get());
       if (!provider) {
         return false;
       }
@@ -200,23 +209,25 @@ public:
       if (!state) {
         return false;
       }
-      auto chooseOutput = new component::ChooseJavaOutput(*state);
-      fMainWindow->setContentOwned(chooseOutput, true);
+      auto chooseOutput = std::make_shared<component::ChooseJavaOutput>(*state);
+      fMainWindow->setContentNonOwned(chooseOutput.get(), true);
+      fMainWindowContent = chooseOutput;
       return true;
     }
     case commands::toCopyJavaArtifact: {
-      auto provider = dynamic_cast<JavaOutputChoosenStateProvider *>(current);
+      auto provider = dynamic_cast<JavaOutputChoosenStateProvider *>(current.get());
       if (!provider) {
         return false;
       }
-      auto copy = new component::CopyJavaArtifactProgress(provider->getJavaOutputChoosenState());
-      fMainWindow->setContentOwned(copy, true);
+      auto copy = std::make_shared<component::CopyJavaArtifactProgress>(provider->getJavaOutputChoosenState());
+      fMainWindow->setContentNonOwned(copy.get(), true);
+      fMainWindowContent = copy;
       return true;
     }
     case commands::toChooseXbox360InputToBedrock:
     case commands::toChooseXbox360InputToJava: {
       std::optional<ChooseInputState> state;
-      auto provider = dynamic_cast<ChooseInputStateProvider *>(current);
+      auto provider = dynamic_cast<ChooseInputStateProvider *>(current.get());
       if (provider) {
         state = provider->getChooseInputState();
       }
@@ -229,13 +240,14 @@ public:
         destination = commands::toXbox360ToJavaConfig;
         title = TRANS("Xbox360 to Java");
       }
-      auto chooseInput = new component::ChooseXbox360Input(destination, state);
-      fMainWindow->setContentOwned(chooseInput, true);
+      auto chooseInput = std::make_shared<component::ChooseXbox360Input>(destination, state);
+      fMainWindow->setContentNonOwned(chooseInput.get(), true);
+      fMainWindowContent = chooseInput;
       fMainWindow->setName(getApplicationName() + " : " + title);
       return true;
     }
     case commands::toXbox360ToJavaConfig: {
-      auto provider = dynamic_cast<ChooseInputStateProvider *>(current);
+      auto provider = dynamic_cast<ChooseInputStateProvider *>(current.get());
       if (!provider) {
         return false;
       }
@@ -246,21 +258,23 @@ public:
       if (state->fType != InputType::Xbox360) {
         return false;
       }
-      auto config = new component::x2j::X2JConfig(*state);
-      fMainWindow->setContentOwned(config, true);
+      auto config = std::make_shared<component::x2j::X2JConfig>(*state);
+      fMainWindow->setContentNonOwned(config.get(), true);
+      fMainWindowContent = config;
       return true;
     }
     case commands::toXbox360ToJavaConvert: {
-      auto provider = dynamic_cast<X2JConfigStateProvider *>(current);
+      auto provider = dynamic_cast<X2JConfigStateProvider *>(current.get());
       if (!provider) {
         return false;
       }
-      auto convert = new component::x2j::X2JConvertProgress(provider->getConfigState());
-      fMainWindow->setContentOwned(convert, true);
+      auto convert = std::make_shared<component::x2j::X2JConvertProgress>(provider->getConfigState());
+      fMainWindow->setContentNonOwned(convert.get(), true);
+      fMainWindowContent = convert;
       return true;
     }
     case commands::toXbox360ToBedrockConfig: {
-      auto provider = dynamic_cast<ChooseInputStateProvider *>(current);
+      auto provider = dynamic_cast<ChooseInputStateProvider *>(current.get());
       if (!provider) {
         return false;
       }
@@ -271,17 +285,19 @@ public:
       if (state->fType != InputType::Xbox360) {
         return false;
       }
-      auto config = new component::x2b::X2BConfig(*state);
-      fMainWindow->setContentOwned(config, true);
+      auto config = std::make_shared<component::x2b::X2BConfig>(*state);
+      fMainWindow->setContentNonOwned(config.get(), true);
+      fMainWindowContent = config;
       return true;
     }
     case commands::toXbox360ToBedrockConvert: {
-      auto provider = dynamic_cast<X2BConfigStateProvider *>(current);
+      auto provider = dynamic_cast<X2BConfigStateProvider *>(current.get());
       if (!provider) {
         return false;
       }
-      auto convert = new component::x2b::X2BConvertProgress(provider->getConfigState());
-      fMainWindow->setContentOwned(convert, true);
+      auto convert = std::make_shared<component::x2b::X2BConvertProgress>(provider->getConfigState());
+      fMainWindow->setContentNonOwned(convert.get(), true);
+      fMainWindowContent = convert;
       return true;
     }
     default:
@@ -291,6 +307,7 @@ public:
 
 private:
   std::unique_ptr<component::MainWindow> fMainWindow;
+  std::shared_ptr<juce::Component> fMainWindowContent;
   SharedResourcePointer<TooltipWindow> fTooltipWindow;
   std::unique_ptr<je2be::desktop::LookAndFeel> fLaf;
 };
