@@ -1,3 +1,7 @@
+Version 5.26.0
+・Minecraft 1.20.4 is now supported.
+・The resulting data version of conversions was changed from 1.19 to 1.16 when converting Xbox 360 data. [x2j, x2b]
+
 Version 4.25.1
 ・Fixed an issue that could cause a crash while converting to Bedrock. [j2b, x2b]
 
