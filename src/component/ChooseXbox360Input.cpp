@@ -3,8 +3,8 @@
 #include "CommandID.h"
 #include "Constants.h"
 #include "File.h"
-#include "GameDirectoryScanWorkerXbox360.h"
 #include "Thread.h"
+#include "Xbox360GameDirectoryScanWorker.h"
 #include "component/ChooseXbox360Input.h"
 #include "component/MainWindow.h"
 #include "component/SearchLabel.h"
@@ -136,7 +136,7 @@ void ChooseXbox360Input::parentHierarchyChanged() {
     return;
   }
   fWorkerStarted = true;
-  auto worker = std::make_shared<GameDirectoryScanWorkerXbox360>(weak_from_this());
+  auto worker = std::make_shared<Xbox360GameDirectoryScanWorker>(weak_from_this());
   fWorker = worker;
   Thread::Launch([worker]() {
     worker->run();

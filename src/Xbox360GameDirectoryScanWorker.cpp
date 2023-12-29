@@ -1,7 +1,7 @@
 #include <je2be.hpp>
 
 #include "File.h"
-#include "GameDirectoryScanWorkerXbox360.h"
+#include "Xbox360GameDirectoryScanWorker.h"
 
 using namespace juce;
 
@@ -20,9 +20,9 @@ static bool StringContainsOnlyAlnum(juce::String const &s) {
   return true;
 }
 
-GameDirectoryScanWorkerXbox360::GameDirectoryScanWorkerXbox360(std::weak_ptr<AsyncUpdaterWith<std::vector<GameDirectory>>> owner) : fOwner(owner), fAbort(false) {}
+Xbox360GameDirectoryScanWorker::Xbox360GameDirectoryScanWorker(std::weak_ptr<AsyncUpdaterWith<std::vector<GameDirectory>>> owner) : fOwner(owner), fAbort(false) {}
 
-void GameDirectoryScanWorkerXbox360::run() {
+void Xbox360GameDirectoryScanWorker::run() {
   try {
     unsafeRun();
   } catch (...) {
@@ -34,7 +34,7 @@ void GameDirectoryScanWorkerXbox360::run() {
   }
 }
 
-void GameDirectoryScanWorkerXbox360::unsafeRun() {
+void Xbox360GameDirectoryScanWorker::unsafeRun() {
   Array<File> roots;
   File::findFileSystemRoots(roots);
   for (File root : roots) {
@@ -45,7 +45,7 @@ void GameDirectoryScanWorkerXbox360::unsafeRun() {
   }
 }
 
-void GameDirectoryScanWorkerXbox360::lookupRoot(File root, std::vector<GameDirectory> &buffer) {
+void Xbox360GameDirectoryScanWorker::lookupRoot(File root, std::vector<GameDirectory> &buffer) {
   auto content = root.getChildFile("Content");
   if (!content.isDirectory()) {
     return;
@@ -53,7 +53,7 @@ void GameDirectoryScanWorkerXbox360::lookupRoot(File root, std::vector<GameDirec
   lookupContent(content, buffer);
 }
 
-void GameDirectoryScanWorkerXbox360::lookupContent(File content, std::vector<GameDirectory> &buffer) {
+void Xbox360GameDirectoryScanWorker::lookupContent(File content, std::vector<GameDirectory> &buffer) {
   auto maybeUserProfileIds = content.findChildFiles(File::findDirectories, false, "*", File::FollowSymlinks::no);
   for (auto const &maybeUserProfileId : maybeUserProfileIds) {
     if (threadShouldExit()) {
@@ -70,7 +70,7 @@ void GameDirectoryScanWorkerXbox360::lookupContent(File content, std::vector<Gam
   }
 }
 
-void GameDirectoryScanWorkerXbox360::lookupContentChild(File child, std::vector<GameDirectory> &buffer) {
+void Xbox360GameDirectoryScanWorker::lookupContentChild(File child, std::vector<GameDirectory> &buffer) {
   auto maybeGameTitleIds = child.findChildFiles(File::findDirectories, false, "*", File::FollowSymlinks::no);
   static juce::String const sMaybeMinecraftGameTitleId("584111F7");
   for (auto const &maybeGameTitleId : maybeGameTitleIds) {
@@ -115,11 +115,11 @@ void GameDirectoryScanWorkerXbox360::lookupContentChild(File child, std::vector<
   }
 }
 
-void GameDirectoryScanWorkerXbox360::signalThreadShouldExit() {
+void Xbox360GameDirectoryScanWorker::signalThreadShouldExit() {
   fAbort = true;
 }
 
-bool GameDirectoryScanWorkerXbox360::threadShouldExit() const {
+bool Xbox360GameDirectoryScanWorker::threadShouldExit() const {
   return fAbort.load();
 }
 

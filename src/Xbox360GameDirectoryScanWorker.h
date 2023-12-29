@@ -5,7 +5,7 @@
 
 namespace je2be::desktop {
 
-class GameDirectoryScanWorkerXbox360 {
+class Xbox360GameDirectoryScanWorker {
 public:
   std::vector<GameDirectory> fGameDirectories;
 
@@ -14,7 +14,7 @@ private:
   std::atomic<bool> fAbort;
 
 public:
-  explicit GameDirectoryScanWorkerXbox360(std::weak_ptr<AsyncUpdaterWith<std::vector<GameDirectory>>> owner);
+  explicit Xbox360GameDirectoryScanWorker(std::weak_ptr<AsyncUpdaterWith<std::vector<GameDirectory>>> owner);
 
   void run();
   void signalThreadShouldExit();
@@ -26,7 +26,7 @@ private:
   void lookupContentChild(juce::File child, std::vector<GameDirectory> &buffer);
   bool threadShouldExit() const;
 
-  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GameDirectoryScanWorkerXbox360)
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Xbox360GameDirectoryScanWorker)
 };
 
 } // namespace je2be::desktop

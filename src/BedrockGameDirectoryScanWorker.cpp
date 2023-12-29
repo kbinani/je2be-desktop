@@ -1,15 +1,15 @@
 #include <je2be.hpp>
 
+#include "BedrockGameDirectoryScanWorker.h"
 #include "File.h"
-#include "GameDirectoryScanWorkerBedrock.h"
 
 using namespace juce;
 
 namespace je2be::desktop {
 
-GameDirectoryScanWorkerBedrock::GameDirectoryScanWorkerBedrock(std::weak_ptr<AsyncUpdaterWith<std::vector<GameDirectory>>> owner) : fOwner(owner), fAbort(false) {}
+BedrockGameDirectoryScanWorker::BedrockGameDirectoryScanWorker(std::weak_ptr<AsyncUpdaterWith<std::vector<GameDirectory>>> owner) : fOwner(owner), fAbort(false) {}
 
-void GameDirectoryScanWorkerBedrock::run() {
+void BedrockGameDirectoryScanWorker::run() {
   try {
     unsafeRun();
   } catch (...) {
@@ -21,7 +21,7 @@ void GameDirectoryScanWorkerBedrock::run() {
   }
 }
 
-void GameDirectoryScanWorkerBedrock::unsafeRun() {
+void BedrockGameDirectoryScanWorker::unsafeRun() {
   File dir = GameDirectory::BedrockSaveDirectory();
   auto directories = dir.findChildFiles(File::findDirectories, false);
   for (File const &directory : directories) {
@@ -97,11 +97,11 @@ void GameDirectoryScanWorkerBedrock::unsafeRun() {
   });
 }
 
-void GameDirectoryScanWorkerBedrock::signalThreadShouldExit() {
+void BedrockGameDirectoryScanWorker::signalThreadShouldExit() {
   fAbort = true;
 }
 
-bool GameDirectoryScanWorkerBedrock::threadShouldExit() const {
+bool BedrockGameDirectoryScanWorker::threadShouldExit() const {
   return fAbort.load();
 }
 

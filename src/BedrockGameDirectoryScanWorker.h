@@ -5,7 +5,7 @@
 
 namespace je2be::desktop {
 
-class GameDirectoryScanWorkerJava {
+class BedrockGameDirectoryScanWorker {
 public:
   std::vector<GameDirectory> fGameDirectories;
 
@@ -14,7 +14,7 @@ private:
   std::atomic<bool> fAbort;
 
 public:
-  explicit GameDirectoryScanWorkerJava(std::weak_ptr<AsyncUpdaterWith<std::vector<GameDirectory>>> owner);
+  explicit BedrockGameDirectoryScanWorker(std::weak_ptr<AsyncUpdaterWith<std::vector<GameDirectory>>> owner);
 
   void run();
   void signalThreadShouldExit();
@@ -23,7 +23,7 @@ public:
 private:
   void unsafeRun();
 
-  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GameDirectoryScanWorkerJava)
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BedrockGameDirectoryScanWorker)
 };
 
 } // namespace je2be::desktop

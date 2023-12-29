@@ -1,15 +1,15 @@
 #include <je2be.hpp>
 
 #include "File.h"
-#include "GameDirectoryScanWorkerJava.h"
+#include "JavaGameDirectoryScanWorker.h"
 
 using namespace juce;
 
 namespace je2be::desktop {
 
-GameDirectoryScanWorkerJava::GameDirectoryScanWorkerJava(std::weak_ptr<AsyncUpdaterWith<std::vector<GameDirectory>>> owner) : fOwner(owner), fAbort(false) {}
+JavaGameDirectoryScanWorker::JavaGameDirectoryScanWorker(std::weak_ptr<AsyncUpdaterWith<std::vector<GameDirectory>>> owner) : fOwner(owner), fAbort(false) {}
 
-void GameDirectoryScanWorkerJava::run() {
+void JavaGameDirectoryScanWorker::run() {
   try {
     unsafeRun();
   } catch (...) {
@@ -21,7 +21,7 @@ void GameDirectoryScanWorkerJava::run() {
   }
 }
 
-void GameDirectoryScanWorkerJava::unsafeRun() {
+void JavaGameDirectoryScanWorker::unsafeRun() {
   File dir = GameDirectory::JavaSaveDirectory();
   auto directories = dir.findChildFiles(File::findDirectories, false);
   for (File const &directory : directories) {
@@ -81,11 +81,11 @@ void GameDirectoryScanWorkerJava::unsafeRun() {
   });
 }
 
-void GameDirectoryScanWorkerJava::signalThreadShouldExit() {
+void JavaGameDirectoryScanWorker::signalThreadShouldExit() {
   fAbort = true;
 }
 
-bool GameDirectoryScanWorkerJava::threadShouldExit() const {
+bool JavaGameDirectoryScanWorker::threadShouldExit() const {
   return fAbort.load();
 }
 

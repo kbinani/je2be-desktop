@@ -5,7 +5,7 @@
 #include "GameDirectory.h"
 
 namespace je2be::desktop {
-class GameDirectoryScanWorkerBedrock;
+class BedrockGameDirectoryScanWorker;
 }
 
 namespace je2be::desktop::component {
@@ -64,7 +64,7 @@ private:
   std::unique_ptr<juce::Label> fOrMessage2;
   std::unique_ptr<TextButton> fBackButton;
   juce::File fBedrockGameDirectory;
-  std::weak_ptr<GameDirectoryScanWorkerBedrock> fWorker;
+  std::weak_ptr<BedrockGameDirectoryScanWorker> fWorker;
   bool fWorkerStarted = false;
   std::unique_ptr<juce::Label> fPlaceholder;
   std::unique_ptr<SearchLabel> fSearch;

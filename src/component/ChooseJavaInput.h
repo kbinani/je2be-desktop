@@ -5,7 +5,7 @@
 #include "GameDirectory.h"
 
 namespace je2be::desktop {
-class GameDirectoryScanWorkerJava;
+class JavaGameDirectoryScanWorker;
 }
 
 namespace je2be::desktop::component {
@@ -55,7 +55,7 @@ private:
   std::unique_ptr<TextButton> fNextButton;
   std::unique_ptr<TextButton> fChooseCustomButton;
   std::unique_ptr<juce::ListBox> fListComponent;
-  std::weak_ptr<GameDirectoryScanWorkerJava> fWorker;
+  std::weak_ptr<JavaGameDirectoryScanWorker> fWorker;
   bool fWorkerStarted = false;
   std::optional<ChooseInputState> fState;
   std::unique_ptr<juce::Label> fMessage;

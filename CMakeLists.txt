@@ -56,17 +56,15 @@ set(je2be_desktop_files
   src/Application.cpp
   src/AsyncHandler.h
   src/AsyncUpdaterWith.h
+  src/BedrockGameDirectoryScanWorker.cpp
+  src/BedrockGameDirectoryScanWorker.h
   src/CommandID.h
   src/ComponentState.h
   src/Constants.h
   src/File.h
   src/GameDirectory.h
-  src/GameDirectoryScanWorkerBedrock.cpp
-  src/GameDirectoryScanWorkerBedrock.h
-  src/GameDirectoryScanWorkerJava.cpp
-  src/GameDirectoryScanWorkerJava.h
-  src/GameDirectoryScanWorkerXbox360.cpp
-  src/GameDirectoryScanWorkerXbox360.h
+  src/JavaGameDirectoryScanWorker.cpp
+  src/JavaGameDirectoryScanWorker.h
   src/LocalizationHelper.cpp
   src/LocalizationHelper.h
   src/LookAndFeel.cpp
@@ -78,6 +76,8 @@ set(je2be_desktop_files
   src/TemporaryDirectory.cpp
   src/TemporaryDirectory.h
   src/Thread.h
+  src/Xbox360GameDirectoryScanWorker.cpp
+  src/Xbox360GameDirectoryScanWorker.h
   src/component/About.cpp
   src/component/About.h
   src/component/ChooseBedrockInput.cpp

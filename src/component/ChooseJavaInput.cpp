@@ -1,7 +1,7 @@
 #include "component/ChooseJavaInput.h"
 #include "CommandID.h"
 #include "Constants.h"
-#include "GameDirectoryScanWorkerJava.h"
+#include "JavaGameDirectoryScanWorker.h"
 #include "Thread.h"
 #include "component/MainWindow.h"
 #include "component/SearchLabel.h"
@@ -113,7 +113,7 @@ void ChooseJavaInput::parentHierarchyChanged() {
     return;
   }
   fWorkerStarted = true;
-  auto worker = std::make_shared<GameDirectoryScanWorkerJava>(weak_from_this());
+  auto worker = std::make_shared<JavaGameDirectoryScanWorker>(weak_from_this());
   fWorker = worker;
   Thread::Launch([worker]() {
     worker->run();
