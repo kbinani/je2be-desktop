@@ -3,6 +3,7 @@
 #include "LocalizationHelper.h"
 #include "LookAndFeel.h"
 #include "TemporaryDirectory.h"
+#include "Thread.h"
 #include "component/ChooseBedrockInput.h"
 #include "component/ChooseBedrockOutput.h"
 #include "component/ChooseJavaInput.h"
@@ -21,8 +22,6 @@
 #include "component/x2j/X2JConvertProgress.h"
 
 #include <mimalloc.h>
-
-using namespace juce;
 
 namespace je2be::desktop {
 
@@ -47,7 +46,7 @@ public:
     fLaf.reset(new je2be::desktop::LookAndFeel);
     LookAndFeel::setDefaultLookAndFeel(fLaf.get());
 
-    LocalisedStrings::setCurrentMappings(LocalizationHelper::CurrentLocalisedStrings());
+    juce::LocalisedStrings::setCurrentMappings(LocalizationHelper::CurrentLocalisedStrings());
 
     TemporaryDirectory::CleanupAsync();
 
@@ -57,13 +56,14 @@ public:
 
   void shutdown() override {
     fMainWindow = nullptr;
+    Thread::Wait();
   }
 
   void systemRequestedQuit() override {
     quit();
   }
 
-  void getAllCommands(Array<CommandID> &commands) override {
+  void getAllCommands(juce::Array<juce::CommandID> &commands) override {
     JUCEApplication::getAllCommands(commands);
     commands.addArray({commands::toJ2BConfig,
                        commands::toChooseJavaInput,
@@ -84,8 +84,8 @@ public:
                        commands::toXbox360ToBedrockConvert});
   }
 
-  void getCommandInfo(CommandID commandID, ApplicationCommandInfo &result) override {
-    result.setInfo("", "", "", ApplicationCommandInfo::CommandFlags::hiddenFromKeyEditor);
+  void getCommandInfo(juce::CommandID commandID, juce::ApplicationCommandInfo &result) override {
+    result.setInfo("", "", "", juce::ApplicationCommandInfo::CommandFlags::hiddenFromKeyEditor);
   }
 
   bool perform(InvocationInfo const &info) override {
@@ -231,8 +231,8 @@ public:
       if (provider) {
         state = provider->getChooseInputState();
       }
-      CommandID destination;
-      String title;
+      juce::CommandID destination;
+      juce::String title;
       if (info.commandID == commands::toChooseXbox360InputToBedrock) {
         destination = commands::toXbox360ToBedrockConfig;
         title = TRANS("Xbox360 to Bedrock");
@@ -308,7 +308,7 @@ public:
 private:
   std::unique_ptr<component::MainWindow> fMainWindow;
   std::shared_ptr<juce::Component> fMainWindowContent;
-  SharedResourcePointer<TooltipWindow> fTooltipWindow;
+  juce::SharedResourcePointer<juce::TooltipWindow> fTooltipWindow;
   std::unique_ptr<je2be::desktop::LookAndFeel> fLaf;
 };
 

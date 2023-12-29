@@ -77,6 +77,7 @@ set(je2be_desktop_files
   src/TaskbarProgress.h
   src/TemporaryDirectory.cpp
   src/TemporaryDirectory.h
+  src/Thread.h
   src/component/About.cpp
   src/component/About.h
   src/component/ChooseBedrockInput.cpp

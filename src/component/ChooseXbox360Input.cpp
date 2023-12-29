@@ -4,6 +4,7 @@
 #include "Constants.h"
 #include "File.h"
 #include "GameDirectoryScanWorkerXbox360.h"
+#include "Thread.h"
 #include "component/ChooseXbox360Input.h"
 #include "component/MainWindow.h"
 #include "component/SearchLabel.h"
@@ -137,7 +138,7 @@ void ChooseXbox360Input::parentHierarchyChanged() {
   fWorkerStarted = true;
   auto worker = std::make_shared<GameDirectoryScanWorkerXbox360>(weak_from_this());
   fWorker = worker;
-  juce::Thread::launch([worker]() {
+  Thread::Launch([worker]() {
     worker->run();
   });
 }
