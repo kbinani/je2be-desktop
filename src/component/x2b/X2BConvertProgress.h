@@ -1,29 +1,22 @@
 #pragma once
 
-#include "AsyncHandler.h"
 #include "CommandID.h"
 #include "ComponentState.h"
 #include "Status.hpp"
-
-namespace je2be::desktop {
-class TaskbarProgress;
-}
-
-namespace je2be::desktop::component {
-class TextButton;
-}
+#include "component/ConvertProgress.h"
 
 namespace je2be::desktop::component::x2b {
 
-class X2BConvertProgress : public juce::Component,
+class X2BConvertProgress : public ConvertProgress,
                            public BedrockConvertedStateProvider,
                            public X2BConfigStateProvider,
-                           public ChooseInputStateProvider {
+                           public ChooseInputStateProvider,
+                           public std::enable_shared_from_this<X2BConvertProgress> {
 public:
   explicit X2BConvertProgress(X2BConfigState const &configState);
-  ~X2BConvertProgress() override;
+  ~X2BConvertProgress() override {}
 
-  void paint(juce::Graphics &) override;
+  void paint(juce::Graphics &) override {}
 
   X2BConfigState getConfigState() const override {
     return fConfigState;
@@ -37,47 +30,34 @@ public:
     return fConfigState.fInputState;
   }
 
-  void onCancelButtonClicked();
+  int getProgressSteps() const override {
+    return 4;
+  }
 
-  enum class Phase {
-    XboxToJavaConversion,
-    JavaToBedrockConversion,
-    JavaToBedrockPostProcess,
-    JavaToBedrockCompaction,
-    Done,
-    Error,
-  };
+  Characteristics getProgressCharacteristics(int step) const override {
+    switch (step) {
+    case 1:
+      return Characteristics(Characteristics::Unit::Chunk, 0.3, TRANS("Converting..."), "Conversion", "Converted %d Chunks: ");
+    case 2:
+      return Characteristics(Characteristics::Unit::Percent, 0.2, TRANS("PostProcess"), "PostProcess");
+    case 3:
+      return Characteristics(Characteristics::Unit::Percent, 0.167, TRANS("LevelDB compaction"), "LevelDB Compaction");
+    case 0:
+    default:
+      return Characteristics(Characteristics::Unit::Percent, 0.333, TRANS("Extracting..."), "Extraction");
+    }
+  }
 
-  struct UpdateQueue {
-    Phase fPhase;
-    double fProgress;
-    uint64_t fNumConvertedChunks;
-    Status fStatus;
-  };
-
-  void onProgressUpdate(Phase phase, double progress, uint64_t numConvertedChunks, Status status);
+  void onCancelButtonClicked() override;
+  void startThread() override;
+  void onFinish() override;
 
 private:
-  std::unique_ptr<TextButton> fCancelButton;
   X2BConfigState fConfigState;
   std::optional<BedrockConvertedState> fState;
   juce::File fOutputDirectory;
-  std::unique_ptr<juce::Thread> fThread;
-  std::shared_ptr<AsyncHandler<UpdateQueue>> fUpdater;
-  std::unique_ptr<juce::ProgressBar> fXbox360ToJavaConversionProgressBar;
-  std::unique_ptr<juce::ProgressBar> fJavaToBedrockConversionProgressBar;
-  std::unique_ptr<juce::ProgressBar> fJavaToBedrockPostProcessProgressBar;
-  std::unique_ptr<juce::ProgressBar> fJavaToBedrockCompactionProgressBar;
-  double fXbox360ToJavaConversionProgress = 0;
-  double fJavaToBedrockConversionProgress = 0;
-  double fJavaToBedrockPostProcessProgress = 0;
-  double fJavaToBedrockCompactionProgress = 0;
-  std::unique_ptr<juce::Label> fLabel;
   juce::CommandID fCommandWhenFinished = commands::toChooseBedrockOutput;
-  bool fFailed = false;
-  std::unique_ptr<juce::TextEditor> fErrorMessage;
-  std::unique_ptr<TaskbarProgress> fTaskbarProgress;
-  bool fCancelRequested = false;
+  juce::File fTempRoot;
 
 private:
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(X2BConvertProgress)
