@@ -54,7 +54,6 @@ set(je2be_desktop_files
   src/AccountScanThread.cpp
   src/AccountScanThread.h
   src/Application.cpp
-  src/AsyncHandler.h
   src/AsyncUpdaterWith.h
   src/BedrockGameDirectoryScanWorker.cpp
   src/BedrockGameDirectoryScanWorker.h

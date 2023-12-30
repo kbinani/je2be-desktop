@@ -87,9 +87,7 @@ private:
 };
 
 J2BConvertProgress::J2BConvertProgress(J2BConfigState const &configState) : fConfigState(configState) {
-  auto width = kWindowWidth;
-  auto height = kWindowHeight;
-  setSize(width, height);
+  setSize(kWindowWidth, kWindowHeight);
 
   fTempRoot = TemporaryDirectory::EnsureExisting();
   juce::Uuid u;
