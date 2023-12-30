@@ -98,11 +98,6 @@ J2BConvertProgress::J2BConvertProgress(J2BConfigState const &configState) : fCon
   fOutputDirectory = outputDir;
 }
 
-J2BConvertProgress::~J2BConvertProgress() {
-  fThread->stopThread(-1);
-  fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
-}
-
 void J2BConvertProgress::startThread() {
   je2be::tobe::Options opt;
   opt.fTempDirectory = PathFromFile(fTempRoot);

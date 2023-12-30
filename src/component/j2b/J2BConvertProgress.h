@@ -14,7 +14,7 @@ class J2BConvertProgress : public ConvertProgress,
                            public std::enable_shared_from_this<J2BConvertProgress> {
 public:
   explicit J2BConvertProgress(J2BConfigState const &configState);
-  ~J2BConvertProgress() override;
+  ~J2BConvertProgress() override {}
 
   void paint(juce::Graphics &) override {}
 

@@ -75,6 +75,7 @@ protected:
   std::mutex fMut;
   std::vector<Progress> fLast;
   std::unique_ptr<juce::Thread> fThread;
+  bool fCancelRequested = false;
 };
 
 } // namespace je2be::desktop::component

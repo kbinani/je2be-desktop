@@ -14,7 +14,7 @@ class B2JConvertProgress : public ConvertProgress,
                            public std::enable_shared_from_this<B2JConvertProgress> {
 public:
   explicit B2JConvertProgress(B2JConfigState const &configState);
-  ~B2JConvertProgress() override;
+  ~B2JConvertProgress() override {}
 
   void paint(juce::Graphics &) override {}
 

@@ -13,6 +13,10 @@ ConvertProgress::ConvertProgress() {
 }
 
 ConvertProgress::~ConvertProgress() {
+  if (!fThread) {
+    fThread->stopThread(-1);
+  }
+  fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
 }
 
 void ConvertProgress::parentHierarchyChanged() {
@@ -54,6 +58,7 @@ void ConvertProgress::parentHierarchyChanged() {
   fCancelButton.reset(new component::TextButton(TRANS("Cancel")));
   fCancelButton->setBounds(kMargin, kWindowHeight - kMargin - kButtonBaseHeight, kButtonMinWidth, kButtonBaseHeight);
   fCancelButton->onClick = [this]() {
+    fCancelRequested = true;
     if (!fFailure && fThread) {
       fCancelButton->setEnabled(false);
       fThread->signalThreadShouldExit();
@@ -128,7 +133,7 @@ void ConvertProgress::handleAsyncUpdate() {
     }
     fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
     onFinish();
-  } else {
+  } else if (!fCancelRequested) {
     int steps = getProgressSteps();
 
     double progress = 0;

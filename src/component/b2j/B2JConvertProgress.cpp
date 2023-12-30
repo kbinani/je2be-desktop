@@ -146,11 +146,6 @@ B2JConvertProgress::B2JConvertProgress(B2JConfigState const &configState) : fCon
   fOutputDirectory = outputDir;
 }
 
-B2JConvertProgress::~B2JConvertProgress() {
-  fThread->stopThread(-1);
-  fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
-}
-
 void B2JConvertProgress::startThread() {
   je2be::toje::Options opt;
   opt.fTempDirectory = PathFromFile(fTempRoot);
