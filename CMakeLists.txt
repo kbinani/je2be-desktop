@@ -90,6 +90,8 @@ set(je2be_desktop_files
   src/component/ChooseJavaOutput.h
   src/component/ChooseXbox360Input.cpp
   src/component/ChooseXbox360Input.h
+  src/component/ConvertProgress.cpp
+  src/component/ConvertProgress.h
   src/component/CopyBedrockArtifactProgress.cpp
   src/component/CopyBedrockArtifactProgress.h
   src/component/CopyJavaArtifactProgress.cpp
