@@ -38,8 +38,9 @@ protected:
     juce::String fLabel;
     juce::String fProgressBarLabel;
     juce::String fProgressBarExtraLabelFormat;
-    Characteristics(Unit unit, juce::String const &label, juce::String progressBarLabel, juce::String progressBarExtraLabelFormat = "")
-        : fUnit(unit), fLabel(label), fProgressBarLabel(progressBarLabel), fProgressBarExtraLabelFormat(progressBarExtraLabelFormat) {}
+    double fProgressWeight;
+    Characteristics(Unit unit, double progressWeight, juce::String const &label, juce::String progressBarLabel, juce::String progressBarExtraLabelFormat = "")
+        : fUnit(unit), fLabel(label), fProgressBarLabel(progressBarLabel), fProgressBarExtraLabelFormat(progressBarExtraLabelFormat), fProgressWeight(progressWeight) {}
   };
 
   virtual int getProgressSteps() const = 0;
@@ -52,7 +53,7 @@ protected:
 
 public:
   ConvertProgress();
-  virtual ~ConvertProgress() {}
+  virtual ~ConvertProgress();
   void parentHierarchyChanged() override;
 
   void notifyProgress(int step, Progress progress);

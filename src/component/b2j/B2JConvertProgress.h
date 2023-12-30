@@ -1,29 +1,22 @@
 #pragma once
 
-#include "AsyncHandler.h"
 #include "CommandID.h"
 #include "ComponentState.h"
 #include "Status.hpp"
-
-namespace je2be::desktop {
-class TaskbarProgress;
-}
-
-namespace je2be::desktop::component {
-class TextButton;
-}
+#include "component/ConvertProgress.h"
 
 namespace je2be::desktop::component::b2j {
 
-class B2JConvertProgress : public juce::Component,
+class B2JConvertProgress : public ConvertProgress,
                            public JavaConvertedStateProvider,
                            public B2JConfigStateProvider,
-                           public ChooseInputStateProvider {
+                           public ChooseInputStateProvider,
+                           public std::enable_shared_from_this<B2JConvertProgress> {
 public:
   explicit B2JConvertProgress(B2JConfigState const &configState);
   ~B2JConvertProgress() override;
 
-  void paint(juce::Graphics &) override;
+  void paint(juce::Graphics &) override {}
 
   B2JConfigState getConfigState() const override {
     return fConfigState;
@@ -37,44 +30,56 @@ public:
     return fConfigState.fInputState;
   }
 
-  void onCancelButtonClicked();
+  int getProgressSteps() const override {
+    if (isUnzipNeeded()) {
+      return 3;
+    } else {
+      return 2;
+    }
+  }
 
-  enum class Phase {
-    Unzip = 1,
-    Conversion = 2,
-    PostProcess = 3,
-    Done = 4,
-    Error = -1,
-  };
+  Characteristics getProgressCharacteristics(int step) const override {
+    // unzip:        0:02.46 =   2.46
+    // conversion:   2:13.28 = 133.28
+    // post-process: 4:56.09 = 296.09
+    if (isUnzipNeeded()) {
+      // 431.83
+      switch (step) {
+      case 1:
+        return Characteristics(Characteristics::Unit::Chunk, 0.309, TRANS("Converting..."), "Conversion", "Converted %d Chunks: ");
+      case 2:
+        return Characteristics(Characteristics::Unit::Chunk, 0.686, TRANS("Post processing..."), "Post process", "Post processed %d Chunks: ");
+      case 0:
+      default:
+        return Characteristics(Characteristics::Unit::Percent, 0.005, TRANS("Unzipping..."), "Unzip");
+      }
+    } else {
+      // 429.37
+      switch (step) {
+      case 1:
+        return Characteristics(Characteristics::Unit::Chunk, 0.69, TRANS("Post processing..."), "Post process", "Post processed %d Chunks: ");
+      case 0:
+      default: {
+        return Characteristics(Characteristics::Unit::Chunk, 0.31, TRANS("Converting..."), "Conversion", "Converted %d Chunks: ");
+      }
+      }
+    }
+  }
 
-  struct UpdateQueue {
-    Phase fPhase;
-    double fProgress;
-    uint64_t fNumConvertedChunks;
-    Status fStatus;
-  };
-
-  void onProgressUpdate(Phase phase, double progress, uint64_t numConvertedChunks, Status status);
+  void onCancelButtonClicked() override;
+  void startThread() override;
+  void onFinish() override;
 
 private:
-  std::unique_ptr<TextButton> fCancelButton;
-  B2JConfigState fConfigState;
+  B2JConfigState const fConfigState;
   juce::File fOutputDirectory;
   std::optional<JavaConvertedState> fState;
-  std::unique_ptr<juce::Thread> fThread;
-  std::shared_ptr<AsyncHandler<UpdateQueue>> fUpdater;
-  std::unique_ptr<juce::ProgressBar> fUnzipOrCopyProgressBar;
-  std::unique_ptr<juce::ProgressBar> fConversionProgressBar;
-  std::unique_ptr<juce::ProgressBar> fPostProcessProgressBar;
-  double fUnzipOrCopyProgress;
-  double fConversionProgress;
-  double fPostProcessProgress;
-  std::unique_ptr<juce::Label> fLabel;
   juce::CommandID fCommandWhenFinished = commands::toChooseJavaOutput;
-  bool fFailed = false;
-  std::unique_ptr<juce::TextEditor> fErrorMessage;
-  std::unique_ptr<TaskbarProgress> fTaskbarProgress;
-  bool fCancelRequested = false;
+  juce::File fTempRoot;
+
+  bool isUnzipNeeded() const {
+    return !fConfigState.fInputState.fInput.isDirectory();
+  }
 
 private:
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(B2JConvertProgress)

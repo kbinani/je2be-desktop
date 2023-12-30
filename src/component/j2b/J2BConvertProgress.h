@@ -41,12 +41,12 @@ public:
   Characteristics getProgressCharacteristics(int step) const override {
     switch (step) {
     case 1:
-      return Characteristics(Characteristics::Unit::Percent, TRANS("Post processing..."), "PostProcess");
+      return Characteristics(Characteristics::Unit::Percent, 0.4, TRANS("Post processing..."), "PostProcess");
     case 2:
-      return Characteristics(Characteristics::Unit::Percent, TRANS("LevelDB compaction"), "LevelDB Compaction");
+      return Characteristics(Characteristics::Unit::Percent, 0.2, TRANS("LevelDB compaction"), "LevelDB Compaction");
     case 0:
     default:
-      return Characteristics(Characteristics::Unit::Chunk, TRANS("Converting..."), "Conversion", "Converted %d Chunks: ");
+      return Characteristics(Characteristics::Unit::Chunk, 0.4, TRANS("Converting..."), "Conversion", "Converted %d Chunks: ");
     }
   }
 

@@ -12,6 +12,9 @@ ConvertProgress::ConvertProgress() {
   setSize(kWindowWidth, kWindowHeight);
 }
 
+ConvertProgress::~ConvertProgress() {
+}
+
 void ConvertProgress::parentHierarchyChanged() {
   if (fPrepared) {
     return;
@@ -67,6 +70,8 @@ void ConvertProgress::parentHierarchyChanged() {
   fErrorMessage->setColour(juce::TextEditor::backgroundColourId, findColour(juce::Label::backgroundColourId));
   addChildComponent(*fErrorMessage);
 
+  fTaskbarProgress->setState(TaskbarProgress::State::Normal);
+
   startThread();
 }
 
@@ -116,38 +121,44 @@ void ConvertProgress::handleAsyncUpdate() {
     for (auto &bar : fProgressBars) {
       bar->setVisible(false);
     }
+    fTaskbarProgress->setState(TaskbarProgress::State::Error);
   } else if (fFinished) {
     for (size_t i = 0; i < fProgresses.size(); i++) {
       fProgresses[i] = 1;
     }
-    if (fFailure) {
-      fTaskbarProgress->setState(TaskbarProgress::State::Error);
-    } else {
-      fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
-    }
+    fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
     onFinish();
   } else {
     int steps = getProgressSteps();
+
+    double progress = 0;
     for (int i = 0; i < fStep; i++) {
       fProgresses[i] = 1;
-    }
-    fProgresses[fStep] = fLast[fStep].fProgress;
-    if (fStep + 1 < steps && fLast[fStep].fProgress == 1) {
-      fProgresses[fStep + 1] = -1;
-    } else {
-      fProgresses[fStep + 1] = 0;
-    }
-    for (int i = fStep + 2; i < fProgresses.size(); i++) {
-      fProgresses[i] = 0;
+      auto ch = getProgressCharacteristics(i);
+      progress += ch.fProgressWeight;
     }
     auto ch = getProgressCharacteristics(fStep);
+    fProgresses[fStep] = fLast[fStep].fProgress;
+    progress += fLast[fStep].fProgress * ch.fProgressWeight;
+    if (fStep + 1 < steps) {
+      if (fLast[fStep].fProgress == 1) {
+        fProgresses[fStep + 1] = -1;
+      } else {
+        fProgresses[fStep + 1] = 0;
+      }
+    }
+    for (int i = fStep + 2; i < steps; i++) {
+      fProgresses[i] = 0;
+    }
+
     fLabel->setText(ch.fLabel, juce::dontSendNotification);
     for (int i = 0; i < steps; i++) {
       auto c = getProgressCharacteristics(i);
       if (c.fUnit == Characteristics::Unit::Chunk) {
-        fProgressBars[i]->setTextToDisplay(juce::String::formatted(c.fProgressBarExtraLabelFormat, fLast[fStep].fCount));
+        fProgressBars[i]->setTextToDisplay(juce::String::formatted(c.fProgressBarExtraLabelFormat, fLast[i].fCount));
       }
     }
+    fTaskbarProgress->update(progress);
   }
 }
 

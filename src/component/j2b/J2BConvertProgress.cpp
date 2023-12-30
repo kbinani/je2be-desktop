@@ -19,8 +19,14 @@ public:
   void run() override {
     try {
       auto status = je2be::tobe::Converter::Run(PathFromFile(fInput), PathFromFile(fOutput), fOptions, std::thread::hardware_concurrency(), this);
-      if (auto updater = fUpdater.lock(); updater) {
+      auto updater = fUpdater.lock();
+      if (!updater) {
+        return;
+      }
+      if (status.ok()) {
         updater->notifyFinished();
+      } else {
+        updater->notifyError(status);
       }
     } catch (std::filesystem::filesystem_error &e) {
       triggerError(Error(__FILE__, __LINE__, e.what()));
