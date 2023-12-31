@@ -29,8 +29,14 @@ public:
       return;
     }
     ITaskbarList3 *taskbar = nullptr;
-    HRESULT hr = CoCreateInstance(CLSID_TaskbarList, nullptr, CLSCTX_ALL, IID_ITaskbarList3, (void **)&taskbar);
-    if (!SUCCEEDED(hr)) {
+    if (FAILED(CoCreateInstance(CLSID_TaskbarList, nullptr, CLSCTX_INPROC_SERVER, IID_ITaskbarList3, (void **)&taskbar))) {
+      return;
+    }
+    if (!taskbar) {
+      return;
+    }
+    if (FAILED(taskbar->HrInit())) {
+      taskbar->Release();
       return;
     }
     fTaskbar = taskbar;
