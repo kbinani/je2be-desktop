@@ -9,33 +9,14 @@ using namespace juce;
 namespace je2be::desktop {
 
 namespace {
-struct CallbackArgs {
-  DWORD fPid;
-  std::vector<HWND> fResult;
-};
-
-BOOL CALLBACK EnumWindowsCallback(HWND hnd, LPARAM lParam) {
-  CallbackArgs *args = (CallbackArgs *)lParam;
-
-  DWORD windowPid;
-  GetWindowThreadProcessId(hnd, &windowPid);
-  if (windowPid == args->fPid) {
-    args->fResult.push_back(hnd);
-  }
-
-  return TRUE;
-}
-
 std::optional<HWND> GetTopLevelWindow() {
-  CallbackArgs args;
-  args.fPid = GetCurrentProcessId();
-  if (!EnumWindows(EnumWindowsCallback, (LPARAM)&args)) {
-    return std::nullopt;
+  int const num = juce::TopLevelWindow::getNumTopLevelWindows();
+  for (int i = 0; i < num; i++) {
+    if (auto window = juce::TopLevelWindow::getTopLevelWindow(i); window) {
+      return (HWND)window->getWindowHandle();
+    }
   }
-  if (args.fResult.empty()) {
-    return std::nullopt;
-  }
-  return args.fResult[0];
+  return std::nullopt;
 }
 } // namespace
 
