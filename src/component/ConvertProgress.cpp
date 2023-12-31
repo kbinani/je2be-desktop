@@ -104,7 +104,11 @@ void ConvertProgress::handleAsyncUpdate() {
     }
   }
   if (fFailure) {
-    fLabel->setText(TRANS("The conversion failed."), juce::dontSendNotification);
+    if (fCancelRequested) {
+      fLabel->setText(TRANS("The conversion has cancelled."), juce::dontSendNotification);
+    } else {
+      fLabel->setText(TRANS("The conversion has failed."), juce::dontSendNotification);
+    }
     fLabel->setColour(juce::Label::textColourId, kErrorTextColor);
     auto error = fFailure->error();
     if (error) {
