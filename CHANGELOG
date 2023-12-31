@@ -1,3 +1,7 @@
+Version 4.26.2
+・Fixed a problem where the minecarts would sometimes be buried in the ground when reading the converted data. [b2j]
+・Fixed a problem in which incorrect biomes could be included in the resulting data. [b2j]
+
 Version 4.26.1
 ・Fixed a problem where bees in a beehive/bee_next were not being converted correctly. [b2j]
 ・Fixed a problem where entities would not load correctly when the resulting conversion data was read by the Paper server. [b2j, x2j]
