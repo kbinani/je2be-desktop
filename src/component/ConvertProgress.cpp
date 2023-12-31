@@ -13,7 +13,7 @@ ConvertProgress::ConvertProgress() {
 }
 
 ConvertProgress::~ConvertProgress() {
-  if (!fThread) {
+  if (fThread) {
     fThread->stopThread(-1);
   }
   fTaskbarProgress->setState(TaskbarProgress::State::NoProgress);
