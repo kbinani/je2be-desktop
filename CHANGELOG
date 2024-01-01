@@ -1,6 +1,8 @@
 Version 4.27.0
 ・Fixed a problem where the minecarts would sometimes be buried in the ground when reading the converted data. [b2j]
 ・Fixed a problem in which incorrect biomes could be included in the resulting data. [b2j]
+・Fixed a problem in which an unnecessary "entities" directory was created when converting data from the Xbox360 version. [x2j]
+・Improved entity conversion accuracy. [x2j]
 
 Version 4.26.1
 ・Fixed a problem where bees in a beehive/bee_next were not being converted correctly. [b2j]
