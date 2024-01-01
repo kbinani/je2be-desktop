@@ -37,11 +37,50 @@ void Xbox360GameDirectoryScanWorker::run() {
 void Xbox360GameDirectoryScanWorker::unsafeRun() {
   Array<File> roots;
   File::findFileSystemRoots(roots);
+
+  struct Comparator {
+    int compareElements(File first, File second) {
+      auto a = Order(first);
+      auto b = Order(second);
+      if (a == b) {
+        return second.getFullPathName().compare(first.getFullPathName());
+      } else {
+        return a - b;
+      }
+    }
+
+    static int Order(File const &f) {
+      int ret = 0;
+      if (f.isOnHardDisk()) {
+        ret += (1 << 0);
+      }
+      if (!f.isOnRemovableDrive()) {
+        ret += (1 << 1);
+      }
+      if (IsRemoteDrive(f)) {
+        ret += (1 << 2);
+      }
+      return ret;
+    }
+  } comparator;
+  roots.sort<Comparator>(comparator, true);
+
   for (File root : roots) {
     if (threadShouldExit()) {
       break;
     }
+    size_t before = fGameDirectories.size();
     lookupRoot(root, fGameDirectories);
+    auto owner = fOwner.lock();
+    if (!owner) {
+      break;
+    }
+    if (fAbort.load()) {
+      break;
+    }
+    if (before != fGameDirectories.size()) {
+      owner->triggerAsyncUpdateWith(fGameDirectories);
+    }
   }
 }
 
