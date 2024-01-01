@@ -1,4 +1,4 @@
-Version 4.26.2
+Version 4.27.0
 ・Fixed a problem where the minecarts would sometimes be buried in the ground when reading the converted data. [b2j]
 ・Fixed a problem in which incorrect biomes could be included in the resulting data. [b2j]
 
