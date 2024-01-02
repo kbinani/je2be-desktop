@@ -2,6 +2,8 @@
 
 #include <leveldb/env.h>
 
+#include <defer.hpp>
+
 #include "CommandID.h"
 #include "Constants.h"
 #include "File.h"
@@ -14,9 +16,9 @@ using namespace juce;
 
 namespace je2be::desktop::component::b2j {
 
-class B2JWorkerThread : public Thread, public je2be::toje::Progress {
+class B2JWorkerThread : public Thread, public je2be::bedrock::Progress {
 public:
-  B2JWorkerThread(File input, File output, je2be::toje::Options opt, int stepOffset, std::weak_ptr<ConvertProgress> updater)
+  B2JWorkerThread(File input, File output, je2be::bedrock::Options opt, int stepOffset, std::weak_ptr<ConvertProgress> updater)
       : Thread("je2be::desktop::component::b2j::B2JWorkerThread"), fInput(input), fOutput(output), fOptions(opt), fUpdater(updater), fStepOffset(stepOffset) {}
 
   void run() override {
@@ -62,7 +64,7 @@ public:
       }
       input = temp;
     }
-    auto st = je2be::toje::Converter::Run(PathFromFile(input), PathFromFile(fOutput), fOptions, std::thread::hardware_concurrency(), this);
+    auto st = je2be::bedrock::Converter::Run(PathFromFile(input), PathFromFile(fOutput), fOptions, std::thread::hardware_concurrency(), this);
     auto updater = fUpdater.lock();
     if (!updater) {
       return;
@@ -129,7 +131,7 @@ public:
 private:
   File const fInput;
   File const fOutput;
-  je2be::toje::Options fOptions;
+  je2be::bedrock::Options fOptions;
   std::weak_ptr<ConvertProgress> fUpdater;
   int const fStepOffset;
 };
@@ -145,7 +147,7 @@ B2JConvertProgress::B2JConvertProgress(B2JConfigState const &configState) : fCon
 }
 
 void B2JConvertProgress::startThread() {
-  je2be::toje::Options opt;
+  je2be::bedrock::Options opt;
   opt.fTempDirectory = PathFromFile(fTempRoot);
   if (fConfigState.fLocalPlayer) {
     juce::Uuid juceUuid = *fConfigState.fLocalPlayer;

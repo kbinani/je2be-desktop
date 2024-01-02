@@ -134,8 +134,8 @@ void Xbox360GameDirectoryScanWorker::lookupContentChild(File child, std::vector<
         continue;
       }
 
-      std::vector<je2be::box360::MinecraftSaveInfo::SaveBin> bins;
-      je2be::box360::MinecraftSaveInfo::Parse(PathFromFile(saveInfo), bins);
+      std::vector<je2be::xbox360::MinecraftSaveInfo::SaveBin> bins;
+      je2be::xbox360::MinecraftSaveInfo::Parse(PathFromFile(saveInfo), bins);
       if (bins.empty()) {
         continue;
       }

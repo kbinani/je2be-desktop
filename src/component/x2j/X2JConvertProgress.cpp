@@ -1,5 +1,7 @@
 #include <je2be.hpp>
 
+#include <defer.hpp>
+
 #include "CommandID.h"
 #include "Constants.h"
 #include "File.h"
@@ -10,9 +12,9 @@ using namespace juce;
 
 namespace je2be::desktop::component::x2j {
 
-class X2JWorkerThread : public Thread, public je2be::box360::Progress {
+class X2JWorkerThread : public Thread, public je2be::lce::Progress {
 public:
-  X2JWorkerThread(File input, File output, je2be::box360::Options opt, std::weak_ptr<ConvertProgress> updater)
+  X2JWorkerThread(File input, File output, je2be::lce::Options opt, std::weak_ptr<ConvertProgress> updater)
       : Thread("je2be::desktop::component::x2j::X2JWorkerThread"), fInput(input), fOutput(output), fOptions(opt), fUpdater(updater) {}
 
   void run() override {
@@ -40,7 +42,7 @@ public:
     defer {
       TemporaryDirectory::QueueDeletingDirectory(temp);
     };
-    auto status = je2be::box360::Converter::Run(PathFromFile(fInput), PathFromFile(fOutput), std::thread::hardware_concurrency(), fOptions, this);
+    auto status = je2be::xbox360::Converter::Run(PathFromFile(fInput), PathFromFile(fOutput), std::thread::hardware_concurrency(), fOptions, this);
     auto updater = fUpdater.lock();
     if (!updater) {
       return;
@@ -71,7 +73,7 @@ public:
 private:
   File const fInput;
   File const fOutput;
-  je2be::box360::Options fOptions;
+  je2be::lce::Options fOptions;
   std::weak_ptr<ConvertProgress> fUpdater;
 };
 
@@ -86,7 +88,7 @@ X2JConvertProgress::X2JConvertProgress(X2JConfigState const &configState) : fCon
 }
 
 void X2JConvertProgress::startThread() {
-  je2be::box360::Options opt;
+  je2be::lce::Options opt;
   opt.fTempDirectory = PathFromFile(fTempRoot);
   if (fConfigState.fLocalPlayer) {
     juce::Uuid juceUuid = *fConfigState.fLocalPlayer;

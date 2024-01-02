@@ -10,7 +10,7 @@ using namespace juce;
 
 namespace je2be::desktop::component::x2b {
 
-class X2BWorkerThread : public Thread, public je2be::box360::Progress, public je2be::tobe::Progress {
+class X2BWorkerThread : public Thread, public je2be::lce::Progress, public je2be::java::Progress {
 public:
   X2BWorkerThread(File input, File output, std::weak_ptr<ConvertProgress> updater, File tempRoot)
       : Thread("je2be::desktop::component::x2b::X2BWorkerThread"), fInput(input), fOutput(output), fUpdater(updater), fTempRoot(tempRoot) {}
@@ -37,9 +37,9 @@ public:
       return;
     }
     {
-      je2be::box360::Options o;
+      je2be::lce::Options o;
       o.fTempDirectory = PathFromFile(fTempRoot);
-      auto status = je2be::box360::Converter::Run(PathFromFile(fInput), PathFromFile(javaIntermediateDirectory), std::thread::hardware_concurrency(), o, this);
+      auto status = je2be::xbox360::Converter::Run(PathFromFile(fInput), PathFromFile(javaIntermediateDirectory), std::thread::hardware_concurrency(), o, this);
       auto updater = fUpdater.lock();
       if (!updater) {
         return;
@@ -54,9 +54,9 @@ public:
       return;
     }
     {
-      je2be::tobe::Options o;
+      je2be::java::Options o;
       o.fTempDirectory = PathFromFile(fTempRoot);
-      auto status = je2be::tobe::Converter::Run(PathFromFile(javaIntermediateDirectory), PathFromFile(fOutput), o, std::thread::hardware_concurrency(), this);
+      auto status = je2be::java::Converter::Run(PathFromFile(javaIntermediateDirectory), PathFromFile(fOutput), o, std::thread::hardware_concurrency(), this);
       auto updater = fUpdater.lock();
       if (!updater) {
         return;

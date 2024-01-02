@@ -11,14 +11,14 @@ using namespace juce;
 
 namespace je2be::desktop::component::j2b {
 
-class J2BWorkerThread : public Thread, public je2be::tobe::Progress {
+class J2BWorkerThread : public Thread, public je2be::java::Progress {
 public:
-  J2BWorkerThread(File input, File output, je2be::tobe::Options opt, std::weak_ptr<ConvertProgress> updater)
+  J2BWorkerThread(File input, File output, je2be::java::Options opt, std::weak_ptr<ConvertProgress> updater)
       : Thread("je2be::desktop::component::j2b::J2BWorkerThread"), fInput(input), fOutput(output), fOptions(opt), fUpdater(updater) {}
 
   void run() override {
     try {
-      auto status = je2be::tobe::Converter::Run(PathFromFile(fInput), PathFromFile(fOutput), fOptions, std::thread::hardware_concurrency(), this);
+      auto status = je2be::java::Converter::Run(PathFromFile(fInput), PathFromFile(fOutput), fOptions, std::thread::hardware_concurrency(), this);
       auto updater = fUpdater.lock();
       if (!updater) {
         return;
@@ -81,7 +81,7 @@ public:
 private:
   File const fInput;
   File const fOutput;
-  je2be::tobe::Options const fOptions;
+  je2be::java::Options const fOptions;
   std::weak_ptr<ConvertProgress> fUpdater;
   Status fStatus = Status::Ok();
 };
@@ -97,7 +97,7 @@ J2BConvertProgress::J2BConvertProgress(J2BConfigState const &configState) : fCon
 }
 
 void J2BConvertProgress::startThread() {
-  je2be::tobe::Options opt;
+  je2be::java::Options opt;
   opt.fTempDirectory = PathFromFile(fTempRoot);
   if (fConfigState.fStructure == J2BConfigState::DirectoryStructure::Paper) {
     opt.fLevelDirectoryStructure = je2be::LevelDirectoryStructure::Paper;
