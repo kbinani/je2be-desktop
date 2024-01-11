@@ -33,10 +33,12 @@ language: Japanese
 "Save into custom folder" = "保存先を自分で選ぶ";
 "Export as mcworld file" = "mcworld 形式で保存";
 "Select conversion mode" = "変換モードを選んでください";
-"Java to Bedrock" = "Java版 から 統合版に";
-"Bedrock to Java" = "統合版 から Java版に";
-"Xbox360 to Bedrock" = "Xbox360版 から 統合版に";
-"Xbox360 to Java" = "Xbox360版 から Java版に";
+"from Java" = "Java版から"
+"from Bedrock" = "統合版から"
+"from Xbox360" = "Xbox360版から"
+"from PS3" = "PS3版から"
+"to Java" = "Java版に"
+"to Bedrock" = "統合版に"
 "Select *.mcworld file" = "*.mcworld ファイルを選ぶ";
 "Select *.mcworld file to convert" = "変換する *.mcworld ファイルを選んでください";
 "Select world folder" = "フォルダを選ぶ"
