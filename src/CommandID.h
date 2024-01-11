@@ -9,6 +9,8 @@ enum {
   toChooseBedrockInput,
   toChooseXbox360InputToJava,
   toChooseXbox360InputToBedrock,
+  toChoosePS3InputToJava,
+  toChoosePS3InputToBedrock,
 
   toJ2BConfig,
   toJ2BConvert,

@@ -259,7 +259,35 @@ void ModeSelect::onAboutButtonClicked() {
 }
 
 void ModeSelect::onNextButtonClicked() {
-  //TODO:
+  if (!fFrom || !fTo) {
+    return;
+  }
+  switch (*fFrom) {
+  case From::Java:
+    if (fTo == To::Bedrock) {
+      JUCEApplication::getInstance()->invoke(commands::toChooseJavaInput, true);
+    }
+    break;
+  case From::Bedrock:
+    if (fTo == To::Java) {
+      JUCEApplication::getInstance()->invoke(commands::toChooseBedrockInput, true);
+    }
+    break;
+  case From::Xbox360:
+    if (fTo == To::Java) {
+      JUCEApplication::getInstance()->invoke(commands::toChooseXbox360InputToJava, true);
+    } else {
+      JUCEApplication::getInstance()->invoke(commands::toChooseXbox360InputToBedrock, true);
+    }
+    break;
+  case From::PS3:
+    if (fTo == To::Java) {
+      JUCEApplication::getInstance()->invoke(commands::toChoosePS3InputToJava, true);
+    } else {
+      JUCEApplication::getInstance()->invoke(commands::toChoosePS3InputToBedrock, true);
+    }
+    break;
+  }
 }
 
 } // namespace je2be::desktop::component
