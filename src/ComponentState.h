@@ -10,6 +10,7 @@ enum class InputType {
   Java,
   Bedrock,
   Xbox360,
+  PS3,
 };
 
 class ChooseInputState {

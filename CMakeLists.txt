@@ -68,6 +68,8 @@ set(je2be_desktop_files
   src/LocalizationHelper.h
   src/LookAndFeel.cpp
   src/LookAndFeel.h
+  src/PS3GameDirectoryScanWorker.cpp
+  src/PS3GameDirectoryScanWorker.h
   src/ScaledTypeface.h
   src/Status.hpp
   src/TaskbarProgress.cpp
@@ -87,6 +89,8 @@ set(je2be_desktop_files
   src/component/ChooseJavaInput.h
   src/component/ChooseJavaOutput.cpp
   src/component/ChooseJavaOutput.h
+  src/component/ChoosePS3Input.cpp
+  src/component/ChoosePS3Input.h
   src/component/ChooseXbox360Input.cpp
   src/component/ChooseXbox360Input.h
   src/component/ConvertProgress.cpp

@@ -8,6 +8,7 @@
 #include "component/ChooseBedrockOutput.h"
 #include "component/ChooseJavaInput.h"
 #include "component/ChooseJavaOutput.h"
+#include "component/ChoosePS3Input.h"
 #include "component/ChooseXbox360Input.h"
 #include "component/CopyBedrockArtifactProgress.h"
 #include "component/CopyJavaArtifactProgress.h"
@@ -85,7 +86,9 @@ public:
                        commands::toXbox360ToJavaConfig,
                        commands::toXbox360ToJavaConvert,
                        commands::toXbox360ToBedrockConfig,
-                       commands::toXbox360ToBedrockConvert});
+                       commands::toXbox360ToBedrockConvert,
+                       commands::toChoosePS3InputToJava,
+                       commands::toChoosePS3InputToBedrock});
   }
 
   void getCommandInfo(juce::CommandID commandID, juce::ApplicationCommandInfo &result) override {
@@ -302,6 +305,28 @@ public:
       auto convert = std::make_shared<component::x2b::X2BConvertProgress>(provider->getConfigState());
       fMainWindow->setContentNonOwned(convert.get(), true);
       fMainWindowContent = convert;
+      return true;
+    }
+    case commands::toChoosePS3InputToJava:
+    case commands::toChoosePS3InputToBedrock: {
+      std::optional<ChooseInputState> state;
+      auto provider = dynamic_cast<ChooseInputStateProvider *>(current.get());
+      if (provider) {
+        state = provider->getChooseInputState();
+      }
+      juce::CommandID destination;
+      juce::String title;
+      if (info.commandID == commands::toChoosePS3InputToBedrock) {
+        destination = commands::toPS3ToBedrockConfig;
+        title = TRANS("PS3 to Bedrock");
+      } else {
+        destination = commands::toPS3ToJavaConfig;
+        title = TRANS("PS3 to Java");
+      }
+      auto chooseInput = std::make_shared<component::ChoosePS3Input>(destination, state);
+      fMainWindow->setContentNonOwned(chooseInput.get(), true);
+      fMainWindowContent = chooseInput;
+      fMainWindow->setName(getApplicationName() + " : " + title);
       return true;
     }
     default:
