@@ -4,16 +4,16 @@
 #include "Constants.h"
 #include "File.h"
 #include "TemporaryDirectory.h"
-#include "component/x2b/X2BConvertProgress.h"
+#include "component/p2b/P2BConvertProgress.h"
 
 using namespace juce;
 
-namespace je2be::desktop::component::x2b {
+namespace je2be::desktop::component::p2b {
 
-class X2BWorkerThread : public Thread, public je2be::lce::Progress, public je2be::java::Progress {
+class P2BWorkerThread : public Thread, public je2be::lce::Progress, public je2be::java::Progress {
 public:
-  X2BWorkerThread(File input, File output, std::weak_ptr<ConvertProgress> updater, File tempRoot)
-      : Thread("je2be::desktop::component::x2b::X2BWorkerThread"), fInput(input), fOutput(output), fUpdater(updater), fTempRoot(tempRoot) {}
+  P2BWorkerThread(File input, File output, std::weak_ptr<ConvertProgress> updater, File tempRoot)
+      : Thread("je2be::desktop::component::p2b::P2BWorkerThread"), fInput(input), fOutput(output), fUpdater(updater), fTempRoot(tempRoot) {}
 
   void run() override {
     try {
@@ -39,7 +39,7 @@ public:
     {
       je2be::lce::Options o;
       o.fTempDirectory = PathFromFile(fTempRoot);
-      auto status = je2be::xbox360::Converter::Run(PathFromFile(fInput), PathFromFile(javaIntermediateDirectory), std::thread::hardware_concurrency(), o, this);
+      auto status = je2be::ps3::Converter::Run(PathFromFile(fInput), PathFromFile(javaIntermediateDirectory), std::thread::hardware_concurrency(), o, this);
       auto updater = fUpdater.lock();
       if (!updater) {
         return;
@@ -122,7 +122,7 @@ private:
   std::weak_ptr<ConvertProgress> fUpdater;
 };
 
-X2BConvertProgress::X2BConvertProgress(ToBedrockConfigState const &configState) : fConfigState(configState) {
+P2BConvertProgress::P2BConvertProgress(ToBedrockConfigState const &configState) : fConfigState(configState) {
   setSize(kWindowWidth, kWindowHeight);
 
   fTempRoot = TemporaryDirectory::EnsureExisting();
@@ -132,20 +132,20 @@ X2BConvertProgress::X2BConvertProgress(ToBedrockConfigState const &configState) 
   fOutputDirectory = outputDir;
 }
 
-void X2BConvertProgress::startThread() {
-  fThread.reset(new X2BWorkerThread(fConfigState.fInputState.fInput, fOutputDirectory, weak_from_this(), fTempRoot));
+void P2BConvertProgress::startThread() {
+  fThread.reset(new P2BWorkerThread(fConfigState.fInputState.fInput, fOutputDirectory, weak_from_this(), fTempRoot));
   fThread->startThread();
 }
 
-void X2BConvertProgress::onCancelButtonClicked() {
+void P2BConvertProgress::onCancelButtonClicked() {
   if (fFailure) {
-    JUCEApplication::getInstance()->invoke(commands::toChooseXbox360InputToBedrock, true);
+    JUCEApplication::getInstance()->invoke(commands::toChoosePS3InputToBedrock, true);
   } else {
-    fCommandWhenFinished = commands::toXbox360ToBedrockConfig;
+    fCommandWhenFinished = commands::toPS3ToBedrockConfig;
   }
 }
 
-void X2BConvertProgress::onFinish() {
+void P2BConvertProgress::onFinish() {
   if (fCommandWhenFinished != commands::toChooseBedrockOutput && fOutputDirectory.exists()) {
     TemporaryDirectory::QueueDeletingDirectory(fOutputDirectory);
   }
@@ -155,4 +155,4 @@ void X2BConvertProgress::onFinish() {
   }
 }
 
-} // namespace je2be::desktop::component::x2b
+} // namespace je2be::desktop::component::p2b

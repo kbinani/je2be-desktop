@@ -115,6 +115,10 @@ set(je2be_desktop_files
   src/component/b2j/B2JConvertProgress.h
   src/component/j2b/J2BConvertProgress.cpp
   src/component/j2b/J2BConvertProgress.h
+  src/component/p2b/P2BConvertProgress.cpp
+  src/component/p2b/P2BConvertProgress.h
+  src/component/p2j/P2JConvertProgress.cpp
+  src/component/p2j/P2JConvertProgress.h
   src/component/x2b/X2BConvertProgress.cpp
   src/component/x2b/X2BConvertProgress.h
   src/component/x2j/X2JConvertProgress.cpp

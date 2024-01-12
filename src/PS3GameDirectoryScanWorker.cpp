@@ -111,7 +111,9 @@ void PS3GameDirectoryScanWorker::lookupSAVEDATA(File savedata, std::vector<GameD
       continue;
     }
     GameDirectory gd;
-    gd.fDirectory = gamedata;
+    gd.fDirectory = child;
+    // TODO: taking level name from somewhere
+    gd.fLevelName = "world";
     auto icon = child.getChildFile("ICON0.PNG");
     if (icon.existsAsFile()) {
       gd.fIcon = PNGImageFormat::loadFrom(icon);

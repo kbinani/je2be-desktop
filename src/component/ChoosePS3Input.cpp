@@ -142,8 +142,9 @@ void ChoosePS3Input::onCustomDirectorySelected(juce::FileChooser const &chooser)
   if (result == File()) {
     return;
   }
-  fState = ChooseInputState(InputType::PS3, result, "world");
-  sLastDirectory = result.getParentDirectory();
+  auto parent = result.getParentDirectory();
+  fState = ChooseInputState(InputType::PS3, parent, "world");
+  sLastDirectory = parent;
   JUCEApplication::getInstance()->invoke(fDestinationAfterChoose, true);
 }
 

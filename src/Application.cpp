@@ -17,6 +17,8 @@
 #include "component/ToJavaConfig.h"
 #include "component/b2j/B2JConvertProgress.h"
 #include "component/j2b/J2BConvertProgress.h"
+#include "component/p2b/P2BConvertProgress.h"
+#include "component/p2j/P2JConvertProgress.h"
 #include "component/x2b/X2BConvertProgress.h"
 #include "component/x2j/X2JConvertProgress.h"
 
@@ -365,6 +367,26 @@ public:
       auto config = std::make_shared<component::ToBedrockConfig>(*state, commands::toPS3ToBedrockConvert, commands::toChoosePS3InputToBedrock);
       fMainWindow->setContentNonOwned(config.get(), true);
       fMainWindowContent = config;
+      return true;
+    }
+    case commands::toPS3ToJavaConvert: {
+      auto provider = dynamic_cast<ToJavaConfigStateProvider *>(current.get());
+      if (!provider) {
+        return false;
+      }
+      auto convert = std::make_shared<component::p2j::P2JConvertProgress>(provider->getConfigState());
+      fMainWindow->setContentNonOwned(convert.get(), true);
+      fMainWindowContent = convert;
+      return true;
+    }
+    case commands::toPS3ToBedrockConvert: {
+      auto provider = dynamic_cast<ToBedrockConfigStateProvider *>(current.get());
+      if (!provider) {
+        return false;
+      }
+      auto convert = std::make_shared<component::p2b::P2BConvertProgress>(provider->getConfigState());
+      fMainWindow->setContentNonOwned(convert.get(), true);
+      fMainWindowContent = convert;
       return true;
     }
     default:
