@@ -1,3 +1,6 @@
+Version 5.0.0
+・Added the ability to convert game data of the PS3 edition.
+
 Version 4.27.0
 ・Fixed a problem where the minecarts would sometimes be buried in the ground when reading the converted data. [b2j]
 ・Fixed a problem in which incorrect biomes could be included in the resulting data. [b2j]
