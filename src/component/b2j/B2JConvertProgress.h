@@ -9,16 +9,16 @@ namespace je2be::desktop::component::b2j {
 
 class B2JConvertProgress : public ConvertProgress,
                            public JavaConvertedStateProvider,
-                           public B2JConfigStateProvider,
+                           public ToJavaConfigStateProvider,
                            public ChooseInputStateProvider,
                            public std::enable_shared_from_this<B2JConvertProgress> {
 public:
-  explicit B2JConvertProgress(B2JConfigState const &configState);
+  explicit B2JConvertProgress(ToJavaConfigState const &configState);
   ~B2JConvertProgress() override {}
 
   void paint(juce::Graphics &) override {}
 
-  B2JConfigState getConfigState() const override {
+  ToJavaConfigState getConfigState() const override {
     return fConfigState;
   }
 
@@ -71,7 +71,7 @@ public:
   void onFinish() override;
 
 private:
-  B2JConfigState const fConfigState;
+  ToJavaConfigState const fConfigState;
   juce::File fOutputDirectory;
   std::optional<JavaConvertedState> fState;
   juce::CommandID fCommandWhenFinished = commands::toChooseJavaOutput;

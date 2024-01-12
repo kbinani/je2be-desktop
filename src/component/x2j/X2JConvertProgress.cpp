@@ -77,7 +77,7 @@ private:
   std::weak_ptr<ConvertProgress> fUpdater;
 };
 
-X2JConvertProgress::X2JConvertProgress(X2JConfigState const &configState) : fConfigState(configState) {
+X2JConvertProgress::X2JConvertProgress(ToJavaConfigState const &configState) : fConfigState(configState) {
   setSize(kWindowWidth, kWindowHeight);
 
   fTempRoot = TemporaryDirectory::EnsureExisting();

@@ -4,13 +4,13 @@
 #include "Constants.h"
 #include "GameDirectory.h"
 #include "component/TextButton.h"
-#include "component/x2j/X2JConfig.h"
+#include "component/ToJavaConfig.h"
 
 using namespace juce;
 
-namespace je2be::desktop::component::x2j {
+namespace je2be::desktop::component {
 
-X2JConfig::X2JConfig(ChooseInputState const &chooseInputState) : fState(chooseInputState) {
+ToJavaConfig::ToJavaConfig(ChooseInputState const &chooseInputState, int forwardCommand, int backwardCommand) : fState(chooseInputState), fForwardCommand(forwardCommand), fBackwardCommand(backwardCommand) {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
   setSize(width, height);
@@ -85,14 +85,14 @@ X2JConfig::X2JConfig(ChooseInputState const &chooseInputState) : fState(chooseIn
   startTimer(1000);
 }
 
-X2JConfig::~X2JConfig() {}
+ToJavaConfig::~ToJavaConfig() {}
 
-void X2JConfig::timerCallback() {
+void ToJavaConfig::timerCallback() {
   stopTimer();
   updateStartButton();
 }
 
-void X2JConfig::updateStartButton() {
+void ToJavaConfig::updateStartButton() {
   if (fAccountScanThread == nullptr && !isTimerRunning()) {
     fStartButton->setEnabled(fOk);
   } else {
@@ -100,9 +100,9 @@ void X2JConfig::updateStartButton() {
   }
 }
 
-void X2JConfig::paint(juce::Graphics &g) {}
+void ToJavaConfig::paint(juce::Graphics &g) {}
 
-void X2JConfig::onStartButtonClicked() {
+void ToJavaConfig::onStartButtonClicked() {
   if (fImportAccountFromLauncher->getToggleState()) {
     int selected = fAccountList->getSelectedId();
     int index = selected - 1;
@@ -111,21 +111,21 @@ void X2JConfig::onStartButtonClicked() {
       fState.fLocalPlayer = a.fUuid;
     }
   }
-  JUCEApplication::getInstance()->invoke(commands::toXbox360ToJavaConvert, true);
+  JUCEApplication::getInstance()->invoke(fForwardCommand, true);
 }
 
-void X2JConfig::onBackButtonClicked() {
-  JUCEApplication::getInstance()->invoke(commands::toChooseXbox360InputToJava, true);
+void ToJavaConfig::onBackButtonClicked() {
+  JUCEApplication::getInstance()->invoke(fBackwardCommand, true);
 }
 
-void X2JConfig::onClickImportAccountFromLauncherButton() {
+void ToJavaConfig::onClickImportAccountFromLauncherButton() {
   if (fAccountScanThread) {
     return;
   }
   fAccountList->setEnabled(fImportAccountFromLauncher->getToggleState());
 }
 
-void X2JConfig::handleAsyncUpdate() {
+void ToJavaConfig::handleAsyncUpdate() {
   if (fAccountScanThread) {
     fAccountScanThread->copyAccounts(fAccounts);
   }
@@ -145,4 +145,4 @@ void X2JConfig::handleAsyncUpdate() {
   fBackButton->setEnabled(true);
 }
 
-} // namespace je2be::desktop::component::x2j
+} // namespace je2be::desktop::component

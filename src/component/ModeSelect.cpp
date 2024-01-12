@@ -208,6 +208,12 @@ void ModeSelect::paint(juce::Graphics &g) {
   if (fFrom != From::PS3 || fTo != To::Bedrock) {
     g.strokePath(fPS3ToBedrockPath, type);
   }
+  if (fTo != To::Java || !fFrom) {
+    g.strokePath(fArrowHeadBedrockToJava, type);
+  }
+  if (fTo != To::Bedrock || !fFrom) {
+    g.strokePath(fArrowHeadXbox360ToBedrock, type);
+  }
   g.setColour(findColour(juce::TextButton::ColourIds::textColourOffId));
   if (fFrom == From::Java && fTo == To::Bedrock) {
     g.strokePath(fJavaToBedrockPath, type);

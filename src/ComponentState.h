@@ -28,9 +28,9 @@ public:
   virtual std::optional<ChooseInputState> getChooseInputState() const = 0;
 };
 
-class J2BConfigState {
+class ToBedrockConfigState {
 public:
-  explicit J2BConfigState(ChooseInputState const &inputState)
+  explicit ToBedrockConfigState(ChooseInputState const &inputState)
       : fInputState(inputState) {}
   ChooseInputState const fInputState;
   enum class DirectoryStructure {
@@ -40,10 +40,10 @@ public:
   DirectoryStructure fStructure = DirectoryStructure::Vanilla;
 };
 
-class J2BConfigStateProvider {
+class ToBedrockConfigStateProvider {
 public:
-  virtual ~J2BConfigStateProvider() {}
-  virtual J2BConfigState getConfigState() const = 0;
+  virtual ~ToBedrockConfigStateProvider() {}
+  virtual ToBedrockConfigState getConfigState() const = 0;
 };
 
 class BedrockConvertedState {
@@ -81,20 +81,6 @@ public:
   virtual BedrockOutputChoosenState getBedrockOutputChoosenState() const = 0;
 };
 
-class B2JConfigState {
-public:
-  explicit B2JConfigState(ChooseInputState const &inputState)
-      : fInputState(inputState) {}
-  ChooseInputState const fInputState;
-  std::optional<juce::Uuid> fLocalPlayer;
-};
-
-class B2JConfigStateProvider {
-public:
-  virtual ~B2JConfigStateProvider() {}
-  virtual B2JConfigState getConfigState() const = 0;
-};
-
 class JavaConvertedState {
 public:
   JavaConvertedState(juce::String const &worldName, juce::File const &outputDirectory) : fWorldName(worldName), fOutputDirectory(outputDirectory) {}
@@ -123,31 +109,18 @@ public:
   virtual JavaOutputChoosenState getJavaOutputChoosenState() const = 0;
 };
 
-class X2JConfigState {
+class ToJavaConfigState {
 public:
-  explicit X2JConfigState(ChooseInputState const &inputState)
+  explicit ToJavaConfigState(ChooseInputState const &inputState)
       : fInputState(inputState) {}
   ChooseInputState const fInputState;
   std::optional<juce::Uuid> fLocalPlayer;
 };
 
-class X2JConfigStateProvider {
+class ToJavaConfigStateProvider {
 public:
-  virtual ~X2JConfigStateProvider() {}
-  virtual X2JConfigState getConfigState() const = 0;
-};
-
-class X2BConfigState {
-public:
-  explicit X2BConfigState(ChooseInputState const &inputState)
-      : fInputState(inputState) {}
-  ChooseInputState const fInputState;
-};
-
-class X2BConfigStateProvider {
-public:
-  virtual ~X2BConfigStateProvider() {}
-  virtual X2BConfigState getConfigState() const = 0;
+  virtual ~ToJavaConfigStateProvider() {}
+  virtual ToJavaConfigState getConfigState() const = 0;
 };
 
 } // namespace je2be::desktop

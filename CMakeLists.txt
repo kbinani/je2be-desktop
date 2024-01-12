@@ -107,20 +107,16 @@ set(je2be_desktop_files
   src/component/SearchLabel.cpp
   src/component/SearchLabel.h
   src/component/TextButton.h
-  src/component/b2j/B2JConfig.cpp
-  src/component/b2j/B2JConfig.h
+  src/component/ToBedrockConfig.cpp
+  src/component/ToBedrockConfig.h
+  src/component/ToJavaConfig.cpp
+  src/component/ToJavaConfig.h
   src/component/b2j/B2JConvertProgress.cpp
   src/component/b2j/B2JConvertProgress.h
-  src/component/j2b/J2BConfig.cpp
-  src/component/j2b/J2BConfig.h
   src/component/j2b/J2BConvertProgress.cpp
   src/component/j2b/J2BConvertProgress.h
-  src/component/x2b/X2BConfig.cpp
-  src/component/x2b/X2BConfig.h
   src/component/x2b/X2BConvertProgress.cpp
   src/component/x2b/X2BConvertProgress.h
-  src/component/x2j/X2JConfig.cpp
-  src/component/x2j/X2JConfig.h
   src/component/x2j/X2JConvertProgress.cpp
   src/component/x2j/X2JConvertProgress.h
   #end je2be-desktop

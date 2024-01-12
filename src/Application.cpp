@@ -13,13 +13,11 @@
 #include "component/CopyBedrockArtifactProgress.h"
 #include "component/CopyJavaArtifactProgress.h"
 #include "component/MainWindow.h"
-#include "component/b2j/B2JConfig.h"
+#include "component/ToBedrockConfig.h"
+#include "component/ToJavaConfig.h"
 #include "component/b2j/B2JConvertProgress.h"
-#include "component/j2b/J2BConfig.h"
 #include "component/j2b/J2BConvertProgress.h"
-#include "component/x2b/X2BConfig.h"
 #include "component/x2b/X2BConvertProgress.h"
-#include "component/x2j/X2JConfig.h"
 #include "component/x2j/X2JConvertProgress.h"
 
 #include <mimalloc.h>
@@ -70,25 +68,31 @@ public:
 
   void getAllCommands(juce::Array<juce::CommandID> &commands) override {
     JUCEApplication::getAllCommands(commands);
-    commands.addArray({commands::toJ2BConfig,
-                       commands::toChooseJavaInput,
-                       commands::toJ2BConvert,
-                       commands::toChooseBedrockOutput,
-                       commands::toCopyBedrockArtifact,
-                       commands::toModeSelect,
-                       commands::toChooseBedrockInput,
-                       commands::toB2JConfig,
-                       commands::toB2JConvert,
-                       commands::toChooseJavaOutput,
-                       commands::toCopyJavaArtifact,
-                       commands::toChooseXbox360InputToBedrock,
-                       commands::toChooseXbox360InputToJava,
-                       commands::toXbox360ToJavaConfig,
-                       commands::toXbox360ToJavaConvert,
-                       commands::toXbox360ToBedrockConfig,
-                       commands::toXbox360ToBedrockConvert,
-                       commands::toChoosePS3InputToJava,
-                       commands::toChoosePS3InputToBedrock});
+    commands.addArray({
+        commands::toJ2BConfig,
+        commands::toChooseJavaInput,
+        commands::toJ2BConvert,
+        commands::toChooseBedrockOutput,
+        commands::toCopyBedrockArtifact,
+        commands::toModeSelect,
+        commands::toChooseBedrockInput,
+        commands::toB2JConfig,
+        commands::toB2JConvert,
+        commands::toChooseJavaOutput,
+        commands::toCopyJavaArtifact,
+        commands::toChooseXbox360InputToBedrock,
+        commands::toChooseXbox360InputToJava,
+        commands::toXbox360ToJavaConfig,
+        commands::toXbox360ToJavaConvert,
+        commands::toXbox360ToBedrockConfig,
+        commands::toXbox360ToBedrockConvert,
+        commands::toChoosePS3InputToJava,
+        commands::toChoosePS3InputToBedrock,
+        commands::toPS3ToJavaConfig,
+        commands::toPS3ToJavaConvert,
+        commands::toPS3ToBedrockConfig,
+        commands::toPS3ToBedrockConvert,
+    });
   }
 
   void getCommandInfo(juce::CommandID commandID, juce::ApplicationCommandInfo &result) override {
@@ -110,7 +114,7 @@ public:
       if (state->fType != InputType::Java) {
         return false;
       }
-      auto config = std::make_shared<component::j2b::J2BConfig>(*state);
+      auto config = std::make_shared<component::ToBedrockConfig>(*state, commands::toJ2BConvert, commands::toChooseJavaInput);
       fMainWindow->setContentNonOwned(config.get(), true);
       fMainWindowContent = config;
       return true;
@@ -128,7 +132,7 @@ public:
       return true;
     }
     case commands::toJ2BConvert: {
-      auto provider = dynamic_cast<J2BConfigStateProvider *>(current.get());
+      auto provider = dynamic_cast<ToBedrockConfigStateProvider *>(current.get());
       if (!provider) {
         return false;
       }
@@ -192,13 +196,13 @@ public:
       if (state->fType != InputType::Bedrock) {
         return false;
       }
-      auto config = std::make_shared<component::b2j::B2JConfig>(*state);
+      auto config = std::make_shared<component::ToJavaConfig>(*state, commands::toB2JConvert, commands::toChooseBedrockInput);
       fMainWindow->setContentNonOwned(config.get(), true);
       fMainWindowContent = config;
       return true;
     }
     case commands::toB2JConvert: {
-      auto provider = dynamic_cast<B2JConfigStateProvider *>(current.get());
+      auto provider = dynamic_cast<ToJavaConfigStateProvider *>(current.get());
       if (!provider) {
         return false;
       }
@@ -265,13 +269,13 @@ public:
       if (state->fType != InputType::Xbox360) {
         return false;
       }
-      auto config = std::make_shared<component::x2j::X2JConfig>(*state);
+      auto config = std::make_shared<component::ToJavaConfig>(*state, commands::toXbox360ToJavaConvert, commands::toChooseXbox360InputToJava);
       fMainWindow->setContentNonOwned(config.get(), true);
       fMainWindowContent = config;
       return true;
     }
     case commands::toXbox360ToJavaConvert: {
-      auto provider = dynamic_cast<X2JConfigStateProvider *>(current.get());
+      auto provider = dynamic_cast<ToJavaConfigStateProvider *>(current.get());
       if (!provider) {
         return false;
       }
@@ -292,13 +296,13 @@ public:
       if (state->fType != InputType::Xbox360) {
         return false;
       }
-      auto config = std::make_shared<component::x2b::X2BConfig>(*state);
+      auto config = std::make_shared<component::ToBedrockConfig>(*state, commands::toXbox360ToBedrockConvert, commands::toChooseXbox360InputToBedrock);
       fMainWindow->setContentNonOwned(config.get(), true);
       fMainWindowContent = config;
       return true;
     }
     case commands::toXbox360ToBedrockConvert: {
-      auto provider = dynamic_cast<X2BConfigStateProvider *>(current.get());
+      auto provider = dynamic_cast<ToBedrockConfigStateProvider *>(current.get());
       if (!provider) {
         return false;
       }
@@ -327,6 +331,40 @@ public:
       fMainWindow->setContentNonOwned(chooseInput.get(), true);
       fMainWindowContent = chooseInput;
       fMainWindow->setName(getApplicationName() + " : " + title);
+      return true;
+    }
+    case commands::toPS3ToJavaConfig: {
+      auto provider = dynamic_cast<ChooseInputStateProvider *>(current.get());
+      if (!provider) {
+        return false;
+      }
+      auto state = provider->getChooseInputState();
+      if (!state) {
+        return false;
+      }
+      if (state->fType != InputType::PS3) {
+        return false;
+      }
+      auto config = std::make_shared<component::ToJavaConfig>(*state, commands::toPS3ToJavaConvert, commands::toChoosePS3InputToJava);
+      fMainWindow->setContentNonOwned(config.get(), true);
+      fMainWindowContent = config;
+      return true;
+    }
+    case commands::toPS3ToBedrockConfig: {
+      auto provider = dynamic_cast<ChooseInputStateProvider *>(current.get());
+      if (!provider) {
+        return false;
+      }
+      auto state = provider->getChooseInputState();
+      if (!state) {
+        return false;
+      }
+      if (state->fType != InputType::PS3) {
+        return false;
+      }
+      auto config = std::make_shared<component::ToBedrockConfig>(*state, commands::toPS3ToBedrockConvert, commands::toChoosePS3InputToBedrock);
+      fMainWindow->setContentNonOwned(config.get(), true);
+      fMainWindowContent = config;
       return true;
     }
     default:

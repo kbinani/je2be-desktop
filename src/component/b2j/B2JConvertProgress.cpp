@@ -136,7 +136,7 @@ private:
   int const fStepOffset;
 };
 
-B2JConvertProgress::B2JConvertProgress(B2JConfigState const &configState) : fConfigState(configState) {
+B2JConvertProgress::B2JConvertProgress(ToJavaConfigState const &configState) : fConfigState(configState) {
   setSize(kWindowWidth, kWindowHeight);
 
   fTempRoot = TemporaryDirectory::EnsureExisting();

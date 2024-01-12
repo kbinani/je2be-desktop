@@ -122,7 +122,7 @@ private:
   std::weak_ptr<ConvertProgress> fUpdater;
 };
 
-X2BConvertProgress::X2BConvertProgress(X2BConfigState const &configState) : fConfigState(configState) {
+X2BConvertProgress::X2BConvertProgress(ToBedrockConfigState const &configState) : fConfigState(configState) {
   setSize(kWindowWidth, kWindowHeight);
 
   fTempRoot = TemporaryDirectory::EnsureExisting();

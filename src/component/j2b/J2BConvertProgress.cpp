@@ -86,7 +86,7 @@ private:
   Status fStatus = Status::Ok();
 };
 
-J2BConvertProgress::J2BConvertProgress(J2BConfigState const &configState) : fConfigState(configState) {
+J2BConvertProgress::J2BConvertProgress(ToBedrockConfigState const &configState) : fConfigState(configState) {
   setSize(kWindowWidth, kWindowHeight);
 
   fTempRoot = TemporaryDirectory::EnsureExisting();
@@ -99,7 +99,7 @@ J2BConvertProgress::J2BConvertProgress(J2BConfigState const &configState) : fCon
 void J2BConvertProgress::startThread() {
   je2be::java::Options opt;
   opt.fTempDirectory = PathFromFile(fTempRoot);
-  if (fConfigState.fStructure == J2BConfigState::DirectoryStructure::Paper) {
+  if (fConfigState.fStructure == ToBedrockConfigState::DirectoryStructure::Paper) {
     opt.fLevelDirectoryStructure = je2be::LevelDirectoryStructure::Paper;
   }
   fThread.reset(new J2BWorkerThread(fConfigState.fInputState.fInput, fOutputDirectory, opt, weak_from_this()));

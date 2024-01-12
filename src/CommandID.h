@@ -25,7 +25,9 @@ enum {
   toXbox360ToBedrockConvert,
 
   toPS3ToJavaConfig,
+  toPS3ToJavaConvert,
   toPS3ToBedrockConfig,
+  toPS3ToBedrockConvert,
 
   toChooseBedrockOutput,
   toChooseJavaOutput,

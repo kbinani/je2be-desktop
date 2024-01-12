@@ -1,13 +1,13 @@
-#include "component/x2b/X2BConfig.h"
+#include "component/ToBedrockConfig.h"
 #include "CommandID.h"
 #include "Constants.h"
 #include "component/TextButton.h"
 
 using namespace juce;
 
-namespace je2be::desktop::component::x2b {
+namespace je2be::desktop::component {
 
-X2BConfig::X2BConfig(ChooseInputState const &chooseInputState) : fState(chooseInputState) {
+ToBedrockConfig::ToBedrockConfig(ChooseInputState const &chooseInputState, int forwardCommand, int backwardCommand) : fState(chooseInputState), fForwardCommand(forwardCommand), fBackwardCommand(backwardCommand) {
   auto width = kWindowWidth;
   auto height = kWindowHeight;
   setSize(width, height);
@@ -32,21 +32,21 @@ X2BConfig::X2BConfig(ChooseInputState const &chooseInputState) : fState(chooseIn
   startTimer(1000);
 }
 
-X2BConfig::~X2BConfig() {}
+ToBedrockConfig::~ToBedrockConfig() {}
 
-void X2BConfig::timerCallback() {
+void ToBedrockConfig::timerCallback() {
   stopTimer();
   fStartButton->setEnabled(true);
 }
 
-void X2BConfig::paint(juce::Graphics &g) {}
+void ToBedrockConfig::paint(juce::Graphics &g) {}
 
-void X2BConfig::onStartButtonClicked() {
-  JUCEApplication::getInstance()->invoke(commands::toXbox360ToBedrockConvert, true);
+void ToBedrockConfig::onStartButtonClicked() {
+  JUCEApplication::getInstance()->invoke(fForwardCommand, true);
 }
 
-void X2BConfig::onBackButtonClicked() {
-  JUCEApplication::getInstance()->invoke(commands::toChooseXbox360InputToBedrock, true);
+void ToBedrockConfig::onBackButtonClicked() {
+  JUCEApplication::getInstance()->invoke(fBackwardCommand, true);
 }
 
-} // namespace je2be::desktop::component::x2b
+} // namespace je2be::desktop::component

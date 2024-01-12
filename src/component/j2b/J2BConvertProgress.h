@@ -9,16 +9,16 @@ namespace je2be::desktop::component::j2b {
 
 class J2BConvertProgress : public ConvertProgress,
                            public BedrockConvertedStateProvider,
-                           public J2BConfigStateProvider,
+                           public ToBedrockConfigStateProvider,
                            public ChooseInputStateProvider,
                            public std::enable_shared_from_this<J2BConvertProgress> {
 public:
-  explicit J2BConvertProgress(J2BConfigState const &configState);
+  explicit J2BConvertProgress(ToBedrockConfigState const &configState);
   ~J2BConvertProgress() override {}
 
   void paint(juce::Graphics &) override {}
 
-  J2BConfigState getConfigState() const override {
+  ToBedrockConfigState getConfigState() const override {
     return fConfigState;
   }
 
@@ -51,7 +51,7 @@ public:
   }
 
 private:
-  J2BConfigState fConfigState;
+  ToBedrockConfigState fConfigState;
   std::optional<BedrockConvertedState> fState;
   juce::File fTempRoot;
   juce::File fOutputDirectory;
