@@ -119,6 +119,10 @@ About::About() {
       "mimalloc",
       "https://github.com/microsoft/mimalloc",
       "",
+
+      "sparse",
+      "https://github.com/Arzaghi/sparse",
+      "",
   };
 
   int width = 400;
