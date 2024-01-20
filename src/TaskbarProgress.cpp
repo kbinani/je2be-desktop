@@ -20,7 +20,7 @@ std::optional<HWND> GetTopLevelWindow() {
 }
 } // namespace
 
-class TaskbarProgress::Impl : juce::Timer {
+class TaskbarProgress::Impl : public juce::Timer {
 public:
   Impl()
       : fTaskbar(nullptr), fState(std::nullopt) {
@@ -43,10 +43,13 @@ public:
     startTimerHz(24);
   }
 
-  ~Impl() {
+  ~Impl() override {
     stopTimer();
 
     if (fTaskbar) {
+      if (fTopLevelWindow) {
+        fTaskbar->SetProgressState(*fTopLevelWindow, TBPF_NOPROGRESS);
+      }
       fTaskbar->Release();
       fTaskbar = nullptr;
     }
@@ -111,7 +114,7 @@ private:
 };
 
 TaskbarProgress::TaskbarProgress()
-    : fImpl(new Impl()) {
+    : fImpl(std::make_unique<Impl>()) {
 }
 
 TaskbarProgress::~TaskbarProgress() {
