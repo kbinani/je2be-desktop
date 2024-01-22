@@ -147,10 +147,11 @@ void ConvertProgress::handleAsyncUpdate() {
       progress += ch.fProgressWeight;
     }
     auto ch = getProgressCharacteristics(fStep);
-    fProgresses[fStep] = fLast[fStep].fProgress;
-    progress += fLast[fStep].fProgress * ch.fProgressWeight;
+    double next = (std::max)(fProgresses[fStep], fLast[fStep].fProgress);
+    fProgresses[fStep] = next;
+    progress += next * ch.fProgressWeight;
     if (fStep + 1 < steps) {
-      if (fLast[fStep].fProgress == 1) {
+      if (next == 1) {
         fProgresses[fStep + 1] = -1;
       } else {
         fProgresses[fStep + 1] = 0;
