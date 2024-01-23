@@ -1,3 +1,7 @@
+Version 5.1.0
+・Fixed a problem in which the progress bar display could decrease during processing. [x2j, x2b, p2j, p2b]
+・Improved memory utilization. [x2j, x2b, p2j, p2b, b2j]
+
 Version 5.0.0
 ・Added the ability to convert game data of the PS3 edition.
 
