@@ -123,6 +123,10 @@ About::About() {
       "sparse",
       "https://github.com/Arzaghi/sparse",
       "",
+
+      "lz4",
+      "https://github.com/lz4/lz4",
+      "",
   };
 
   int width = 400;
