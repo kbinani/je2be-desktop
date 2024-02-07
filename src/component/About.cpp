@@ -55,14 +55,6 @@ About::About() {
       "https://github.com/juce-framework/JUCE",
       "",
 
-      "LevelDB",
-      "https://github.com/kbinani/leveldb-stdfs",
-      "",
-
-      "xxhash",
-      "https://github.com/stbrumme/xxhash",
-      "",
-
       "json",
       "https://github.com/nlohmann/json",
       "",
@@ -92,14 +84,6 @@ About::About() {
       "https://sourceforge.net/projects/xboxtopcminecraftconverter",
       "",
 
-      "je2be-core",
-      "https://github.com/kbinani/je2be-core",
-      "",
-
-      "libminecraft-file",
-      "https://github.com/kbinani/libminecraft-file",
-      "",
-
       "Noto Sans",
       "https://fonts.google.com/noto/specimen/Noto+Sans",
       "",
@@ -126,6 +110,22 @@ About::About() {
 
       "lz4",
       "https://github.com/lz4/lz4",
+      "",
+
+      "defer",
+      "https://github.com/kbinani/defer",
+      "",
+
+      "LevelDB",
+      "https://github.com/kbinani/leveldb-stdfs",
+      "",
+
+      "libminecraft-file",
+      "https://github.com/kbinani/libminecraft-file",
+      "",
+
+      "je2be-core",
+      "https://github.com/kbinani/je2be-core",
       "",
   };
 
