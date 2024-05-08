@@ -103,6 +103,7 @@ ToJavaConfig::ToJavaConfig(ChooseInputState const &chooseInputState, int forward
   }
 
   if (error.isEmpty()) {
+    fOk = true;
     fMessage.reset(new Label("", ""));
   } else {
     fMessage.reset(new Label("", TRANS("There doesn't seem to be any Minecraft save data in the specified folder.")));
