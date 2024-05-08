@@ -1,3 +1,8 @@
+Version 5.2.0
+・Added support for Minecraft 1.20.6.
+・Improved the conversion accuracy for items such as Lodestone and Bucket of Salmon. [b2j, j2b]
+・Fixed an issue that could cause a crash during conversion to the Java edition. [b2j]
+
 Version 5.1.0
 ・Fixed a problem in which the progress bar display could decrease during processing. [x2j, x2b, p2j, p2b]
 ・Improved memory utilization. [x2j, x2b, p2j, p2b, b2j]
