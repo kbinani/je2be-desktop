@@ -64,10 +64,45 @@ ToJavaConfig::ToJavaConfig(ChooseInputState const &chooseInputState, int forward
   fBackButton->onClick = [this]() { onBackButtonClicked(); };
   addAndMakeVisible(*fBackButton);
 
-  // TODO: check given file or directory
-  fOk = true;
+  juce::String error;
+  juce::File input = fState.fInputState.fInput;
+  switch (fState.fInputState.fType) {
+  case InputType::Bedrock: {
+    if (input.isDirectory()) {
+      if (!input.getChildFile("level.dat").existsAsFile()) {
+        error = TRANS("level.dat file not found");
+        break;
+      } else if (!input.getChildFile("db").isDirectory()) {
+        error = TRANS("db directory not found");
+        break;
+      } else if (!input.getChildFile("db").getChildFile("CURRENT").existsAsFile()) {
+        error = TRANS("CURRENT file not found");
+        break;
+      }
+    } else {
+      auto extension = input.getFileExtension().toLowerCase();
+      if (extension != ".mcworld" && extension != ".zip") {
+        error = TRANS("Unsupported file type") + ": \"" + input.getFileExtension() + "\"";
+      }
+    }
+    break;
+  }
+  case InputType::Xbox360: {
+    auto extension = input.getFileExtension().toLowerCase();
+    if (extension != ".bin") {
+      error = TRANS("Unsupported file type") + ": \"" + input.getFileExtension() + "\"";
+    }
+    break;
+  }
+  case InputType::PS3:
+    break;
+  case InputType::Java:
+  default:
+    error = "Unexpected input type: InputType::Java";
+    break;
+  }
 
-  if (fOk) {
+  if (error.isEmpty()) {
     fMessage.reset(new Label("", ""));
   } else {
     fMessage.reset(new Label("", TRANS("There doesn't seem to be any Minecraft save data in the specified folder.")));
