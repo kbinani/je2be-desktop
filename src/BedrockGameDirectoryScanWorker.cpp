@@ -43,7 +43,7 @@ void BedrockGameDirectoryScanWorker::unsafeRun() {
     bool commandsEnabled = false;
     auto s = std::make_shared<mcfile::stream::GzFileInputStream>(PathFromFile(level));
     if (s->valid() && s->seek(8)) {
-      if (auto tag = CompoundTag::Read(s, mcfile::Endian::Little); tag) {
+      if (auto tag = CompoundTag::Read(s, mcfile::Encoding::LittleEndian); tag) {
         if (auto lastPlayed = tag->int64(u8"LastPlayed"); lastPlayed) {
           lastUpdate = Time(*lastPlayed * 1000);
         }

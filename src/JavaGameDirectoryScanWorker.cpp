@@ -39,7 +39,7 @@ void JavaGameDirectoryScanWorker::unsafeRun() {
     juce::String version;
     bool commandsEnabled = false;
     auto s = std::make_shared<mcfile::stream::GzFileInputStream>(PathFromFile(level));
-    if (auto tag = CompoundTag::Read(s, mcfile::Endian::Big); tag) {
+    if (auto tag = CompoundTag::Read(s, mcfile::Encoding::Java); tag) {
       if (auto data = tag->compoundTag(u8"Data"); data) {
         if (auto lastPlayed = data->int64(u8"LastPlayed"); lastPlayed) {
           lastUpdate = Time(*lastPlayed);
