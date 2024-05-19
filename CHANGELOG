@@ -1,3 +1,7 @@
+Version 5.3.0
+・Fixed an issue where the contents of shulker boxes and other containers would disappear. [b2j, j2b]
+・Fixed an issue where extra quotation marks (") were added to the names of entities and items. [b2j, j2b]
+
 Version 5.2.0
 ・Added support for Minecraft 1.20.6.
 ・Improved the conversion accuracy for items such as Lodestone and Bucket of Salmon. [b2j, j2b]
