@@ -84,22 +84,6 @@ About::About() {
       "https://sourceforge.net/projects/xboxtopcminecraftconverter",
       "",
 
-      "Noto Sans",
-      "https://fonts.google.com/noto/specimen/Noto+Sans",
-      "",
-
-      "Noto Sans JP",
-      "https://fonts.google.com/noto/specimen/Noto+Sans+JP",
-      "",
-
-      "Noto Sans TC",
-      "https://fonts.google.com/noto/specimen/Noto+Sans+TC",
-      "",
-
-      "Noto Sans SC",
-      "https://fonts.google.com/noto/specimen/Noto+Sans+SC",
-      "",
-
       "mimalloc",
       "https://github.com/microsoft/mimalloc",
       "",

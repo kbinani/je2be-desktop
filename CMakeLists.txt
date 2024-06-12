@@ -66,11 +66,9 @@ set(je2be_desktop_files
   src/JavaGameDirectoryScanWorker.h
   src/LocalizationHelper.cpp
   src/LocalizationHelper.h
-  src/LookAndFeel.cpp
   src/LookAndFeel.h
   src/PS3GameDirectoryScanWorker.cpp
   src/PS3GameDirectoryScanWorker.h
-  src/ScaledTypeface.h
   src/Status.hpp
   src/TaskbarProgress.cpp
   src/TaskbarProgress.h
@@ -143,11 +141,7 @@ target_compile_definitions(je2be-desktop
 juce_add_binary_data(je2be-desktop-data
   SOURCES
     resource/icon-large.png
-    resource/japanese.lang
-    resource/NotoSans-Regular.ttf
-    resource/NotoSansJP-Regular.otf
-    resource/NotoSansSC-Regular.otf
-    resource/NotoSansTC-Regular.otf)
+    resource/japanese.lang)
 
 target_link_libraries(je2be-desktop
   PRIVATE
