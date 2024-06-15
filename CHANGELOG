@@ -1,3 +1,6 @@
+Version 5.4.0
+・Added support for Minecraft 1.21.
+
 Version 5.3.0
 ・Fixed an issue where the contents of shulker boxes and other containers would disappear. [b2j, j2b]
 ・Fixed an issue where extra quotation marks (") were added to the names of entities and items. [b2j, j2b]
