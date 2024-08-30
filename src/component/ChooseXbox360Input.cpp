@@ -3,7 +3,8 @@
 #include "CommandID.h"
 #include "Constants.h"
 #include "File.h"
-#include "GameDirectoryScanWorkerXbox360.h"
+#include "Thread.h"
+#include "Xbox360GameDirectoryScanWorker.h"
 #include "component/ChooseXbox360Input.h"
 #include "component/MainWindow.h"
 #include "component/SearchLabel.h"
@@ -27,8 +28,8 @@ static juce::String GetWorldName(File input, std::vector<GameDirectory> const &b
   if (!saveInfo.existsAsFile()) {
     return input.getFileNameWithoutExtension();
   }
-  std::vector<je2be::box360::MinecraftSaveInfo::SaveBin> bins;
-  je2be::box360::MinecraftSaveInfo::Parse(PathFromFile(saveInfo), bins);
+  std::vector<je2be::xbox360::MinecraftSaveInfo::SaveBin> bins;
+  je2be::xbox360::MinecraftSaveInfo::Parse(PathFromFile(saveInfo), bins);
   for (auto const &bin : bins) {
     if (input.getFileName() == juce::String(bin.fFileName)) {
       std::u16string const &title = bin.fTitle;
@@ -135,9 +136,9 @@ void ChooseXbox360Input::parentHierarchyChanged() {
     return;
   }
   fWorkerStarted = true;
-  auto worker = std::make_shared<GameDirectoryScanWorkerXbox360>(weak_from_this());
+  auto worker = std::make_shared<Xbox360GameDirectoryScanWorker>(weak_from_this());
   fWorker = worker;
-  juce::Thread::launch([worker]() {
+  Thread::Launch([worker]() {
     worker->run();
   });
 }

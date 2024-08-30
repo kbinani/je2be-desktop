@@ -6,7 +6,7 @@
 
 namespace je2be::desktop {
 
-class GameDirectoryScanWorkerXbox360;
+class Xbox360GameDirectoryScanWorker;
 
 }
 
@@ -62,7 +62,7 @@ private:
   std::unique_ptr<juce::Label> fOrMessage;
   std::unique_ptr<TextButton> fBackButton;
   juce::File fBedrockGameDirectory;
-  std::weak_ptr<GameDirectoryScanWorkerXbox360> fWorker;
+  std::weak_ptr<Xbox360GameDirectoryScanWorker> fWorker;
   bool fWorkerStarted = false;
   std::unique_ptr<juce::Label> fPlaceholder;
   std::vector<GameDirectory> fGameDirectoriesVisible;

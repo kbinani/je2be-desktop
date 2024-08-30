@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(je2be-desktop VERSION 4.26.0)
+project(je2be-desktop VERSION 5.4.0)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -33,7 +33,7 @@ include(cmake/CPM.cmake)
 CPMAddPackage(
   NAME mimalloc
   GITHUB_REPOSITORY microsoft/mimalloc
-  VERSION 2.0.9
+  VERSION 2.1.7
   OPTIONS "MI_OVERRIDE ON"
           "MI_BUILD_TESTS OFF"
           "MI_BUILD_OBJECT OFF"
@@ -54,29 +54,29 @@ set(je2be_desktop_files
   src/AccountScanThread.cpp
   src/AccountScanThread.h
   src/Application.cpp
-  src/AsyncHandler.h
   src/AsyncUpdaterWith.h
+  src/BedrockGameDirectoryScanWorker.cpp
+  src/BedrockGameDirectoryScanWorker.h
   src/CommandID.h
   src/ComponentState.h
   src/Constants.h
   src/File.h
   src/GameDirectory.h
-  src/GameDirectoryScanWorkerBedrock.cpp
-  src/GameDirectoryScanWorkerBedrock.h
-  src/GameDirectoryScanWorkerJava.cpp
-  src/GameDirectoryScanWorkerJava.h
-  src/GameDirectoryScanWorkerXbox360.cpp
-  src/GameDirectoryScanWorkerXbox360.h
+  src/JavaGameDirectoryScanWorker.cpp
+  src/JavaGameDirectoryScanWorker.h
   src/LocalizationHelper.cpp
   src/LocalizationHelper.h
-  src/LookAndFeel.cpp
   src/LookAndFeel.h
-  src/ScaledTypeface.h
+  src/PS3GameDirectoryScanWorker.cpp
+  src/PS3GameDirectoryScanWorker.h
   src/Status.hpp
   src/TaskbarProgress.cpp
   src/TaskbarProgress.h
   src/TemporaryDirectory.cpp
   src/TemporaryDirectory.h
+  src/Thread.h
+  src/Xbox360GameDirectoryScanWorker.cpp
+  src/Xbox360GameDirectoryScanWorker.h
   src/component/About.cpp
   src/component/About.h
   src/component/ChooseBedrockInput.cpp
@@ -87,8 +87,12 @@ set(je2be_desktop_files
   src/component/ChooseJavaInput.h
   src/component/ChooseJavaOutput.cpp
   src/component/ChooseJavaOutput.h
+  src/component/ChoosePS3Input.cpp
+  src/component/ChoosePS3Input.h
   src/component/ChooseXbox360Input.cpp
   src/component/ChooseXbox360Input.h
+  src/component/ConvertProgress.cpp
+  src/component/ConvertProgress.h
   src/component/CopyBedrockArtifactProgress.cpp
   src/component/CopyBedrockArtifactProgress.h
   src/component/CopyJavaArtifactProgress.cpp
@@ -101,20 +105,20 @@ set(je2be_desktop_files
   src/component/SearchLabel.cpp
   src/component/SearchLabel.h
   src/component/TextButton.h
-  src/component/b2j/B2JConfig.cpp
-  src/component/b2j/B2JConfig.h
+  src/component/ToBedrockConfig.cpp
+  src/component/ToBedrockConfig.h
+  src/component/ToJavaConfig.cpp
+  src/component/ToJavaConfig.h
   src/component/b2j/B2JConvertProgress.cpp
   src/component/b2j/B2JConvertProgress.h
-  src/component/j2b/J2BConfig.cpp
-  src/component/j2b/J2BConfig.h
   src/component/j2b/J2BConvertProgress.cpp
   src/component/j2b/J2BConvertProgress.h
-  src/component/x2b/X2BConfig.cpp
-  src/component/x2b/X2BConfig.h
+  src/component/p2b/P2BConvertProgress.cpp
+  src/component/p2b/P2BConvertProgress.h
+  src/component/p2j/P2JConvertProgress.cpp
+  src/component/p2j/P2JConvertProgress.h
   src/component/x2b/X2BConvertProgress.cpp
   src/component/x2b/X2BConvertProgress.h
-  src/component/x2j/X2JConfig.cpp
-  src/component/x2j/X2JConfig.h
   src/component/x2j/X2JConvertProgress.cpp
   src/component/x2j/X2JConvertProgress.h
   #end je2be-desktop
@@ -137,11 +141,7 @@ target_compile_definitions(je2be-desktop
 juce_add_binary_data(je2be-desktop-data
   SOURCES
     resource/icon-large.png
-    resource/japanese.lang
-    resource/NotoSans-Regular.ttf
-    resource/NotoSansJP-Regular.otf
-    resource/NotoSansSC-Regular.otf
-    resource/NotoSansTC-Regular.otf)
+    resource/japanese.lang)
 
 target_link_libraries(je2be-desktop
   PRIVATE

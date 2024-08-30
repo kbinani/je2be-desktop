@@ -1,3 +1,32 @@
+Version 5.4.0
+・Added support for Minecraft 1.21.
+
+Version 5.3.0
+・Fixed an issue where the contents of shulker boxes and other containers would disappear. [b2j, j2b]
+・Fixed an issue where extra quotation marks (") were added to the names of entities and items. [b2j, j2b]
+
+Version 5.2.0
+・Added support for Minecraft 1.20.6.
+・Improved the conversion accuracy for items such as Lodestone and Bucket of Salmon. [b2j, j2b]
+・Fixed an issue that could cause a crash during conversion to the Java edition. [b2j]
+
+Version 5.1.0
+・Fixed a problem in which the progress bar display could decrease during processing. [x2j, x2b, p2j, p2b]
+・Improved memory utilization. [x2j, x2b, p2j, p2b, b2j]
+
+Version 5.0.0
+・Added the ability to convert game data of the PS3 edition.
+
+Version 4.27.0
+・Fixed a problem where the minecarts would sometimes be buried in the ground when reading the converted data. [b2j]
+・Fixed a problem in which incorrect biomes could be included in the resulting data. [b2j]
+・Fixed a problem in which an unnecessary "entities" directory was created when converting data from the Xbox360 version. [x2j]
+・Improved entity conversion accuracy. [x2j]
+
+Version 4.26.1
+・Fixed a problem where bees in a beehive/bee_next were not being converted correctly. [b2j]
+・Fixed a problem where entities would not load correctly when the resulting conversion data was read by the Paper server. [b2j, x2j]
+
 Version 4.26.0
 ・Minecraft 1.20.4 is now supported.
 ・The resulting data version of conversions was changed from 1.19 to 1.16 when converting Xbox 360 data. [x2j, x2b]

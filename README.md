@@ -6,6 +6,8 @@
   - Bedrock ▶️ Java
   - Xbox360 ▶️ Bedrock
   - Xbox360 ▶️ Java
+  - PS3 ▶️ Bedrock
+  - PS3 ▶️ Java
 
 # Screenshot
 

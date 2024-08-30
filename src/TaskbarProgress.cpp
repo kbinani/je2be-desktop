@@ -9,37 +9,18 @@ using namespace juce;
 namespace je2be::desktop {
 
 namespace {
-struct CallbackArgs {
-  DWORD fPid;
-  std::vector<HWND> fResult;
-};
-
-BOOL CALLBACK EnumWindowsCallback(HWND hnd, LPARAM lParam) {
-  CallbackArgs *args = (CallbackArgs *)lParam;
-
-  DWORD windowPid;
-  GetWindowThreadProcessId(hnd, &windowPid);
-  if (windowPid == args->fPid) {
-    args->fResult.push_back(hnd);
-  }
-
-  return TRUE;
-}
-
 std::optional<HWND> GetTopLevelWindow() {
-  CallbackArgs args;
-  args.fPid = GetCurrentProcessId();
-  if (!EnumWindows(EnumWindowsCallback, (LPARAM)&args)) {
-    return std::nullopt;
+  int const num = juce::TopLevelWindow::getNumTopLevelWindows();
+  for (int i = 0; i < num; i++) {
+    if (auto window = juce::TopLevelWindow::getTopLevelWindow(i); window) {
+      return (HWND)window->getWindowHandle();
+    }
   }
-  if (args.fResult.empty()) {
-    return std::nullopt;
-  }
-  return args.fResult[0];
+  return std::nullopt;
 }
 } // namespace
 
-class TaskbarProgress::Impl {
+class TaskbarProgress::Impl : public juce::Timer {
 public:
   Impl()
       : fTaskbar(nullptr), fState(std::nullopt) {
@@ -48,15 +29,27 @@ public:
       return;
     }
     ITaskbarList3 *taskbar = nullptr;
-    HRESULT hr = CoCreateInstance(CLSID_TaskbarList, nullptr, CLSCTX_ALL, IID_ITaskbarList3, (void **)&taskbar);
-    if (!SUCCEEDED(hr)) {
+    if (FAILED(CoCreateInstance(CLSID_TaskbarList, nullptr, CLSCTX_INPROC_SERVER, IID_ITaskbarList3, (void **)&taskbar))) {
+      return;
+    }
+    if (!taskbar) {
+      return;
+    }
+    if (FAILED(taskbar->HrInit())) {
+      taskbar->Release();
       return;
     }
     fTaskbar = taskbar;
+    startTimerHz(24);
   }
 
-  ~Impl() {
+  ~Impl() override {
+    stopTimer();
+
     if (fTaskbar) {
+      if (fTopLevelWindow) {
+        fTaskbar->SetProgressState(*fTopLevelWindow, TBPF_NOPROGRESS);
+      }
       fTaskbar->Release();
       fTaskbar = nullptr;
     }
@@ -73,9 +66,30 @@ public:
       return;
     }
     fState = state;
+  }
+
+  void update(double progress) {
+    if (!fTopLevelWindow) {
+      return;
+    }
+    if (!fTaskbar) {
+      return;
+    }
+    fProgress = progress;
+  }
+
+  void timerCallback() override {
+    if (!fTopLevelWindow || !fState || !fTaskbar) {
+      return;
+    }
+
+    double v = std::min(std::max(fProgress, 0.0), 1.0);
+    ULONGLONG pos = static_cast<ULONGLONG>(v * std::numeric_limits<uint32_t>::max());
+    ULONGLONG constexpr max = static_cast<ULONGLONG>(std::numeric_limits<uint32_t>::max());
+    fTaskbar->SetProgressValue(*fTopLevelWindow, pos, max);
 
     TBPFLAG flag = TBPF_NOPROGRESS;
-    switch (state) {
+    switch (*fState) {
     case State::Indeterminate:
       flag = TBPF_INDETERMINATE;
       break;
@@ -92,27 +106,15 @@ public:
     fTaskbar->SetProgressState(*fTopLevelWindow, flag);
   }
 
-  void update(double progress) {
-    if (!fTopLevelWindow) {
-      return;
-    }
-    if (!fTaskbar) {
-      return;
-    }
-    double v = std::min(std::max(progress, 0.0), 1.0);
-    ULONGLONG pos = static_cast<ULONGLONG>(v * std::numeric_limits<uint32_t>::max());
-    ULONGLONG constexpr max = static_cast<ULONGLONG>(std::numeric_limits<uint32_t>::max());
-    fTaskbar->SetProgressValue(*fTopLevelWindow, pos, max);
-  }
-
 private:
   ITaskbarList3 *fTaskbar;
   std::optional<HWND> fTopLevelWindow;
   std::optional<State> fState;
+  double fProgress = 0;
 };
 
 TaskbarProgress::TaskbarProgress()
-    : fImpl(new Impl()) {
+    : fImpl(std::make_unique<Impl>()) {
 }
 
 TaskbarProgress::~TaskbarProgress() {

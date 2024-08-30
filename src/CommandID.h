@@ -9,6 +9,8 @@ enum {
   toChooseBedrockInput,
   toChooseXbox360InputToJava,
   toChooseXbox360InputToBedrock,
+  toChoosePS3InputToJava,
+  toChoosePS3InputToBedrock,
 
   toJ2BConfig,
   toJ2BConvert,
@@ -21,6 +23,11 @@ enum {
 
   toXbox360ToJavaConfig,
   toXbox360ToBedrockConvert,
+
+  toPS3ToJavaConfig,
+  toPS3ToJavaConvert,
+  toPS3ToBedrockConfig,
+  toPS3ToBedrockConvert,
 
   toChooseBedrockOutput,
   toChooseJavaOutput,

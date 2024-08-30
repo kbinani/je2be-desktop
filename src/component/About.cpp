@@ -26,7 +26,7 @@ namespace je2be::desktop::component {
 About::About() {
   std::vector<juce::String> lines = {
       "",
-      "Copyright (C) 2020-2023 kbinani",
+      "Copyright (C) 2020-2024 kbinani",
       "",
       "This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.",
       "",
@@ -37,30 +37,22 @@ About::About() {
       "",
       "",
       "",
-      "Disclaimer",
-      "",
       "This program is not an official Minecraft product.",
       "",
+      "Xbox and Xbox 360 are trademarks of the Microsoft group of companies.",
       "",
-      "",
-      "Reinforced by PVS-Studio - static analyzer for C, C++, C#, and Java code.",
-      "https://pvs-studio.com/en/pvs-studio",
+      "PS3 is a registered trademark of Sony Interactive Entertainment Inc.",
       "",
       "",
       "",
       "Acknowledgement",
       "",
+      "Reinforced by PVS-Studio - static analyzer for C, C++, C#, and Java code.",
+      "https://pvs-studio.com/en/pvs-studio",
+      "",
 
       "JUCE",
       "https://github.com/juce-framework/JUCE",
-      "",
-
-      "LevelDB",
-      "https://github.com/kbinani/leveldb-stdfs",
-      "",
-
-      "xxhash",
-      "https://github.com/stbrumme/xxhash",
       "",
 
       "json",
@@ -92,32 +84,32 @@ About::About() {
       "https://sourceforge.net/projects/xboxtopcminecraftconverter",
       "",
 
-      "je2be-core",
-      "https://github.com/kbinani/je2be-core",
+      "mimalloc",
+      "https://github.com/microsoft/mimalloc",
+      "",
+
+      "sparse",
+      "https://github.com/Arzaghi/sparse",
+      "",
+
+      "lz4",
+      "https://github.com/lz4/lz4",
+      "",
+
+      "defer",
+      "https://github.com/kbinani/defer",
+      "",
+
+      "LevelDB",
+      "https://github.com/kbinani/leveldb-stdfs",
       "",
 
       "libminecraft-file",
       "https://github.com/kbinani/libminecraft-file",
       "",
 
-      "Noto Sans",
-      "https://fonts.google.com/noto/specimen/Noto+Sans",
-      "",
-
-      "Noto Sans JP",
-      "https://fonts.google.com/noto/specimen/Noto+Sans+JP",
-      "",
-
-      "Noto Sans TC",
-      "https://fonts.google.com/noto/specimen/Noto+Sans+TC",
-      "",
-
-      "Noto Sans SC",
-      "https://fonts.google.com/noto/specimen/Noto+Sans+SC",
-      "",
-
-      "mimalloc",
-      "https://github.com/microsoft/mimalloc",
+      "je2be-core",
+      "https://github.com/kbinani/je2be-core",
       "",
   };
 

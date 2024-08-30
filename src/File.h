@@ -5,6 +5,8 @@
 
 #include <minecraft-file.hpp>
 
+#include <shlwapi.h>
+
 #if defined(CopyFile)
 #undef CopyFile
 #endif
@@ -124,6 +126,24 @@ static Status CopyDirectoryRecursive(juce::File from, juce::File to, std::vector
     }
   }
   return Status::Ok();
+}
+
+static inline bool IsRemoteDrive(juce::File const &f) {
+  auto fullPathName = f.getFullPathName();
+  if (fullPathName.isEmpty()) {
+    return false;
+  }
+  std::wstring s = fullPathName.toWideCharPointer();
+  std::vector<wchar_t> buffer;
+  buffer.reserve(s.size() + 1);
+  std::copy(s.begin(), s.end(), std::back_inserter(buffer));
+  buffer.push_back(0);
+
+  if (PathStripToRootW(buffer.data())) {
+    s = buffer.data();
+  }
+  auto n = GetDriveTypeW(s.data());
+  return n == DRIVE_REMOTE;
 }
 
 } // namespace je2be::desktop

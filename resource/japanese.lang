@@ -19,7 +19,8 @@ language: Japanese
 "Select save data folder of Minecraft" = "Minecraft のセーブデータのフォルダを選択"
 "Directory structure" = "ディレクトリの形式"
 "There doesn't seem to be any Minecraft save data in the specified folder." = "指定されたフォルダには Minecraft のセーブデータが存在しないようです"
-"The conversion failed." = "変換に失敗しました"
+"The conversion has failed." = "変換に失敗しました"
+"The conversion has cancelled." = "変換をキャンセルしました"
 "There are files and folders in the selected folder.\rPlease select an empty folder" = "フォルダ内にファイルやフォルダがあります。\r中身が空のフォルダを選択してください"
 "Change the destination" = "保存先を変更"
 "Select an empty folder to save in" = "保存先の空のフォルダを選択してください"
@@ -36,6 +37,14 @@ language: Japanese
 "Bedrock to Java" = "統合版 から Java版に";
 "Xbox360 to Bedrock" = "Xbox360版 から 統合版に";
 "Xbox360 to Java" = "Xbox360版 から Java版に";
+"PS3 to Java" = "PS3版 から Java版に"
+"PS3 to Bedrock" = "PS3版 から 統合版に"
+"from Java" = "Java版から"
+"from Bedrock" = "統合版から"
+"from Xbox360" = "Xbox360版から"
+"from PS3" = "PS3版から"
+"to Java" = "Java版に"
+"to Bedrock" = "統合版に"
 "Select *.mcworld file" = "*.mcworld ファイルを選ぶ";
 "Select *.mcworld file to convert" = "変換する *.mcworld ファイルを選んでください";
 "Select world folder" = "フォルダを選ぶ"
@@ -57,6 +66,8 @@ language: Japanese
 "Nothing found in the save folder" = "セーブフォルダにワールドがありませんでした";
 "Select *.bin file" = "*.bin ファイルを選ぶ";
 "Select *.bin file to convert" = "変換する *.bin ファイルを選んでください";
+"Select GAMEDATA file" = "GAMEDATA ファイルを選ぶ";
+"Select GAMEDATA file to convert" = "変換する GAMEDATA ファイルを選んでください";
 "Extracting..." = "抽出中...";
 "Show in Explorer" = "エクスプローラーに表示";
 

@@ -1,8 +1,9 @@
 #include "component/ChooseBedrockInput.h"
+#include "BedrockGameDirectoryScanWorker.h"
 #include "CommandID.h"
 #include "Constants.h"
 #include "File.h"
-#include "GameDirectoryScanWorkerBedrock.h"
+#include "Thread.h"
 #include "component/MainWindow.h"
 #include "component/SearchLabel.h"
 #include "component/TextButton.h"
@@ -153,9 +154,9 @@ void ChooseBedrockInput::parentHierarchyChanged() {
     return;
   }
   fWorkerStarted = true;
-  auto worker = std::make_shared<GameDirectoryScanWorkerBedrock>(weak_from_this());
+  auto worker = std::make_shared<BedrockGameDirectoryScanWorker>(weak_from_this());
   fWorker = worker;
-  juce::Thread::launch([worker]() {
+  Thread::Launch([worker]() {
     worker->run();
   });
 }

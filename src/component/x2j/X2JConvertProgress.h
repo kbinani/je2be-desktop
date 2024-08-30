@@ -1,31 +1,24 @@
 #pragma once
 
-#include "AsyncHandler.h"
 #include "CommandID.h"
 #include "ComponentState.h"
 #include "Status.hpp"
-
-namespace je2be::desktop {
-class TaskbarProgress;
-}
-
-namespace je2be::desktop::component {
-class TextButton;
-}
+#include "component/ConvertProgress.h"
 
 namespace je2be::desktop::component::x2j {
 
-class X2JConvertProgress : public juce::Component,
+class X2JConvertProgress : public ConvertProgress,
                            public JavaConvertedStateProvider,
-                           public X2JConfigStateProvider,
-                           public ChooseInputStateProvider {
+                           public ToJavaConfigStateProvider,
+                           public ChooseInputStateProvider,
+                           public std::enable_shared_from_this<X2JConvertProgress> {
 public:
-  explicit X2JConvertProgress(X2JConfigState const &configState);
-  ~X2JConvertProgress() override;
+  explicit X2JConvertProgress(ToJavaConfigState const &configState);
+  ~X2JConvertProgress() override {}
 
-  void paint(juce::Graphics &) override;
+  void paint(juce::Graphics &) override {}
 
-  X2JConfigState getConfigState() const override {
+  ToJavaConfigState getConfigState() const override {
     return fConfigState;
   }
 
@@ -37,37 +30,24 @@ public:
     return fConfigState.fInputState;
   }
 
-  void onCancelButtonClicked();
+  int getProgressSteps() const override {
+    return 1;
+  }
 
-  enum class Phase {
-    Conversion = 1,
-    Done = 2,
-    Error = -1,
-  };
+  Characteristics getProgressCharacteristics(int step) const override {
+    return Characteristics(Characteristics::Unit::Percent, 1, TRANS("Converting..."), "Conversion");
+  }
 
-  void onProgressUpdate(Phase phase, double progress, Status status);
-
-  struct UpdateQueue {
-    Phase fPhase;
-    double fProgress;
-    Status fStatus;
-  };
+  void onCancelButtonClicked() override;
+  void startThread() override;
+  void onFinish() override;
 
 private:
-  std::unique_ptr<TextButton> fCancelButton;
-  X2JConfigState fConfigState;
+  ToJavaConfigState fConfigState;
   std::optional<JavaConvertedState> fState;
   juce::File fOutputDirectory;
-  std::unique_ptr<juce::Thread> fThread;
-  std::shared_ptr<AsyncHandler<UpdateQueue>> fUpdater;
-  std::unique_ptr<juce::ProgressBar> fConversionProgressBar;
-  double fConversionProgress;
-  std::unique_ptr<juce::Label> fLabel;
   juce::CommandID fCommandWhenFinished = commands::toChooseJavaOutput;
-  bool fFailed = false;
-  std::unique_ptr<juce::TextEditor> fErrorMessage;
-  std::unique_ptr<TaskbarProgress> fTaskbarProgress;
-  bool fCancelRequested = false;
+  juce::File fTempRoot;
 
 private:
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(X2JConvertProgress)
