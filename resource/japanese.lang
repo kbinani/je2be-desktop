@@ -10,7 +10,7 @@ language: Japanese
 "Selected world:" = "選択されたワールド:"
 "Start" = "開始"
 "Back" = "戻る"
-"Converting..." = "转换中..."
+"Converting..." = "変換中..."
 "Waiting for the worker thread to finish" = "処理が完了するのを待っています"
 "LevelDB compaction" = "LevelDB の後処理中"
 "Saving..." = "保存中..."

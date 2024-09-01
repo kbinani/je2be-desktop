@@ -10,7 +10,7 @@ language: Chinese
 "Selected world:" = "已选择世界："
 "Start" = "开始"
 "Back" = "返回"
-"Converting..." = "変換中..."
+"Converting..." = "转换中..."
 "Waiting for the worker thread to finish" = "等待工作线程结束"
 "LevelDB compaction" = "LevelDB 压缩中"
 "Saving..." = "保存中..."
