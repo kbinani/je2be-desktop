@@ -1,0 +1,32 @@
+name: Build je2be-desktop
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Initialize submodules
+      run: git submodule update --init --recursive
+
+    - name: Set up CMake
+      uses: lukka/get-cmake@v3
+      with:
+        cmakeVersion: '3.22.0'
+
+    - name: Configure CMake
+      run: cmake -S Builds -B Builds
+
+    - name: Build the project
+      run: cmake --build Builds --target je2be-desktop --config Release --parallel
+
+    - name: Archive the build output
+      uses: actions/upload-artifact@v3
+      with:
+        name: je2be-desktop
+        path: Builds/je2be-desktop_artifacts/Release/je2be.exe
