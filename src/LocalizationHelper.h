@@ -17,7 +17,8 @@ private:
     return new juce::LocalisedStrings(t, false);
   }
 
-  static juce::LocalisedStrings *Japanese();
+  static juce::LocalisedStrings *Language_ja_JP();
+  static juce::LocalisedStrings *Language_zh_Hans();
 
   LocalizationHelper() = delete;
 };

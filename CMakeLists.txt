@@ -9,7 +9,7 @@ set(BUILD_SHARED_LIBS OFF)
 add_definitions(
   /DUNICODE
   /D_UNICODE
-  /source-charset:utf-8
+  /utf-8
   /we4828
   /wd4100 # Suppress "unreferenced formal parameter" warnings
 )
@@ -141,7 +141,8 @@ target_compile_definitions(je2be-desktop
 juce_add_binary_data(je2be-desktop-data
   SOURCES
     resource/icon-large.png
-    resource/japanese.lang)
+    resource/ja-JP.lang
+    resource/zh-Hans.lang)
 
 target_link_libraries(je2be-desktop
   PRIVATE
