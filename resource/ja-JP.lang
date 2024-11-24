@@ -1,4 +1,4 @@
-language: Japanese
+language: ja-JP
 
 "Select a world to convert\nfrom the list" = "変換するワールドを\nリストから選択してください"
 "or" = "または"

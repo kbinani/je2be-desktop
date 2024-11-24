@@ -16,8 +16,11 @@ LocalisedStrings *LocalizationHelper::CurrentLocalisedStrings() {
   if (languages.empty()) {
     return nullptr;
   }
-  if (languages[0] == "ja-JP") {
-    return Japanese();
+  auto language = languages[0];
+  if (language == "ja-JP") {
+    return Language_ja_JP();
+  } else if (language == "zh-Hans") {
+    return Language_zh_Hans();
   }
   return nullptr;
 }
@@ -57,9 +60,14 @@ std::vector<String> LocalizationHelper::PreferredLanguages() {
   return ret;
 }
 
-LocalisedStrings *LocalizationHelper::Japanese() {
-  return LoadLocalisedStrings(BinaryData::japanese_lang,
-                              BinaryData::japanese_langSize);
+LocalisedStrings *LocalizationHelper::Language_ja_JP() {
+  return LoadLocalisedStrings(BinaryData::jaJP_lang,
+                              BinaryData::jaJP_langSize);
+}
+
+LocalisedStrings *LocalizationHelper::Language_zh_Hans() {
+  return LoadLocalisedStrings(BinaryData::zhHans_lang,
+                              BinaryData::zhHans_langSize);
 }
 
 } // namespace je2be::desktop
