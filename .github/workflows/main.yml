@@ -20,10 +20,10 @@ jobs:
         cmakeVersion: '3.22.0'
 
     - name: Configure CMake
-      run: cmake -S Builds -B Builds
+      run: cd Builds && cmake ..
 
     - name: Build the project
-      run: cmake --build Builds --target je2be-desktop --config Release --parallel
+      run: cd Builds && cmake --build Builds --target je2be-desktop --config Release --parallel
 
     - name: Archive the build output
       uses: actions/upload-artifact@v3
