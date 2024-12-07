@@ -96,6 +96,14 @@ About::About() {
       "https://github.com/lz4/lz4",
       "",
 
+      "icu",
+      "https://icu.unicode.org",
+      "",
+
+      "icu-cmake",
+      "https://github.com/AiMiDi/icu-cmake",
+      "",
+
       "defer",
       "https://github.com/kbinani/defer",
       "",
