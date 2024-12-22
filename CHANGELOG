@@ -1,3 +1,6 @@
+Version 5.5.1
+・Fixed an issue where the "pale_garden" biome was not converting properly. [b2j, j2b]
+
 Version 5.5.0
 ・Added support for Minecraft 1.21.4.
 
