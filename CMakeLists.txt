@@ -33,7 +33,7 @@ include(cmake/CPM.cmake)
 CPMAddPackage(
   NAME mimalloc
   GITHUB_REPOSITORY microsoft/mimalloc
-  VERSION 2.1.7
+  VERSION 2.2.4
   OPTIONS "MI_OVERRIDE ON"
           "MI_BUILD_TESTS OFF"
           "MI_BUILD_OBJECT OFF"
