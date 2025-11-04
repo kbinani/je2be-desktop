@@ -144,7 +144,43 @@ struct GameDirectory {
   }
 
   static juce::File BedrockSaveDirectory() {
-    return juce::File::getSpecialLocation(juce::File::userApplicationDataDirectory)
+    auto userApplicationDataDirectory = juce::File::getSpecialLocation(juce::File::userApplicationDataDirectory);
+    auto users = userApplicationDataDirectory.getChildFile("Minecraft Bedrock").getChildFile("Users");
+    if (users.exists() && users.isDirectory()) {
+      juce::DirectoryIterator itr(users, false, "*", juce::File::findDirectories);
+      juce::String userId;
+      juce::String const digits = "0123456789";
+      while (itr.next()) {
+        auto sub = itr.getFile();
+        auto n = sub.getFileName();
+        if (n == u8"Shared") {
+          continue;
+        }
+        if (n.startsWith("-")) {
+          // Not sure if negative userId exists
+          if (n.length() == 1) {
+            continue;
+          }
+          if (!n.substring(1).containsOnly(digits)) {
+            continue;
+          }
+        } else {
+          if (!n.containsOnly(digits)) {
+            continue;
+          }
+        }
+        auto moj = sub.getChildFile("games").getChildFile("com.mojang");
+        if (!moj.exists() || !moj.isDirectory()) {
+          continue;
+        }
+        userId = n;
+        break;
+      }
+      if (userId.isNotEmpty()) {
+        return users.getChildFile(userId).getChildFile("games").getChildFile("com.mojang").getChildFile("minecraftWorlds");
+      }
+    }
+    return userApplicationDataDirectory
         .getParentDirectory()
         .getChildFile("Local")
         .getChildFile("Packages")
