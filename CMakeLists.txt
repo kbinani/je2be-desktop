@@ -158,8 +158,8 @@ target_link_libraries(je2be-desktop
 target_include_directories(je2be-desktop PRIVATE src)
 
 include_external_msproject(Package Package/Package.wapproj
-  TYPE C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5
-  GUID 713653CB-7989-4C22-8171-0F1951271B8D)
+  TYPE c7167f0d-bc9f-4e6e-afe1-012c56b48db5
+  GUID 41f00b03-d1a9-4bb3-a428-561b090e7c34)
 
 configure_file(Builds/Package/Package.appxmanifest.in Package/Package.appxmanifest)
 
