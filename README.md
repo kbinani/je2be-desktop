@@ -29,7 +29,7 @@ then build with cmake to get the exe `Builds/je2be-desktop_artifacts/Release/je2
 cmake --build . --target je2be-desktop --config Release --parallel
 ```
 
-or just open `Builds/je2be-desktop.sln` with Visual Studio
+or just open `Builds/je2be-desktop.slnx` with Visual Studio
 
 # License
 GPL-3.0
