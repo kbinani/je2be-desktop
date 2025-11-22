@@ -1,3 +1,6 @@
+Version 5.6.1
+・Fixed an issue where custom item names were not converted correctly.[b2j, j2b]
+
 Version 5.6.0
 ・Added support for Minecraft 1.21.10.
 
